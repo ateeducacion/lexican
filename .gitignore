@@ -148,3 +148,4 @@ temp/
 .history
 
 # End of https://www.gitignore.io/api/git,node,laravel,visualstudiocode
+.DS_Store
