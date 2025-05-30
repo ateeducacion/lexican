@@ -1,0 +1,32 @@
+// Scroll
+::-webkit-scrollbar{
+    height: 6px;
+    width: 8px;
+    background: #ddd;
+    border-radius: 1px;
+    @media only screen and (max-width: $mobile) {
+      height: 12px;
+      width: 16px;
+      border-radius: 3px;
+    }
+}
+::-webkit-scrollbar-track:horizontal {
+    border-radius: 4px;
+    background: rgba(0,0,0,0.1);
+    border: 1px solid #ccc;
+  }
+::-webkit-scrollbar-thumb:horizontal{
+    border-radius: 4px;    
+    background: rgb(175,175,175);
+    border: 1px solid #888;
+}
+::-webkit-scrollbar-track:vertical {
+    // border-radius: 3px;
+    background: rgba(0,0,0,0.1);
+    border: 1px solid #ddd;
+  }
+::-webkit-scrollbar-thumb:vertical{
+    border-radius: 3px;    
+    background: rgb(175,175,175);
+    border: 1px solid #888;
+}

@@ -1,0 +1,14 @@
+
+.dc-centerdiv {
+    width: max-content;
+    margin: 0 auto;
+}
+.flip-horizontally {
+    transform: scaleX(-1);
+}
+.flip-vertically {
+    transform: scaleY(-1);
+}
+.cursor-pointer {
+    cursor: pointer;
+}

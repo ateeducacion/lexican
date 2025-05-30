@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="36.365"
+   height="36.365"
+   viewBox="0 0 36.365 36.365"
+   version="1.1"
+   id="svg18"
+   sodipodi:docname="ico-info-verde.svg"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)">
+  <metadata
+     id="metadata22">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1860"
+     inkscape:window-height="1016"
+     id="namedview20"
+     showgrid="false"
+     inkscape:zoom="6.4897563"
+     inkscape:cx="9.9959363"
+     inkscape:cy="18.028412"
+     inkscape:window-x="60"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg18" />
+  <defs
+     id="defs4">
+    <style
+       id="style2">.a{fill:none;}.b{fill:#3eb1ba;}</style>
+  </defs>
+  <circle
+     id="path3746"
+     cx="18.105457"
+     cy="18.413633"
+     r="14.672604"
+     style="fill:#ffffff;fill-opacity:1;stroke:#3eb1ba;stroke-width:1.87760949;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:30.8076973px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#3eb1ba;fill-opacity:1;stroke:none;stroke-width:0.77019238"
+     x="9.485919"
+     y="29.620535"
+     id="text4555"><tspan
+       sodipodi:role="line"
+       id="tspan4553"
+       x="9.485919"
+       y="29.620535"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:AnjaliOldLipi;-inkscape-font-specification:AnjaliOldLipi;fill:#3eb1ba;fill-opacity:1;stroke-width:0.77019238">?</tspan></text>
+</svg>

@@ -1,0 +1,42 @@
+#cookieswarning{
+    // z-index: 2;
+    // position: fixed;
+    // bottom: 0;
+    // width: 100%;
+    
+    
+    // background-color: moccasin;    
+    // width: 70%;
+    // left: 15%;
+    
+    .close {
+        position: absolute;
+        top: 0;
+        right: 13px;
+        display: block;
+        float: none;
+    }
+
+    #cookiestxt {
+        background-color: #FFDF61;
+        background-color: #efe4b0;
+        border-top: 0.5rem #FFDF61 solid;
+        padding: 1rem 5rem 1.5rem;
+
+        bottom: 0;
+        position: fixed;
+        margin-bottom: 1rem;
+    }
+}
+
+@media only screen and (max-width: $mobile) {
+    #cookieswarning{
+            margin-bottom: 0;
+            #cookiestxt {
+                border-top: 0.25rem #FFDF61 solid;
+                padding: 1rem 1rem 1.5rem;
+            }
+    }
+    
+}
+

@@ -1,0 +1,68 @@
+// Tipografia Tamano fuentes
+.modal input,
+.modal .dc-comentario,
+.dropify-wrapper ,
+.form-control,
+{
+    font-size: $font-size0;
+}
+
+#header-line-content,
+.breadcrumb ,
+.breadcrumb-item ,
+.dc-home-nentradas,
+.dc-entrada-acepcion .dc-acepcion-texto,
+.modal label,
+.modal-footer .btn
+{
+    font-size: $font-size1;
+}
+
+.modal .modal-title,
+.dc-tabs,
+.modal .modal-body
+{
+    font-size: $font-size2;
+    @media only screen and (max-width: $mobile) {
+        font-size: $font-size0;
+    }
+}
+
+// {
+//     font-size: $font-size3;
+// }
+
+.dc-entrada-titulo {
+    font-size: $font-size4;
+    @media only screen and (max-width: $mobile) {
+        font-size: $font-size2;
+        & div, & {
+            word-break: break-all;
+            word-wrap: break-word;
+        }
+    }
+}
+
+// .modal .dc-comentario,
+// .modal-footer .btn,
+// .modal .modal-title
+// {
+//     font-weight: bold;
+// }
+
+.dc-fontsize0{
+    font-size: $font-size0 !important;
+}
+.dc-fontsize1{
+    font-size: $font-size1 !important;
+}
+.dc-fontsize2{
+    font-size: $font-size2 !important;
+}
+.dc-fontsize3{
+    font-size: $font-size3 !important;
+}
+.dc-fontsize4{
+    font-size: $font-size4 !important;
+}
+// Fin Tipografia

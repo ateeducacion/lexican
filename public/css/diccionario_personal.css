@@ -1,0 +1,132 @@
+.top-buffer {
+    margin-top: 20px;
+}
+
+/* usado para marcar como activos los diccionarios a enviar */
+.especialocultable.btn-secondary:not(:disabled):not(.disabled).active,
+.especialocultable.btn-secondary:not(:disabled):not(.disabled):active,
+.especialocultable.show>.btn-secondary.dropdown-toggle {
+    color: #fff;
+    background-color: #3490dc;
+    border-color: #3490dc;
+}
+
+
+/* Se usa para envolver las entradas de un diccionario en una elipse */
+.elipse {
+    border-bottom-left-radius: 50% 50%;
+    border-bottom-right-radius: 50% 50%;
+    border-top-left-radius: 50% 50%;
+    border-top-right-radius: 50% 50%;
+
+    font-size: 150% !important;
+    line-height: 2rem !important;
+
+    color: #fff;
+    margin: 10px;
+}
+
+/* span.class {
+    color: #fff !important;
+} */
+
+.badge-primary.elipse {
+    background-color: #449b23 !important;
+}
+
+/* .badge .badge-secondary .elipse {
+     background-color: #008E30; 
+} */
+
+/* Se usa para que en los formularios modales, los textos de los campos salgan alineados a la izquierda */
+/* .form-group {
+    text-align: left !important;
+} */
+
+.comentario-texto-letra {
+    color: #747474;
+    font-family: "Carlito", Calibri, sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+.comentario-seccion-letra {
+    color: #747474;
+    font-family: "Carlito", Calibri, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+.comentario-entrada-letra {
+    color: #747474;
+    font-family: "Carlito", Calibri, sans-serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+.comentario-card-sinborde {
+    border: 0 !important;
+}
+
+.comentario-nomodal-card-body {
+    padding-left: 12px;
+}
+
+.comentario-modal-card-body {
+    padding-left: 12px;
+    padding-bottom: 0px;
+    background-color: #f4f4f4 !important;
+    /* 'bg-light' */
+}
+
+.comentario-diccionario-card {
+    margin-bottom: 10px !important;
+}
+
+.comentario-diccionario-header {
+    padding-left: 12px;
+    padding-bottom: 0px;
+    margin-top: 0px;
+}
+
+.comentario-diccionario-body {
+    padding-top: 0px;
+    padding-bottom: 10px;
+    padding-left: 12px;
+    background-color: white;
+}
+
+.comentario-diccionario-entrada {
+    margin-bottom: 10px
+}
+
+.comentario-modal-card-principal {
+    background-color: #f4f4f4 !important;
+    border: 0px !important;
+    width: 100%;
+}
+
+.comentario-nomodal-card-principal {
+    background-color: #f8f9fa !important;
+    /* 'bg-light' */
+    /* width: 80%; */
+}
+
+.comentario-modal-footer {
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.libroDiccionarioVerde {
+    width: 150px;
+    vertical-align: top;
+}
+
+.libroDiccionarioGris {
+    width: 150px;
+    vertical-align: top;
+    padding-top: 25px;
+}

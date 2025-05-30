@@ -1,0 +1,113 @@
+#app{
+    .toggleDiv ~ h5 > label {
+        cursor: pointer;
+    }
+    .toggleDiv:checked ~ h5 > label > div.show-hide{
+        background-image: url($baseurl+'imagenes/icono-bajar.svg');
+    }
+    .toggleDiv ~ h5 > label > div.show-hide{
+        position: relative;
+        bottom: -3px;
+        background-image: url($baseurl+'imagenes/icono-subir.svg');
+    }
+    .show-hide{
+        display: inline-block;
+        background-size: cover;
+        background-repeat: no-repeat;
+        width: 20px;
+        height: 21px;
+        margin-left: 10px;
+    }
+    .ico-info{
+        width: 18px;
+        height: 18px;
+        background: #FFFFFF 0% 0% no-repeat padding-box;
+        border: 0.5px solid $gris6;
+        opacity: 1;
+        border-radius: 50%;
+        display: inline-block;
+        &>div{
+            text-align: center;
+            font: normal normal bold 16px/19px Calibri;
+            color: $gris6;
+        }
+    }
+    .sublabel{
+        text-transform: none;
+        font-weight: normal;
+        color: $gris6;
+    }
+    .selected-element{
+        font-style: oblique;
+        opacity: 0.75;
+        color: $color1;
+    }
+    .underline-hover:hover{
+        text-decoration: underline;
+        cursor: pointer;
+    }
+    .modal-confirmar{
+        background: $body-bg;
+        padding: 5px;
+        border: 2px solid $color1;
+        border-radius: 2px;
+        width: fit-content;
+        color: $gris6;
+        position: absolute;
+        top: -6.5rem;
+        right: -2rem;
+        z-index: 100;
+        font-size: $font-size0;
+        width: fit-content;
+        &:hover{
+            text-decoration: none;
+        }
+        // pico que sobresale por debajo a modo de bocadillo:
+        &::after{
+            content:"";
+            position: absolute;
+            top: 100%;
+            right: 15%;
+            margin-left: -5px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: $color1 transparent transparent transparent;
+        }
+    }
+}
+
+// Mostrar boton editar docente solo en las busquedas
+.dc-entrada-acepcion .dc-editar-docente{
+    display: none;
+}
+
+.aula-entrada-get
+ {
+    .dc-entrada-acepcion .dc-editar-docente{
+        display: block;
+    }
+
+}
+
+#importarEntradas {
+    h5 {
+        color: #747474;
+    }
+    a h5 .show-hide {
+        background-image: url($baseurl+'imagenes/icono-bajar.svg');
+        bottom: -3px;
+        position: relative;
+    }
+    a.collapsed h5 .show-hide {
+        background-image: url($baseurl+'imagenes/icono-subir.svg');
+    }
+    
+    // corregir centrado de iconos diccionarios y texto en importar entradas
+    // ul tenian padding-left 
+    .modal-body{
+        ul{
+            padding: 0;
+        }
+    }
+
+}

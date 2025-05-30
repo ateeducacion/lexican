@@ -1,0 +1,355 @@
+.dc-bocadillo-bg.vertical {
+    position: absolute;
+    top: -14px;
+    right: -20px;
+
+    width: 150px;
+    height: calc(100% + 100px);
+    background-repeat: no-repeat no-repeat;
+
+    .dc-bocadillo-vertical-top { 
+        background-image: url($baseurl+'imagenes/bocadillo-vert-top.svg');
+        background-repeat: no-repeat no-repeat;        
+
+        height: 63px;
+    }
+    .dc-bocadillo-vertical-middle {
+        flex-grow: 1;            
+        background-image: url($baseurl+'imagenes/bocadillo-vert-middle.svg');
+        background-repeat: no-repeat repeat-y;
+    }
+    .dc-bocadillo-vertical-bottom {
+        background-image: url($baseurl+'imagenes/bocadillo-vert-bottom.svg');
+        background-repeat: no-repeat no-repeat;
+
+        height: 62px;
+    }
+}
+
+.dc-bocadillo-bg.horizontal {
+    position: absolute;
+    top: 0px;
+    right: -9%;
+    // position relative:
+    // right: 32px;
+    @media only screen and (max-width: $tablet) and (min-width: $mobile){
+        right: -50% !important;
+    }
+    @media only screen and (max-width: $mobile){
+        top: -3px;
+        right: -3% !important;
+        width: 150px;
+        height: calc(100% + 240px);
+        flex-direction: column;
+        display: flex;
+        &:last-child{
+            top: -19%;
+            right: 47% !important;
+        }
+    }
+    height: 180px;
+    width: calc(100% + 100px);
+    background-repeat: no-repeat no-repeat;
+}
+
+.dc-bocadillo-horizontal-start
+{ 
+    background-image: url($baseurl+'imagenes/bocadillo-horz-start.svg');
+    background-repeat: no-repeat no-repeat;       
+
+    width: 75px;
+    @media only screen and (max-width: $mobile){
+        width: auto;
+
+        background-image: url($baseurl+'imagenes/bocadillo-vert-bottom.svg');
+        background-repeat: no-repeat no-repeat;        
+        height: 63px;
+        transform: translateX(14px) scale(-1);
+    }
+}
+.dc-bocadillo-horizontal-middle {
+    flex-grow: 1;            
+    background-image: url($baseurl+'imagenes/bocadillo-horz-middle.svg');
+    background-repeat: repeat-x no-repeat;
+    @media only screen and (max-width: $mobile){
+        flex-grow: 1;            
+        background-image: url($baseurl+'imagenes/bocadillo-vert-middle.svg');
+        background-repeat: no-repeat repeat-y;
+        transform: translateX(14px) scaleX(-1);
+    }
+
+}
+.dc-bocadillo-horizontal-end
+{
+    background-image: url($baseurl+'imagenes/bocadillo-horz-end.svg');
+    background-repeat: no-repeat no-repeat;
+    width: 50px;
+    @media only screen and (max-width: $mobile){
+        width: auto;        
+        background-image: url($baseurl+'imagenes/bocadillo-vert-top.svg');
+        background-repeat: no-repeat no-repeat;
+        height: 62px;
+        transform: translateX(14px) scale(-1);
+    }
+}
+
+.left .dc-bocadillo-horizontal-end
+{
+    background-image: url($baseurl+'imagenes/bocadillo-horz-start.svg');
+    background-repeat: no-repeat no-repeat;
+    width: 75px;
+    @media only screen and (max-width: $mobile){
+        width: auto;        
+        background-image: url($baseurl+'imagenes/bocadillo-vert-top.svg');
+        background-repeat: no-repeat no-repeat;
+        height: 62px;
+        transform: translateX(14px) scale(-1);
+    }
+}
+.left .dc-bocadillo-horizontal-start
+{
+    background-image: url($baseurl+'imagenes/bocadillo-horz-end.svg');
+    background-repeat: no-repeat no-repeat;
+    width: 50px;
+    @media only screen and (max-width: $mobile){
+        width: auto;
+
+        background-image: url($baseurl+'imagenes/bocadillo-vert-bottom.svg');
+        background-repeat: no-repeat no-repeat;        
+        height: 63px;
+        transform: translateX(14px) scale(-1);
+    }
+}
+
+.left .dc-bocadillo-horizontal-start,
+.left .dc-bocadillo-horizontal-end {
+    transform:scaleX(-1);
+    @media only screen and (max-width: $mobile){
+        transform: translateX(14px) scale(-1);
+    }
+}
+
+// .left.dc-bocadillo{
+//     transform:scaleX(-1);
+// }
+
+.dc-bocadillo {    
+    position: absolute;
+    right: 0.5rem;
+    top: 0;
+    text-align: center;
+
+    margin: 0 !important;
+}
+
+.dc-bocadillo.horizontal {
+    height: 100px;
+    top: 0;
+    right: -60px;
+    @media only screen and (max-width: $mobile){
+        width: 100px;
+        height: auto;
+        top: -121% !important;
+        left: 52% !important;
+    }
+}
+
+
+#app .left.dc-actionbutton-menu.dc-bocadillo.horizontal, 
+.left.dc-bocadillo.horizontal {
+    height: 100px;
+    top: -100px;
+    right: 60%;
+    left: auto;
+    @media only screen and (max-width: $mobile){
+        height: 183px;
+    }
+}
+
+
+#gestionar-entradas-enviadas .left.dc-bocadillo.horizontal {
+    left: -201px;
+}
+
+#gestion-dic .left.dc-actionbutton-menu.dc-bocadillo.horizontal, 
+#gestion-dic .left.dc-bocadillo.horizontal {
+    left: auto;
+    right: 55%;
+}
+
+
+.dc-bocadillo.vertical {
+    width: 100px;
+    display: none;
+
+    .dc-menu-btn {
+        cursor: pointer;
+        padding: 0.4rem;
+        border-radius: 5px;
+        text-decoration: none;
+        padding: 10px;
+        color: $gris6;
+    }
+    .dc-menu-btn.activo {
+        background-color: rgba($color: #000000, $alpha: 0.2);
+    }
+    .dc-menu-btn:hover, .dc-menu-btn.activo:hover {
+        background-color: $color1;
+        color: $gris1;
+    }    
+}
+
+#bocadillo-dic-aula {
+    z-index: 10;
+}
+.dc-select-dicAula-activo {
+    position: absolute;
+    right: 2rem;
+    top: -2rem;
+
+    // width: 100%;
+    padding: 20px;
+    
+    .vertical .dc-bocadillo-contenido {
+        position: relative;
+        top: 2.2rem;
+        width: 100px;
+        right: -52px;
+        // height: fit-content;
+    }
+}
+
+
+.dc-select-dicAula-activo .d-sm-none {
+    position: relative;
+}
+
+.dc-select-dicAula-activo-show {
+    cursor: pointer;
+    background-color: rgba( #fff, 0.5);
+    // border: 1px solid black;
+}
+
+.dc-bocadillo.left .dc-bocadillo-contenido{
+    margin: 0 -23px 0 -20px;
+}
+
+.btn-acciones-vertical 
+.dc-bocadillo.left .dc-bocadillo-contenido{
+    margin: 0 0 0 -1.5rem;
+}
+
+// .btn-acciones-vertical .dc-actionbutton-menu.left.dc-bocadillo.horizontal
+// .dc-bocadillo-contenido
+// {
+    // margin: 0 -2rem 0 0;
+// }
+
+.dc-bocadillo.vertical .dc-bocadillo-contenido{
+    margin: 0 -20px 0 -50px;
+}
+
+.dc-bocadillo .dc-bocadillo-contenido{
+    margin: 0 -35px 0 -35px;
+    @media only screen and (max-width: $mobile) {
+        margin: 0 -20px 0 -50px;
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+        width: 165px;
+        a{
+            width: 100%;
+            max-width: 100%;
+            flex: 100%;
+        }
+    }
+}
+
+.dc-bocadillo-item {
+    width: 131px;
+}
+
+.dc-sel-aula.dc-aula-no-visible{
+    filter: opacity(80%);
+    img {
+        filter: grayscale(100%);
+    }
+
+}
+
+.dc-sel-aula.activo div:nth-child(2){
+    border-left: 2px solid $color3;
+    background: linear-gradient(45deg, #4cbcc6, transparent);
+}
+
+.dc-select-dicAula-activo-show {
+    img.dc-aula-no-visible{
+        filter: grayscale(100%);
+    }
+}
+
+.td-underline:hover{
+    text-decoration: underline;
+}
+
+.colored{
+    color: $primary;
+    @media only screen and (max-width: $mobile){
+        color: rgba(255, 255, 255, 0.5);
+    }
+}
+
+.cursor-pointer{
+    cursor: pointer;
+}
+
+.quepuedohacer{
+    position: absolute; 
+    top: -107px; 
+    // left: 0;
+    right: 300px;
+
+    width: 187px;
+    // height: 46px;
+    z-index: 1000; // se queda por encima de tabs y por debajo panel pautas
+    @media only screen and (min-width: $tablet) and (max-width: $desktop){
+        right: 10%;
+    }
+    @media only screen and (max-width: $tablet) {
+        display: none;
+    }
+    img{
+        position: relative;
+        pointer-events: none;
+        width: 100%;
+    }
+} 
+
+.que-puedo-hacer-menu{
+    top: -60px;
+    right: 266px;
+    // left: 0;
+    background-color: $gris1;
+    border: solid 1px $gris3;
+    z-index: 1000;
+    width: 14rem;
+    &>.col-10>div{
+        padding: 0.1rem;
+    }
+    &>.col-2{
+        border-right: solid 1px $gris3;
+        padding: 0.1rem;
+    }
+    div{
+        white-space: nowrap;
+    }
+
+    @media only screen and (min-width: $tablet) and (max-width: $desktop){
+        right: 10%;
+    }
+    @media only screen and (max-width: $tablet) {
+        display: none;
+    }
+}
+

@@ -1,0 +1,123 @@
+
+
+
+h1. Pruebas 
+
+h2. 1. Exportar PDF Diccionario Personal , Mostrar entradas Ocultas
+
+| código  | Test de aceptación                                                                                       | Resultado |
+| CP-1-01 | Mostrar entradas ocultas no marcado, comprobar que se muestran correctamente  entradas visibles          |    ok       |
+| CP-1-02 | Mostrar entradas ocultas no  marcado, comprobar entradas ocultas                                         |    ok       |
+| CP-1-03 | Mostrar entradas ocultas no  marcado, comprobar acepciones visibles de las entradas visibles             |    ok       |
+| CP-1-04 | Mostrar entradas ocultas no  marcado, comprobar acepciones ocultas de las entradas visibles              |    ok       |
+| CP-1-05 | Mostrar entradas ocultas no  marcado, comprobar acepciones visibles de las entradas ocultas              |    ok       |
+| CP-1-06 | Mostrar entradas ocultas no  marcado, comprobar  acepciones ocultas de las entradas ocultas              |    ok       |
+| CP-1-07 | Mostrar entradas ocultas marcado, comprobar que se muestran correctamente  entradas visibles             |    ok       |
+| CP-1-08 | Mostrar entradas ocultas marcado, comprobar que se muestra entrada con entradas ocultas                  |    ok       |
+| CP-1-09 | Mostrar entradas ocultas marcado, comprobar que se muestran acepciones visibles de las entradas visibles |    ok       |
+| CP-1-10 | Mostrar entradas ocultas marcado, comprobar que se muestran acepciones ocultas de las entradas visibles  |    ok       |
+| CP-1-11 | Mostrar entradas ocultas marcado, comprobar que se muestran acepciones visibles de las entradas ocultas  |    ok       |
+| CP-1-12 | Mostrar entradas ocultas marcado, comprobar que se muestran acepciones ocultas de las entradas ocultas   |    ok       |
+
+
+h2. 2. Exportar PDF Diccionario personal, entradas etiquetadas
+
+| código  | Test de aceptación                                                                                                                 | Resultado |
+| CP-2-01 | Sin marcar la casilla exportar ni exportar ocultas  entradas etiquetadas comprobar que se exportan todas las entradas y acepciones | ok        |
+| CP-2-02 | Comprobar que se exportan solo las entradas marcadas con la etiqueta  Alemán                                                       | ok        |
+| CP-2-03 | Comprobar que se exportan solo las entradas marcadas con la etiqueta  Arte                                                         | ok        |
+| CP-2-04 | Comprobar que se exportan solo las entradas marcadas con la etiqueta  Arte o Alemán                                                | ok        |
+| CP-2-05 | Marcar “Exportar solo entradas Etiquetas” pero no seleccionar ninguna etiqueta                                                     | ok        |
+
+h2. 3. Exportar PDF Diccionario de Aula 
+
+| código  | Test de aceptación                                                                                     | Resultado |
+| CP-3-01 | Docente: Exportar diccionario de aula a PDF sin seleccionar ninguna opción                             | ok        |
+| CP-3-02 | Comprobar que se exportan solo las entradas marcadas con la etiqueta  Alemán                           | ok        |
+| CP-3-03 | Comprobar que se exportan solo las entradas marcadas con la etiqueta  Arte                             | ok        |
+| CP-3-04 | Comprobar que se exportan solo las entradas marcadas con la etiqueta  Arte o Alemán                    | ok        |
+| CP-3-05 | Comparar que tras editar una entrada como coordinador del diccionario, aparece correctamente en el PDF | ok        |
+
+h2. 4. Probar que los nuevos botones de Exportar PDF funcionan tanto en las paginas iniciales como en las que aparecen como botones laterales
+
+| código  | Test de aceptación                                                       | Resultado |
+| CP-4-01 | Botón en Inicio de Diccionario Personal                                  | ok        |
+| CP-4-02 | Botón en “Añadir entrada a diccionario personal”                         | ok        |
+| CP-4-03 | Botón en “Enviar entradas”                                               | ok        |
+| CP-4-04 | Botón en “Ver comentarios”                                               | ok        |
+| CP-4-05 | Botón en “Listado de entradas diccionario personal (todas las entradas)” | ok        |
+| CP-4-06 | Botón en “Listado de entradas diccionario personal (Búsqueda por letra)” | ok        |
+| CP-4-07 | Botón en “Listado de entradas diccionario personal (Búsqueda)”           | ok        |
+| CP-4-08 | Botón en “Modificar diccionario”                                         | ok        |
+| CP-4-09 | Botón en Inicio de Diccionario  de aula                                  | ok        |
+| CP-4-10 | Botón en “Listado de entradas diccionario de aula (todas las entradas)”  | ok        |
+| CP-4-11 | Botón en “Listado de entradas diccionario de aula (Búsqueda por letra)”  | ok        |
+| CP-4-12 | Botón en “Listado de entradas diccionario de aula (Búsqueda)”            | ok        |
+| CP-4-13 | Botón en “Edición de entrada”                                            | ok        |
+
+
+---
+
+Nuevas pruebas para poner en el ODT 
+
+
+h2. 5 Pruebas Busqueda con Etiquetas
+
+h3. 5.1 Busquedas diccionario Personal
+
+Necesitamos tener un usuario creado con varias entradas para comprobar que la busqueda funciona bien
+
+h4. 5.1.1 Busqueda de texto en Inicio diccionario personal "texto"
+
+* Nos dirigimos a nuestro diccionario personal 
+    url: /personal
+* En el campo Buscar escribimos las primeras letras del nombre de una entrada existente y pulsamos la lupa
+
+Resultado esperado
+
+* Al empezar a escribir debe mostrarnos el listado de autocompletar con los nombres de las entradas del diccionario
+* Al pulsar la lupa debe rederigir  a /personal/entradas/<texto introducido>
+* Debe mostrar todas las entradas que coincidan con el texto 
+* Mostrar boton de "crear entrada" con el texto exatcto que hemos introducido
+
+h4. 5.1.2 Busqueda de texto en Inicio con un texto que no coincida con niguna entrada
+
+* Nos dirigimos a nuestro diccionario personal 
+    url: /personal
+* En el campo Buscar escribimos una palabra que no se corresponda con niguna de las existentes en el diccionario 
+
+Resultado esperado
+
+* Al empezar a escribir debe mostrarnos el listado de autocompletar con los nombres de las entradas del diccionario con el mensaje 'No se encuentra entrada "<texto>"'
+* Al pulsar la lupa debe rederigir  a /personal/entradas/<texto introducido>
+    * Donde se listaban las entradas aparecera vacio
+    * Mostrar boton de "crear entrada" con el texto exatcto que hemos introducido
+    * Mensaje ' No se encontró ningún resultado "<texto>" '
+
+h4. 5.1.3 Scroll con resultados de busqueda
+
+Hace falta que tengamos mas de 10 entradas que coincidan con nuestra busqueda
+* Repetimos los pasos de 5.1.2 y nos desplazamos hasta el final de la paginas
+* Comprobar que los 
+
+h4. 5.1. Busqueda por etiquetas
+
+h4. 5.1. Busqueda Scrol con etiquetas
+
+h3. 5.2 Busquedas diccionario de aula
+
+h2. 5.1 Otras partes de la aplicacion que se ven afectadas por las etiquetas
+
+h3. Enviar Entradas a dic de aula
+
+h3. Crear entrada
+
+h3. ****
+
+h3. editar entrada en diccionario de aula
+
+
+
+
+
+

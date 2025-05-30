@@ -1,0 +1,121 @@
+:root {
+  --color2: $color2;
+  --color3: $color3;
+  --color4: $color4;
+  --color5: $color5;
+  --color6: $color6;
+  --gris4: $gris4;
+  --gris3: $gris3;
+  --gris2: $gris2;
+  --gris1: $gris1;
+}
+
+.dc-entrada-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0.3rem;
+}
+
+.dc-entrada-top {
+  display: flex;
+  height: 3rem;
+}
+
+.dc-entrada-titulo {
+  align-self: center;
+  margin-left: 0.3rem;
+  margin-right: 1rem;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.dc-entrada-botones-top {
+  background: #fff;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+.dc-entrada-botones > a {
+  display: block;
+  position: relative;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.dc-entrada-botones-top > a {
+  margin-right: 1.5rem;
+  align-self: center;
+  top: -0.05rem;
+}
+
+.dc-entrada-botones-acepcion > a {
+  align-self: center;
+  top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.dc-entrada-botones > a img {
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.dc-entrada-top-right {
+  align-self: flex-end;
+  margin: 0 1rem;
+}
+
+.dc-entrada-acepcion {
+  background: #F8F8F8;
+  display: flex;
+  padding: 1rem 1rem;
+  margin-bottom: 0.3rem;
+}
+
+.dc-entrada-acepcion .dc-entrada-botones-acepcion {
+  flex-shrink: 1;
+  padding-right: 0.9em;
+}
+
+.dc-entrada-acepcion .dc-acepcion-texto {
+  padding: 0.1rem 0.3rem;
+  /* font-size: 1.1rem; */
+  line-height: 1.5rem;
+  /* alto fijo */
+  /* height: 7.7rem; */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dc-entrada-acepcion .dc-acepcion-leermas {
+  text-align: right;
+  font-size: 1rem;
+}
+
+.dc-entrada-acepcion .dc-entrada-botones-media {
+  display: flex;
+  padding: 0.3rem;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dc-entrada-acepcion .dc-entrada-botones-media div {
+  padding: 0.25rem 0;
+}
+
+.dc-entrada-acepcion .dc-entrada-imagen .dc-entrada-imagen-img {
+  border: 1px solid grey;
+  height: 10rem;
+  width: 13.3rem;
+  margin: 0.3rem;
+  background-image: url("http://localhost//imagenes/img4x3.svg");
+  background-size: cover;
+}
+
+.dc-entrada-bottom {
+  position: relative;
+  top: -0.7rem;
+}
+

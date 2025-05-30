@@ -1,0 +1,36 @@
+.text-black {
+    color: black;
+}
+
+.bg-corp-blue {
+    background-color: #00469e;
+}
+
+.bg-corp-yellow {
+    background-color: #ffe555;
+}
+
+.no-bg-image {
+    background-image: none !important;
+}
+
+header a.nombre-app {
+    font-family: Futura-CondensedExtraBold;
+    font-size: 1.5rem;
+}
+footer.panel-footer {
+    padding: 0 0 0 60px;
+}
+
+footer.panel-footer .nav>li>a:hover {
+    background-color: #ffe555;
+}
+
+.expanded~footer {
+    margin-left: 235px;
+    padding: 0 0 0 15px;
+}
+
+.nombre-app {
+    font-size: 1.2em;
+}

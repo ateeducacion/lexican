@@ -1,0 +1,24 @@
+
+// fondo beig y texto gris oscuro
+// $tooltipBgColor: $gris2;
+// $tooltipColor: $gris6;
+/// Fondo verte y letras gris claro casi blanco:
+$tooltipBgColor: $color1;
+$tooltipColor: $gris1;
+
+.tooltip-inner {
+    background-color: $tooltipBgColor;
+    color: $tooltipColor;
+}
+.tooltip.bs-tooltip-right .arrow:before {
+    border-right-color: $tooltipBgColor !important;
+}
+.tooltip.bs-tooltip-left .arrow:before {
+    border-left-color: $tooltipBgColor !important;
+}
+.tooltip.bs-tooltip-bottom .arrow:before {
+    border-bottom-color: $tooltipBgColor !important;
+}
+.tooltip.bs-tooltip-top .arrow:before {
+    border-top-color: $tooltipBgColor !important;
+}

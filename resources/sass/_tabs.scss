@@ -1,0 +1,39 @@
+.dc-tabs {
+    position: relative;
+    width: 100%;
+    font-weight: bold;
+    $height: 45px;
+    .dc-tab {
+        position: relative;
+        display: inline-block;
+        width: 270px;
+        height: $height;
+        text-align: center;
+        text-transform: uppercase;
+        @media only screen and (max-width: $mobile){
+            display: none;
+            img{
+                width: 282px;
+            }
+        }
+        .name {
+            position: absolute;
+            width: 294px;
+            top: 12px;
+            left: 0; 
+            line-height: 1rem;
+            color: $gris4;
+            @media only screen and (max-width: $mobile){
+                width: 285px;
+            }
+        }
+    }
+    .dc-tab.active {
+        z-index: 1000;
+        display: inline-block;
+        .name {
+            color: $color1;
+        }
+    }
+}
+

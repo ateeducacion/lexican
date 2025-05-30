@@ -1,0 +1,195 @@
+
+
+/* Método de cambiar una imagen por otra, ambas son un libro con circulo arriba, pero una tiene el círculo chequeado y la otra no*/
+
+// Paginas en las que se aplica el css 
+.diccionario-comentarios,
+.personal-consulta-all,
+.personal-consulta-byInitial,
+.personal-consulta-palabra,
+.diccionario-enviar,
+.form-enviar-diccionarios
+{
+    ul {
+        list-style-type: none;
+    }
+    .alert{
+        ul{
+            list-style-type: disc;
+            li{
+                display: list-item;
+            }
+        }        
+    }
+
+    li {
+        display: inline-block;
+    }
+
+    input[type="checkbox"][id^="chk_"],  input[type="radio"][id^="chk_"]{
+        display: none;
+    }
+    
+    
+    label {
+        /* border: 1px solid #fff; */
+        padding: 10px;
+        display: block;
+        position: relative;
+        margin: 10px;
+        cursor: pointer;
+    }
+
+    img.ico-libro-verde {        
+        content: url($baseurl+'imagenes/ico-libro-verde-desmarcado.svg');
+    }
+    
+    :checked+label img {
+        transform: scale(1.1);
+        /* box-shadow: 0 0 5px #333; */
+        z-index: -1;
+        transform: scale(1.2);
+        content: url($baseurl+'imagenes/ico-libro-verde-marcado.svg');
+        // content: url("{{ asset('imagenes/ico-libro-verde-marcado.svg') }}");
+    }
+}
+
+.diccionario-enviar{
+    .dc-palabra{
+        position: relative;
+        padding: 0.1rem 0.75rem 0.2rem ;
+        margin: auto 20px;
+        // box-shadow: 0 0 0.2rem;
+        // box-shadow: inset 0 0 0.1rem;
+        line-height: 3rem !important;
+        // font-weight: bold;
+        cursor: pointer;
+
+        border: solid 1px $gris5; // gris fino
+        color: $color1; // verde 
+        
+        // evitar que se selsecione accidentelamente:
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -ms-user-select: none;
+    } 
+
+    .dc-palabra.no-border {
+        border: 0px none transparent !important;
+    }
+
+    .top-badge {
+        display: none;
+    }
+
+    // palabaro oculta
+    .dc-palabra-oculta{
+        color: $gris5;
+        border: solid 1px $gris5;
+    }
+
+    // enviada
+    .dc-palabra-enviada {
+        border-color: $primary; // azul oscuro
+    }
+
+    // palabra selecionada
+    .dc-palabra-visible{
+        color: $color1; // verde 
+        border-right: 6px solid $color1 !important;
+        margin-right: 15px; // 14 + 6 = 20px pero por alugna razon hay que poner un pixel mas del borde supongo
+        border-color: $color1;
+    }
+
+    // lo pongo despues de visible para que en visible y envida 
+    // salga el borde de visible y color de enviada
+    .dc-palabra-enviada {
+        color: $primary;
+    }    
+
+    // con errores
+    .dc-palabra-error{
+        color: $red;
+    }
+    .dc-palabra.dc-palabra-error{        
+        border: 1px solid $red;
+    }    
+
+    // inicalmente estan ocultos
+    #listadoEntradas,
+    #leyenda,
+    #infoEntrada,
+    #spectacle-case
+    {
+        display: none;
+        .icon{
+            position: relative; 
+            margin-right: 0.6rem;
+        }
+    }
+    
+    #infoEntrada .badge{
+        display: none;
+    }
+
+    #leyenda {
+        margin-bottom: 2em;
+        .dc-palabra-enviada,
+        .dc-palabra-error,
+        .dc-palabra-oculta,
+        .dc-palabra-visible,
+        {
+            margin: 10px
+        }
+    }
+
+    ul.errores-campos {
+        padding-right: 1.5em;
+        margin-bottom: 0;
+    }
+    .dc-entrada-top{
+        margin-bottom: 0.5em;
+    }
+
+    .dc-entrada-botones-top.dc-entrada-botones {
+        background: transparent;
+    }
+
+    #palabras-total {
+        display: none;
+        position: absolute;
+        bottom: -1.6rem;
+        right: 0;
+    }
+
+}
+
+.dc-ico-modificado {
+    height: 1rem;
+    bottom: 0.1rem;
+    position: relative;
+}
+
+.personal-consulta-all,
+.personal-consulta-byInitial,
+.personal-consulta-palabra,
+.personal-consulta-tematica,
+.personal-consulta-palabra-tematica,
+.entrada-get {
+    // alinear los iconos a la derecha
+    .dc-entrada-botones-top.dc-entrada-botones {
+        justify-content: flex-end;
+    }
+}
+
+
+// Mensaje de campos que falta para poder enviar al diccionario de aula 
+.errores-campos {
+    font-weight: 400;
+    font-size: 0.8em;
+}
+
+.dc-info-ultimo-envio{
+    font-size: 0.9em;
+}
