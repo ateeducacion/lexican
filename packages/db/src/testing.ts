@@ -45,6 +45,8 @@ export async function openPostgres(url: string): Promise<TestDb> {
   const target = new URL(url);
   target.pathname = `/${name}`;
   const pool = new pg.Pool({ connectionString: target.toString(), max: 4 });
+  // `drop database … with (force)` terminates sessions that are still closing; that is expected at teardown.
+  pool.on('error', () => undefined);
   const db = drizzlePg({ client: pool, schema }) as unknown as Db;
   const { journal, sqlByTag } = loadMigrations();
   await migrateBundled(db, journal, sqlByTag);
