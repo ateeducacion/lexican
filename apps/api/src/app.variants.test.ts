@@ -360,3 +360,50 @@ describe('SPA static files', () => {
     }
   });
 });
+
+describe('edge cases', () => {
+  it('malformed login bodies, oversized SLO, undecodable paths and untrusted X-Forwarded-For', async () => {
+    const dist = mkdtempSync(join(tmpdir(), 'lexican-dist-'));
+    writeFileSync(join(dist, 'index.html'), '<!doctype html><title>LexiCán</title>');
+    try {
+      const a = await app(
+        config({
+          WEB_DIST: dist,
+          CAS_URL: CAS,
+          CAS_PROFILES: 'test',
+          CAS_ALLOWED_SLO_HOSTS: '10.0.0.5',
+        }),
+      );
+      const bad = await a.inject({
+        method: 'POST',
+        url: '/api/auth/login',
+        headers: { origin: HTTP, 'content-type': 'application/json' },
+        payload: '{"email":',
+      });
+      expect(bad.statusCode).toBe(400);
+      const big = await a.inject({
+        method: 'POST',
+        url: '/api/auth/cas/slo',
+        remoteAddress: '10.0.0.5',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        payload: `logoutRequest=${'x'.repeat(70 * 1024)}`,
+      });
+      expect(big.statusCode).toBe(413);
+      expect((await a.inject({ method: 'GET', url: '/%E0%A4%A' })).statusCode).toBe(404);
+      // Without TRUST_PROXY a forged X-Forwarded-For is ignored: the socket address is what counts.
+      const forged = await a.inject({
+        method: 'POST',
+        url: '/api/auth/cas/slo',
+        remoteAddress: '127.0.0.1',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          'x-forwarded-for': '10.0.0.5',
+        },
+        payload: 'logoutRequest=x',
+      });
+      expect(forged.statusCode).toBe(403);
+    } finally {
+      rmSync(dist, { recursive: true, force: true });
+    }
+  });
+});
