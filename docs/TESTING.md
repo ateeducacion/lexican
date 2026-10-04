@@ -79,8 +79,10 @@ quedan en `test-results/` (`trace: 'retain-on-failure'`) y se abren con `npx pla
 ## Cobertura
 
 `npm run test:coverage` (Vitest v8) mide `packages/*/src`, `apps/api/src` y `tools/*/src`, excluidos los tests.
-Informe `text-summary` en consola y `lcov` en `coverage/`. Todavía **no hay umbrales** que bloqueen CI; el objetivo
-(§81) es ~90 % en dominio y aplicación.
+Informe `text-summary` en consola y `lcov` en `coverage/`. **Umbral bloqueante: 90 %** en líneas, sentencias,
+funciones y ramas (`vitest.config.ts`); en CI se ejecuta con PostgreSQL y MariaDB para incluir el contrato y el migrador.
+Codecov (`codecov.yml`) publica en cada PR la cobertura del proyecto y del parche, ambas con objetivo del 90 %, y el
+badge del README.
 
 La cifra **no mide**:
 
@@ -96,7 +98,7 @@ La cifra **no mide**:
 
 | Job | Servicios | Pasos |
 |---|---|---|
-| `quality` | PostgreSQL 18 | `npm ci` → `audit` → `licenses` → `lint` → `format:check` → `typecheck` → `test:coverage` (con `TEST_DATABASE_URL`: contrato en PGlite y PostgreSQL + integración de la API) → `build` → `build:demo` → `check:dist` → instalación de navegadores → `npm run e2e` (con `E2E_DATABASE_URL`: demo en 3 navegadores + móvil y producción) → informe de Playwright como artefacto si falla |
+| `quality` | PostgreSQL 18 + MariaDB 11 | `npm ci` → `audit` → `licenses` → `lint` → `format:check` → `typecheck` → `test:coverage` (con `TEST_DATABASE_URL` y `TEST_MARIADB_URL`; umbral 90 %) → subida a Codecov → `build` → `build:demo` → `check:dist` → instalación de navegadores → `npm run e2e` (con `E2E_DATABASE_URL`: demo en 3 navegadores + móvil y producción) → informe de Playwright como artefacto si falla |
 | `migration` | PostgreSQL 18 + MariaDB 11 | `npm ci` → `npm run test:migration` |
 
 Pages ([DEMO.md](DEMO.md)) y las *releases* ([DEPLOYMENT.md](DEPLOYMENT.md)) dependen de este gate.

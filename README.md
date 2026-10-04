@@ -1,5 +1,7 @@
 # LexiCán
 
+[![CI](https://github.com/ateeducacion/lexican/actions/workflows/ci.yml/badge.svg)](https://github.com/ateeducacion/lexican/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/ateeducacion/lexican/graph/badge.svg)](https://codecov.io/gh/ateeducacion/lexican) [![Licencia: AGPL-3.0-or-later](https://img.shields.io/badge/licencia-AGPL--3.0--or--later-0f4c81)](LICENSE)
+
 Diccionarios personales y de aula para aprender léxico. Cada alumno o alumna construye su propio diccionario con
 palabras, acepciones, ejemplos, imágenes, audio y vídeo; el profesorado reúne lo mejor en un diccionario de aula que
 revisa, comenta y publica.

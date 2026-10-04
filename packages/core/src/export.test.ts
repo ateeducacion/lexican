@@ -178,3 +178,63 @@ describe('toDmlex', () => {
     expect(validate(d), JSON.stringify(validate.errors)).toBe(true);
   });
 });
+
+describe('exports with incomplete references', () => {
+  const none = v('x0', 'part_of_speech', 'no_tiene', 'No tiene');
+  const personal = { ...dictionary, kind: 'personal', classroom: null } as DictionaryView;
+  const bare = {
+    ...sense,
+    id: 's3',
+    extraInfo: '',
+    example: '',
+    partOfSpeechId: 'x0',
+    genderId: 'gone',
+    numberId: null,
+    languageId: null,
+    topicIds: ['t1', 'gone', 't1'],
+  };
+  const list = [
+    { ...entries[0]!, author: null, senses: [bare, { ...bare, id: 's4', partOfSpeechId: 'p1' }] },
+    {
+      ...entries[0]!,
+      id: 'e2',
+      headword: 'gofio',
+      senses: [{ ...bare, id: 's5', partOfSpeechId: 'p1' }],
+    },
+  ] as EntryView[];
+
+  it('CSV leaves unknown vocabulary cells empty', () => {
+    expect(toCsv(list, [...vocab, none]).split('\r\n')[1]).toBe(
+      'guagua,1,No tiene,,,"Autobús, ""de línea"", público.",,,,bus,Dialecto canario; ; Dialecto canario',
+    );
+  });
+
+  it('JSON drops unknown references, anonymous authors and the school year of personal dictionaries', () => {
+    const j = toJson(personal, list, vocab);
+    expect(j.dictionary.schoolYear).toBeNull();
+    expect(j.entries[0]!.author).toBeNull();
+    expect(j.entries[0]!.senses[0]).toMatchObject({
+      partOfSpeech: null,
+      gender: null,
+      topics: [{ code: 'dialecto_canario' }, { code: 'dialecto_canario' }],
+    });
+  });
+
+  it('DMLex skips "no_tiene" and unknown values and declares each tag once', () => {
+    const d = toDmlex(personal, list, [...vocab, none]);
+    expect(
+      d.entries.map((e) => [e.headword, e.partsOfSpeech, e.senses.map((s) => s.labels)]),
+    ).toEqual([
+      ['guagua', ['sustantivo'], [['topic.dialecto_canario'], ['topic.dialecto_canario']]],
+      ['gofio', ['sustantivo'], [['topic.dialecto_canario']]],
+    ]);
+    expect(d.partOfSpeechTags).toHaveLength(1);
+    expect(d.labelTags).toHaveLength(1);
+    expect(d.definitionTypeTags).toBeUndefined();
+    expect(toDmlex(personal, [], vocab)).toEqual({
+      title: 'Canarismos',
+      langCode: 'es',
+      entries: [],
+    });
+  });
+});

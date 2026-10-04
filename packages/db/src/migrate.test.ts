@@ -16,4 +16,15 @@ describe('schema on PGlite', () => {
     expect(row?.n).toBe(360);
     await t.close();
   });
+
+  it('refuses a journal entry without its SQL file', async () => {
+    const t = await openPglite();
+    const { journal, sqlByTag } = loadMigrations();
+    const [first] = journal.entries;
+    const broken = { entries: [...journal.entries, { ...first!, idx: 999, tag: '9999_missing' }] };
+    await expect(migrateBundled(t.db, broken, sqlByTag)).rejects.toThrow(
+      'Missing migration SQL for 9999_missing',
+    );
+    await t.close();
+  });
 });

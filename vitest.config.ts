@@ -7,9 +7,11 @@ export default defineConfig({
     testTimeout: 30_000,
     coverage: {
       provider: 'v8',
-      include: ['packages/*/src/**', 'apps/api/src/**', 'tools/*/src/**'],
+      include: ['packages/*/src/**/*.ts', 'apps/api/src/**/*.ts', 'tools/*/src/**/*.ts'],
       exclude: ['**/*.test.ts', '**/testing/**'],
       reporter: ['text-summary', 'lcov'],
+      // Blocking gate (CI runs with PostgreSQL and MariaDB); Codecov reports project and patch coverage.
+      thresholds: { lines: 90, statements: 90, functions: 90, branches: 90 },
     },
   },
 });
