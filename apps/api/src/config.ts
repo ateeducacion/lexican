@@ -1,3 +1,4 @@
+import { isIP } from 'node:net';
 import type { SchoolYearConfig } from '@lexican/core';
 import { z } from 'zod';
 
@@ -20,6 +21,7 @@ const Env = z.object({
     .default(8),
   MEDIA_DIR: z.string().min(1),
   MAX_UPLOAD_MB: z.coerce.number().positive().max(100).default(10),
+  MEDIA_QUOTA_MB_PER_DAY: z.coerce.number().positive().max(100_000).default(100),
   CAS_BASE_URL: optionalUrl,
   CAUCE_URL: optionalUrl,
   CAUCE_TOKEN: z.string().optional(),
@@ -31,7 +33,7 @@ const Env = z.object({
     .default('08-30'),
   WEB_DIST: z.string().optional(),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
-  /** Fastify `trustProxy`: `true` or a comma list of proxy IPs/CIDRs. */
+  /** Reverse proxies to trust for client IPs: a hop count or a comma list of IPs/CIDRs (never `true`). */
   TRUST_PROXY: z.string().default(''),
   MIGRATE_ON_START: bool,
 });
@@ -53,7 +55,9 @@ export interface Config {
   schoolYear: SchoolYearConfig;
   webDist: string | null;
   logLevel: string;
-  trustProxy: boolean | string;
+  /** `false`, number of trusted hops, or trusted proxy IPs/CIDRs. */
+  trustProxy: false | number | string[];
+  mediaQuotaBytesPerDay: number;
   migrateOnStart: boolean;
 }
 
@@ -73,9 +77,17 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
       'CAS is enabled (CAS_BASE_URL) but CAUCE_URL/CAUCE_TOKEN are missing: refusing to start.',
     );
 
+  const sloHosts = e.CAS_ALLOWED_SLO_HOSTS.split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (production && e.CAS_BASE_URL && sloHosts.length === 0)
+    throw new Error(
+      'CAS_ALLOWED_SLO_HOSTS is required in production when CAS is enabled (back-channel logout source IPs).',
+    );
+
   const publicUrl = e.PUBLIC_URL.replace(/\/+$/, '');
   const [startMonth, startDay] = e.SCHOOL_YEAR_START.split('-').map(Number) as [number, number];
-  const tp = e.TRUST_PROXY.trim();
+  const trustProxy = parseTrustProxy(e.TRUST_PROXY.trim());
   return {
     production,
     databaseUrl: e.DATABASE_URL,
@@ -91,9 +103,7 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
       ? {
           baseUrl: e.CAS_BASE_URL.replace(/\/+$/, ''),
           serviceUrl: `${publicUrl}/api/auth/cas/callback`,
-          sloHosts: e.CAS_ALLOWED_SLO_HOSTS.split(',')
-            .map((s) => s.trim())
-            .filter(Boolean),
+          sloHosts,
         }
       : null,
     cauce: e.CAUCE_URL && e.CAUCE_TOKEN ? { url: e.CAUCE_URL, token: e.CAUCE_TOKEN } : null,
@@ -101,7 +111,33 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
     schoolYear: { startMonth, startDay },
     webDist: e.WEB_DIST || null,
     logLevel: e.LOG_LEVEL,
-    trustProxy: tp === '' ? false : tp === 'true' ? true : tp,
+    trustProxy,
+    mediaQuotaBytesPerDay: Math.round(e.MEDIA_QUOTA_MB_PER_DAY * 1024 * 1024),
     migrateOnStart: e.MIGRATE_ON_START,
   };
+}
+
+const isCidrOrIp = (s: string): boolean => {
+  const [ip, bits, ...rest] = s.split('/');
+  const v = isIP(ip ?? '');
+  if (!v || rest.length) return false;
+  return bits === undefined || (/^\d{1,3}$/.test(bits) && Number(bits) <= (v === 4 ? 32 : 128));
+};
+
+/**
+ * TRUST_PROXY: empty (no proxy), a hop count, or IPs/CIDRs. `true` would trust any X-Forwarded-For and let
+ * clients spoof their IP (rate limits, SLO allowlist), so it is refused (SEC-007).
+ */
+function parseTrustProxy(tp: string): false | number | string[] {
+  if (tp === '') return false;
+  if (/^\d{1,2}$/.test(tp)) return Number(tp);
+  const list = tp
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (list.length === 0 || !list.every(isCidrOrIp))
+    throw new Error(
+      'TRUST_PROXY must be a hop count or a comma list of proxy IPs/CIDRs (true is not allowed).',
+    );
+  return list;
 }

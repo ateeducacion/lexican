@@ -49,5 +49,5 @@ export async function validateTicket(
 /** SessionIndex (the service ticket) of a back-channel `samlp:LogoutRequest`, or null. */
 export function parseLogoutRequest(xml: string): string | null {
   const idx = obj(parseXmlSafe(xml).LogoutRequest)?.SessionIndex;
-  return typeof idx === 'string' && idx.length > 0 && idx.length <= 512 ? idx : null;
+  return typeof idx === 'string' && idx.startsWith('ST-') && idx.length <= 512 ? idx : null;
 }

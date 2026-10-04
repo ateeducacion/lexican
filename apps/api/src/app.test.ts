@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { seedDemo } from '@lexican/app';
 import { openPglite, openPostgres, type TestDb } from '@lexican/db/testing';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { buildApp } from './app.ts';
+import { buildApp, errSerializer } from './app.ts';
 import { loadConfig } from './config.ts';
 import { fsMediaStorage } from './media-storage.ts';
 
@@ -52,7 +52,11 @@ afterAll(async () => {
 
 afterEach(() => vi.unstubAllGlobals());
 
+/** One session per account for the whole file (the login route is rate-limited per IP). */
+const sessionsByEmail = new Map<string, string>();
 async function login(email: string, password: string): Promise<string> {
+  const known = sessionsByEmail.get(email);
+  if (known) return known;
   const r = await app.inject({
     method: 'POST',
     url: '/api/auth/login',
@@ -61,6 +65,7 @@ async function login(email: string, password: string): Promise<string> {
   });
   expect(r.statusCode).toBe(200);
   const c = r.cookies.find((x) => x.name === 'sid');
+  sessionsByEmail.set(email, `sid=${c!.value}`);
   return `sid=${c!.value}`;
 }
 
@@ -294,45 +299,237 @@ function stubNetwork(cas: string, cauce: string) {
   return calls;
 }
 
+const upload = async (cookie: string) => {
+  const r = await app.inject({
+    method: 'POST',
+    url: '/api/media',
+    ...withAuth(multipart(demoPng, 'foto.png', 'image/png'), cookie),
+  });
+  expect(r.statusCode, r.body).toBe(200);
+  return r.json() as { id: string; url: string };
+};
+let posId = '';
+const sense = (definition: string, mediaIds: string[] = [], hidden = false) => ({
+  definition,
+  mediaIds,
+  hidden,
+  partOfSpeechId: posId,
+});
+
+/** alumno1 writes entries in the personal dictionary and submits them to the demo classroom. */
+async function submitAsStudent(
+  entries: { headword: string; senses: ReturnType<typeof sense>[] }[],
+) {
+  const teacher = await login('profesor@ejemplo.com', 'profesor');
+  const student = await login('alumno1@ejemplo.com', 'alumno1');
+  if (!posId)
+    posId = (await get('/api/vocabularies', student))
+      .json()
+      .find((v: { vocabulary: string }) => v.vocabulary === 'part_of_speech').id;
+  const [classroom] = (await get('/api/classrooms', teacher)).json();
+  const dict = (await get('/api/me/dictionary', student)).json();
+  const entryIds: string[] = [];
+  for (const entry of entries) {
+    const r = await send('POST', `/api/dictionaries/${dict.id}/entries`, student, {
+      entry: { ...entry, senses: entry.senses.map((x) => ({ ...x, partOfSpeechId: posId })) },
+    });
+    expect(r.statusCode, r.body).toBe(200);
+    entryIds.push(r.json().id);
+  }
+  const sub = await send('POST', '/api/submissions', student, {
+    entryIds,
+    classroomIds: [classroom.id],
+  });
+  const created = sub.json().created as { id: string }[];
+  expect(created, sub.body).toHaveLength(entries.length);
+  return { teacher, student, classroom, submissionIds: created.map((c) => c.id) };
+}
+
+describe('media authorization regressions', () => {
+  it('a media id written in a submitted text does not grant access; a real reference does (SEC-001)', async () => {
+    const secret = await upload(await login('alumno2@ejemplo.com', 'alumno2'));
+    const mine = await upload(await login('alumno1@ejemplo.com', 'alumno1'));
+    const { teacher } = await submitAsStudent([
+      { headword: 'zzleak', senses: [sense(`Mira ${secret.id}`)] },
+      { headword: 'zzreal', senses: [sense('Con imagen', [mine.id])] },
+    ]);
+    expect((await get(secret.url, teacher)).statusCode).toBe(404);
+    expect((await get(mine.url, teacher)).statusCode).toBe(200);
+  });
+
+  it('media of hidden entries or senses are only served to editors (SEC-009)', async () => {
+    const student = await login('alumno1@ejemplo.com', 'alumno1');
+    const [entryMedia, senseMedia] = [await upload(student), await upload(student)];
+    const { teacher, classroom, submissionIds } = await submitAsStudent([
+      {
+        headword: 'zzoculta',
+        senses: [sense('Uno', [entryMedia.id]), sense('Dos', [senseMedia.id])],
+      },
+    ]);
+    const pub = await send('POST', '/api/submissions/publish', teacher, { submissionIds });
+    expect(pub.json().published, pub.body).toHaveLength(1);
+    const list = (
+      await get(`/api/dictionaries/${classroom.id}/entries?q=zzoculta`, teacher)
+    ).json();
+    const entry = (await get(`/api/entries/${list.items[0].id}`, teacher)).json();
+    const published = { entry: entry.senses[0].media[0].url, sense: entry.senses[1].media[0].url };
+
+    const viewer = await login('alumno2@ejemplo.com', 'alumno2');
+    expect((await get(published.entry, viewer)).statusCode).toBe(200);
+    const hide = (url: string, body: object) => send('PATCH', url, teacher, body);
+    expect(
+      (await hide(`/api/senses/${entry.senses[1].id}/visibility`, { hidden: true })).statusCode,
+    ).toBe(200);
+    expect((await get(published.sense, viewer)).statusCode).toBe(404);
+    expect((await get(published.entry, viewer)).statusCode).toBe(200);
+    expect((await hide(`/api/entries/${entry.id}/visibility`, { hidden: true })).statusCode).toBe(
+      200,
+    );
+    expect((await get(published.entry, viewer)).statusCode).toBe(404);
+    expect((await get(published.entry, teacher)).statusCode).toBe(200);
+  });
+
+  it('enforces a per-user daily upload quota (SEC-004)', async () => {
+    const config = loadConfig({
+      DATABASE_URL: 'x',
+      PUBLIC_URL: ORIGIN,
+      MEDIA_DIR: mediaDir,
+      AUTH_DEV_LOGIN: 'true',
+      MEDIA_QUOTA_MB_PER_DAY: '0.01',
+    });
+    const quotaApp = await buildApp({ config, db: t.db, logger: false });
+    try {
+      const r = await quotaApp.inject({
+        method: 'POST',
+        url: '/api/auth/login',
+        headers: { origin: ORIGIN },
+        payload: { email: 'admin@ejemplo.com', password: 'admin' },
+      });
+      const cookie = `sid=${r.cookies.find((c) => c.name === 'sid')!.value}`;
+      const up = () =>
+        quotaApp.inject({
+          method: 'POST',
+          url: '/api/media',
+          ...withAuth(multipart(demoPng, 'a.png', 'image/png'), cookie),
+        });
+      expect((await up()).statusCode).toBe(200);
+      const second = await up();
+      expect(second.statusCode).toBe(400);
+      expect(second.json().message).toMatch(/límite de subida/);
+    } finally {
+      await quotaApp.close();
+    }
+  });
+});
+
+describe('join codes (SEC-002)', () => {
+  it('accepts only 6 characters of the join alphabet, case-insensitively', async () => {
+    const student = await login('alumno2@ejemplo.com', 'alumno2');
+    for (const code of ['ABC12', 'ABCDEFG', 'ABCDE1', 'ABCDEO'])
+      expect((await send('POST', '/api/classrooms/join', student, { code })).statusCode).toBe(400);
+    const lower = await send('POST', '/api/classrooms/join', student, { code: 'zzzzzz' });
+    expect(lower.statusCode).toBe(404);
+  });
+
+  it('throttles join attempts per user', async () => {
+    const student = await login('alumno2@ejemplo.com', 'alumno2');
+    const statuses: number[] = [];
+    for (let i = 0; i < 12; i++)
+      statuses.push(
+        (await send('POST', '/api/classrooms/join', student, { code: 'ZZZZZZ' })).statusCode,
+      );
+    expect(statuses).toContain(429);
+    const other = await login('alumno1@ejemplo.com', 'alumno1');
+    expect((await send('POST', '/api/classrooms/join', other, { code: 'ZZZZZZ' })).statusCode).toBe(
+      404,
+    );
+  });
+});
+
+/** Start a CAS login like a browser: returns the state bound into the service URL and its cookie. */
+async function casLogin() {
+  const r = await get('/api/auth/cas/login');
+  const c = r.cookies.find((x) => x.name === 'cas_state')!;
+  return { state: c.value, cookie: `cas_state=${c.value}`, response: r };
+}
+const callback = (ticket: string, s: { state: string; cookie: string }) =>
+  app.inject({
+    method: 'GET',
+    url: `/api/auth/cas/callback?ticket=${ticket}&state=${s.state}`,
+    headers: { cookie: s.cookie },
+  });
+const serviceFor = (state: string) => `${ORIGIN}/api/auth/cas/callback?state=${state}`;
+const slo = (url: string, index: string) =>
+  app.inject({
+    method: 'POST',
+    url,
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    payload: new URLSearchParams({
+      logoutRequest: `<samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ID="x" Version="2.0" IssueInstant="2026-01-01T00:00:00Z"><saml:NameID xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">u</saml:NameID><samlp:SessionIndex>${index}</samlp:SessionIndex></samlp:LogoutRequest>`,
+    }).toString(),
+  });
+
 describe('CAS', () => {
-  it('login redirects to CAS with the fixed service URL', async () => {
-    const r = await get('/api/auth/cas/login');
+  it('login sets a short-lived state cookie and binds it into the service URL', async () => {
+    const { state, response: r } = await casLogin();
     expect(r.statusCode).toBe(302);
     expect(r.headers.location).toBe(
-      `${CAS}/login?service=${encodeURIComponent(`${ORIGIN}/api/auth/cas/callback`)}`,
+      `${CAS}/login?service=${encodeURIComponent(serviceFor(state))}`,
     );
+    expect(r.cookies.find((c) => c.name === 'cas_state')).toMatchObject({
+      httpOnly: true,
+      sameSite: 'Lax',
+      maxAge: 300,
+      path: '/',
+    });
+    expect(state.length).toBeGreaterThanOrEqual(32);
   });
 
   it('callback validates the ticket, queries CAUCE and opens a session; SLO closes it', async () => {
     const calls = stubNetwork(fixture('cas-success.xml'), fixture('cauce-teacher.xml'));
-    const r = await get('/api/auth/cas/callback?ticket=ST-1-abc');
+    const s = await casLogin();
+    const r = await callback('ST-1-abc', s);
     expect(r.statusCode).toBe(302);
     expect(r.headers.location).toBe(`${ORIGIN}/`);
     expect(calls[0]!.url).toContain('ticket=ST-1-abc');
-    expect(calls[0]!.url).toContain(
-      `service=${encodeURIComponent(`${ORIGIN}/api/auth/cas/callback`)}`,
-    );
+    expect(calls[0]!.url).toContain(`service=${encodeURIComponent(serviceFor(s.state))}`);
     expect(calls[1]).toEqual({ url: `${CAUCE}cficticia`, auth: 'Bearer test-token' });
+    expect(r.cookies.find((c) => c.name === 'cas_state')?.value).toBe('');
 
     const cookie = `sid=${r.cookies.find((c) => c.name === 'sid')!.value}`;
     const me = (await get('/api/me', cookie)).json().user;
     expect(me).toMatchObject({ firstName: 'Carmen Ficticia', globalRole: 'teacher' });
     expect(JSON.stringify(me)).not.toMatch(/00000000T|Z0000000Z/);
 
-    const logoutRequest = `<samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ID="x" Version="2.0" IssueInstant="2026-01-01T00:00:00Z"><saml:NameID xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">cficticia</saml:NameID><samlp:SessionIndex>ST-1-abc</samlp:SessionIndex></samlp:LogoutRequest>`;
-    const slo = await app.inject({
-      method: 'POST',
-      url: '/api/auth/cas/slo',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      payload: new URLSearchParams({ logoutRequest }).toString(),
-    });
-    expect(slo.statusCode).toBe(200);
+    expect((await slo('/api/auth/cas/slo', 'ST-1-abc')).statusCode).toBe(200);
     expect((await get('/api/me', cookie)).json()).toEqual({ user: null });
+  });
+
+  it('accepts back-channel logout on the callback URL and requires an ST- SessionIndex', async () => {
+    stubNetwork(fixture('cas-success.xml'), fixture('cauce-teacher.xml'));
+    const r = await callback('ST-7-slo', await casLogin());
+    const cookie = `sid=${r.cookies.find((c) => c.name === 'sid')!.value}`;
+    expect((await slo('/api/auth/cas/slo', 'XX-7-slo')).statusCode).toBe(400);
+    expect((await get('/api/me', cookie)).json().user).not.toBeNull();
+    expect((await slo('/api/auth/cas/callback', 'ST-7-slo')).statusCode).toBe(200);
+    expect((await get('/api/me', cookie)).json()).toEqual({ user: null });
+  });
+
+  it('rejects callbacks without the login state (login CSRF)', async () => {
+    const calls = stubNetwork(fixture('cas-success.xml'), fixture('cauce-teacher.xml'));
+    const noCookie = await get('/api/auth/cas/callback?ticket=ST-4&state=whatever');
+    expect(noCookie.headers.location).toBe(`${ORIGIN}/entrar?error=cas`);
+    const mine = await casLogin();
+    const attacker = await casLogin();
+    const mixed = await callback('ST-5', { state: attacker.state, cookie: mine.cookie });
+    expect(mixed.headers.location).toBe(`${ORIGIN}/entrar?error=cas`);
+    expect(mixed.cookies.find((c) => c.name === 'sid')).toBeUndefined();
+    expect(calls).toEqual([]);
   });
 
   it('invalid tickets redirect to the login page with an error', async () => {
     stubNetwork(fixture('cas-failure.xml'), fixture('cauce-teacher.xml'));
-    const r = await get('/api/auth/cas/callback?ticket=ST-bad');
+    const r = await callback('ST-bad', await casLogin());
     expect(r.statusCode).toBe(302);
     expect(r.headers.location).toBe(`${ORIGIN}/entrar?error=cas`);
     expect(r.cookies.find((c) => c.name === 'sid')).toBeUndefined();
@@ -340,21 +537,59 @@ describe('CAS', () => {
 
   it('users refused by CAUCE get error=forbidden', async () => {
     stubNetwork(fixture('cas-success.xml'), fixture('cauce-denied.xml'));
-    const r = await get('/api/auth/cas/callback?ticket=ST-2');
+    const r = await callback('ST-2', await casLogin());
     expect(r.headers.location).toBe(`${ORIGIN}/entrar?error=forbidden`);
+  });
+
+  it('a directory email already used by another account does not block sign-in', async () => {
+    const withEmail = fixture('cauce-teacher.xml').replace(
+      '</Apellidos>',
+      '</Apellidos>\n      <Email>PROFESOR@ejemplo.com</Email>',
+    );
+    stubNetwork(fixture('cas-success.xml').replace('cficticia', 'colision'), withEmail);
+    const r = await callback('ST-6', await casLogin());
+    expect(r.headers.location).toBe(`${ORIGIN}/`);
+    const cookie = `sid=${r.cookies.find((c) => c.name === 'sid')!.value}`;
+    expect((await get('/api/me', cookie)).json().user).toMatchObject({
+      firstName: 'Carmen Ficticia',
+      email: null,
+    });
   });
 
   it('CAS unreachable gives error=unavailable', async () => {
     vi.stubGlobal('fetch', async () => {
       throw new TypeError('fetch failed');
     });
-    const r = await get('/api/auth/cas/callback?ticket=ST-3');
+    const r = await callback('ST-3', await casLogin());
     expect(r.headers.location).toBe(`${ORIGIN}/entrar?error=unavailable`);
   });
 
   it('cas logout redirects to the CAS logout endpoint', async () => {
     const r = await get('/api/auth/cas/logout');
     expect(r.headers.location).toBe(`${CAS}/logout?service=${encodeURIComponent(`${ORIGIN}/`)}`);
+  });
+});
+
+describe('logging', () => {
+  it('database errors are logged without SQL, parameters or row values', () => {
+    const pgError = Object.assign(new Error('duplicate key value violates unique constraint'), {
+      code: '23505',
+      severity: 'ERROR',
+      detail: 'Key (lower(email))=(secreto@ejemplo.com) already exists.',
+    });
+    const drizzle = Object.assign(
+      new Error('Failed query: insert into users values ($1)\nparams: secreto@ejemplo.com'),
+      { name: 'DrizzleQueryError', cause: pgError },
+    );
+    for (const e of [drizzle, pgError]) {
+      const out = errSerializer(e);
+      expect(JSON.stringify(out)).not.toMatch(/secreto|insert|duplicate/);
+      expect(out.code).toBe('23505');
+    }
+    expect(errSerializer(new TypeError('boom'))).toMatchObject({
+      type: 'TypeError',
+      message: 'boom',
+    });
   });
 });
 

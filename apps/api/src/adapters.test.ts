@@ -39,6 +39,12 @@ describe('CAS XML', () => {
     const xml = `<samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"><samlp:SessionIndex>ST-9-x</samlp:SessionIndex></samlp:LogoutRequest>`;
     expect(parseLogoutRequest(xml)).toBe('ST-9-x');
     expect(parseLogoutRequest('<samlp:LogoutRequest xmlns:samlp="x"/>')).toBeNull();
+    // Only service tickets can end sessions (SEC-008).
+    expect(
+      parseLogoutRequest(
+        '<samlp:LogoutRequest xmlns:samlp="x"><samlp:SessionIndex>TGT-1</samlp:SessionIndex></samlp:LogoutRequest>',
+      ),
+    ).toBeNull();
   });
 });
 
@@ -135,5 +141,36 @@ describe('config', () => {
     expect(() => loadConfig({ ...base, DATABASE_URL: '', CAUCE_TOKEN: 'secret-value' })).toThrow(
       /^(?!.*secret-value)/,
     );
+  });
+  const cas = {
+    CAS_BASE_URL: 'https://cas.example.org',
+    CAUCE_URL: 'https://c.example.org/',
+    CAUCE_TOKEN: 't',
+  };
+
+  it('requires the SLO allowlist in production when CAS is enabled (SEC-008)', () => {
+    expect(() => loadConfig({ ...base, ...cas, NODE_ENV: 'production' })).toThrow(
+      /CAS_ALLOWED_SLO_HOSTS/,
+    );
+    const ok = loadConfig({
+      ...base,
+      ...cas,
+      NODE_ENV: 'production',
+      CAS_ALLOWED_SLO_HOSTS: '10.0.0.5',
+    });
+    expect(ok.cas?.sloHosts).toEqual(['10.0.0.5']);
+    expect(loadConfig({ ...base, ...cas }).cas?.sloHosts).toEqual([]);
+  });
+
+  it('accepts only a hop count or IP/CIDR list as TRUST_PROXY (SEC-007)', () => {
+    expect(loadConfig(base).trustProxy).toBe(false);
+    expect(loadConfig({ ...base, TRUST_PROXY: '1' }).trustProxy).toBe(1);
+    expect(loadConfig({ ...base, TRUST_PROXY: '10.0.0.1, 172.16.0.0/12,::1' }).trustProxy).toEqual([
+      '10.0.0.1',
+      '172.16.0.0/12',
+      '::1',
+    ]);
+    for (const bad of ['true', 'TRUE', 'loopback', '10.0.0.0/33', '999.1.1.1', '*'])
+      expect(() => loadConfig({ ...base, TRUST_PROXY: bad }), bad).toThrow(/TRUST_PROXY/);
   });
 });

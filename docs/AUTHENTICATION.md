@@ -20,10 +20,10 @@ sequenceDiagram
   participant C as Servidor CAS
   participant D as CAUCE
   N->>A: GET /api/auth/cas/login
-  A-->>N: 302 CAS_BASE_URL/login?service=PUBLIC_URL/api/auth/cas/callback
+  A-->>N: Set-Cookie cas_state + 302 CAS_BASE_URL/login?service=…/api/auth/cas/callback?state=S
   N->>C: credenciales institucionales
-  C-->>N: 302 …/api/auth/cas/callback?ticket=ST-…
-  N->>A: GET /api/auth/cas/callback?ticket=…
+  C-->>N: 302 …/api/auth/cas/callback?state=S&ticket=ST-…
+  N->>A: GET /api/auth/cas/callback?state=S&ticket=… (cookie cas_state=S)
   A->>C: GET /p3/serviceValidate?service=…&ticket=…
   C-->>A: XML authenticationSuccess (user)
   A->>D: GET CAUCE_URL + sujeto (Bearer CAUCE_TOKEN)
@@ -31,7 +31,11 @@ sequenceDiagram
   A-->>N: Set-Cookie de sesión + 302 PUBLIC_URL/
 ```
 
-- La URL de servicio es **fija** (`${PUBLIC_URL}/api/auth/cas/callback`), nunca derivada de la petición.
+- La URL de servicio es `${PUBLIC_URL}/api/auth/cas/callback?state=<aleatorio>`, nunca derivada de la petición.
+  Protección contra *login CSRF*: el `state` (192 bits) viaja también en la cookie `cas_state` (`__Host-cas_state`
+  con HTTPS; `HttpOnly`, `SameSite=Lax`, 5 min). El callback exige que coincidan, la borra y valida el ticket con esa
+  misma URL, así que un ticket emitido para otro navegador no sirve. El CAS debe aceptar la URL de servicio con
+  `?state=…` (registro por prefijo o patrón).
 - El ticket se valida en `/p3/serviceValidate` con `fetch` (TLS verificado, *timeout* de 5 s, sin seguir
   redirecciones). El XML se analiza con `fast-xml-parser` y se rechaza cualquier `<!DOCTYPE`/`<!ENTITY`.
 - Errores: el callback redirige a `/entrar?error=cas|forbidden|unavailable`. Se registra solo el código, nunca el
@@ -86,10 +90,11 @@ No hay tokens en `localStorage` ni Redis.
 
 ## Single logout (SLO)
 
-`POST /api/auth/cas/slo` recibe el `logoutRequest` del servidor CAS por *back-channel*, extrae el `SessionIndex`
-(ticket) y borra las sesiones con ese `cas_ticket`. Está exento de la comprobación de `Origin`.
-`CAS_ALLOWED_SLO_HOSTS` restringe las IP de origen (lista separada por comas; vacío = cualquiera). Detrás de un proxy
-inverso hay que fijar `TRUST_PROXY` para que la IP sea la real.
+`POST /api/auth/cas/slo` y `POST /api/auth/cas/callback` (el CAS envía el SLO a la URL de servicio si no tiene una
+URL de logout registrada) reciben el `logoutRequest` por *back-channel*, extraen el `SessionIndex` (debe empezar por
+`ST-`) y borran las sesiones con ese `cas_ticket`. Están exentos de la comprobación de `Origin`.
+`CAS_ALLOWED_SLO_HOSTS` restringe las IP de origen (lista separada por comas); en producción con CAS es obligatoria y
+la API no arranca sin ella. Detrás de un proxy inverso hay que fijar `TRUST_PROXY` para que la IP sea la real.
 
 ## Proveedor de contraseña (desarrollo)
 

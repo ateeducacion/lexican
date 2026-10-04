@@ -9,12 +9,14 @@ import {
   senseMedia,
   submissions,
 } from '@lexican/db';
-import { and, eq, isNull, sql } from 'drizzle-orm';
+import { and, eq, gte, isNull, sql } from 'drizzle-orm';
 import { fileTypeFromBuffer } from 'file-type';
 import { dictionaryAccess } from './access.ts';
 import { notFound, requireUser, type Actor, type Deps } from './context.ts';
 
 const DEFAULT_MAX_BYTES = 10 * 1024 * 1024;
+const DEFAULT_MAX_BYTES_PER_DAY = 100 * 1024 * 1024;
+const DAY_MS = 24 * 3600_000;
 
 async function sha256Hex(bytes: Uint8Array): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', bytes as BufferSource);
@@ -28,6 +30,7 @@ async function sha256Hex(bytes: Uint8Array): Promise<string> {
 export function mediaServices(deps: Deps) {
   const { db } = deps;
   const maxBytes = deps.maxUploadBytes ?? DEFAULT_MAX_BYTES;
+  const maxPerDay = deps.maxUploadBytesPerDay ?? DEFAULT_MAX_BYTES_PER_DAY;
 
   return {
     async uploadMedia(actor: Actor | null, file: { bytes: Uint8Array; name: string }): Promise<MediaView> {
@@ -39,6 +42,16 @@ export function mediaServices(deps: Deps) {
       const kind = type ? mediaKindOf(type.mime) : null;
       if (!type || !kind)
         throw new DomainError('validation', 'Formato no admitido. Usa una imagen (PNG, JPG, WebP, GIF), un audio (MP3, OGG, WAV) o un vídeo (MP4, WebM).');
+      // Per-user rolling quota (SEC-004). ponytail: check-then-insert, concurrent uploads may overshoot by one file.
+      const [usage] = await db
+        .select({ used: sql<number>`coalesce(sum(${mediaAssets.byteSize}), 0)::float8` })
+        .from(mediaAssets)
+        .where(and(eq(mediaAssets.createdBy, a.userId), gte(mediaAssets.createdAt, new Date(deps.clock().getTime() - DAY_MS))));
+      if (Number(usage?.used ?? 0) + file.bytes.byteLength > maxPerDay)
+        throw new DomainError(
+          'validation',
+          `Has alcanzado el límite de subida de ${Math.round(maxPerDay / 1024 / 1024)} MB en 24 horas. Inténtalo más tarde.`,
+        );
       const storageKey = `${crypto.randomUUID()}.${type.ext}`;
       await deps.media.put(storageKey, file.bytes, type.mime);
       const originalName = file.name.replace(/[^\p{L}\p{N} ._-]/gu, '_').slice(0, 120);
@@ -55,8 +68,12 @@ export function mediaServices(deps: Deps) {
       const [asset] = await db.select().from(mediaAssets).where(eq(mediaAssets.id, mediaId));
       if (!asset) throw notFound('El archivo');
       if (asset.createdBy !== a.userId) {
+        // Hidden or deleted entries and hidden senses only count for people who can edit that dictionary (SEC-009).
         const uses = await db
-          .selectDistinct({ dictionaryId: entries.dictionaryId })
+          .selectDistinct({
+            dictionaryId: entries.dictionaryId,
+            visible: sql<boolean>`not (${entries.hidden} or ${entrySenses.hidden} or ${entries.deletedAt} is not null)`,
+          })
           .from(senseMedia)
           .innerJoin(entrySenses, eq(entrySenses.id, senseMedia.senseId))
           .innerJoin(entries, eq(entries.id, entrySenses.entryId))
@@ -65,7 +82,7 @@ export function mediaServices(deps: Deps) {
         let allowed = false;
         for (const u of uses) {
           const acc = await dictionaryAccess(deps, a, u.dictionaryId).catch(() => null);
-          if (acc?.canRead) {
+          if (acc?.canEdit || (acc?.canRead && u.visible)) {
             allowed = true;
             break;
           }
@@ -95,7 +112,8 @@ async function usedInReviewableSubmission(deps: Deps, actor: Actor, mediaId: str
         eq(dictionaryMemberships.active, true),
       ),
     )
-    .where(sql`${entryRevisions.snapshot}::text like ${'%' + mediaId + '%'}`)
+    // Structural match on the snapshot's media ids, never a text search (SEC-001).
+    .where(sql`${entryRevisions.snapshot}->'senses' @> ${JSON.stringify([{ media: [{ id: mediaId }] }])}::jsonb`)
     .limit(1);
   return rows.length > 0;
 }

@@ -20,8 +20,14 @@ export const CSV_HEADER = [
   'Temáticas',
 ] as const;
 
-/** RFC 4180 field: quoted when it holds a comma, quote or line break; quotes doubled. */
-const csvField = (s: string) => (/[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s);
+/**
+ * RFC 4180 field: quoted when it holds a comma, quote or line break; quotes doubled. Cells starting with
+ * = + - @ TAB or CR get a leading apostrophe so spreadsheets never evaluate them as formulas (SEC-003, CWE-1236).
+ */
+const csvField = (raw: string) => {
+  const s = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw;
+  return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+};
 
 /** One row per sense, CRLF line endings (RFC 4180). */
 export function toCsv(entries: EntryView[], vocab: VocabularyValue[]): string {

@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import { sep } from 'node:path';
 import cookie from '@fastify/cookie';
 import helmet from '@fastify/helmet';
@@ -46,9 +46,41 @@ const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const SLIDE_EVERY_MS = 5 * 60_000;
 const SLO_PATH = '/api/auth/cas/slo';
+const CALLBACK_PATH = '/api/auth/cas/callback';
+const STATE_TTL_S = 5 * 60;
 const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
 const redactUrl = (url: string) =>
   url.replace(/([?&](?:ticket|logoutRequest)=)[^&]*/gi, '$1[REDACTED]');
+
+/** Per-operation route config (rate limits keyed by user, falling back to IP). */
+const OPERATION_LIMITS: Partial<Record<OperationName, { max: number; timeWindow: string }>> = {
+  // Join codes are short: throttle guessing (SEC-002).
+  joinClassroom: { max: 10, timeWindow: '1 minute' },
+};
+const byUserOrIp = (req: FastifyRequest) => req.actor?.userId ?? req.ip;
+
+/**
+ * pino `err` serializer: database errors carry SQL text, parameters and row values in `message`, `detail`,
+ * `stack` and `cause`, so only their class and SQLSTATE are logged (SEC-005).
+ */
+export function errSerializer(err: Error): {
+  type: string;
+  message: string;
+  stack: string;
+  code?: unknown;
+} {
+  const e = err as Error & { code?: unknown; cause?: unknown };
+  const cause = (typeof e.cause === 'object' && e.cause ? e.cause : {}) as { code?: unknown };
+  const isDb = e.name === 'DrizzleQueryError' || 'severity' in e || 'severity' in cause;
+  if (isDb)
+    return {
+      type: e.name,
+      message: 'database error',
+      stack: '',
+      code: typeof e.code === 'string' ? e.code : cause.code,
+    };
+  return { type: e.name, message: e.message, stack: e.stack ?? '', code: e.code };
+}
 
 /** `inline` disposition with an ASCII fallback name and the UTF-8 original (RFC 6266/5987). */
 function disposition(name: string): string {
@@ -71,13 +103,18 @@ export async function buildApp(opts: AppOptions) {
     mediaUrl: (id) => `/media/${id}`,
     schoolYear: config.schoolYear,
     maxUploadBytes: config.maxUploadBytes,
+    maxUploadBytesPerDay: config.mediaQuotaBytesPerDay,
   });
   const cookieName = config.secureCookies ? '__Host-sid' : 'sid';
+  const stateCookie = config.secureCookies ? '__Host-cas_state' : 'cas_state';
+  const hops = config.trustProxy;
+  const trustProxy = typeof hops === 'number' ? (_addr: string, i: number) => i < hops : hops;
 
   const logger: FastifyServerOptions['logger'] = opts.logger ?? {
     level: config.logLevel,
     redact: ['req.headers.cookie', 'req.headers.authorization', 'res.headers["set-cookie"]'],
     serializers: {
+      err: errSerializer,
       req: (req: { method?: string; url?: string; ip?: string }) => ({
         method: req.method,
         url: redactUrl(req.url ?? ''),
@@ -85,7 +122,7 @@ export async function buildApp(opts: AppOptions) {
       }),
     },
   };
-  const app = Fastify({ bodyLimit: 1024 * 1024, trustProxy: config.trustProxy, logger });
+  const app = Fastify({ bodyLimit: 1024 * 1024, trustProxy, logger });
   app.decorateRequest('actor', null);
   app.decorateRequest('sessionHash', null);
   // JSON or multipart only: no text/plain bodies (CSRF surface, TECH_RESEARCH §5).
@@ -127,7 +164,8 @@ export async function buildApp(opts: AppOptions) {
 
   // CSRF: SameSite=Lax cookie + Origin allowlist on every unsafe method. CAS back-channel SLO is exempt.
   app.addHook('onRequest', async (req, reply) => {
-    if (SAFE_METHODS.has(req.method) || req.url.split('?')[0] === SLO_PATH) return;
+    const path = req.url.split('?')[0];
+    if (SAFE_METHODS.has(req.method) || path === SLO_PATH || path === CALLBACK_PATH) return;
     if (req.headers.origin !== config.publicOrigin)
       return reply
         .code(403)
@@ -234,9 +272,11 @@ export async function buildApp(opts: AppOptions) {
   for (const name of Object.keys(operations) as OperationName[]) {
     if (name === 'login' || name === 'logout') continue;
     const op = operations[name];
+    const limit = OPERATION_LIMITS[name];
     app.route({
       method: op.method,
       url: op.path,
+      ...(limit ? { config: { rateLimit: { ...limit, keyGenerator: byUserOrIp } } } : {}),
       handler: (req) => services.call(name, req.actor, inputOf(req)),
     });
   }
@@ -274,23 +314,46 @@ export async function buildApp(opts: AppOptions) {
 
   // ---- CAS ----
   const cas = config.cas;
+  // Login CSRF (SEC-006): a random state goes in a short-lived cookie AND in the service URL, so a ticket is
+  // only accepted by the browser that started that login (CAS validates the exact service URL).
+  const serviceFor = (state: string) => `${cas!.serviceUrl}?state=${state}`;
+  const stateCookieOpts = {
+    path: '/',
+    httpOnly: true,
+    secure: config.secureCookies,
+    sameSite: 'lax' as const,
+  };
+
   app.get('/api/auth/cas/login', async (_req, reply) => {
     if (!cas) return notFound(reply);
-    return reply.redirect(`${cas.baseUrl}/login?service=${encodeURIComponent(cas.serviceUrl)}`);
+    const state = randomBytes(24).toString('base64url');
+    reply.setCookie(stateCookie, state, { ...stateCookieOpts, maxAge: STATE_TTL_S });
+    return reply.redirect(`${cas.baseUrl}/login?service=${encodeURIComponent(serviceFor(state))}`);
   });
 
-  app.get<{ Querystring: { ticket?: string } }>(
-    '/api/auth/cas/callback',
+  app.get<{ Querystring: { ticket?: string; state?: string } }>(
+    CALLBACK_PATH,
     { config: { rateLimit: { max: 20, timeWindow: '1 minute' } } },
     async (req, reply) => {
       if (!cas) return notFound(reply);
       const fail = (error: string) => reply.redirect(`${config.publicUrl}/entrar?error=${error}`);
-      const ticket = req.query.ticket;
+      const { ticket, state } = req.query;
+      const expected = req.cookies[stateCookie];
+      reply.clearCookie(stateCookie, stateCookieOpts);
       if (typeof ticket !== 'string' || ticket.length === 0 || ticket.length > 512)
         return fail('cas');
+      if (
+        typeof state !== 'string' ||
+        !expected ||
+        state.length !== expected.length ||
+        !timingSafeEqual(Buffer.from(state), Buffer.from(expected))
+      ) {
+        req.log.warn('CAS callback without a matching login state');
+        return fail('cas');
+      }
       let subject: string;
       try {
-        const r = await validateTicket(cas.baseUrl, cas.serviceUrl, ticket);
+        const r = await validateTicket(cas.baseUrl, serviceFor(state), ticket);
         if (!r.ok) {
           req.log.warn({ casCode: r.code }, 'CAS ticket validation failed');
           return fail('cas');
@@ -332,7 +395,13 @@ export async function buildApp(opts: AppOptions) {
       { parseAs: 'string', bodyLimit: 64 * 1024 },
       (_req, body, done) => done(null, Object.fromEntries(new URLSearchParams(body as string))),
     );
-    slo.post<{ Body: { logoutRequest?: string } }>(SLO_PATH, async (req, reply) => {
+    // CAS sends SLO to the service URL (the callback) unless a logout URL is registered: accept both.
+    slo.post<{ Body: { logoutRequest?: string } }>(SLO_PATH, sloHandler);
+    slo.post<{ Body: { logoutRequest?: string } }>(CALLBACK_PATH, sloHandler);
+    async function sloHandler(
+      req: FastifyRequest<{ Body: { logoutRequest?: string } }>,
+      reply: FastifyReply,
+    ) {
       if (!cas) return notFound(reply);
       if (cas.sloHosts.length > 0 && !cas.sloHosts.includes(req.ip))
         return reply.code(403).send({ code: 'forbidden', message: 'No permitido.' });
@@ -347,13 +416,13 @@ export async function buildApp(opts: AppOptions) {
         return reply.code(400).send({ code: 'validation', message: 'Petición no válida.' });
       await db.delete(sessions).where(eq(sessions.casTicket, ticket));
       return { ok: true };
-    });
+    }
   });
 
   // ---- Media ----
   app.post(
     '/api/media',
-    { config: { rateLimit: { max: 30, timeWindow: '1 minute' } } },
+    { config: { rateLimit: { max: 30, timeWindow: '1 minute', keyGenerator: byUserOrIp } } },
     async (req) => {
       const actor = services.auth.requireUser(req.actor);
       const file = await req.file();

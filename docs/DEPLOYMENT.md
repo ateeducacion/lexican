@@ -55,14 +55,15 @@ valores ficticios: `apps/api/.env.example`.
 | `SESSION_TTL_HOURS` | `8` (máx. 720) | caducidad de sesión |
 | `MEDIA_DIR` | — (obligatoria; `/data/media` en la imagen) | raíz de medios |
 | `MAX_UPLOAD_MB` | `10` (máx. 100) | tamaño máximo por archivo |
+| `MEDIA_QUOTA_MB_PER_DAY` | `100` | cuota de subida por usuario en 24 h (ventana móvil) |
 | `CAS_BASE_URL` | vacío (CAS desactivado) | base del servidor CAS 3.0 |
 | `CAUCE_URL`, `CAUCE_TOKEN` | vacío | directorio institucional; obligatorios si hay CAS. **Secreto**: el token |
-| `CAS_ALLOWED_SLO_HOSTS` | vacío (cualquiera) | IP permitidas para el SLO, separadas por comas |
+| `CAS_ALLOWED_SLO_HOSTS` | vacío (cualquiera; **obligatoria en producción con CAS**) | IP permitidas para el SLO, separadas por comas |
 | `AUTH_DEV_LOGIN` | `false` | acceso con contraseña; solo desarrollo/test |
 | `SCHOOL_YEAR_START` | `08-30` | inicio del curso escolar (`MM-DD`) |
 | `WEB_DIST` | vacío (`/app/apps/web/dist` en la imagen) | carpeta de la SPA que sirve la API |
 | `LOG_LEVEL` | `info` | `fatal`…`trace`, `silent` |
-| `TRUST_PROXY` | vacío | `true` o lista de IP/CIDR del proxy |
+| `TRUST_PROXY` | vacío | número de saltos de proxy de confianza (`1`) o lista de IP/CIDR del proxy. `true` se rechaza |
 | `MIGRATE_ON_START` | `false` | aplica migraciones al arrancar |
 | `MIGRATIONS_DIR` | autodetectado | carpeta de migraciones si no está junto al bundle (`apps/api/src/db.ts`) |
 
@@ -87,7 +88,7 @@ imagen o `npm run db:seed` desde el repositorio (idempotente). Con varias répli
 ## Proxy inverso y TLS
 
 - TLS termina en el proxy; `PUBLIC_URL` debe ser la URL `https://` que ve el navegador.
-- `TRUST_PROXY` con la IP del proxy para que `req.ip` (límite de peticiones, `CAS_ALLOWED_SLO_HOSTS`) sea la del
+- `TRUST_PROXY` con la IP (o el número de saltos) del proxy para que `req.ip` (límite de peticiones, `CAS_ALLOWED_SLO_HOSTS`) sea la del
   cliente.
 - El proxy debe conservar la cabecera `Origin` y el `Host`, y permitir cuerpos de al menos `MAX_UPLOAD_MB`.
 - No añadir CORS ni reescribir la CSP: la API ya envía las cabeceras de seguridad ([SECURITY.md](SECURITY.md)).

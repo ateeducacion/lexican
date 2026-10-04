@@ -94,6 +94,32 @@ describe('toCsv', () => {
     expect(csv).toContain('guagua,2,,,,"Bebé\nde pocos meses",,,,,\r\n');
     expect(csv.endsWith('\r\n')).toBe(true);
   });
+
+  it('neutralizes spreadsheet formulas (CSV injection)', () => {
+    const evil = ['=HYPERLINK("http://x")', '+1+1', '-2', '@SUM(A1)', '\tcmd', '\rcmd'];
+    const csv = toCsv(
+      evil.map((headword, i) => ({
+        ...entries[0]!,
+        id: `e${i}`,
+        headword,
+        senses: [entries[0]!.senses[1]!],
+      })),
+      vocab,
+    );
+    const firstCells = csv
+      .split('\r\n')
+      .slice(1, -1)
+      .map((l) => l.split(',')[0]);
+    expect(firstCells.slice(0, 4)).toEqual([
+      '"\'=HYPERLINK(""http://x"")"',
+      "'+1+1",
+      "'-2",
+      "'@SUM(A1)",
+    ]);
+    expect(csv).toContain("'\tcmd,1,");
+    expect(csv).toContain('"\'\rcmd",1,');
+    expect(toCsv(entries, vocab)).not.toContain("'guagua");
+  });
 });
 
 describe('toJson', () => {

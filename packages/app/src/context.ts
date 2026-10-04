@@ -22,6 +22,8 @@ export interface Deps {
   schoolYear?: SchoolYearConfig;
   /** Upload size limit per media kind, bytes. */
   maxUploadBytes?: number;
+  /** Per-user upload quota over a rolling 24 h window, bytes (default 100 MB). */
+  maxUploadBytesPerDay?: number;
 }
 
 export function requireUser(actor: Actor | null): Actor {

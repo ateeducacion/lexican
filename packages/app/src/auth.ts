@@ -127,10 +127,10 @@ export function authServices(deps: Deps) {
             .where(eq(users.id, id));
           await tx.update(authIdentities).set({ lastLoginAt: deps.clock() }).where(eq(authIdentities.id, identity!.id));
         } else {
-          const [u] = await tx
-            .insert(users)
-            .values({ email: profile.email, firstName: profile.firstName, lastName: profile.lastName, displayName, globalRole: directoryRole })
-            .returning({ id: users.id });
+          const values = { firstName: profile.firstName, lastName: profile.lastName, displayName, globalRole: directoryRole };
+          // An email already used by another account must not block institutional sign-in (SEC-005): store none.
+          let [u] = await tx.insert(users).values({ ...values, email: profile.email }).onConflictDoNothing().returning({ id: users.id });
+          if (!u) [u] = await tx.insert(users).values({ ...values, email: null }).returning({ id: users.id });
           id = u!.id;
           await tx.insert(authIdentities).values({ userId: id, provider: 'cas', subject: profile.subject, lastLoginAt: deps.clock() });
         }

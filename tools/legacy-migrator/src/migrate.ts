@@ -51,6 +51,7 @@ import {
   groupLabelOf,
   htmlLosses,
   htmlToText,
+  isJoinCode,
   legacyJoinCode,
   maxSensesOf,
   memberRoleOf,
@@ -1105,7 +1106,8 @@ async function run(db: Db, L: LegacyData, opts: MigrateOptions, report: Report):
       .select({ c: classroomSettings.joinCode })
       .from(classroomSettings)
       .where(eq(classroomSettings.dictionaryId, dictionaryId));
-    let joinCode = existing?.c;
+    // Codes stored by an earlier run that no longer pass the current rule are regenerated too.
+    let joinCode = existing && isJoinCode(existing.c) ? existing.c : undefined;
     if (!joinCode) {
       const legacyCode = legacyJoinCode(a.codigo);
       if (legacyCode && codeUses.get(legacyCode) === 1 && !usedCodes.has(legacyCode))
@@ -1261,7 +1263,10 @@ async function run(db: Db, L: LegacyData, opts: MigrateOptions, report: Report):
     await db
       .insert(classroomSettings)
       .values({ dictionaryId, joinCode, ...settings })
-      .onConflictDoUpdate({ target: classroomSettings.dictionaryId, set: settings });
+      .onConflictDoUpdate({
+        target: classroomSettings.dictionaryId,
+        set: { joinCode, ...settings },
+      });
     stat(R, 'dic_aula').mapped++;
   }
 

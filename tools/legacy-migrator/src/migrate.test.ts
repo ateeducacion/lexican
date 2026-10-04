@@ -138,6 +138,7 @@ describe.skipIf(!MARIADB || !PG)('legacy migration (MariaDB fixture → PostgreS
         'dp_acepciones_medios:3001',
         'envios_entradas:803',
         'centros:3',
+        'dic_aula:500', // legacy code «abc123» uses 1: regenerated (SEC-002)
         'dic_aula:501',
       ]),
     );
@@ -275,7 +276,6 @@ describe.skipIf(!MARIADB || !PG)('legacy migration (MariaDB fixture → PostgreS
           from classroom_settings c join dictionaries d on d.id = c.dictionary_id order by d.legacy_id`,
     );
     expect(cs[0]).toMatchObject({
-      join_code: 'ABC123',
       timeless: false,
       validity_years: 2,
       max_senses: null,
@@ -306,6 +306,7 @@ describe.skipIf(!MARIADB || !PG)('legacy migration (MariaDB fixture → PostgreS
       comments_visibility: 'hidden',
       subject: 'robotica_ficticia',
     });
+    expect(String(cs[0]!.join_code)).toMatch(/^[A-HJ-NP-Z2-9]{6}$/);
     expect(String(cs[1]!.join_code)).toMatch(/^[A-HJ-NP-Z2-9]{6}$/);
     expect((cs[1]!.visible_fields as string[]).length).toBe(10);
 

@@ -153,7 +153,7 @@ function JoinForm() {
     <section aria-labelledby="join-title" className={`card ${styles.section}`}>
       <h2 id="join-title">Unirse con un código</h2>
       <p className="small muted">
-        Tu profesor o profesora te dará un código de 4 a 6 letras o números.
+        Tu profesor o profesora te dará un código de 6 letras o números.
       </p>
       <form onSubmit={submit} noValidate className={styles.joinForm}>
         <Field label="Código del diccionario de aula" error={fieldError}>

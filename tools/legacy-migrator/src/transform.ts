@@ -143,9 +143,13 @@ export const maxSensesOf = (n: number | null): number | null =>
   n !== null && n > 1 ? Math.min(n, 50) : null;
 
 /** Legacy join code kept only when it is a valid new code (4-6 uppercase letters/digits). */
+/** A legacy code is kept only if it is a valid current code: 6 chars of the unambiguous alphabet (SEC-002). */
+export const isJoinCode = (c: string): boolean =>
+  c.length === 6 && [...c].every((ch) => JOIN_CODE_ALPHABET.includes(ch));
+
 export function legacyJoinCode(codigo: string | null): string | null {
   const c = (codigo ?? '').trim().toUpperCase();
-  return /^[A-Z0-9]{4,6}$/.test(c) ? c : null;
+  return isJoinCode(c) ? c : null;
 }
 
 /** Same generator as the app (6 chars, unambiguous alphabet). */

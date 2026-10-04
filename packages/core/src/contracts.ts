@@ -115,7 +115,10 @@ export const JoinInput = z.object({
     .string()
     .trim()
     .toUpperCase()
-    .regex(/^[A-Z0-9]{4,6}$/, { error: 'El código tiene entre 4 y 6 letras o números' }),
+    // Exactly the generator's 6-character unambiguous alphabet (SEC-002).
+    .regex(new RegExp(`^[${JOIN_CODE_ALPHABET}]{6}$`), {
+      error: 'El código tiene 6 letras o números',
+    }),
 });
 
 export const CommentInput = z.object({
