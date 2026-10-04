@@ -1,0 +1,4790 @@
+{
+ "system": "Lexican",
+ "root": {
+  "id": "sys",
+  "name": "lexican",
+  "kind": "system",
+  "children": [
+   {
+    "id": "dom:entry",
+    "name": "Entry points & bootstrap",
+    "kind": "domain",
+    "children": [
+     {
+      "id": "Console/Kernel",
+      "name": "Kernel",
+      "kind": "module",
+      "language": "php",
+      "loc": 36,
+      "file": "legacy/lexican/app/Console/Kernel.php"
+     },
+     {
+      "id": "Exceptions/Handler",
+      "name": "Handler",
+      "kind": "module",
+      "language": "php",
+      "loc": 62,
+      "file": "legacy/lexican/app/Exceptions/Handler.php"
+     },
+     {
+      "id": "Http/Kernel",
+      "name": "Kernel",
+      "kind": "module",
+      "language": "php",
+      "loc": 86,
+      "file": "legacy/lexican/app/Http/Kernel.php"
+     },
+     {
+      "id": "Providers/AppServiceProvider",
+      "name": "AppServiceProvider",
+      "kind": "module",
+      "language": "php",
+      "loc": 38,
+      "file": "legacy/lexican/app/Providers/AppServiceProvider.php"
+     },
+     {
+      "id": "Providers/AuthServiceProvider",
+      "name": "AuthServiceProvider",
+      "kind": "module",
+      "language": "php",
+      "loc": 36,
+      "file": "legacy/lexican/app/Providers/AuthServiceProvider.php"
+     },
+     {
+      "id": "Providers/BroadcastServiceProvider",
+      "name": "BroadcastServiceProvider",
+      "kind": "module",
+      "language": "php",
+      "loc": 17,
+      "file": "legacy/lexican/app/Providers/BroadcastServiceProvider.php"
+     },
+     {
+      "id": "Providers/EventServiceProvider",
+      "name": "EventServiceProvider",
+      "kind": "module",
+      "language": "php",
+      "loc": 29,
+      "file": "legacy/lexican/app/Providers/EventServiceProvider.php"
+     },
+     {
+      "id": "Providers/HelperServiceProvider",
+      "name": "HelperServiceProvider",
+      "kind": "module",
+      "language": "php",
+      "loc": 27,
+      "file": "legacy/lexican/app/Providers/HelperServiceProvider.php"
+     },
+     {
+      "id": "Providers/RouteServiceProvider",
+      "name": "RouteServiceProvider",
+      "kind": "module",
+      "language": "php",
+      "loc": 63,
+      "file": "legacy/lexican/app/Providers/RouteServiceProvider.php"
+     },
+     {
+      "id": "routes/api",
+      "name": "api.php",
+      "kind": "module",
+      "language": "php",
+      "loc": 15,
+      "file": "legacy/lexican/routes/api.php"
+     },
+     {
+      "id": "routes/channels",
+      "name": "channels.php",
+      "kind": "module",
+      "language": "php",
+      "loc": 14,
+      "file": "legacy/lexican/routes/channels.php"
+     },
+     {
+      "id": "routes/console",
+      "name": "console.php",
+      "kind": "module",
+      "language": "php",
+      "loc": 15,
+      "file": "legacy/lexican/routes/console.php"
+     },
+     {
+      "id": "routes/web",
+      "name": "web.php",
+      "kind": "module",
+      "language": "php",
+      "loc": 314,
+      "file": "legacy/lexican/routes/web.php",
+      "description": "web.php is the entry point that maps browser requests to controllers. It covers health checks, cookie acceptance and, behind the auth middleware, the diccionario personal routes for entries, senses, comments, media, pdf export and submissions to classroom dictionaries, plus the diccionario de aula routes. The admin and user roles are redirected to voyager.dashboard. It calls Cas/Helper and dispatches to DiccionarioPersonalController, DicAulaController, EnviosController, ComentariosController, PDFController, CSVController, MailController, Auth/CasController, Cas/CasManager and many Voyager controllers."
+     }
+    ]
+   },
+   {
+    "id": "dom:auth",
+    "name": "Auth (CAS + CAUCE)",
+    "kind": "domain",
+    "children": [
+     {
+      "id": "Auth/CasController",
+      "name": "CasController",
+      "kind": "module",
+      "language": "php",
+      "loc": 45,
+      "file": "legacy/lexican/app/Http/Controllers/Auth/CasController.php"
+     },
+     {
+      "id": "Auth/ForgotPasswordController",
+      "name": "ForgotPasswordController",
+      "kind": "module",
+      "language": "php",
+      "loc": 38,
+      "file": "legacy/lexican/app/Http/Controllers/Auth/ForgotPasswordController.php"
+     },
+     {
+      "id": "Auth/LoginController",
+      "name": "LoginController",
+      "kind": "module",
+      "language": "php",
+      "loc": 44,
+      "file": "legacy/lexican/app/Http/Controllers/Auth/LoginController.php"
+     },
+     {
+      "id": "Auth/RegisterController",
+      "name": "RegisterController",
+      "kind": "module",
+      "language": "php",
+      "loc": 75,
+      "file": "legacy/lexican/app/Http/Controllers/Auth/RegisterController.php"
+     },
+     {
+      "id": "Auth/ResetPasswordController",
+      "name": "ResetPasswordController",
+      "kind": "module",
+      "language": "php",
+      "loc": 44,
+      "file": "legacy/lexican/app/Http/Controllers/Auth/ResetPasswordController.php"
+     },
+     {
+      "id": "Auth/VerificationController",
+      "name": "VerificationController",
+      "kind": "module",
+      "language": "php",
+      "loc": 47,
+      "file": "legacy/lexican/app/Http/Controllers/Auth/VerificationController.php"
+     },
+     {
+      "id": "Cas/CasManager",
+      "name": "CasManager",
+      "kind": "module",
+      "language": "php",
+      "loc": 365,
+      "file": "legacy/lexican/app/Cas/CasManager.php",
+      "description": "CasManager is the central CAS authentication module: it configures phpCAS as a client or proxy from configuration settings, sets the CAS server login and logout URLs, hardens the session cookie, optionally handles SAML logout requests, and supports masquerading as a user. It calls Cas/CasUser and reads ds:ext:cas-server. It is called by Cas/CasServiceProvider and dispatched from Auth/CasController, Cas/Helper, Cas/Middleware/Authenticate, Cas/Middleware/RedirectIfAuthenticated, global_helper and routes/web."
+     },
+     {
+      "id": "Cas/CasServiceProvider",
+      "name": "CasServiceProvider",
+      "kind": "module",
+      "language": "php",
+      "loc": 43,
+      "file": "legacy/lexican/app/Cas/CasServiceProvider.php"
+     },
+     {
+      "id": "Cas/CasUser",
+      "name": "CasUser",
+      "kind": "module",
+      "language": "php",
+      "loc": 58,
+      "file": "legacy/lexican/app/Cas/CasUser.php"
+     },
+     {
+      "id": "Cas/Contracts/Factory",
+      "name": "Factory",
+      "kind": "module",
+      "language": "php",
+      "loc": 30,
+      "file": "legacy/lexican/app/Cas/Contracts/Factory.php"
+     },
+     {
+      "id": "Cas/Contracts/User",
+      "name": "User",
+      "kind": "module",
+      "language": "php",
+      "loc": 17,
+      "file": "legacy/lexican/app/Cas/Contracts/User.php"
+     },
+     {
+      "id": "Cas/Facades/Cas",
+      "name": "Cas",
+      "kind": "module",
+      "language": "php",
+      "loc": 13,
+      "file": "legacy/lexican/app/Cas/Facades/Cas.php"
+     },
+     {
+      "id": "Cas/Helper",
+      "name": "Helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 8,
+      "file": "legacy/lexican/app/Cas/Helper.php"
+     },
+     {
+      "id": "Cas/Middleware/Authenticate",
+      "name": "Authenticate",
+      "kind": "module",
+      "language": "php",
+      "loc": 34,
+      "file": "legacy/lexican/app/Cas/Middleware/Authenticate.php"
+     },
+     {
+      "id": "Cas/Middleware/RedirectIfAuthenticated",
+      "name": "RedirectIfAuthenticated",
+      "kind": "module",
+      "language": "php",
+      "loc": 27,
+      "file": "legacy/lexican/app/Cas/Middleware/RedirectIfAuthenticated.php"
+     },
+     {
+      "id": "Http/Middleware/Authenticate",
+      "name": "Authenticate",
+      "kind": "module",
+      "language": "php",
+      "loc": 33,
+      "file": "legacy/lexican/app/Http/Middleware/Authenticate.php"
+     },
+     {
+      "id": "Http/Middleware/CheckForMaintenanceMode",
+      "name": "CheckForMaintenanceMode",
+      "kind": "module",
+      "language": "php",
+      "loc": 23,
+      "file": "legacy/lexican/app/Http/Middleware/CheckForMaintenanceMode.php"
+     },
+     {
+      "id": "Http/Middleware/EncryptCookies",
+      "name": "EncryptCookies",
+      "kind": "module",
+      "language": "php",
+      "loc": 23,
+      "file": "legacy/lexican/app/Http/Middleware/EncryptCookies.php"
+     },
+     {
+      "id": "Http/Middleware/RedirectIfAuthenticated",
+      "name": "RedirectIfAuthenticated",
+      "kind": "module",
+      "language": "php",
+      "loc": 31,
+      "file": "legacy/lexican/app/Http/Middleware/RedirectIfAuthenticated.php"
+     },
+     {
+      "id": "Http/Middleware/TrimStrings",
+      "name": "TrimStrings",
+      "kind": "module",
+      "language": "php",
+      "loc": 24,
+      "file": "legacy/lexican/app/Http/Middleware/TrimStrings.php"
+     },
+     {
+      "id": "Http/Middleware/TrustProxies",
+      "name": "TrustProxies",
+      "kind": "module",
+      "language": "php",
+      "loc": 28,
+      "file": "legacy/lexican/app/Http/Middleware/TrustProxies.php"
+     },
+     {
+      "id": "Http/Middleware/VerifyCsrfToken",
+      "name": "VerifyCsrfToken",
+      "kind": "module",
+      "language": "php",
+      "loc": 29,
+      "file": "legacy/lexican/app/Http/Middleware/VerifyCsrfToken.php"
+     }
+    ]
+   },
+   {
+    "id": "dom:personal",
+    "name": "Diccionario personal",
+    "kind": "domain",
+    "children": [
+     {
+      "id": "DiccionarioPersonalController",
+      "name": "DiccionarioPersonalController",
+      "kind": "module",
+      "language": "php",
+      "loc": 1294,
+      "file": "legacy/lexican/app/Http/Controllers/DiccionarioPersonalController.php",
+      "description": "DiccionarioPersonalController (1294 lines) manages the student's personal dictionary: entries, acepciones and medios. It shows an entry after an isOwner check, deletes entries unless they are already published (entrada_publicada), and starts entry creation. It is dispatched from routes/web and from views such as diccionario/personal and diccionario/consulta. It extends Controller and calls dpEntradas_helper, dpAcepciones_helper, dpDiccionarios_helper, dpMedios_helper, global_helper and mstEntradaValor_helper. It renders views including diccionario/dpEntrada/masterEntrada and diccionario/consultaAjax, and writes DiccionarioPersonalAcepcion, DiccionarioPersonalEntrada and Persona."
+     },
+     {
+      "id": "Policies/DiccionarioPersonalPolicy",
+      "name": "DiccionarioPersonalPolicy",
+      "kind": "module",
+      "language": "php",
+      "loc": 23,
+      "file": "legacy/lexican/app/Policies/DiccionarioPersonalPolicy.php"
+     },
+     {
+      "id": "dpAcepciones_helper",
+      "name": "dpAcepciones_helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 314,
+      "file": "legacy/lexican/app/Helpers/dpAcepciones_helper.php",
+      "description": "dpAcepciones_helper is a module of global helper functions that manage the senses in a student's personal dictionary. It finds a sense by id and creates or edits one through dpAcepcionSave, which copies fields such as definicion, frase_ejemplo and estado. It also deletes a sense by id and uses dpAcepcionTematicas_Actualizar to replace the sense's thematic links from a comma-separated list. It writes model:DiccionarioPersonalAcepcion and model:DiccionarioPersonalAcepcionTematica. DiccionarioPersonalController and dpEnvios_helper call it."
+     },
+     {
+      "id": "dpDiccionarios_helper",
+      "name": "dpDiccionarios_helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 92,
+      "file": "legacy/lexican/app/Helpers/dpDiccionarios_helper.php"
+     },
+     {
+      "id": "dpEntradas_helper",
+      "name": "dpEntradas_helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 630,
+      "file": "legacy/lexican/app/Helpers/dpEntradas_helper.php",
+      "description": "dpEntradas_helper (630 lines) manages entries (entrada) in a student's personal dictionary. dpEntrada_GetEntradaById looks one up. dpEntrada_GetEntradaByEntradaByDiccionario finds a word case-insensitively and can filter it by category. dpEntrada_DeleteEntradaById fully deletes entries that were never sent and soft-deletes entries whose envío is enviado. It refuses to delete publicado ones. It is called by ComentariosController, DicAulaController, DiccionarioPersonalController, EnviosController, PDFController and dpEnvios_helper. It calls dicAula_helper, dpDiccionarios_helper, dpEnvios_helper and global_helper. It reads CampoValor, DiccionarioPersonal, DiccionarioPersonalAcepcionTematica and NivelEstudio, and writes DiccionarioPersonalEntrada. Other functions are outside the excerpt."
+     },
+     {
+      "id": "dpMedios_helper",
+      "name": "dpMedios_helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 481,
+      "file": "legacy/lexican/app/Helpers/dpMedios_helper.php",
+      "description": "dpMedios_helper manages the media files (imagen, audio, video) attached to an acepción in the student's diccionario personal. dpMedio_TratarMedio replaces any existing medio of the same tipo_medio, saves the uploaded file via dpMedio_SaveMedio, records a DiccionarioPersonalAcepcionMedio row, and creates image or video thumbnails; dpMedio_DeleteMedio deletes the database record. It calls create-thumbnail, global_helper and video_thumbnail, reads model:DiccionarioPersonalAcepcion, and writes model:DiccionarioPersonalAcepcionMedio and ds:ext:file-storage. Callers include DiccionarioPersonalController, dpEnvios_helper, envioAcepcion_helper, pdf_helper and views under layouts/partials/consulta/* and layouts/partials/dpAcepcion/*."
+     },
+     {
+      "id": "mstEntradaValor_helper",
+      "name": "mstEntradaValor_helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 11,
+      "file": "legacy/lexican/app/Helpers/mstEntradaValor_helper.php"
+     }
+    ]
+   },
+   {
+    "id": "dom:aula",
+    "name": "Diccionario de aula",
+    "kind": "domain",
+    "children": [
+     {
+      "id": "DicAulaController",
+      "name": "DicAulaController",
+      "kind": "module",
+      "language": "php",
+      "loc": 1497,
+      "file": "legacy/lexican/app/Http/Controllers/DicAulaController.php",
+      "description": "DicAulaController manages classroom dictionaries (diccionarios de aula) for authenticated users. Its index method shows teachers (esDocente) the creation form, and its create method validates the form and saves a new dictionary. routes/web and views such as diccionario/aula and diccionario/home dispatch to it. It calls dicAula_helper, dpEntradas_helper, dpEnvios_helper, global_helper and mail_helper, and renders views such as diccionario/crearDicAula. It reads models including AreaMateria, Pautas and Persona, and writes ComentarioEntrada, DicAula, DicAulaDestinarioAviso and EnvioEntrada."
+     },
+     {
+      "id": "Policies/DicAulaPolicy",
+      "name": "DicAulaPolicy",
+      "kind": "module",
+      "language": "php",
+      "loc": 126,
+      "file": "legacy/lexican/app/Policies/DicAulaPolicy.php"
+     },
+     {
+      "id": "daMedios_helper",
+      "name": "daMedios_helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 130,
+      "file": "legacy/lexican/app/Helpers/daMedios_helper.php"
+     },
+     {
+      "id": "dicAula_helper",
+      "name": "dicAula_helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 1901,
+      "file": "legacy/lexican/app/Helpers/dicAula_helper.php",
+      "description": "dicAula_helper is a 1901-line helper module that manages classroom dictionaries: createOrUpdateDicAula and daCreateOrUpdateDicAulaByPersonaId create or update a DicAula along with its fields, pautas and participants, and can import entries from another dictionary. It writes DicAula, DicAulaCampo, DicAulaPauta, DicAulaParticipante, DicAulaEntrada, EnvioEntrada, EnvioAcepcion and ComentarioEntrada. It reads CampoEntrada, Persona, UserPersona and User, and calls global_helper and mstEntradaValor_helper. Its callers include DicAulaController, EnviosController, ComentariosController, pdf_helper and several diccionario views. The excerpt shows only the creation path."
+     }
+    ]
+   },
+   {
+    "id": "dom:envios",
+    "name": "Envíos",
+    "kind": "domain",
+    "children": [
+     {
+      "id": "EnvioAcepcionController",
+      "name": "EnvioAcepcionController",
+      "kind": "module",
+      "language": "php",
+      "loc": 190,
+      "file": "legacy/lexican/app/Http/Controllers/EnvioAcepcionController.php",
+      "description": "EnvioAcepcionController lets a user edit a submitted sense (acepción) of an entry in the classroom dictionary (diccionario de aula). It loads the sense, its entry and the value lists for the edit form, then validates and saves changes such as definition, examples, themes and media. It is dispatched from routes/web, view:diccionario/aula/acepcionEdit and view:layouts/partials/components/botones/acepcion/*. It extends Controller, calls envioAcepcion_helper, global_helper and mstEntradaValor_helper, renders diccionario/aula/acepcionEdit, and writes model:EnvioAcepcion."
+     },
+     {
+      "id": "EnviosController",
+      "name": "EnviosController",
+      "kind": "module",
+      "language": "php",
+      "loc": 479,
+      "file": "legacy/lexican/app/Http/Controllers/EnviosController.php",
+      "description": "EnviosController handles sending a student's diccionario personal to diccionarios de aula. enviarDiccionarioGET lists the user's classroom dictionaries (activo, inactivo, planificado) and renders dpDiccionarioEnviarFormulario. enviarDiccionarioPOST hides or shows the selected entries, then calls dpEnvio_EnviarEntradasADicAula for the first target dictionary. It is dispatched by routes/web and several views. It extends Controller, calls dicAula_helper, dpDiccionarios_helper, dpEntradas_helper, dpEnvios_helper and global_helper, and reads DicAula, DiccionarioPersonalEntrada and EnvioEntrada."
+     },
+     {
+      "id": "dpEnvios_helper",
+      "name": "dpEnvios_helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 628,
+      "file": "legacy/lexican/app/Helpers/dpEnvios_helper.php",
+      "description": "dpEnvios_helper is a 628-line helper module that submits a student's diccionario personal, either whole or as selected entries, to one or more diccionarios de aula. It creates one Envio per DicAula inside a database transaction, sends only visible entries and records any error for each attempt. It is called by DicAulaController, EnviosController and dpEntradas_helper. It calls dicAula_helper, dpAcepciones_helper, dpDiccionarios_helper, dpEntradas_helper, dpMedios_helper and global_helper. It reads CampoEntrada, DicAula and DiccionarioPersonalEntrada, and writes Envio, EnvioAcepcion, EnvioAcepcionMedio, EnvioAcepcionTematica and EnvioEntrada."
+     },
+     {
+      "id": "envioAcepcion_helper",
+      "name": "envioAcepcion_helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 142,
+      "file": "legacy/lexican/app/Helpers/envioAcepcion_helper.php",
+      "description": "envioAcepcion_helper is a module of helper functions for editing a submitted acepción in the diccionario de aula. It replaces the temáticas linked to the sense and swaps its image, audio or video media, deleting the previous file of the same type and generating thumbnails for images and videos. It is called by EnvioAcepcionController, calls create-thumbnail, dpMedios_helper, global_helper and video_thumbnail, reads model:EnvioAcepcion, and writes model:EnvioAcepcionMedio and model:EnvioAcepcionTematica."
+     }
+    ]
+   },
+   {
+    "id": "dom:comentarios",
+    "name": "Comentarios",
+    "kind": "domain",
+    "children": [
+     {
+      "id": "ComentariosController",
+      "name": "ComentariosController",
+      "kind": "module",
+      "language": "php",
+      "loc": 329,
+      "file": "legacy/lexican/app/Http/Controllers/ComentariosController.php",
+      "description": "ComentariosController handles comments on a student's diccionario personal entries and on the diccionario de aula. It shows every comment across the user's connected classroom dictionaries (comentariosDiccionarioGET) and returns comment modals through Ajax (getComentariosEntradaAjax, getComentariosDiccionarioAjax). Requests reach it from routes/web and from views such as comentarios/comentariosDiccionarioEnviar and diccionario/aula. It calls ComentariosHelper, dicAula_helper, dpDiccionarios_helper, dpEntradas_helper and global_helper, and renders comentarios/comentariosDiccionarioVer. It reads DicAula and EnvioEntrada and writes ComentarioGeneral."
+     },
+     {
+      "id": "ComentariosHelper",
+      "name": "ComentariosHelper",
+      "kind": "module",
+      "language": "php",
+      "loc": 416,
+      "file": "legacy/lexican/app/Helpers/ComentariosHelper.php",
+      "description": "ComentariosHelper is a 416-line module of global helper functions that gathers comments on classroom dictionaries: it lists the connected user's DicAula records, marks each activo or inactivo depending on whether visible entry or general comments exist, and filters comments by the comentarios_visibles setting, newest fecha_envio first. It calls dicAula_helper, reads ComentarioEntrada, DicAula and DiccionarioPersonal, and writes ComentarioGeneral. It is called by ComentariosController, the comentarios/comentariosDiccionarioEnviar view, and views under layouts/partials/components."
+     },
+     {
+      "id": "Policies/ComentarioGeneralPolicy",
+      "name": "ComentarioGeneralPolicy",
+      "kind": "module",
+      "language": "php",
+      "loc": 23,
+      "file": "legacy/lexican/app/Policies/ComentarioGeneralPolicy.php"
+     }
+    ]
+   },
+   {
+    "id": "dom:export",
+    "name": "PDF / CSV / Mail",
+    "kind": "domain",
+    "children": [
+     {
+      "id": "CSVController",
+      "name": "CSVController",
+      "kind": "module",
+      "language": "php",
+      "loc": 123,
+      "file": "legacy/lexican/app/Http/Controllers/CSVController.php"
+     },
+     {
+      "id": "MailController",
+      "name": "MailController",
+      "kind": "module",
+      "language": "php",
+      "loc": 85,
+      "file": "legacy/lexican/app/Http/Controllers/MailController.php"
+     },
+     {
+      "id": "PDFController",
+      "name": "PDFController",
+      "kind": "module",
+      "language": "php",
+      "loc": 174,
+      "file": "legacy/lexican/app/Http/Controllers/PDFController.php",
+      "description": "PDFController builds PDF exports of a student's diccionario personal and of a diccionario de aula with DOMPDF. Before the diccionario de aula export it checks esParticipante, and it shows export options. When exportOnlyTagged is set without listaTematicas, it redirects back with an error. It is dispatched by routes/web and views diccionario/aula, diccionario/personal, layouts/partials/components/* and layouts/partials/pdf/*. It calls Controller, dpDiccionarios_helper, dpEntradas_helper, global_helper, mstEntradaValor_helper, pdf_helper, diccionario/daOptionsPDF, diccionario/dpOptionsPDFView and layouts/partials/pdf/*, and reads model:DicAula."
+     },
+     {
+      "id": "mail_helper",
+      "name": "mail_helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 49,
+      "file": "legacy/lexican/app/Helpers/mail_helper.php"
+     },
+     {
+      "id": "pdf_helper",
+      "name": "pdf_helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 273,
+      "file": "legacy/lexican/app/Helpers/pdf_helper.php",
+      "description": "pdf_helper is a module that gathers dictionary content into a data array: getDataByDiccionarioPersonalId collects the title, the owner's full name and the entries with their acepciones from a student's diccionario personal, optionally keeping hidden ones or filtering by tematica_id; getDataByDiccionarioAulaId does the same for a diccionario de aula and its profesor. It is called by PDFController, calls daMedios_helper, dicAula_helper, dpMedios_helper and global_helper, and reads DicAula, DiccionarioPersonal, DiccionarioPersonalAcepcionMedio, DiccionarioPersonalAcepcionTematica, EnvioAcepcion, EnvioAcepcionMedio, EnvioAcepcionTematica and EnvioEntrada."
+     }
+    ]
+   },
+   {
+    "id": "dom:admin",
+    "name": "Admin (Voyager)",
+    "kind": "domain",
+    "children": [
+     {
+      "id": "Voyager/VoyagerAuthController",
+      "name": "VoyagerAuthController",
+      "kind": "module",
+      "language": "php",
+      "loc": 64,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/VoyagerAuthController.php"
+     },
+     {
+      "id": "Voyager/VoyagerBaseController",
+      "name": "VoyagerBaseController",
+      "kind": "module",
+      "language": "php",
+      "loc": 152,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/VoyagerBaseController.php",
+      "description": "VoyagerBaseController extends the Voyager BREAD controller to customise browse listings. Its index method finds the DataType by slug, queries the model (or DB::table when no model exists), applies key0/value0/filter0 search filters ('equals' or LIKE), ordering, server_side pagination and withTrashed for SoftDeletes, then builds actions and showCheckboxColumn. The browse permission check is commented out. It is dispatched by routes/web and calls voyager_helper. The excerpt shows only index, so other methods are unknown."
+     },
+     {
+      "id": "Voyager/VoyagerBreadController",
+      "name": "VoyagerBreadController",
+      "kind": "module",
+      "language": "php",
+      "loc": 16,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/VoyagerBreadController.php"
+     },
+     {
+      "id": "Voyager/VoyagerCompassController",
+      "name": "VoyagerCompassController",
+      "kind": "module",
+      "language": "php",
+      "loc": 598,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/VoyagerCompassController.php",
+      "description": "VoyagerCompassController extends BaseVoyagerCompassController with a log viewer gated by browse_compass that can view, download or delete log files. It also adds admin statistics on classroom dictionaries: dic_aula counts per ano_ini_curso_escolar, active ones (estado 1, vigencia > 0), and participants per rol_diccionario_id. routes/web dispatches to it, and CSVController, Voyager/vDicAulaController, Voyager/vDicPersonalController and Voyager/vCentrosAñoEscolarController call it. It calls dicAula_helper and global_helper, reads centros, dic_aula, dic_aula_participantes, dic_personal, dp_entradas, envios_entradas and DicAulaAtemporal, and writes DicAula. The excerpt covers only part of the 598 lines, so the DicAula write does not appear in it."
+     },
+     {
+      "id": "Voyager/VoyagerController",
+      "name": "VoyagerController",
+      "kind": "module",
+      "language": "php",
+      "loc": 19,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/VoyagerController.php"
+     },
+     {
+      "id": "Voyager/VoyagerDatabaseController",
+      "name": "VoyagerDatabaseController",
+      "kind": "module",
+      "language": "php",
+      "loc": 16,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/VoyagerDatabaseController.php"
+     },
+     {
+      "id": "Voyager/VoyagerMediaController",
+      "name": "VoyagerMediaController",
+      "kind": "module",
+      "language": "php",
+      "loc": 16,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/VoyagerMediaController.php"
+     },
+     {
+      "id": "Voyager/VoyagerMenuController",
+      "name": "VoyagerMenuController",
+      "kind": "module",
+      "language": "php",
+      "loc": 16,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/VoyagerMenuController.php"
+     },
+     {
+      "id": "Voyager/VoyagerRoleController",
+      "name": "VoyagerRoleController",
+      "kind": "module",
+      "language": "php",
+      "loc": 16,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/VoyagerRoleController.php"
+     },
+     {
+      "id": "Voyager/VoyagerSettingsController",
+      "name": "VoyagerSettingsController",
+      "kind": "module",
+      "language": "php",
+      "loc": 16,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/VoyagerSettingsController.php"
+     },
+     {
+      "id": "Voyager/VoyagerUserController",
+      "name": "VoyagerUserController",
+      "kind": "module",
+      "language": "php",
+      "loc": 16,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/VoyagerUserController.php"
+     },
+     {
+      "id": "Voyager/vCentrosAñoEscolarController",
+      "name": "vCentrosAñoEscolarController",
+      "kind": "module",
+      "language": "php",
+      "loc": 17,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/vCentrosAñoEscolarController.php"
+     },
+     {
+      "id": "Voyager/vDicAulaController",
+      "name": "vDicAulaController",
+      "kind": "module",
+      "language": "php",
+      "loc": 17,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/vDicAulaController.php"
+     },
+     {
+      "id": "Voyager/vDicPersonalController",
+      "name": "vDicPersonalController",
+      "kind": "module",
+      "language": "php",
+      "loc": 17,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/vDicPersonalController.php"
+     },
+     {
+      "id": "Voyager/vRecordingController",
+      "name": "vRecordingController",
+      "kind": "module",
+      "language": "php",
+      "loc": 55,
+      "file": "legacy/lexican/app/Http/Controllers/Voyager/vRecordingController.php"
+     }
+    ]
+   },
+   {
+    "id": "dom:shared",
+    "name": "Shared / platform",
+    "kind": "domain",
+    "children": [
+     {
+      "id": "Controller",
+      "name": "Controller",
+      "kind": "module",
+      "language": "php",
+      "loc": 19,
+      "file": "legacy/lexican/app/Http/Controllers/Controller.php"
+     },
+     {
+      "id": "HealthCheckController",
+      "name": "HealthCheckController",
+      "kind": "module",
+      "language": "php",
+      "loc": 42,
+      "file": "legacy/lexican/app/Http/Controllers/HealthCheckController.php"
+     },
+     {
+      "id": "HomeController",
+      "name": "HomeController",
+      "kind": "module",
+      "language": "php",
+      "loc": 200,
+      "file": "legacy/lexican/app/Http/Controllers/HomeController.php",
+      "description": "HomeController is the controller behind the home page, and every request must pass the auth middleware. index renders view:home. upload stores images sent from tinyMCE and returns their location as json. logs and downloadLogs list and serve log files. createAdmin creates or updates an admin User with a hardcoded password. test holds sample CheckUsuarioAutorizadoResponse data. Both routes/web and view:diccionario/cookies dispatch to it. It extends Controller, calls global_helper and view:home, and writes User and ds:ext:file-storage."
+     },
+     {
+      "id": "MediaTypeController",
+      "name": "MediaTypeController",
+      "kind": "module",
+      "language": "php",
+      "loc": 15,
+      "file": "legacy/lexican/app/Http/Controllers/MediaTypeController.php"
+     },
+     {
+      "id": "ModalAjaxController",
+      "name": "ModalAjaxController",
+      "kind": "module",
+      "language": "php",
+      "loc": 47,
+      "file": "legacy/lexican/app/Http/Controllers/ModalAjaxController.php"
+     },
+     {
+      "id": "User",
+      "name": "User",
+      "kind": "module",
+      "language": "php",
+      "loc": 68,
+      "file": "legacy/lexican/app/User.php"
+     },
+     {
+      "id": "create-thumbnail",
+      "name": "create-thumbnail",
+      "kind": "module",
+      "language": "php",
+      "loc": 129,
+      "file": "legacy/lexican/app/Helpers/create-thumbnail.php"
+     },
+     {
+      "id": "global_helper",
+      "name": "global_helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 1218,
+      "file": "legacy/lexican/app/Helpers/global_helper.php",
+      "description": "global_helper (1218 lines) is a shared library of utility functions. The excerpt shows two of them: valida_nif_nie, which checks whether a NIF or NIE document number is valid, and getHttpMessage, which turns an http status code into its text message. It writes to User, model:Persona, model:UserPersona, model:Centro and ds:ext:file-storage, and reads ds:ext:cauce-ws and model:NivelEstudio. That suggests it sets up user records, but the excerpt does not confirm this. It calls Cas/Helper and view:errors/403 and dispatches Cas/CasManager. Its callers include controllers such as EnviosController, helpers such as dicAula_helper, and many views."
+     },
+     {
+      "id": "video_thumbnail",
+      "name": "video_thumbnail",
+      "kind": "module",
+      "language": "php",
+      "loc": 31,
+      "file": "legacy/lexican/app/Helpers/video_thumbnail.php"
+     },
+     {
+      "id": "voyager_helper",
+      "name": "voyager_helper",
+      "kind": "module",
+      "language": "php",
+      "loc": 20,
+      "file": "legacy/lexican/app/Helpers/voyager_helper.php"
+     }
+    ]
+   },
+   {
+    "id": "dom:models",
+    "name": "Eloquent models",
+    "kind": "domain",
+    "children": [
+     {
+      "id": "model:AreaMateria",
+      "name": "AreaMateria",
+      "kind": "module",
+      "language": "php",
+      "loc": 21,
+      "file": "legacy/lexican/app/Models/AreaMateria.php"
+     },
+     {
+      "id": "model:CampoEntrada",
+      "name": "CampoEntrada",
+      "kind": "module",
+      "language": "php",
+      "loc": 30,
+      "file": "legacy/lexican/app/Models/CampoEntrada.php"
+     },
+     {
+      "id": "model:CampoValor",
+      "name": "CampoValor",
+      "kind": "module",
+      "language": "php",
+      "loc": 30,
+      "file": "legacy/lexican/app/Models/CampoValor.php"
+     },
+     {
+      "id": "model:Centro",
+      "name": "Centro",
+      "kind": "module",
+      "language": "php",
+      "loc": 41,
+      "file": "legacy/lexican/app/Models/Centro.php"
+     },
+     {
+      "id": "model:CentroDicAula",
+      "name": "CentroDicAula",
+      "kind": "module",
+      "language": "php",
+      "loc": 25,
+      "file": "legacy/lexican/app/Models/CentroDicAula.php"
+     },
+     {
+      "id": "model:ComentarioEntrada",
+      "name": "ComentarioEntrada",
+      "kind": "module",
+      "language": "php",
+      "loc": 46,
+      "file": "legacy/lexican/app/Models/ComentarioEntrada.php"
+     },
+     {
+      "id": "model:ComentarioGeneral",
+      "name": "ComentarioGeneral",
+      "kind": "module",
+      "language": "php",
+      "loc": 57,
+      "file": "legacy/lexican/app/Models/ComentarioGeneral.php"
+     },
+     {
+      "id": "model:DicAula",
+      "name": "DicAula",
+      "kind": "module",
+      "language": "php",
+      "loc": 440,
+      "file": "legacy/lexican/app/Models/DicAula.php",
+      "description": "DicAula is the Eloquent model for a diccionario de aula. It is stored in table dic_aula, uses SoftDeletes and Auditable, and holds fields such as titulo, codigo, max_acepciones_entrada and envios_habilitados. Its enviosHabilitados method works out whether submissions are currently enabled. It reads DicAulaPauta, DicAulaCampo, DicAulaParticipante, DicAulaEntrada, Envio and Persona, calls global_helper, and writes dic_aula, dic_aula_participantes, dic_aula_pautas, dp_envios and avisos. DicAulaController, dicAula_helper and Voyager/VoyagerCompassController write to it. EnviosController, PDFController, ComentariosController and Policies/DicAulaPolicy read it."
+     },
+     {
+      "id": "model:DicAulaAtemporal",
+      "name": "DicAulaAtemporal",
+      "kind": "module",
+      "language": "php",
+      "loc": 36,
+      "file": "legacy/lexican/app/Models/DicAulaAtemporal.php"
+     },
+     {
+      "id": "model:DicAulaCampo",
+      "name": "DicAulaCampo",
+      "kind": "module",
+      "language": "php",
+      "loc": 38,
+      "file": "legacy/lexican/app/Models/DicAulaCampo.php"
+     },
+     {
+      "id": "model:DicAulaDestinarioAviso",
+      "name": "DicAulaDestinarioAviso",
+      "kind": "module",
+      "language": "php",
+      "loc": 33,
+      "file": "legacy/lexican/app/Models/DicAulaDestinarioAviso.php"
+     },
+     {
+      "id": "model:DicAulaEntrada",
+      "name": "DicAulaEntrada",
+      "kind": "module",
+      "language": "php",
+      "loc": 58,
+      "file": "legacy/lexican/app/Models/DicAulaEntrada.php"
+     },
+     {
+      "id": "model:DicAulaParticipante",
+      "name": "DicAulaParticipante",
+      "kind": "module",
+      "language": "php",
+      "loc": 32,
+      "file": "legacy/lexican/app/Models/DicAulaParticipante.php"
+     },
+     {
+      "id": "model:DicAulaPauta",
+      "name": "DicAulaPauta",
+      "kind": "module",
+      "language": "php",
+      "loc": 33,
+      "file": "legacy/lexican/app/Models/DicAulaPauta.php"
+     },
+     {
+      "id": "model:DiccionarioPersonal",
+      "name": "DiccionarioPersonal",
+      "kind": "module",
+      "language": "php",
+      "loc": 45,
+      "file": "legacy/lexican/app/Models/DiccionarioPersonal.php"
+     },
+     {
+      "id": "model:DiccionarioPersonalAcepcion",
+      "name": "DiccionarioPersonalAcepcion",
+      "kind": "module",
+      "language": "php",
+      "loc": 105,
+      "file": "legacy/lexican/app/Models/DiccionarioPersonalAcepcion.php"
+     },
+     {
+      "id": "model:DiccionarioPersonalAcepcionMedio",
+      "name": "DiccionarioPersonalAcepcionMedio",
+      "kind": "module",
+      "language": "php",
+      "loc": 44,
+      "file": "legacy/lexican/app/Models/DiccionarioPersonalAcepcionMedio.php"
+     },
+     {
+      "id": "model:DiccionarioPersonalAcepcionTematica",
+      "name": "DiccionarioPersonalAcepcionTematica",
+      "kind": "module",
+      "language": "php",
+      "loc": 36,
+      "file": "legacy/lexican/app/Models/DiccionarioPersonalAcepcionTematica.php"
+     },
+     {
+      "id": "model:DiccionarioPersonalEntrada",
+      "name": "DiccionarioPersonalEntrada",
+      "kind": "module",
+      "language": "php",
+      "loc": 92,
+      "file": "legacy/lexican/app/Models/DiccionarioPersonalEntrada.php"
+     },
+     {
+      "id": "model:Ensenanza",
+      "name": "Ensenanza",
+      "kind": "module",
+      "language": "php",
+      "loc": 21,
+      "file": "legacy/lexican/app/Models/Ensenanza.php"
+     },
+     {
+      "id": "model:EnsenanzaEstudio",
+      "name": "EnsenanzaEstudio",
+      "kind": "module",
+      "language": "php",
+      "loc": 21,
+      "file": "legacy/lexican/app/Models/EnsenanzaEstudio.php"
+     },
+     {
+      "id": "model:Envio",
+      "name": "Envio",
+      "kind": "module",
+      "language": "php",
+      "loc": 59,
+      "file": "legacy/lexican/app/Models/Envio.php"
+     },
+     {
+      "id": "model:EnvioAcepcion",
+      "name": "EnvioAcepcion",
+      "kind": "module",
+      "language": "php",
+      "loc": 124,
+      "file": "legacy/lexican/app/Models/EnvioAcepcion.php"
+     },
+     {
+      "id": "model:EnvioAcepcionMedio",
+      "name": "EnvioAcepcionMedio",
+      "kind": "module",
+      "language": "php",
+      "loc": 28,
+      "file": "legacy/lexican/app/Models/EnvioAcepcionMedio.php"
+     },
+     {
+      "id": "model:EnvioAcepcionTematica",
+      "name": "EnvioAcepcionTematica",
+      "kind": "module",
+      "language": "php",
+      "loc": 39,
+      "file": "legacy/lexican/app/Models/EnvioAcepcionTematica.php"
+     },
+     {
+      "id": "model:EnvioEntrada",
+      "name": "EnvioEntrada",
+      "kind": "module",
+      "language": "php",
+      "loc": 102,
+      "file": "legacy/lexican/app/Models/EnvioEntrada.php"
+     },
+     {
+      "id": "model:EstudioAreaMateria",
+      "name": "EstudioAreaMateria",
+      "kind": "module",
+      "language": "php",
+      "loc": 21,
+      "file": "legacy/lexican/app/Models/EstudioAreaMateria.php"
+     },
+     {
+      "id": "model:NivelEstudio",
+      "name": "NivelEstudio",
+      "kind": "module",
+      "language": "php",
+      "loc": 21,
+      "file": "legacy/lexican/app/Models/NivelEstudio.php"
+     },
+     {
+      "id": "model:Pautas",
+      "name": "Pautas",
+      "kind": "module",
+      "language": "php",
+      "loc": 20,
+      "file": "legacy/lexican/app/Models/Pautas.php"
+     },
+     {
+      "id": "model:Persona",
+      "name": "Persona",
+      "kind": "module",
+      "language": "php",
+      "loc": 61,
+      "file": "legacy/lexican/app/Models/Persona.php"
+     },
+     {
+      "id": "model:TipoDiccionarioAula",
+      "name": "TipoDiccionarioAula",
+      "kind": "module",
+      "language": "php",
+      "loc": 21,
+      "file": "legacy/lexican/app/Models/TipoDiccionarioAula.php"
+     },
+     {
+      "id": "model:UserCentro",
+      "name": "UserCentro",
+      "kind": "module",
+      "language": "php",
+      "loc": 25,
+      "file": "legacy/lexican/app/Models/UserCentro.php"
+     },
+     {
+      "id": "model:UserPersona",
+      "name": "UserPersona",
+      "kind": "module",
+      "language": "php",
+      "loc": 25,
+      "file": "legacy/lexican/app/Models/UserPersona.php"
+     },
+     {
+      "id": "model:Voyager/DataType",
+      "name": "Voyager/DataType",
+      "kind": "module",
+      "language": "php",
+      "loc": 88,
+      "file": "legacy/lexican/app/Models/Voyager/DataType.php"
+     },
+     {
+      "id": "model:Voyager/PermissionRole",
+      "name": "Voyager/PermissionRole",
+      "kind": "module",
+      "language": "php",
+      "loc": 38,
+      "file": "legacy/lexican/app/Models/Voyager/PermissionRole.php"
+     }
+    ]
+   },
+   {
+    "id": "dom:screens",
+    "name": "Screens (Blade views)",
+    "kind": "domain",
+    "children": [
+     {
+      "id": "view:auth/login",
+      "name": "auth/login",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 61,
+      "file": "legacy/lexican/resources/views/auth/login.blade.php"
+     },
+     {
+      "id": "view:auth/passwords/email",
+      "name": "auth/passwords/email",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 40,
+      "file": "legacy/lexican/resources/views/auth/passwords/email.blade.php"
+     },
+     {
+      "id": "view:auth/passwords/reset",
+      "name": "auth/passwords/reset",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 53,
+      "file": "legacy/lexican/resources/views/auth/passwords/reset.blade.php"
+     },
+     {
+      "id": "view:auth/register",
+      "name": "auth/register",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 63,
+      "file": "legacy/lexican/resources/views/auth/register.blade.php"
+     },
+     {
+      "id": "view:auth/verify",
+      "name": "auth/verify",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 21,
+      "file": "legacy/lexican/resources/views/auth/verify.blade.php"
+     },
+     {
+      "id": "view:comentarios/comentariosDiccionarioEnviar",
+      "name": "comentarios/comentariosDiccionarioEnviar",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 275,
+      "file": "legacy/lexican/resources/views/comentarios/comentariosDiccionarioEnviar.blade.php",
+      "description": "The comentarios/comentariosDiccionarioEnviar screen lets a teacher write general comments on a classroom dictionary (dicAula). It lists participantes in an estudiante selector, provides a tinyComentario text editor and posts the form to the comentarios.save route. It also shows saved comments taken from daGetComentariosGeneralesProfesorByDicAula. It extends view:diccionario/home and includes view:layouts/partials/components/*. ComentariosController calls it. It calls ComentariosHelper and global_helper, and dispatches to ComentariosController and DicAulaController."
+     },
+     {
+      "id": "view:comentarios/comentariosDiccionarioVer",
+      "name": "comentarios/comentariosDiccionarioVer",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 325,
+      "file": "legacy/lexican/resources/views/comentarios/comentariosDiccionarioVer.blade.php",
+      "description": "This screen, comentarios/comentariosDiccionarioVer, shows a student the teacher comments on their dictionary. It lists the diccionarios de aula they have joined and highlights the ones whose comments are visible. It also displays comentariosGenerales, with buttons to sort them by date or alphabetically. ComentariosController calls it. It extends view:diccionario/home, includes view:layouts/partials/components/*, calls global_helper, and holds a POST form to diccionario.send that dispatches to EnviosController. The excerpt covers only the first ~150 lines."
+     },
+     {
+      "id": "view:development/unirsediccionario",
+      "name": "development/unirsediccionario",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 81,
+      "file": "legacy/lexican/resources/views/development/unirsediccionario.blade.php"
+     },
+     {
+      "id": "view:diccionario/aula",
+      "name": "diccionario/aula",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 209,
+      "file": "legacy/lexican/resources/views/diccionario/aula.blade.php",
+      "description": "The diccionario/aula screen shows the Diccionario de Aula: an alphabet selector, search box and entry count for the active classroom dictionary. Other users see these tools only when a dictionary is active. Users allowed createDicAula also get buttons for \"Crear diccionario de aula\" and \"Gestionar Entradas Enviadas\", which link to viewing and publishing entradas and to Comentarios generales. DicAulaController calls this screen. It extends view:diccionario/home, calls dicAula_helper, view:layouts/partials/components/* and view:layouts/partials/nentradas, and dispatches to ComentariosController, DicAulaController and PDFController."
+     },
+     {
+      "id": "view:diccionario/aula/acepcionEdit",
+      "name": "diccionario/aula/acepcionEdit",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 375,
+      "file": "legacy/lexican/resources/views/diccionario/aula/acepcionEdit.blade.php",
+      "description": "This screen (\"Docente - Editar Acepción\") lets a teacher edit a sense of a classroom dictionary entry. It is guarded by createDicAula, posts the form to aula.acepcion.update, and handles image and audio uploads, with a confirmed delete through aula.medio.delete. EnvioAcepcionController renders it. It extends view:diccionario/home, includes view:layouts/partials/dpAcepcion/* and view:layouts/partials/components/*, calls daMedios_helper and global_helper, and dispatches to DicAulaController and EnvioAcepcionController."
+     },
+     {
+      "id": "view:diccionario/aula/consulta",
+      "name": "diccionario/aula/consulta",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 128,
+      "file": "legacy/lexican/resources/views/diccionario/aula/consulta.blade.php"
+     },
+     {
+      "id": "view:diccionario/aula/daEntradaEdit",
+      "name": "diccionario/aula/daEntradaEdit",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 104,
+      "file": "legacy/lexican/resources/views/diccionario/aula/daEntradaEdit.blade.php"
+     },
+     {
+      "id": "view:diccionario/aula/entrada",
+      "name": "diccionario/aula/entrada",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 67,
+      "file": "legacy/lexican/resources/views/diccionario/aula/entrada.blade.php"
+     },
+     {
+      "id": "view:diccionario/aula/pautas",
+      "name": "diccionario/aula/pautas",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 30,
+      "file": "legacy/lexican/resources/views/diccionario/aula/pautas.blade.php"
+     },
+     {
+      "id": "view:diccionario/consulta",
+      "name": "diccionario/consulta",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 121,
+      "file": "legacy/lexican/resources/views/diccionario/consulta.blade.php"
+     },
+     {
+      "id": "view:diccionario/consultaAjax",
+      "name": "diccionario/consultaAjax",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 10,
+      "file": "legacy/lexican/resources/views/diccionario/consultaAjax.blade.php"
+     },
+     {
+      "id": "view:diccionario/consultaAulaAjax",
+      "name": "diccionario/consultaAulaAjax",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 8,
+      "file": "legacy/lexican/resources/views/diccionario/consultaAulaAjax.blade.php"
+     },
+     {
+      "id": "view:diccionario/cookies",
+      "name": "diccionario/cookies",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 22,
+      "file": "legacy/lexican/resources/views/diccionario/cookies.blade.php"
+     },
+     {
+      "id": "view:diccionario/crearDicAula",
+      "name": "diccionario/crearDicAula",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 793,
+      "file": "legacy/lexican/resources/views/diccionario/crearDicAula.blade.php",
+      "description": "The diccionario/crearDicAula screen (793 lines) shows the form a teacher uses to create or modify a classroom dictionary (Diccionario de Aula). It shows the owner from getSessionPersona() and the cursoEscolar. It collects nombreDiccionario, descripcionDiccionario, estudio, grupoLetra, areaMateria and vigencia, which is capped by vigenciaMax. The form posts to 'edit' or 'create'. DicAulaController calls this screen. It extends diccionario.home and calls global_helper, view:diccionario/participantesAjax and view:layouts/partials/components/*. The excerpt covers only the first ~150 lines, so the rest of the screen is not confirmed."
+     },
+     {
+      "id": "view:diccionario/daOptionsPDF",
+      "name": "diccionario/daOptionsPDF",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 151,
+      "file": "legacy/lexican/resources/views/diccionario/daOptionsPDF.blade.php",
+      "description": "The diccionario/daOptionsPDF screen shows the options form for exporting a dictionary to PDF, with diccionario.exportarpdf__titulo as its title. The user can tick exportOnlyTagged to show the tematicas panel. They can then move tematicas between tematicas_disponibles and tematicas_seleccionadas, which fills the listaTematicas field. In the CONNECTIONS list, PDFController calls this screen. The screen calls view:diccionario/home, the layout it extends, and view:layouts/partials/aulaOptionsPDFform, the form it includes. The packet does not show where the form submits."
+     },
+     {
+      "id": "view:diccionario/dpDiccionario/dpDiccionarioEnviarFormulario",
+      "name": "diccionario/dpDiccionario/dpDiccionarioEnviarFormulario",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 505,
+      "file": "legacy/lexican/resources/views/diccionario/dpDiccionario/dpDiccionarioEnviarFormulario.blade.php",
+      "description": "This 505-line screen is the form for submitting a student's personal dictionary (diccionario personal) to one or more classroom dictionaries (diccionarios de aula). It shows the classroom dictionaries the user has joined and a cloud of the dictionary's entries, marked visible or hidden. It also shows the date of the last submission (envío) to each classroom dictionary. It extends view:diccionario/home, includes view:layouts/partials/components/*, calls global_helper, and is rendered by EnviosController. It dispatches to EnviosController and DiccionarioPersonalController."
+     },
+     {
+      "id": "view:diccionario/dpDiccionario/dpModificacion",
+      "name": "diccionario/dpDiccionario/dpModificacion",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 113,
+      "file": "legacy/lexican/resources/views/diccionario/dpDiccionario/dpModificacion.blade.php"
+     },
+     {
+      "id": "view:diccionario/dpEntrada/listado",
+      "name": "diccionario/dpEntrada/listado",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 45,
+      "file": "legacy/lexican/resources/views/diccionario/dpEntrada/listado.blade.php"
+     },
+     {
+      "id": "view:diccionario/dpEntrada/masterEntrada",
+      "name": "diccionario/dpEntrada/masterEntrada",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 118,
+      "file": "legacy/lexican/resources/views/diccionario/dpEntrada/masterEntrada.blade.php"
+     },
+     {
+      "id": "view:diccionario/dpOptionsPDFView",
+      "name": "diccionario/dpOptionsPDFView",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 151,
+      "file": "legacy/lexican/resources/views/diccionario/dpOptionsPDFView.blade.php",
+      "description": "The diccionario/dpOptionsPDFView screen appears to be the page where a user chooses options before exporting the dictionary to PDF, titled via diccionario.exportarpdf__titulo. It extends view:diccionario/home and includes view:layouts/partials/dpOptionsPDFform. Its scripts show the tematicas list only when exportOnlyTagged is checked. They also move temáticas between tematicas_disponibles and tematicas_seleccionadas and record the choices in listaTematicas. It is not an entry point, and PDFController calls it. A TODO notes the script was copied from acepcionEdit.blade.php."
+     },
+     {
+      "id": "view:diccionario/entradasAula",
+      "name": "diccionario/entradasAula",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 204,
+      "file": "legacy/lexican/resources/views/diccionario/entradasAula.blade.php",
+      "description": "The diccionario/entradasAula screen shows the entries ($entradas) submitted to the active classroom dictionary, titled from getDicAulaActivo(), so they can be viewed and published. When there are no entries, it shows an info alert. A search form posts back to the current page and filters by buscarNombre, estado (publicado or enviado), estudiante (taken from the dicAula participantes), and desde/hasta submission dates. A swiper-container shows participant avatars. DicAulaController calls this screen. It extends view:diccionario/home and calls dicAula_helper and view:layouts/partials/components/*."
+     },
+     {
+      "id": "view:diccionario/home",
+      "name": "diccionario/home",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 164,
+      "file": "legacy/lexican/resources/views/diccionario/home.blade.php",
+      "description": "diccionario/home is the dictionary screen template that other views build on. It shows the user's avatar and builds the navigation. When the Aula tab is active, the navigation lists the classroom dictionaries the person has joined and marks the ones not visible to students. Otherwise it links to the personal dictionary. It calls view:layouts/app, dicAula_helper, global_helper and view:layouts/partials/components/*. It dispatches to DicAulaController and DiccionarioPersonalController, and many views call it, including view:diccionario/personal, view:diccionario/aula and view:errors/404."
+     },
+     {
+      "id": "view:diccionario/participantesAjax",
+      "name": "diccionario/participantesAjax",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 73,
+      "file": "legacy/lexican/resources/views/diccionario/participantesAjax.blade.php"
+     },
+     {
+      "id": "view:diccionario/personal",
+      "name": "diccionario/personal",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 227,
+      "file": "legacy/lexican/resources/views/diccionario/personal.blade.php",
+      "description": "The diccionario/personal screen shows a student's Diccionario Personal. It extends diccionario/home and offers an alphabet selector routed to personal.consulta.byInitial, a search box, and an entry count through view:layouts/partials/nentradas. Its action buttons let the student add an entrada (entrada.buscador) or open submission (envío) and comment options, such as joining a dictionary. It is called by DiccionarioPersonalController. It includes view:layouts/partials/components/* and view:layouts/partials/components/botones/diccionario/*, and dispatches to DiccionarioPersonalController and PDFController. A commented-out debug block remains."
+     },
+     {
+      "id": "view:errors/403",
+      "name": "errors/403",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 26,
+      "file": "legacy/lexican/resources/views/errors/403.blade.php"
+     },
+     {
+      "id": "view:errors/404",
+      "name": "errors/404",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 23,
+      "file": "legacy/lexican/resources/views/errors/404.blade.php"
+     },
+     {
+      "id": "view:home",
+      "name": "home",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 20,
+      "file": "legacy/lexican/resources/views/home.blade.php"
+     },
+     {
+      "id": "view:layouts/app",
+      "name": "layouts/app",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 116,
+      "file": "legacy/lexican/resources/views/layouts/app.blade.php"
+     },
+     {
+      "id": "view:layouts/logging/route",
+      "name": "layouts/logging/route",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 8,
+      "file": "legacy/lexican/resources/views/layouts/logging/route.blade.php"
+     },
+     {
+      "id": "view:media/grabacion",
+      "name": "media/grabacion",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 10,
+      "file": "legacy/lexican/resources/views/media/grabacion.blade.php"
+     },
+     {
+      "id": "view:welcome",
+      "name": "welcome",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 88,
+      "file": "legacy/lexican/resources/views/welcome.blade.php"
+     }
+    ]
+   },
+   {
+    "id": "dom:partials",
+    "name": "Blade partials",
+    "kind": "domain",
+    "children": [
+     {
+      "id": "view:layouts/partials/alerts/*",
+      "name": "alerts/*",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 226,
+      "file": "legacy/lexican/resources/views/layouts/partials/alerts",
+      "description": "The alerts/* partials show the app's notice and error banners. alertas.blade.php lists validation $errors and the info, success, successArray and errores messages in alert-danger, alert-info and alert-success blocks. alertas-test.blade.php is a copy with the logic commented out. It reads Session values, and the excerpt shows no writes. In the excerpt, the errores branch actually lists $info items. It is called by DicAulaController, dicAula_helper, view:diccionario/home, view:diccionario/dpEntrada/masterEntrada, and the view:layouts/partials/components/*, view:layouts/partials/consulta/* and view:layouts/partials/dpAcepcion/* partials."
+     },
+     {
+      "id": "view:layouts/partials/aulaOptionsPDFform",
+      "name": "layouts/partials/aulaOptionsPDFform",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 40,
+      "file": "legacy/lexican/resources/views/layouts/partials/aulaOptionsPDFform.blade.php"
+     },
+     {
+      "id": "view:layouts/partials/components/*",
+      "name": "components/*",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 1987,
+      "file": "legacy/lexican/resources/views/layouts/partials/components",
+      "description": "components/* is a shared screen partial set (1987 loc) of reusable interface pieces. In the visible excerpt, abecedario.blade.php renders an alphabet selector that either links to a route by letra or fires an ajax event. actionbutton.blade.php renders an icon action button, and actionbuttonAula.blade.php offers \"Crear diccionario de aula\". It is called by ComentariosController, DicAulaController, EnviosController, ModalAjaxController and many views such as view:diccionario/personal. It calls ComentariosHelper, dicAula_helper, global_helper, view:diccionario/aula/pautas and view:layouts/partials/alerts/*. It also dispatches to DiccionarioPersonalController and PDFController."
+     },
+     {
+      "id": "view:layouts/partials/components/botones/acepcion/*",
+      "name": "components/botones/acepcion/*",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 73,
+      "file": "legacy/lexican/resources/views/layouts/partials/components/botones/acepcion"
+     },
+     {
+      "id": "view:layouts/partials/components/botones/diccionario/*",
+      "name": "components/botones/diccionario/*",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 136,
+      "file": "legacy/lexican/resources/views/layouts/partials/components/botones/diccionario",
+      "description": "This screen node (136 lines) is a set of dictionary action buttons shown inside a bocadillo menu: enviar appears to submit a dictionary, enviarvarios links to diccionario.enviar, unirse joins a dictionary, and verComentarios shows comments. Most buttons load a modal via $.get from routes such as getDiccionariosAulaDiccionarioAjax, getUnirseDiccionarioAjax and getComentariosDiccionarioAjax, and haciendoLlamada blocks repeated clicks while a request is running. It is called by diccionario/home, diccionario/personal and layouts/partials/components/*, and dispatches to ComentariosController and EnviosController."
+     },
+     {
+      "id": "view:layouts/partials/components/botones/entrada/*",
+      "name": "components/botones/entrada/*",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 310,
+      "file": "legacy/lexican/resources/views/layouts/partials/components/botones/entrada",
+      "description": "This screen node, components/botones/entrada/*, provides the action buttons shown for each entrada: comentar, edit, delete, get, ocultar, enviar, and eliminarAula. eliminarAula removes an envío from the classroom dictionary only when its estado is not publicado. DicAulaController, dicAula_helper, view:layouts/partials/components/* and view:layouts/partials/consulta/* call this node. It calls ComentariosHelper, dicAula_helper and view:layouts/partials/components/*. It also dispatches to ComentariosController, DicAulaController, DiccionarioPersonalController and EnviosController."
+     },
+     {
+      "id": "view:layouts/partials/consulta/*",
+      "name": "consulta/*",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 787,
+      "file": "legacy/lexican/resources/views/layouts/partials/consulta",
+      "description": "consulta/* is a group of Blade partials, 787 lines in total, used on lookup screens to show a dictionary acepción. It renders the sense's orden, definicion, frase_ejemplo, ejemplo2, language word and tematicas, plus audio, video and image icons. A separate acepcionAula set handles classroom-dictionary senses and only shows media when the dicAulaCampos visibility setting is visible. The partials call daMedios_helper, dpMedios_helper, global_helper and the alerts/*, components/* and botones partials, and they dispatch to DicAulaController and DiccionarioPersonalController. They are called by DicAulaController, view:diccionario/consulta, view:diccionario/consultaAjax, view:diccionario/consultaAulaAjax, view:diccionario/aula/consulta, view:diccionario/aula/entrada and view:layouts/partials/dpEntrada/*."
+     },
+     {
+      "id": "view:layouts/partials/dpAcepcion/*",
+      "name": "dpAcepcion/*",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 1411,
+      "file": "legacy/lexican/resources/views/layouts/partials/dpAcepcion",
+      "description": "The dpAcepcion/* partials (1411 lines) make up the screen fragments for creating and editing an acepción (sense) of an entrada in the diccionario personal. They render the form fields: idioma, cat_gramatical_id, genero_id, numero_id, definicion, ejemplo2 and frase_ejemplo. They also render an \"Añadir Acepción\" button that links to acepcion.create. The partials are called by acepcionEdit, masterEntrada, aulaOptionsPDFform, dpEntrada/* and dpOptionsPDFform. In turn they call dpMedios_helper, global_helper, alerts/*, components/* and components/botones/acepcion/*, and they dispatch to DiccionarioPersonalController."
+     },
+     {
+      "id": "view:layouts/partials/dpEntrada/*",
+      "name": "dpEntrada/*",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 154,
+      "file": "legacy/lexican/resources/views/layouts/partials/dpEntrada",
+      "description": "The dpEntrada/* partials render the screens for managing an entrada in a student's personal dictionary. dpEntradaBuscador provides a form that adds a new entrada through route entrada.insert. dpEntradaEdit lets the student rename it through entrada.update. dpEntradaEntrada shows the entrada title with an edit link and a hide/show modal that posts to entrada.ocultar. The node is called by view:diccionario/dpEntrada/masterEntrada. It includes view:layouts/partials/components/*, view:layouts/partials/consulta/* and view:layouts/partials/dpAcepcion/*, and dispatches to DiccionarioPersonalController."
+     },
+     {
+      "id": "view:layouts/partials/dpOptionsPDFform",
+      "name": "layouts/partials/dpOptionsPDFform",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 39,
+      "file": "legacy/lexican/resources/views/layouts/partials/dpOptionsPDFform.blade.php"
+     },
+     {
+      "id": "view:layouts/partials/mail/*",
+      "name": "mail/*",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 45,
+      "file": "legacy/lexican/resources/views/layouts/partials/mail"
+     },
+     {
+      "id": "view:layouts/partials/nentradas",
+      "name": "layouts/partials/nentradas",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 31,
+      "file": "legacy/lexican/resources/views/layouts/partials/nentradas.blade.php"
+     },
+     {
+      "id": "view:layouts/partials/pdf/*",
+      "name": "pdf/*",
+      "kind": "screen",
+      "language": "blade",
+      "loc": 681,
+      "file": "legacy/lexican/resources/views/layouts/partials/pdf",
+      "description": "The pdf/* node is a screen of shared Blade partials (681 lines) under legacy/lexican/resources/views/layouts/partials/pdf that controls how the app's PDF exports look. The css.blade.php excerpt sets page margins, a fixed header and footer, page numbers in upper-roman, forced page breaks, and styles for dictionary content such as titulo-entrada and acepcion-linea. PDFController calls it and routes/web dispatches to it. In turn, it calls global_helper and dispatches to PDFController. The packet does not show which PDF documents use these partials."
+     }
+    ]
+   },
+   {
+    "id": "dom:data",
+    "name": "Data stores",
+    "kind": "domain",
+    "children": [
+     {
+      "id": "ds:audits",
+      "name": "audits",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:avisos",
+      "name": "avisos",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:avisos_coment_entradas",
+      "name": "avisos_coment_entradas",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:avisos_coment_generales",
+      "name": "avisos_coment_generales",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:avisos_dp_envios",
+      "name": "avisos_dp_envios",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:avisos_entradas_compartidas",
+      "name": "avisos_entradas_compartidas",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:categories",
+      "name": "categories",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:centros",
+      "name": "centros",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:centros_dic_aula",
+      "name": "centros_dic_aula",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:comentarios_entradas",
+      "name": "comentarios_entradas",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:comentarios_generales",
+      "name": "comentarios_generales",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:data_types",
+      "name": "data_types",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:dic_aula",
+      "name": "dic_aula",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:dic_aula_atemporales",
+      "name": "dic_aula_atemporales",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:dic_aula_campos",
+      "name": "dic_aula_campos",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:dic_aula_destinatario_avisos",
+      "name": "dic_aula_destinatario_avisos",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:dic_aula_entradas",
+      "name": "dic_aula_entradas",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:dic_aula_participantes",
+      "name": "dic_aula_participantes",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:dic_aula_pautas",
+      "name": "dic_aula_pautas",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:dic_personal",
+      "name": "dic_personal",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:dp_acepciones",
+      "name": "dp_acepciones",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:dp_acepciones_medios",
+      "name": "dp_acepciones_medios",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:dp_acepciones_tematicas",
+      "name": "dp_acepciones_tematicas",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:dp_entradas",
+      "name": "dp_entradas",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:dp_envios",
+      "name": "dp_envios",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:entradas_compartidas",
+      "name": "entradas_compartidas",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:envios_acepciones",
+      "name": "envios_acepciones",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:envios_acepciones_medios",
+      "name": "envios_acepciones_medios",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:envios_acepciones_tematicas",
+      "name": "envios_acepciones_tematicas",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:envios_entradas",
+      "name": "envios_entradas",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:ext:cas-server",
+      "name": "CAS SSO server",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:ext:cauce-ws",
+      "name": "CAUCE web service",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:ext:file-storage",
+      "name": "File storage (media uploads)",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:ext:smtp",
+      "name": "SMTP mail",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:mst_areas_materias",
+      "name": "mst_areas_materias",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:mst_campos_entrada",
+      "name": "mst_campos_entrada",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:mst_campos_valores",
+      "name": "mst_campos_valores",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:mst_ensenanzas",
+      "name": "mst_ensenanzas",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:mst_ensenanzas_estudios",
+      "name": "mst_ensenanzas_estudios",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:mst_estudios_areas_materias",
+      "name": "mst_estudios_areas_materias",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:mst_nivel_estudios",
+      "name": "mst_nivel_estudios",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:mst_pautas",
+      "name": "mst_pautas",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:mst_tipos_diccionario_aula",
+      "name": "mst_tipos_diccionario_aula",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:pages",
+      "name": "pages",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:password_resets",
+      "name": "password_resets",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:permission_role",
+      "name": "permission_role",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:personas",
+      "name": "personas",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:posts",
+      "name": "posts",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:users",
+      "name": "users",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:users_centros",
+      "name": "users_centros",
+      "kind": "datastore"
+     },
+     {
+      "id": "ds:users_personas",
+      "name": "users_personas",
+      "kind": "datastore"
+     }
+    ]
+   }
+  ]
+ },
+ "edges": [
+  {
+   "source": "Auth/CasController",
+   "target": "Cas/CasManager",
+   "kind": "dispatch"
+  },
+  {
+   "source": "Auth/CasController",
+   "target": "Cas/Helper",
+   "kind": "call"
+  },
+  {
+   "source": "Auth/CasController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "Auth/CasController",
+   "target": "User",
+   "kind": "read"
+  },
+  {
+   "source": "Auth/CasController",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "Auth/ForgotPasswordController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "Auth/LoginController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "Auth/RegisterController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "Auth/RegisterController",
+   "target": "User",
+   "kind": "write"
+  },
+  {
+   "source": "Auth/ResetPasswordController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "Auth/VerificationController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "CSVController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "CSVController",
+   "target": "Voyager/VoyagerCompassController",
+   "kind": "call"
+  },
+  {
+   "source": "Cas/CasManager",
+   "target": "Cas/CasUser",
+   "kind": "call"
+  },
+  {
+   "source": "Cas/CasManager",
+   "target": "ds:ext:cas-server",
+   "kind": "read"
+  },
+  {
+   "source": "Cas/CasServiceProvider",
+   "target": "Cas/CasManager",
+   "kind": "call"
+  },
+  {
+   "source": "Cas/Helper",
+   "target": "Cas/CasManager",
+   "kind": "dispatch"
+  },
+  {
+   "source": "Cas/Middleware/Authenticate",
+   "target": "Cas/CasManager",
+   "kind": "dispatch"
+  },
+  {
+   "source": "Cas/Middleware/RedirectIfAuthenticated",
+   "target": "Cas/CasManager",
+   "kind": "dispatch"
+  },
+  {
+   "source": "ComentariosController",
+   "target": "ComentariosHelper",
+   "kind": "call"
+  },
+  {
+   "source": "ComentariosController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "ComentariosController",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "ComentariosController",
+   "target": "dpDiccionarios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "ComentariosController",
+   "target": "dpEntradas_helper",
+   "kind": "call"
+  },
+  {
+   "source": "ComentariosController",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "ComentariosController",
+   "target": "model:ComentarioGeneral",
+   "kind": "write"
+  },
+  {
+   "source": "ComentariosController",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "ComentariosController",
+   "target": "model:EnvioEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "ComentariosController",
+   "target": "view:comentarios/comentariosDiccionarioEnviar",
+   "kind": "call"
+  },
+  {
+   "source": "ComentariosController",
+   "target": "view:comentarios/comentariosDiccionarioVer",
+   "kind": "call"
+  },
+  {
+   "source": "ComentariosController",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "ComentariosHelper",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "ComentariosHelper",
+   "target": "model:ComentarioEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "ComentariosHelper",
+   "target": "model:ComentarioGeneral",
+   "kind": "write"
+  },
+  {
+   "source": "ComentariosHelper",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "ComentariosHelper",
+   "target": "model:DiccionarioPersonal",
+   "kind": "read"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "dpEntradas_helper",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "dpEnvios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "mail_helper",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "model:AreaMateria",
+   "kind": "read"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "model:CampoEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "model:ComentarioEntrada",
+   "kind": "write"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "model:DicAula",
+   "kind": "write"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "model:DicAulaDestinarioAviso",
+   "kind": "write"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "model:DicAulaEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "model:DiccionarioPersonalEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "model:Ensenanza",
+   "kind": "read"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "model:EnvioAcepcion",
+   "kind": "read"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "model:EnvioEntrada",
+   "kind": "write"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "model:Pautas",
+   "kind": "read"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "model:Persona",
+   "kind": "read"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "model:TipoDiccionarioAula",
+   "kind": "read"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "view:development/unirsediccionario",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "view:diccionario/aula",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "view:diccionario/aula/consulta",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "view:diccionario/aula/daEntradaEdit",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "view:diccionario/aula/entrada",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "view:diccionario/consultaAulaAjax",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "view:diccionario/crearDicAula",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "view:diccionario/entradasAula",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "view:diccionario/participantesAjax",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "view:layouts/partials/alerts/*",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "view:layouts/partials/components/botones/entrada/*",
+   "kind": "call"
+  },
+  {
+   "source": "DicAulaController",
+   "target": "view:layouts/partials/consulta/*",
+   "kind": "call"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "dpAcepciones_helper",
+   "kind": "call"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "dpDiccionarios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "dpEntradas_helper",
+   "kind": "call"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "dpMedios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "model:DiccionarioPersonalAcepcion",
+   "kind": "write"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "model:DiccionarioPersonalEntrada",
+   "kind": "write"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "model:Persona",
+   "kind": "write"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "mstEntradaValor_helper",
+   "kind": "call"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "view:diccionario/consulta",
+   "kind": "call"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "view:diccionario/consultaAjax",
+   "kind": "call"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "view:diccionario/dpDiccionario/dpModificacion",
+   "kind": "call"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "view:diccionario/dpEntrada/masterEntrada",
+   "kind": "call"
+  },
+  {
+   "source": "DiccionarioPersonalController",
+   "target": "view:diccionario/personal",
+   "kind": "call"
+  },
+  {
+   "source": "EnvioAcepcionController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "EnvioAcepcionController",
+   "target": "envioAcepcion_helper",
+   "kind": "call"
+  },
+  {
+   "source": "EnvioAcepcionController",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "EnvioAcepcionController",
+   "target": "model:EnvioAcepcion",
+   "kind": "write"
+  },
+  {
+   "source": "EnvioAcepcionController",
+   "target": "mstEntradaValor_helper",
+   "kind": "call"
+  },
+  {
+   "source": "EnvioAcepcionController",
+   "target": "view:diccionario/aula/acepcionEdit",
+   "kind": "call"
+  },
+  {
+   "source": "EnviosController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "EnviosController",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "EnviosController",
+   "target": "dpDiccionarios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "EnviosController",
+   "target": "dpEntradas_helper",
+   "kind": "call"
+  },
+  {
+   "source": "EnviosController",
+   "target": "dpEnvios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "EnviosController",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "EnviosController",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "EnviosController",
+   "target": "model:DiccionarioPersonalEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "EnviosController",
+   "target": "model:EnvioEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "EnviosController",
+   "target": "view:diccionario/dpDiccionario/dpDiccionarioEnviarFormulario",
+   "kind": "call"
+  },
+  {
+   "source": "EnviosController",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "Exceptions/Handler",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "HealthCheckController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "HealthCheckController",
+   "target": "model:Persona",
+   "kind": "read"
+  },
+  {
+   "source": "HomeController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "HomeController",
+   "target": "User",
+   "kind": "write"
+  },
+  {
+   "source": "HomeController",
+   "target": "ds:ext:file-storage",
+   "kind": "write"
+  },
+  {
+   "source": "HomeController",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "HomeController",
+   "target": "view:home",
+   "kind": "call"
+  },
+  {
+   "source": "Http/Kernel",
+   "target": "Cas/Middleware/Authenticate",
+   "kind": "call"
+  },
+  {
+   "source": "Http/Kernel",
+   "target": "Cas/Middleware/RedirectIfAuthenticated",
+   "kind": "call"
+  },
+  {
+   "source": "Http/Kernel",
+   "target": "Http/Middleware/Authenticate",
+   "kind": "call"
+  },
+  {
+   "source": "Http/Kernel",
+   "target": "Http/Middleware/CheckForMaintenanceMode",
+   "kind": "call"
+  },
+  {
+   "source": "Http/Kernel",
+   "target": "Http/Middleware/EncryptCookies",
+   "kind": "call"
+  },
+  {
+   "source": "Http/Kernel",
+   "target": "Http/Middleware/RedirectIfAuthenticated",
+   "kind": "call"
+  },
+  {
+   "source": "Http/Kernel",
+   "target": "Http/Middleware/TrimStrings",
+   "kind": "call"
+  },
+  {
+   "source": "Http/Kernel",
+   "target": "Http/Middleware/TrustProxies",
+   "kind": "call"
+  },
+  {
+   "source": "Http/Kernel",
+   "target": "Http/Middleware/VerifyCsrfToken",
+   "kind": "call"
+  },
+  {
+   "source": "MailController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "MailController",
+   "target": "ds:ext:smtp",
+   "kind": "write"
+  },
+  {
+   "source": "MailController",
+   "target": "mail_helper",
+   "kind": "call"
+  },
+  {
+   "source": "MediaTypeController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "MediaTypeController",
+   "target": "model:DiccionarioPersonalAcepcion",
+   "kind": "read"
+  },
+  {
+   "source": "ModalAjaxController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "ModalAjaxController",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "PDFController",
+   "target": "Controller",
+   "kind": "call"
+  },
+  {
+   "source": "PDFController",
+   "target": "dpDiccionarios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "PDFController",
+   "target": "dpEntradas_helper",
+   "kind": "call"
+  },
+  {
+   "source": "PDFController",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "PDFController",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "PDFController",
+   "target": "mstEntradaValor_helper",
+   "kind": "call"
+  },
+  {
+   "source": "PDFController",
+   "target": "pdf_helper",
+   "kind": "call"
+  },
+  {
+   "source": "PDFController",
+   "target": "view:diccionario/daOptionsPDF",
+   "kind": "call"
+  },
+  {
+   "source": "PDFController",
+   "target": "view:diccionario/dpOptionsPDFView",
+   "kind": "call"
+  },
+  {
+   "source": "PDFController",
+   "target": "view:layouts/partials/pdf/*",
+   "kind": "call"
+  },
+  {
+   "source": "Policies/ComentarioGeneralPolicy",
+   "target": "User",
+   "kind": "read"
+  },
+  {
+   "source": "Policies/ComentarioGeneralPolicy",
+   "target": "model:ComentarioGeneral",
+   "kind": "read"
+  },
+  {
+   "source": "Policies/DicAulaPolicy",
+   "target": "User",
+   "kind": "read"
+  },
+  {
+   "source": "Policies/DicAulaPolicy",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "Policies/DiccionarioPersonalPolicy",
+   "target": "User",
+   "kind": "read"
+  },
+  {
+   "source": "Policies/DiccionarioPersonalPolicy",
+   "target": "model:DiccionarioPersonalEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "Providers/AuthServiceProvider",
+   "target": "Policies/ComentarioGeneralPolicy",
+   "kind": "call"
+  },
+  {
+   "source": "Providers/AuthServiceProvider",
+   "target": "Policies/DicAulaPolicy",
+   "kind": "call"
+  },
+  {
+   "source": "Providers/AuthServiceProvider",
+   "target": "Policies/DiccionarioPersonalPolicy",
+   "kind": "call"
+  },
+  {
+   "source": "Providers/AuthServiceProvider",
+   "target": "model:ComentarioGeneral",
+   "kind": "read"
+  },
+  {
+   "source": "Providers/AuthServiceProvider",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "Providers/AuthServiceProvider",
+   "target": "model:DiccionarioPersonalEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "User",
+   "target": "ds:users",
+   "kind": "write"
+  },
+  {
+   "source": "User",
+   "target": "model:Centro",
+   "kind": "read"
+  },
+  {
+   "source": "User",
+   "target": "model:Persona",
+   "kind": "read"
+  },
+  {
+   "source": "User",
+   "target": "model:UserPersona",
+   "kind": "read"
+  },
+  {
+   "source": "Voyager/VoyagerAuthController",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "Voyager/VoyagerBaseController",
+   "target": "voyager_helper",
+   "kind": "call"
+  },
+  {
+   "source": "Voyager/VoyagerCompassController",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "Voyager/VoyagerCompassController",
+   "target": "ds:centros",
+   "kind": "read"
+  },
+  {
+   "source": "Voyager/VoyagerCompassController",
+   "target": "ds:dic_aula",
+   "kind": "read"
+  },
+  {
+   "source": "Voyager/VoyagerCompassController",
+   "target": "ds:dic_aula_participantes",
+   "kind": "read"
+  },
+  {
+   "source": "Voyager/VoyagerCompassController",
+   "target": "ds:dic_personal",
+   "kind": "read"
+  },
+  {
+   "source": "Voyager/VoyagerCompassController",
+   "target": "ds:dp_entradas",
+   "kind": "read"
+  },
+  {
+   "source": "Voyager/VoyagerCompassController",
+   "target": "ds:envios_entradas",
+   "kind": "read"
+  },
+  {
+   "source": "Voyager/VoyagerCompassController",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "Voyager/VoyagerCompassController",
+   "target": "model:DicAula",
+   "kind": "write"
+  },
+  {
+   "source": "Voyager/VoyagerCompassController",
+   "target": "model:DicAulaAtemporal",
+   "kind": "read"
+  },
+  {
+   "source": "Voyager/vCentrosAñoEscolarController",
+   "target": "Voyager/VoyagerCompassController",
+   "kind": "call"
+  },
+  {
+   "source": "Voyager/vDicAulaController",
+   "target": "Voyager/VoyagerCompassController",
+   "kind": "call"
+  },
+  {
+   "source": "Voyager/vDicPersonalController",
+   "target": "Voyager/VoyagerCompassController",
+   "kind": "call"
+  },
+  {
+   "source": "create-thumbnail",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "daMedios_helper",
+   "target": "model:EnvioAcepcion",
+   "kind": "read"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "User",
+   "kind": "read"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:CampoEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:CampoValor",
+   "kind": "read"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:ComentarioEntrada",
+   "kind": "write"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:DicAula",
+   "kind": "write"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:DicAulaCampo",
+   "kind": "write"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:DicAulaDestinarioAviso",
+   "kind": "read"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:DicAulaEntrada",
+   "kind": "write"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:DicAulaParticipante",
+   "kind": "write"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:DicAulaPauta",
+   "kind": "write"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:EnvioAcepcion",
+   "kind": "write"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:EnvioAcepcionTematica",
+   "kind": "read"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:EnvioEntrada",
+   "kind": "write"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:Persona",
+   "kind": "read"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:TipoDiccionarioAula",
+   "kind": "read"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "model:UserPersona",
+   "kind": "read"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "mstEntradaValor_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "view:layouts/partials/alerts/*",
+   "kind": "call"
+  },
+  {
+   "source": "dicAula_helper",
+   "target": "view:layouts/partials/components/botones/entrada/*",
+   "kind": "call"
+  },
+  {
+   "source": "dpAcepciones_helper",
+   "target": "model:DiccionarioPersonalAcepcion",
+   "kind": "write"
+  },
+  {
+   "source": "dpAcepciones_helper",
+   "target": "model:DiccionarioPersonalAcepcionTematica",
+   "kind": "write"
+  },
+  {
+   "source": "dpDiccionarios_helper",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dpDiccionarios_helper",
+   "target": "model:DiccionarioPersonal",
+   "kind": "write"
+  },
+  {
+   "source": "dpEntradas_helper",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dpEntradas_helper",
+   "target": "dpDiccionarios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dpEntradas_helper",
+   "target": "dpEnvios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dpEntradas_helper",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dpEntradas_helper",
+   "target": "model:CampoValor",
+   "kind": "read"
+  },
+  {
+   "source": "dpEntradas_helper",
+   "target": "model:DiccionarioPersonal",
+   "kind": "read"
+  },
+  {
+   "source": "dpEntradas_helper",
+   "target": "model:DiccionarioPersonalAcepcionTematica",
+   "kind": "read"
+  },
+  {
+   "source": "dpEntradas_helper",
+   "target": "model:DiccionarioPersonalEntrada",
+   "kind": "write"
+  },
+  {
+   "source": "dpEntradas_helper",
+   "target": "model:NivelEstudio",
+   "kind": "read"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "dpAcepciones_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "dpDiccionarios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "dpEntradas_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "dpMedios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "model:CampoEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "model:DiccionarioPersonalEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "model:Envio",
+   "kind": "write"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "model:EnvioAcepcion",
+   "kind": "write"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "model:EnvioAcepcionMedio",
+   "kind": "write"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "model:EnvioAcepcionTematica",
+   "kind": "write"
+  },
+  {
+   "source": "dpEnvios_helper",
+   "target": "model:EnvioEntrada",
+   "kind": "write"
+  },
+  {
+   "source": "dpMedios_helper",
+   "target": "create-thumbnail",
+   "kind": "call"
+  },
+  {
+   "source": "dpMedios_helper",
+   "target": "ds:ext:file-storage",
+   "kind": "write"
+  },
+  {
+   "source": "dpMedios_helper",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "dpMedios_helper",
+   "target": "model:DiccionarioPersonalAcepcion",
+   "kind": "read"
+  },
+  {
+   "source": "dpMedios_helper",
+   "target": "model:DiccionarioPersonalAcepcionMedio",
+   "kind": "write"
+  },
+  {
+   "source": "dpMedios_helper",
+   "target": "video_thumbnail",
+   "kind": "call"
+  },
+  {
+   "source": "envioAcepcion_helper",
+   "target": "create-thumbnail",
+   "kind": "call"
+  },
+  {
+   "source": "envioAcepcion_helper",
+   "target": "dpMedios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "envioAcepcion_helper",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "envioAcepcion_helper",
+   "target": "model:EnvioAcepcion",
+   "kind": "read"
+  },
+  {
+   "source": "envioAcepcion_helper",
+   "target": "model:EnvioAcepcionMedio",
+   "kind": "write"
+  },
+  {
+   "source": "envioAcepcion_helper",
+   "target": "model:EnvioAcepcionTematica",
+   "kind": "write"
+  },
+  {
+   "source": "envioAcepcion_helper",
+   "target": "video_thumbnail",
+   "kind": "call"
+  },
+  {
+   "source": "global_helper",
+   "target": "Cas/CasManager",
+   "kind": "dispatch"
+  },
+  {
+   "source": "global_helper",
+   "target": "Cas/Helper",
+   "kind": "call"
+  },
+  {
+   "source": "global_helper",
+   "target": "User",
+   "kind": "write"
+  },
+  {
+   "source": "global_helper",
+   "target": "ds:ext:cauce-ws",
+   "kind": "read"
+  },
+  {
+   "source": "global_helper",
+   "target": "ds:ext:file-storage",
+   "kind": "write"
+  },
+  {
+   "source": "global_helper",
+   "target": "model:Centro",
+   "kind": "write"
+  },
+  {
+   "source": "global_helper",
+   "target": "model:NivelEstudio",
+   "kind": "read"
+  },
+  {
+   "source": "global_helper",
+   "target": "model:Persona",
+   "kind": "write"
+  },
+  {
+   "source": "global_helper",
+   "target": "model:UserPersona",
+   "kind": "write"
+  },
+  {
+   "source": "global_helper",
+   "target": "view:errors/403",
+   "kind": "call"
+  },
+  {
+   "source": "mail_helper",
+   "target": "ds:ext:smtp",
+   "kind": "write"
+  },
+  {
+   "source": "model:AreaMateria",
+   "target": "ds:mst_areas_materias",
+   "kind": "read"
+  },
+  {
+   "source": "model:CampoEntrada",
+   "target": "ds:mst_campos_entrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:CampoEntrada",
+   "target": "model:CampoValor",
+   "kind": "read"
+  },
+  {
+   "source": "model:CampoValor",
+   "target": "ds:mst_campos_valores",
+   "kind": "read"
+  },
+  {
+   "source": "model:CampoValor",
+   "target": "model:CampoEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:Centro",
+   "target": "User",
+   "kind": "read"
+  },
+  {
+   "source": "model:Centro",
+   "target": "ds:centros",
+   "kind": "write"
+  },
+  {
+   "source": "model:CentroDicAula",
+   "target": "ds:centros_dic_aula",
+   "kind": "read"
+  },
+  {
+   "source": "model:ComentarioEntrada",
+   "target": "ds:comentarios_entradas",
+   "kind": "write"
+  },
+  {
+   "source": "model:ComentarioEntrada",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "model:ComentarioEntrada",
+   "target": "model:EnvioEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:ComentarioEntrada",
+   "target": "model:Persona",
+   "kind": "read"
+  },
+  {
+   "source": "model:ComentarioGeneral",
+   "target": "ds:comentarios_generales",
+   "kind": "write"
+  },
+  {
+   "source": "model:ComentarioGeneral",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "model:ComentarioGeneral",
+   "target": "model:DiccionarioPersonal",
+   "kind": "read"
+  },
+  {
+   "source": "model:ComentarioGeneral",
+   "target": "model:Persona",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "ds:avisos",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "ds:comentarios_entradas",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "ds:comentarios_generales",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "ds:dic_aula",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "ds:dic_aula_atemporales",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "ds:dic_aula_campos",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "ds:dic_aula_destinatario_avisos",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "ds:dic_aula_entradas",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "ds:dic_aula_participantes",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "ds:dic_aula_pautas",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "ds:dp_envios",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "model:ComentarioEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "model:ComentarioGeneral",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "model:DicAulaAtemporal",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "model:DicAulaCampo",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "model:DicAulaDestinarioAviso",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "model:DicAulaEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "model:DicAulaParticipante",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "model:DicAulaPauta",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "model:Envio",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAula",
+   "target": "model:Persona",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAulaAtemporal",
+   "target": "ds:dic_aula_atemporales",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAulaAtemporal",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAulaCampo",
+   "target": "ds:dic_aula_campos",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAulaCampo",
+   "target": "model:CampoEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAulaDestinarioAviso",
+   "target": "ds:dic_aula_destinatario_avisos",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAulaEntrada",
+   "target": "ds:dic_aula_entradas",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAulaEntrada",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAulaEntrada",
+   "target": "model:EnvioAcepcion",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAulaEntrada",
+   "target": "model:EnvioAcepcionTematica",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAulaEntrada",
+   "target": "model:EnvioEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAulaParticipante",
+   "target": "ds:dic_aula_participantes",
+   "kind": "write"
+  },
+  {
+   "source": "model:DicAulaParticipante",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAulaParticipante",
+   "target": "model:Persona",
+   "kind": "read"
+  },
+  {
+   "source": "model:DicAulaPauta",
+   "target": "ds:dic_aula_pautas",
+   "kind": "write"
+  },
+  {
+   "source": "model:DiccionarioPersonal",
+   "target": "ds:dic_personal",
+   "kind": "write"
+  },
+  {
+   "source": "model:DiccionarioPersonal",
+   "target": "model:DiccionarioPersonalEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:DiccionarioPersonal",
+   "target": "model:Persona",
+   "kind": "read"
+  },
+  {
+   "source": "model:DiccionarioPersonalAcepcion",
+   "target": "ds:dp_acepciones",
+   "kind": "write"
+  },
+  {
+   "source": "model:DiccionarioPersonalAcepcion",
+   "target": "model:CampoValor",
+   "kind": "read"
+  },
+  {
+   "source": "model:DiccionarioPersonalAcepcion",
+   "target": "model:DiccionarioPersonalAcepcionMedio",
+   "kind": "read"
+  },
+  {
+   "source": "model:DiccionarioPersonalAcepcion",
+   "target": "model:DiccionarioPersonalEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:DiccionarioPersonalAcepcionMedio",
+   "target": "dpMedios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "model:DiccionarioPersonalAcepcionMedio",
+   "target": "ds:dp_acepciones_medios",
+   "kind": "write"
+  },
+  {
+   "source": "model:DiccionarioPersonalAcepcionMedio",
+   "target": "ds:ext:file-storage",
+   "kind": "write"
+  },
+  {
+   "source": "model:DiccionarioPersonalAcepcionMedio",
+   "target": "model:DiccionarioPersonalAcepcion",
+   "kind": "read"
+  },
+  {
+   "source": "model:DiccionarioPersonalAcepcionTematica",
+   "target": "ds:dp_acepciones_tematicas",
+   "kind": "write"
+  },
+  {
+   "source": "model:DiccionarioPersonalAcepcionTematica",
+   "target": "model:CampoValor",
+   "kind": "read"
+  },
+  {
+   "source": "model:DiccionarioPersonalAcepcionTematica",
+   "target": "model:DiccionarioPersonalAcepcion",
+   "kind": "read"
+  },
+  {
+   "source": "model:DiccionarioPersonalEntrada",
+   "target": "ds:dp_entradas",
+   "kind": "write"
+  },
+  {
+   "source": "model:DiccionarioPersonalEntrada",
+   "target": "model:DiccionarioPersonal",
+   "kind": "read"
+  },
+  {
+   "source": "model:DiccionarioPersonalEntrada",
+   "target": "model:DiccionarioPersonalAcepcion",
+   "kind": "read"
+  },
+  {
+   "source": "model:DiccionarioPersonalEntrada",
+   "target": "model:DiccionarioPersonalAcepcionTematica",
+   "kind": "read"
+  },
+  {
+   "source": "model:DiccionarioPersonalEntrada",
+   "target": "model:EnvioEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:Ensenanza",
+   "target": "ds:mst_ensenanzas",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnsenanzaEstudio",
+   "target": "ds:mst_ensenanzas_estudios",
+   "kind": "read"
+  },
+  {
+   "source": "model:Envio",
+   "target": "ds:dp_envios",
+   "kind": "write"
+  },
+  {
+   "source": "model:Envio",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "model:Envio",
+   "target": "model:DiccionarioPersonal",
+   "kind": "read"
+  },
+  {
+   "source": "model:Envio",
+   "target": "model:EnvioEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioAcepcion",
+   "target": "ds:envios_acepciones",
+   "kind": "write"
+  },
+  {
+   "source": "model:EnvioAcepcion",
+   "target": "model:CampoValor",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioAcepcion",
+   "target": "model:EnvioAcepcionMedio",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioAcepcion",
+   "target": "model:EnvioAcepcionTematica",
+   "kind": "write"
+  },
+  {
+   "source": "model:EnvioAcepcion",
+   "target": "model:EnvioEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioAcepcionMedio",
+   "target": "ds:envios_acepciones_medios",
+   "kind": "write"
+  },
+  {
+   "source": "model:EnvioAcepcionMedio",
+   "target": "model:EnvioAcepcion",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioAcepcionTematica",
+   "target": "ds:envios_acepciones_tematicas",
+   "kind": "write"
+  },
+  {
+   "source": "model:EnvioAcepcionTematica",
+   "target": "model:CampoValor",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioAcepcionTematica",
+   "target": "model:EnvioAcepcion",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioEntrada",
+   "target": "ds:envios_entradas",
+   "kind": "write"
+  },
+  {
+   "source": "model:EnvioEntrada",
+   "target": "model:ComentarioEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioEntrada",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioEntrada",
+   "target": "model:DicAulaEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioEntrada",
+   "target": "model:DiccionarioPersonal",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioEntrada",
+   "target": "model:DiccionarioPersonalEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioEntrada",
+   "target": "model:Envio",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioEntrada",
+   "target": "model:EnvioAcepcion",
+   "kind": "read"
+  },
+  {
+   "source": "model:EnvioEntrada",
+   "target": "model:Persona",
+   "kind": "read"
+  },
+  {
+   "source": "model:EstudioAreaMateria",
+   "target": "ds:mst_estudios_areas_materias",
+   "kind": "read"
+  },
+  {
+   "source": "model:NivelEstudio",
+   "target": "ds:mst_nivel_estudios",
+   "kind": "read"
+  },
+  {
+   "source": "model:Pautas",
+   "target": "ds:mst_pautas",
+   "kind": "read"
+  },
+  {
+   "source": "model:Persona",
+   "target": "User",
+   "kind": "read"
+  },
+  {
+   "source": "model:Persona",
+   "target": "ds:personas",
+   "kind": "write"
+  },
+  {
+   "source": "model:Persona",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "model:Persona",
+   "target": "model:UserPersona",
+   "kind": "read"
+  },
+  {
+   "source": "model:TipoDiccionarioAula",
+   "target": "ds:mst_tipos_diccionario_aula",
+   "kind": "read"
+  },
+  {
+   "source": "model:UserCentro",
+   "target": "ds:users_centros",
+   "kind": "read"
+  },
+  {
+   "source": "model:UserPersona",
+   "target": "ds:users_personas",
+   "kind": "write"
+  },
+  {
+   "source": "model:Voyager/DataType",
+   "target": "ds:data_types",
+   "kind": "read"
+  },
+  {
+   "source": "model:Voyager/PermissionRole",
+   "target": "ds:permission_role",
+   "kind": "read"
+  },
+  {
+   "source": "mstEntradaValor_helper",
+   "target": "model:CampoValor",
+   "kind": "read"
+  },
+  {
+   "source": "pdf_helper",
+   "target": "daMedios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "pdf_helper",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "pdf_helper",
+   "target": "dpMedios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "pdf_helper",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "pdf_helper",
+   "target": "model:DicAula",
+   "kind": "read"
+  },
+  {
+   "source": "pdf_helper",
+   "target": "model:DiccionarioPersonal",
+   "kind": "read"
+  },
+  {
+   "source": "pdf_helper",
+   "target": "model:DiccionarioPersonalAcepcionMedio",
+   "kind": "read"
+  },
+  {
+   "source": "pdf_helper",
+   "target": "model:DiccionarioPersonalAcepcionTematica",
+   "kind": "read"
+  },
+  {
+   "source": "pdf_helper",
+   "target": "model:EnvioAcepcion",
+   "kind": "read"
+  },
+  {
+   "source": "pdf_helper",
+   "target": "model:EnvioAcepcionMedio",
+   "kind": "read"
+  },
+  {
+   "source": "pdf_helper",
+   "target": "model:EnvioAcepcionTematica",
+   "kind": "read"
+  },
+  {
+   "source": "pdf_helper",
+   "target": "model:EnvioEntrada",
+   "kind": "read"
+  },
+  {
+   "source": "routes/web",
+   "target": "Auth/CasController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "CSVController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Cas/CasManager",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Cas/Helper",
+   "kind": "call"
+  },
+  {
+   "source": "routes/web",
+   "target": "ComentariosController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "DicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "EnvioAcepcionController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "EnviosController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "HomeController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "MailController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "MediaTypeController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "ModalAjaxController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "PDFController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/VoyagerAuthController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/VoyagerBaseController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/VoyagerBreadController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/VoyagerCompassController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/VoyagerController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/VoyagerDatabaseController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/VoyagerMediaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/VoyagerMenuController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/VoyagerRoleController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/VoyagerSettingsController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/VoyagerUserController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/vCentrosAñoEscolarController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/vDicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/vDicPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "Voyager/vRecordingController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "view:layouts/partials/mail/*",
+   "kind": "dispatch"
+  },
+  {
+   "source": "routes/web",
+   "target": "view:layouts/partials/pdf/*",
+   "kind": "dispatch"
+  },
+  {
+   "source": "video_thumbnail",
+   "target": "dpMedios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "video_thumbnail",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:auth/login",
+   "target": "view:layouts/app",
+   "kind": "call"
+  },
+  {
+   "source": "view:auth/passwords/email",
+   "target": "view:layouts/app",
+   "kind": "call"
+  },
+  {
+   "source": "view:auth/passwords/reset",
+   "target": "view:layouts/app",
+   "kind": "call"
+  },
+  {
+   "source": "view:auth/register",
+   "target": "view:layouts/app",
+   "kind": "call"
+  },
+  {
+   "source": "view:auth/verify",
+   "target": "view:layouts/app",
+   "kind": "call"
+  },
+  {
+   "source": "view:comentarios/comentariosDiccionarioEnviar",
+   "target": "ComentariosController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:comentarios/comentariosDiccionarioEnviar",
+   "target": "ComentariosHelper",
+   "kind": "call"
+  },
+  {
+   "source": "view:comentarios/comentariosDiccionarioEnviar",
+   "target": "DicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:comentarios/comentariosDiccionarioEnviar",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:comentarios/comentariosDiccionarioEnviar",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:comentarios/comentariosDiccionarioEnviar",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:comentarios/comentariosDiccionarioVer",
+   "target": "EnviosController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:comentarios/comentariosDiccionarioVer",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:comentarios/comentariosDiccionarioVer",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:comentarios/comentariosDiccionarioVer",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:development/unirsediccionario",
+   "target": "DicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:development/unirsediccionario",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula",
+   "target": "ComentariosController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/aula",
+   "target": "DicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/aula",
+   "target": "PDFController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/aula",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula",
+   "target": "view:layouts/partials/nentradas",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/acepcionEdit",
+   "target": "DicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/aula/acepcionEdit",
+   "target": "EnvioAcepcionController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/aula/acepcionEdit",
+   "target": "daMedios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/acepcionEdit",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/acepcionEdit",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/acepcionEdit",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/acepcionEdit",
+   "target": "view:layouts/partials/dpAcepcion/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/consulta",
+   "target": "DicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/aula/consulta",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/aula/consulta",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/consulta",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/consulta",
+   "target": "view:layouts/partials/consulta/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/consulta",
+   "target": "view:layouts/partials/nentradas",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/daEntradaEdit",
+   "target": "DicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/aula/daEntradaEdit",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/daEntradaEdit",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/entrada",
+   "target": "DicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/aula/entrada",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/entrada",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/aula/entrada",
+   "target": "view:layouts/partials/consulta/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/consulta",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/consulta",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/consulta",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/consulta",
+   "target": "view:layouts/partials/consulta/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/consulta",
+   "target": "view:layouts/partials/nentradas",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/consultaAjax",
+   "target": "view:layouts/partials/consulta/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/consultaAulaAjax",
+   "target": "view:layouts/partials/consulta/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/cookies",
+   "target": "HomeController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/crearDicAula",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/crearDicAula",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/crearDicAula",
+   "target": "view:diccionario/participantesAjax",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/crearDicAula",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/daOptionsPDF",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/daOptionsPDF",
+   "target": "view:layouts/partials/aulaOptionsPDFform",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpDiccionario/dpDiccionarioEnviarFormulario",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/dpDiccionario/dpDiccionarioEnviarFormulario",
+   "target": "EnviosController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/dpDiccionario/dpDiccionarioEnviarFormulario",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpDiccionario/dpDiccionarioEnviarFormulario",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpDiccionario/dpDiccionarioEnviarFormulario",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpDiccionario/dpModificacion",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/dpDiccionario/dpModificacion",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpDiccionario/dpModificacion",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpEntrada/listado",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/dpEntrada/listado",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpEntrada/listado",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpEntrada/masterEntrada",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpEntrada/masterEntrada",
+   "target": "view:layouts/partials/alerts/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpEntrada/masterEntrada",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpEntrada/masterEntrada",
+   "target": "view:layouts/partials/dpAcepcion/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpEntrada/masterEntrada",
+   "target": "view:layouts/partials/dpEntrada/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpOptionsPDFView",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/dpOptionsPDFView",
+   "target": "view:layouts/partials/dpOptionsPDFform",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/entradasAula",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/entradasAula",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/entradasAula",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/home",
+   "target": "DicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/home",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/home",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/home",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/home",
+   "target": "view:layouts/app",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/home",
+   "target": "view:layouts/logging/route",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/home",
+   "target": "view:layouts/partials/alerts/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/home",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/home",
+   "target": "view:layouts/partials/components/botones/diccionario/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/personal",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/personal",
+   "target": "PDFController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:diccionario/personal",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/personal",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/personal",
+   "target": "view:layouts/partials/components/botones/diccionario/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:diccionario/personal",
+   "target": "view:layouts/partials/nentradas",
+   "kind": "call"
+  },
+  {
+   "source": "view:errors/403",
+   "target": "view:layouts/app",
+   "kind": "call"
+  },
+  {
+   "source": "view:errors/404",
+   "target": "view:diccionario/home",
+   "kind": "call"
+  },
+  {
+   "source": "view:home",
+   "target": "view:layouts/app",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/app",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/app",
+   "target": "view:diccionario/cookies",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/logging/route",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/aulaOptionsPDFform",
+   "target": "view:layouts/partials/dpAcepcion/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/components/*",
+   "target": "ComentariosController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/*",
+   "target": "ComentariosHelper",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/components/*",
+   "target": "DicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/*",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/*",
+   "target": "EnviosController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/*",
+   "target": "ModalAjaxController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/*",
+   "target": "PDFController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/*",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/components/*",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/components/*",
+   "target": "view:diccionario/aula/pautas",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/components/*",
+   "target": "view:layouts/partials/alerts/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/components/*",
+   "target": "view:layouts/partials/components/botones/diccionario/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/components/*",
+   "target": "view:layouts/partials/components/botones/entrada/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/acepcion/*",
+   "target": "DicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/acepcion/*",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/acepcion/*",
+   "target": "EnvioAcepcionController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/acepcion/*",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/acepcion/*",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/diccionario/*",
+   "target": "ComentariosController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/diccionario/*",
+   "target": "EnviosController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/entrada/*",
+   "target": "ComentariosController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/entrada/*",
+   "target": "ComentariosHelper",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/entrada/*",
+   "target": "DicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/entrada/*",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/entrada/*",
+   "target": "EnviosController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/entrada/*",
+   "target": "dicAula_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/components/botones/entrada/*",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/consulta/*",
+   "target": "DicAulaController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/consulta/*",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/consulta/*",
+   "target": "daMedios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/consulta/*",
+   "target": "dpMedios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/consulta/*",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/consulta/*",
+   "target": "view:layouts/partials/alerts/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/consulta/*",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/consulta/*",
+   "target": "view:layouts/partials/components/botones/acepcion/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/consulta/*",
+   "target": "view:layouts/partials/components/botones/entrada/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/dpAcepcion/*",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/dpAcepcion/*",
+   "target": "dpMedios_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/dpAcepcion/*",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/dpAcepcion/*",
+   "target": "view:layouts/partials/alerts/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/dpAcepcion/*",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/dpAcepcion/*",
+   "target": "view:layouts/partials/components/botones/acepcion/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/dpEntrada/*",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/dpEntrada/*",
+   "target": "view:layouts/partials/components/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/dpEntrada/*",
+   "target": "view:layouts/partials/consulta/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/dpEntrada/*",
+   "target": "view:layouts/partials/dpAcepcion/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/dpOptionsPDFform",
+   "target": "view:layouts/partials/dpAcepcion/*",
+   "kind": "call"
+  },
+  {
+   "source": "view:layouts/partials/mail/*",
+   "target": "MailController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/nentradas",
+   "target": "DiccionarioPersonalController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/pdf/*",
+   "target": "PDFController",
+   "kind": "dispatch"
+  },
+  {
+   "source": "view:layouts/partials/pdf/*",
+   "target": "global_helper",
+   "kind": "call"
+  },
+  {
+   "source": "view:media/grabacion",
+   "target": "view:layouts/app",
+   "kind": "call"
+  },
+  {
+   "source": "view:welcome",
+   "target": "view:layouts/app",
+   "kind": "call"
+  }
+ ],
+ "entryPoints": [
+  "Cas/CasServiceProvider",
+  "Console/Kernel",
+  "Exceptions/Handler",
+  "Http/Kernel",
+  "Providers/AppServiceProvider",
+  "Providers/AuthServiceProvider",
+  "Providers/EventServiceProvider",
+  "Providers/HelperServiceProvider",
+  "Providers/RouteServiceProvider",
+  "routes/api",
+  "routes/channels",
+  "routes/console",
+  "routes/web"
+ ],
+ "deadEnds": [
+  "Auth/ForgotPasswordController",
+  "Auth/LoginController",
+  "Auth/RegisterController",
+  "Auth/ResetPasswordController",
+  "Auth/VerificationController",
+  "HealthCheckController",
+  "Providers/BroadcastServiceProvider",
+  "model:CentroDicAula",
+  "model:EnsenanzaEstudio",
+  "model:EstudioAreaMateria",
+  "model:UserCentro",
+  "model:Voyager/DataType",
+  "model:Voyager/PermissionRole",
+  "view:auth/login",
+  "view:auth/passwords/email",
+  "view:auth/passwords/reset",
+  "view:auth/register",
+  "view:auth/verify",
+  "view:diccionario/dpEntrada/listado",
+  "view:media/grabacion",
+  "view:welcome"
+ ],
+ "observations": [
+  "Business logic lives in 16 global-function helper files (6465 LOC, more than the 5838 LOC of controllers), loaded by HelperServiceProvider with glob(). global_helper has the highest fan-in (33) and the helpers call each other in cycles (dpEntradas_helper<->dpEnvios_helper, dpMedios_helper<->video_thumbnail): treat them as the real service layer when extracting rules.",
+  "The envíos pipeline is the most shared write path: the envios_* models are written by 6 modules (DicAulaController, EnvioAcepcionController, dicAula_helper, dpEnvios_helper, envioAcepcion_helper, model:EnvioAcepcion). DicAula::borrar() cascades with raw DB::statement over 10 tables (avisos, comentarios_entradas, comentarios_generales, dic_aula, dic_aula_atemporales, dic_aula_campos, dic_aula_destinatario_avisos, dic_aula_participantes, dic_aula_pautas, dp_envios), bypassing Eloquent and the audit trail.",
+  "Identity is a single point of failure: every login goes CAS -> Auth/CasController -> userValidatorCAUCE() in global_helper, which calls the CAUCE web service and creates or updates users, personas, users_personas and centros on the fly. The GitHub Pages demo needs both CAS and CAUCE replaced by a local mock.",
+  "Admin is Voyager: Voyager::routes() dispatches to the App\\Http\\Controllers\\Voyager namespace (config/voyager.php) and BREAD slugs reach vDicAulaController, vDicPersonalController and vCentrosAñoEscolarController only through data_types rows seeded in DataTypesTableSeeder. 8 view() calls target voyager:: templates absent from this repo; the custom ones (compass.vigencia, compass.dicsCursoEsc, compass.dicsPersonales, compass.centrosAñoEscolar, compass.record) are not in the Voyager package either, so those admin screens cannot be rebuilt from source, and VoyagerBaseController renders Voyager::view($view) dynamically.",
+  "Dead-end candidates: the Laravel auth scaffolding (Login/Register/ForgotPassword/ResetPassword/Verification controllers and auth/* views) is unreachable because login is CAS-only; CentroDicAula maps centros_dic_aula, dropped by the 2021_02_11 migration; UserCentro, EnsenanzaEstudio and EstudioAreaMateria are only used by seeders; HealthCheckController is unrouted (/health-check is a closure). Debug routes (/test, /pdf/paginapdf, /mail/paginamail, aula/DEV_unirseGET) ship in production routes.",
+  "Edges are a lower bound: writes through relations ($x->rel()->create()) and 18 dynamic call sites (call_user_func, new $class, $class::method) are not resolved; the authorization checks ($this->authorize with DicAulaPolicy and friends) are wired by convention through AuthServiceProvider."
+ ],
+ "flows": [
+  {
+   "name": "Crear una entrada con sus acepciones",
+   "persona": "Alumno",
+   "description": "A student adds a new word to their personal dictionary and writes one or more senses for it, with topics and media.",
+   "steps": [
+    {
+     "label": "Opens the personal dictionary",
+     "nodes": [
+      "routes/web",
+      "DiccionarioPersonalController",
+      "view:diccionario/personal"
+     ]
+    },
+    {
+     "label": "Starts a new entry from the search box",
+     "nodes": [
+      "DiccionarioPersonalController",
+      "view:diccionario/dpEntrada/masterEntrada",
+      "view:layouts/partials/dpEntrada/*"
+     ]
+    },
+    {
+     "label": "Fills in the sense form (definition, example, topics)",
+     "nodes": [
+      "view:layouts/partials/dpAcepcion/*",
+      "mstEntradaValor_helper"
+     ]
+    },
+    {
+     "label": "Saves the entry together with its first sense",
+     "nodes": [
+      "DiccionarioPersonalController",
+      "dpEntradas_helper",
+      "model:DiccionarioPersonalEntrada",
+      "ds:dp_entradas"
+     ]
+    },
+    {
+     "label": "Stores the sense and its topics",
+     "nodes": [
+      "dpAcepciones_helper",
+      "model:DiccionarioPersonalAcepcion",
+      "ds:dp_acepciones",
+      "model:DiccionarioPersonalAcepcionTematica",
+      "ds:dp_acepciones_tematicas"
+     ]
+    },
+    {
+     "label": "Attaches an image, audio or video to the sense",
+     "nodes": [
+      "dpMedios_helper",
+      "model:DiccionarioPersonalAcepcionMedio",
+      "ds:dp_acepciones_medios",
+      "ds:ext:file-storage"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Enviar entradas al diccionario de aula",
+   "persona": "Alumno",
+   "description": "A student submits one entry, or the whole personal dictionary, to the classroom dictionaries they belong to, for the teacher to review.",
+   "steps": [
+    {
+     "label": "Picks the classroom dictionaries to send to",
+     "nodes": [
+      "EnviosController",
+      "view:layouts/partials/components/*",
+      "model:DicAula"
+     ]
+    },
+    {
+     "label": "Or chooses to send the whole personal dictionary",
+     "nodes": [
+      "EnviosController",
+      "view:diccionario/dpDiccionario/dpDiccionarioEnviarFormulario"
+     ]
+    },
+    {
+     "label": "Submits the entry",
+     "nodes": [
+      "routes/web",
+      "EnviosController",
+      "dpEnvios_helper"
+     ]
+    },
+    {
+     "label": "A submission is recorded per classroom dictionary",
+     "nodes": [
+      "dpEnvios_helper",
+      "model:Envio",
+      "ds:dp_envios"
+     ]
+    },
+    {
+     "label": "The entry and its senses are copied into the submission",
+     "nodes": [
+      "model:EnvioEntrada",
+      "ds:envios_entradas",
+      "model:EnvioAcepcion",
+      "ds:envios_acepciones",
+      "model:EnvioAcepcionTematica",
+      "model:EnvioAcepcionMedio"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Revisar, publicar y comentar envíos",
+   "persona": "Profesor",
+   "description": "A teacher reviews what students sent to a classroom dictionary, corrects senses, publishes the good ones and leaves comments.",
+   "steps": [
+    {
+     "label": "Opens the list of submitted entries",
+     "nodes": [
+      "routes/web",
+      "DicAulaController",
+      "view:diccionario/entradasAula",
+      "model:EnvioEntrada"
+     ]
+    },
+    {
+     "label": "Only teachers who coordinate the dictionary may act",
+     "nodes": [
+      "Providers/AuthServiceProvider",
+      "Policies/DicAulaPolicy"
+     ]
+    },
+    {
+     "label": "Corrects a submitted sense",
+     "nodes": [
+      "EnvioAcepcionController",
+      "view:diccionario/aula/acepcionEdit",
+      "envioAcepcion_helper",
+      "model:EnvioAcepcion",
+      "ds:envios_acepciones"
+     ]
+    },
+    {
+     "label": "Publishes the entry (one or a list)",
+     "nodes": [
+      "DicAulaController",
+      "dicAula_helper",
+      "model:DicAulaEntrada",
+      "ds:dic_aula_entradas",
+      "ds:envios_entradas"
+     ]
+    },
+    {
+     "label": "Comments on a single entry",
+     "nodes": [
+      "dicAula_helper",
+      "model:ComentarioEntrada",
+      "ds:comentarios_entradas"
+     ]
+    },
+    {
+     "label": "Writes a general comment on a student dictionary",
+     "nodes": [
+      "ComentariosController",
+      "ComentariosHelper",
+      "model:ComentarioGeneral",
+      "ds:comentarios_generales"
+     ]
+    },
+    {
+     "label": "The student reads the comments",
+     "nodes": [
+      "view:comentarios/comentariosDiccionarioVer"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Crear un diccionario de aula y unirse con código",
+   "persona": "Profesor",
+   "description": "A teacher creates a classroom dictionary that gets a join code; students type that code to become participants.",
+   "steps": [
+    {
+     "label": "Opens the creation form (type, guidelines, fields)",
+     "nodes": [
+      "routes/web",
+      "DicAulaController",
+      "view:diccionario/crearDicAula",
+      "model:Pautas",
+      "model:TipoDiccionarioAula"
+     ]
+    },
+    {
+     "label": "A unique join code is generated and the dictionary saved",
+     "nodes": [
+      "dicAula_helper",
+      "model:DicAula",
+      "ds:dic_aula",
+      "model:DicAulaPauta",
+      "ds:dic_aula_pautas",
+      "model:DicAulaCampo"
+     ]
+    },
+    {
+     "label": "Optionally invites another teacher by e-mail",
+     "nodes": [
+      "DicAulaController",
+      "mail_helper",
+      "ds:ext:smtp"
+     ]
+    },
+    {
+     "label": "The student opens the join dialog and types the code",
+     "nodes": [
+      "EnviosController",
+      "view:layouts/partials/components/*"
+     ]
+    },
+    {
+     "label": "The student becomes a participant",
+     "nodes": [
+      "DicAulaController",
+      "dicAula_helper",
+      "model:DicAulaParticipante",
+      "ds:dic_aula_participantes"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Iniciar sesión con CAS y validar en CAUCE",
+   "persona": "Alumno o profesor",
+   "description": "A user signs in with the regional single sign-on and the app checks their role and school against CAUCE before letting them in.",
+   "steps": [
+    {
+     "label": "An anonymous request is sent to the login page",
+     "nodes": [
+      "Http/Kernel",
+      "Http/Middleware/Authenticate",
+      "routes/web"
+     ]
+    },
+    {
+     "label": "Signs in on the CAS server",
+     "nodes": [
+      "Cas/Helper",
+      "Cas/CasManager",
+      "ds:ext:cas-server"
+     ]
+    },
+    {
+     "label": "CAS calls back; the user is checked against CAUCE",
+     "nodes": [
+      "Auth/CasController",
+      "global_helper",
+      "ds:ext:cauce-ws"
+     ]
+    },
+    {
+     "label": "User, person and school are created or updated",
+     "nodes": [
+      "global_helper",
+      "User",
+      "ds:users",
+      "model:Persona",
+      "ds:personas",
+      "model:UserPersona",
+      "ds:users_personas",
+      "model:Centro",
+      "ds:centros"
+     ]
+    },
+    {
+     "label": "Lands on the personal dictionary (admins on the Voyager panel)",
+     "nodes": [
+      "routes/web",
+      "DiccionarioPersonalController",
+      "Voyager/VoyagerController"
+     ]
+    }
+   ]
+  }
+ ]
+}
