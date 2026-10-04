@@ -27,6 +27,9 @@ export default defineConfig({
     {
       name: 'demo-webkit',
       use: { ...devices['Desktop Safari'], baseURL: 'http://localhost:4317/lexican/' },
+      // WebKit reopens the IndexedDB-backed PGlite slowly on hosted runners.
+      timeout: 240_000,
+      expect: { timeout: 60_000 },
     },
     {
       name: 'demo-mobile',
