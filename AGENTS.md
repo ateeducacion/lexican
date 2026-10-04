@@ -18,8 +18,8 @@ Esta versión (2.x) es una reconstrucción completa del Laravel 8 + Voyager orig
   *force-push*, ni borrado. Contiene credenciales filtradas que no se reescriben ([SECURITY.md](docs/SECURITY.md)).
 - `main`: rama mantenida. Solo se cambia por PR, con CI en verde.
 - Ramas de trabajo: `feat/…`, `fix/…`, `docs/…`, `chore/…`. PRs pequeñas, un cambio lógico.
-- El árbol legacy (`app/`, `resources/`, `routes/`, `public/`, `database/`, `config/`…) sigue en `main` congelado: no
-  se edita hasta la fase de limpieza, cuando se elimina entero.
+- El árbol legacy (`app/`, `resources/`, `routes/`, `public/`, `database/`, `config/`…) está congelado: no se edita y se
+  elimina entero en la fase de limpieza. La referencia del legacy es siempre `upstream`.
 
 ## Tecnologías
 
@@ -137,11 +137,13 @@ teclado a cualquier arrastre. Cero errores de axe no basta: checklist manual en
 
 ## Licencias
 
-- El proyecto **no tiene licencia todavía**: no añadir `LICENSE`, campo `license` ni cabeceras SPDX hasta que decida
-  el titular ([LICENSING.md](docs/LICENSING.md)).
-- No copiar código sin licencia comprobada. Si se reutiliza algo, registrar proyecto, URL, versión/commit, titular,
-  licencia y cambios en `THIRD_PARTY_NOTICES.md`.
-- Dependencias de producción: solo licencias de la lista de `scripts/licenses.mjs`.
+- LexiCán es **AGPL-3.0-or-later** ([LICENSE](LICENSE), [LICENSING.md](docs/LICENSING.md)). Todo fichero nuevo se
+  publica bajo esa licencia; un `package.json` nuevo declara `"license": "AGPL-3.0-or-later"`.
+- Código o contenidos de terceros solo con licencia compatible con AGPL-3.0-or-later y comprobada (un repositorio
+  público sin licencia no autoriza a copiar). Registrar proyecto, URL, versión/commit, titular, licencia y cambios en
+  `THIRD_PARTY_NOTICES.md`.
+- Dependencias de producción: solo licencias de la lista de `scripts/licenses.mjs`; ampliarla exige justificar la
+  compatibilidad en la PR.
 
 ## Comandos
 

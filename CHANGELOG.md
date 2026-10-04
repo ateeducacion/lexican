@@ -9,6 +9,12 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
 
 #### Añadido
 
+- Licencia AGPL-3.0-or-later para todo el proyecto ([LICENSE](LICENSE), [docs/LICENSING.md](docs/LICENSING.md)).
+- Interfaz nueva: espacio de trabajo en tres columnas para el diccionario personal (lista con buscador y estado de cada
+  entrada, ficha de lectura y panel con aulas, comentarios y exportación), editor estructurado de entradas con vista
+  previa y comprobación de las pautas del aula, y espacio de revisión para el profesorado (cola con publicación en
+  bloque, instantánea fija, decisión y conversación). En móvil, navegación inferior y botón para añadir.
+- Tipografías Lexend y Literata servidas desde la propia aplicación, sin CDNs.
 - Demo pública en GitHub Pages que funciona entera en el navegador (PostgreSQL en WebAssembly con PGlite), con
   cuentas y datos ficticios, persistencia en el navegador y botón para restablecerla.
 - Diccionario personal: entradas con varias acepciones, temáticas, imagen, audio y vídeo; búsqueda por texto, inicial y

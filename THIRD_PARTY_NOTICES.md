@@ -1,13 +1,18 @@
 # Avisos de terceros
 
-Qué software de terceros incluye o distribuye LexiCán, con su licencia. Estado del proyecto y dudas abiertas:
-[docs/LICENSING.md](docs/LICENSING.md). Los textos completos de cada licencia están en el `LICENSE` de cada paquete
+Qué software de terceros incluye o distribuye LexiCán, con su licencia. LexiCán se distribuye bajo
+AGPL-3.0-or-later ([LICENSE](LICENSE), [docs/LICENSING.md](docs/LICENSING.md)).
+
+**Compatibilidad.** Todas las licencias de esta lista permiten distribuir los componentes junto con LexiCán bajo
+AGPL-3.0-or-later: MIT, ISC, BSD-3-Clause, BlueOak-1.0.0 y Apache-2.0 (dependencias npm), OFL-1.1 (tipografías),
+CC0-1.0 (ilustraciones de la demo) y el aviso de OASIS para el esquema DMLex. Los textos completos de cada licencia están en el `LICENSE` de cada paquete
 (`node_modules/<paquete>/`) y la lista se adjunta como SBOM SPDX (`npm run sbom`) a cada *release*.
 
 ## Dependencias npm de producción
 
-Generado con `npm query ':root .prod'` (licencia del `package.json` de cada paquete) el 2026-10-04: 132 paquetes
-(MIT 113, ISC 6, BSD-3-Clause 5, BlueOak-1.0.0 5, Apache-2.0 3). `npm run licenses` lo vuelve a calcular y falla si
+Generado con `npm query ':root .prod'` (licencia del `package.json` de cada paquete) el 2026-10-04: 134 paquetes
+(MIT 113, ISC 6, BSD-3-Clause 5, BlueOak-1.0.0 5, Apache-2.0 3, OFL-1.1 2). La tabla lista los 132 de código; las dos
+tipografías están en su propia sección. `npm run licenses` lo vuelve a calcular y falla si
 aparece una licencia fuera de la lista permitida.
 
 Dónde acaba cada grupo:
@@ -158,13 +163,33 @@ Dónde acaba cada grupo:
 
 | Componente | Ubicación | Licencia | Origen |
 |---|---|---|---|
-| Esquema JSON de OASIS DMLex 1.0 (variante sin módulo *Crosslingual*) | `packages/core/src/dmlex-1.0.schema.json` | sin cabecera de licencia; © OASIS Open, redistribución por confirmar (docs/LICENSING.md) | <https://docs.oasis-open.org/lexidma/dmlex/v1.0/os/> |
+| Esquema JSON de OASIS DMLex 1.0 (variante sin módulo *Crosslingual*) | `packages/core/src/dmlex-1.0.schema.json` | © OASIS Open 2025, política IPR de OASIS (aviso abajo) | <https://docs.oasis-open.org/lexidma/dmlex/v1.0/os/> |
 | Ilustraciones de la demo (guagua, gofio) | `apps/web/public/demo/` | CC0-1.0 | creadas para LexiCán (`README.txt`) |
 
-## Activos vendor del legacy (aún en `main`)
+### Aviso de OASIS (esquema DMLex)
 
-No los usa el código nuevo ni van en sus bundles. Siguen en `main` hasta la fase de limpieza y para siempre en la rama
-`upstream`. Versiones y licencias tomadas de la cabecera de cada fichero.
+> Copyright © OASIS Open 2025. All Rights Reserved. Distributed under the terms of the OASIS IPR Policy.
+>
+> This document and translations of it may be copied and furnished to others, and derivative works that comment on or
+> otherwise explain it or assist in its implementation may be prepared, copied, published, and distributed, in whole
+> or in part, without restriction of any kind, provided that the above copyright notice and this section are included
+> on all such copies and derivative works. However, this document itself may not be modified in any way, including by
+> removing the copyright notice or references to OASIS, except as needed for the purpose of developing any document or
+> deliverable produced by an OASIS Technical Committee (in which case the rules applicable to copyrights, as set forth
+> in the OASIS IPR Policy, must be followed) or as required to translate it into languages other than English.
+>
+> The limited permissions granted above are perpetual and will not be revoked by OASIS or its successors or assigns.
+>
+> This document and the information contained herein is provided on an "AS IS" basis and OASIS DISCLAIMS ALL
+> WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL
+> NOT INFRINGE ANY OWNERSHIP RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+Fuente: sección *Notices* de <https://docs.oasis-open.org/lexidma/dmlex/v1.0/os/dmlex-v1.0-os.html>.
+
+## Activos vendor del legacy
+
+Forman parte del código legacy (rama `upstream`). No los usa el código nuevo ni van en sus bundles; se retiran del
+árbol en la fase de limpieza. Versiones y licencias tomadas de la cabecera de cada fichero.
 
 | Componente | Versión | Ubicación | Licencia |
 |---|---|---|---|
@@ -178,3 +203,12 @@ No los usa el código nuevo ni van en sus bundles. Siguen en `main` hasta la fas
 | Carlito | — | `public/fonts/carlito*`, `public/fonts/carlito/` | SIL OFL-1.1, según el proyecto de origen (el repositorio no incluye el texto) |
 | Bundle Laravel Mix | — | `public/js/app.js` (+ `app.js.LICENSE.txt`), `public/js/acepciones.js` | varias, listadas en `app.js.LICENSE.txt` |
 | `composer.phar` | — | raíz | MIT (Composer) |
+
+## Tipografías autoalojadas (interfaz 2026-10)
+
+| Paquete | Licencia | Uso |
+|---|---|---|
+| `@fontsource-variable/lexend` (Lexend, Bonnie Shaver-Troup, Thomas Jockin y colaboradores) | OFL-1.1 | Texto de la interfaz |
+| `@fontsource/literata` (Literata, TypeTogether) | OFL-1.1 | Palabras y ejemplos del diccionario |
+
+Se sirven desde el propio despliegue (sin CDN de terceros). La OFL permite incluirlas y redistribuirlas con la aplicación.

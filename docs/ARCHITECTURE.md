@@ -29,7 +29,7 @@ flowchart TB
   W --> S[Servicios de aplicación<br/>packages/app]
   S --> C[packages/core]
   S --> D[Drizzle PGlite]
-  D --> I[(PostgreSQL WASM<br/>IndexedDB lexican-demo-v1)]
+  D --> I[(PostgreSQL WASM<br/>IndexedDB lexican-demo-v2)]
 ```
 
 No hay API: el navegador ejecuta los **mismos** servicios con la **misma** autorización sobre la **misma** migración.
@@ -72,12 +72,16 @@ packages/core: sin dependencias de React, Fastify ni Drizzle
 | Ruta | Quién | Qué |
 |---|---|---|
 | `/entrar` | todos | acceso (CAS en producción; cuentas ficticias en la demo) |
-| `/mi-diccionario` | todos | buscador, abecedario, temáticas, nueva palabra |
-| `/mi-diccionario/entradas/:id` | propietario | ficha, envío al aula, estado de envíos, comentarios |
+| `/mi-diccionario` | todos | espacio de trabajo en tres columnas: lista con buscador, abecedario, temáticas y estado de cada entrada; ficha de lectura; panel lateral con estado en las aulas, comentarios y exportación. En móvil, lista y ficha por separado con navegación inferior |
+| `/mi-diccionario/entradas/:id` | propietario | la misma vista con la entrada abierta |
+| `/mi-diccionario/nueva`, `/mi-diccionario/entradas/:id/editar` | propietario | editor estructurado: esquema de la entrada, tarjetas de acepción, vista previa y comprobación de las pautas del aula antes de enviar |
 | `/mi-diccionario/enviar` | propietario | envío de varias entradas |
 | `/aulas` | todos | panel por tareas (pendientes de revisar), unirse con código |
 | `/aulas/:id` | participantes | visor del diccionario de aula |
-| `/aulas/:id/envios` | profesorado del aula | bandeja de revisión |
+| `/aulas/:id/envios`, `/aulas/:id/envios/:envioId` | profesorado del aula | espacio de revisión: cola con publicación en bloque, instantánea fija del envío, panel de decisión y conversación |
 | `/aulas/:id/participantes` | profesorado del aula | roles y altas/bajas |
 | `/diccionarios/:id/imprimir` | lectores | imprimir/PDF, CSV, JSON, DMLex |
 | `/admin/*` | administración / oficina técnica | vigencia, usuarios, listas, estadísticas, auditoría |
+
+Tipografías Lexend (interfaz) y Literata (palabras y ejemplos), autoalojadas con el build: ninguna petición a CDNs
+externos ([THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md)).

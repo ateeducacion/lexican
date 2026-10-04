@@ -1,8 +1,9 @@
 # Modernización de LexiCán
 
 Informe inicial exigido por §104 de `1er-prompt.md`, actualizado con lo que se ha construido. Las cifras del legacy
-salen de [`analysis/lexican/BASELINE.md`](../analysis/lexican/BASELINE.md) (cada una con su comando); las métricas
-comparadas `upstream` vs `main` las genera `npm run metrics` para `docs/MODERNIZATION-REPORT.md`.
+salen de [`analysis/lexican/BASELINE.md`](../analysis/lexican/BASELINE.md) (cada una con su comando); la comparación
+del legacy (`upstream`) con el sistema nuevo la genera `npm run metrics` para
+[MODERNIZATION-REPORT.md](MODERNIZATION-REPORT.md).
 
 ## Estado actual
 
@@ -15,18 +16,13 @@ avisos), no tiene CI y tiene 8 métodos de test. Diagnóstico completo:
 [`analysis/lexican/ASSESSMENT.md`](../analysis/lexican/ASSESSMENT.md).
 
 **Reconstrucción (2.x).** Monorepo TypeScript con la demo PGlite, la API Fastify, el migrador y la administración
-([ARCHITECTURE.md](ARCHITECTURE.md)). El árbol legacy sigue en `main`, congelado, hasta la fase de limpieza.
+([ARCHITECTURE.md](ARCHITECTURE.md)).
 
-## `upstream` vs `main`
+## Referencia legacy: `upstream`
 
-| Ref | SHA | Contenido |
-|---|---|---|
-| `origin/upstream` | `c80ff652b3be44fc5b881060af5abc8c5f8842e8` | «Initial commit: original vendor source». Única versión del código del proveedor; intocable |
-| `origin/main` (al iniciar) | `0a270cd4f505872968b992835ecbf127dd9fddc8` | `upstream` + `92b0995` (una línea en `.gitignore`, borra un `.DS_Store`) + `0a270cd` (`1er-prompt.md`) |
-| merge-base | `c80ff652b3be44fc5b881060af5abc8c5f8842e8` | `main` desciende directamente de `upstream` |
-
-No hay más diferencias de código entre ambas al empezar. La historia del legacy es un único *import*, sin señal de
-frecuencia de cambios. `upstream` contiene credenciales publicadas que no se reescriben (§5): ver
+La rama `upstream` (`c80ff652b3be44fc5b881060af5abc8c5f8842e8`, «Initial commit: original vendor source») es la única
+versión del código legacy y la referencia de todas las comparaciones. Está congelada. Su historia es un único
+*import*, sin señal de frecuencia de cambios. Contiene credenciales publicadas que no se reescriben (§5): ver
 [SECURITY.md](SECURITY.md#credenciales-expuestas-en-el-histórico).
 
 ## Inventario funcional
@@ -119,7 +115,7 @@ veces del diccionario personal y otras del envío. Mapeo tabla a tabla:
 | Migración MariaDB→PostgreSQL | semántica de estados, envíos duplicados, ids distintos por entorno | migrador idempotente con *dry-run*, informe y huérfanos; ensayo sobre copia autorizada |
 | CI | inexistente | CI con PostgreSQL y MariaDB; Pages y releases dependen de él |
 | Tests | 8 métodos no ejecutables | unitarias, contrato en dos drivers, API, migración y E2E ([TESTING.md](TESTING.md)) |
-| Licencias | sin licencia declarada | ninguna licencia hasta que decida el titular ([LICENSING.md](LICENSING.md)) |
+| Licencias | sin licencia declarada | AGPL-3.0-or-later por decisión del titular; lista de licencias permitidas en CI ([LICENSING.md](LICENSING.md)) |
 | Código de terceros | phpCAS copiado, vendor JS sin gestionar | ningún código copiado; dependencias npm con lista de licencias |
 | Exportaciones | dompdf con PHP activado, CSV en la raíz web | exportación en el cliente (CSV, JSON, DMLex) e impresión |
 | Contenido HTML legacy | HTML de TinyMCE en comentarios (XSS almacenado) | se convierte a texto plano al migrar |
@@ -151,7 +147,7 @@ Diagrama, tabla de entidades, estados y trazabilidad legacy: [DATA-MODEL.md](DAT
 
 El build `demo` del mismo frontend carga PGlite con `import()` dinámico tras pintar el acceso, aplica las migraciones
 SQL de `packages/db/migrations` con `migrateBundled` (mismas filas en `drizzle.__drizzle_migrations` que en
-PostgreSQL), siembra datos ficticios a través de los servicios y guarda todo en IndexedDB `lexican-demo-v1`. Las
+PostgreSQL), siembra datos ficticios a través de los servicios y guarda todo en IndexedDB `lexican-demo-v2`. Las
 operaciones llaman en proceso a los mismos servicios que usa la API. «Restablecer datos de demostración» borra la base
 y vuelve a sembrar. Detalle: [DEMO.md](DEMO.md) y [ADR 0004](adr/0004-demo-pglite.md).
 
@@ -172,7 +168,7 @@ corte y la vuelta atrás es apuntar de nuevo a él.
 | 5 | Migrador | `tools/legacy-migrator`, *fixtures* ficticios, job de CI con MariaDB, `MIGRATION.md` |
 | 6 | Administración + documentación + endurecimiento | pantallas de administración, documentación humana, revisión de seguridad y accesibilidad, release |
 | 7 | Corte | ensayo con copia autorizada, despliegue, migración real, comprobaciones, legacy en solo lectura |
-| 8 | Limpieza | eliminar Laravel, Voyager, Composer, Blade, jQuery y activos vendor de `main`; `upstream` intacta |
+| 8 | Limpieza | eliminar del árbol Laravel, Voyager, Composer, Blade, jQuery y activos vendor; `upstream` intacta |
 
 ## Desviaciones respecto a `1er-prompt.md`
 
@@ -190,4 +186,3 @@ corte y la vuelta atrás es apuntar de nuevo a él.
 | Miniaturas de vídeo | no | sin FFmpeg en la imagen |
 | Cobertura con umbrales (§81) | informe sin umbral bloqueante | pendiente de fijar tras estabilizar ([TESTING.md](TESTING.md)) |
 | Tests visuales (§80) y *skills* de agentes (§97) | no incluidos todavía | pendientes |
-| Licencia del proyecto (§92) | ninguna | decisión del titular ([LICENSING.md](LICENSING.md)) |

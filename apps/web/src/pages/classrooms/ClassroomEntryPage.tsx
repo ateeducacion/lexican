@@ -90,7 +90,10 @@ export function Component() {
       <div className="visually-hidden">
         <PageTitle title={entry.headword}>Entrada: {entry.headword}</PageTitle>
       </div>
-      <div className="card">
+      <p className="eyebrow" style={{ margin: 0 }}>
+        {d.title}
+      </p>
+      <div className={styles.entryCard}>
         <EntryContent
           headword={entry.headword}
           senses={entry.senses}
@@ -112,6 +115,7 @@ export function Component() {
       {teacher && (
         <div
           className={`no-print ${styles.toolbar}`}
+          style={{ margin: 'var(--space-3) 0 var(--space-5)' }}
           role="group"
           aria-label="Acciones de la entrada"
         >

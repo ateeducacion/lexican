@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "One-off MariaDB/MySQL (legacy Laravel) → PostgreSQL migration tool. Not a runtime dependency.",
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
     "@lexican/core": "*",
     "@lexican/db": "*",

@@ -3,6 +3,7 @@
   "version": "2.0.0-dev",
   "private": true,
   "description": "LexiCán: diccionarios personales y de aula para el aprendizaje del léxico",
+  "license": "AGPL-3.0-or-later",
   "type": "module",
   "engines": {
     "node": ">=24"

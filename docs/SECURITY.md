@@ -48,8 +48,7 @@ La reconstrucción no hereda código ni dependencias del legacy. Esta tabla dice
 
 ## Credenciales expuestas en el histórico
 
-La rama `upstream` (copia histórica pública del código del proveedor, intocable por §5 de `1er-prompt.md`) y el commit
-inicial de `main` contienen:
+La rama `upstream` (copia histórica pública del código legacy, intocable por §5 de `1er-prompt.md`) contiene:
 
 - la `APP_KEY` de Laravel;
 - dos tokens *bearer* del servicio CAUCE;

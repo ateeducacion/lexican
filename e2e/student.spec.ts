@@ -12,20 +12,22 @@ test.describe('student', () => {
     await expect(page.getByText(/se guardan únicamente en este navegador/).first()).toBeVisible();
     await expectAccessible(page);
     await page.getByRole('button', { name: 'Entrar como alumno 1' }).click();
-    await expect(page.getByRole('button', { name: 'Salir' })).toBeVisible({ timeout: 90_000 });
-    await expect(page.getByRole('link', { name: '+ Nueva palabra' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Desconectar' })).toBeVisible({
+      timeout: 90_000,
+    });
+    await expect(page.getByRole('link', { name: 'Añadir entrada' })).toBeVisible();
   });
 
   test('§77 journey: create, search, send and see the pending status', async ({ page, app }) => {
     await app.login('student1');
     await page
       .getByRole('navigation', { name: 'Principal' })
-      .getByRole('link', { name: 'Mi diccionario' })
+      .getByRole('link', { name: 'Diccionario personal' })
       .click();
     await createEntry(page, 'tenderete');
     // Sense order is what was typed (first sense first).
     await expect(page.locator('.sense-list > li').first()).toContainText('Lío, alboroto');
-    await page.getByRole('link', { name: '← Mi diccionario' }).click();
+    // Desktop workspace: the list stays beside the entry, so search right away.
     await findAndOpen(page, 'tenderete');
     await sendToClassroom(page);
     await app.logout();
@@ -35,10 +37,10 @@ test.describe('student', () => {
     await app.login('student1');
     await createEntry(page, 'mentidero');
     await page.reload();
-    await expect(page.getByRole('heading', { name: 'mentidero', level: 2 })).toBeVisible({
+    await expect(page.getByRole('heading', { name: 'mentidero', level: 1 })).toBeVisible({
       timeout: 90_000,
     });
-    await expect(page.getByRole('button', { name: 'Salir' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Desconectar' })).toBeVisible();
     await app.goto('/mi-diccionario');
     await findAndOpen(page, 'mentidero');
   });
@@ -49,7 +51,8 @@ test.describe('student', () => {
     await expect(page.getByRole('link', { name: 'guagua', exact: true })).toBeVisible();
     await expectAccessible(page);
     await page.getByRole('link', { name: 'guagua', exact: true }).click();
-    await expect(page.getByRole('region', { name: 'Estado de los envíos' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'guagua', level: 1 })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'En el aula' })).toBeVisible();
     await expectAccessible(page);
     await page.getByRole('link', { name: 'Editar' }).click();
     await expect(page.getByLabel('Palabra (obligatorio)')).toHaveValue('guagua');
@@ -75,7 +78,9 @@ test.describe('student', () => {
     await noHorizontalScroll();
     await createEntry(page, 'magua');
     await noHorizontalScroll();
-    await page.getByRole('link', { name: '← Mi diccionario' }).click();
+    // Phones show the entry alone with a back link; wider screens keep the list beside it.
+    const back = page.getByRole('link', { name: '← Mi diccionario' });
+    if (await back.isVisible()) await back.click();
     await findAndOpen(page, 'magua');
     await noHorizontalScroll();
   });

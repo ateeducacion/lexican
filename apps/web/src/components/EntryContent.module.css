@@ -1,0 +1,82 @@
+/* Numbered sense rows: number badge, definition, example (mint rule, serif italic) and media on the right. */
+.list {
+  display: grid;
+  /* Media column depends on the space this entry gets (reading pane, preview, print), not the viewport. */
+  container-type: inline-size;
+}
+.sense {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--c-border);
+}
+.num {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--c-info-bg);
+  color: var(--c-primary);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.sense:first-child .num {
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+}
+.body {
+  min-width: 0;
+}
+.body > * {
+  margin: 0;
+}
+.body > * + * {
+  margin-top: var(--space-3);
+}
+.definition {
+  font-size: 1.2rem;
+  line-height: 1.45;
+}
+.definition :global(.sense-abbr) {
+  font-size: 1rem;
+}
+.example {
+  padding-left: var(--space-3);
+  border-left: 3px solid var(--brand-mint);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--c-muted);
+}
+.media {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+}
+.sense .media img {
+  display: block;
+  width: 100%;
+  max-height: none;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+.media audio,
+.media video {
+  width: 100%;
+}
+.hidden {
+  opacity: 0.6;
+}
+@container (min-width: 560px) {
+  .withMedia {
+    grid-template-columns: 2.5rem minmax(0, 1fr) minmax(10rem, 13.75rem);
+  }
+  .media {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}

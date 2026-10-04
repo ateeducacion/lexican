@@ -11,9 +11,9 @@ y datos son ficticios:
 
 | Cuenta | Correo | Contraseña |
 |---|---|---|
-| Profesora | `profesor@ejemplo.com` | `profesor` |
-| Alumno 1 | `alumno1@ejemplo.com` | `alumno1` |
-| Alumna 2 | `alumno2@ejemplo.com` | `alumno2` |
+| Profesora (Yaiza Tutoriales) | `profesor@ejemplo.com` | `profesor` |
+| Alumno 1 (Alumno Padrón Armas) | `alumno1@ejemplo.com` | `alumno1` |
+| Alumna 2 (Alumna Armas Padrón) | `alumno2@ejemplo.com` | `alumno2` |
 | Administración | `admin@ejemplo.com` | `admin` |
 
 Más detalles en [docs/DEMO.md](docs/DEMO.md).
@@ -90,5 +90,5 @@ completa en TypeScript ([docs/MODERNIZATION.md](docs/MODERNIZATION.md)).
 
 ## Licencia
 
-Pendiente de decisión del titular; hasta entonces no se concede licencia sobre el código
-([docs/LICENSING.md](docs/LICENSING.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)).
+LexiCán es software libre bajo la [GNU Affero General Public License v3.0 o posterior](LICENSE) (AGPL-3.0-or-later).
+Detalle y componentes de terceros: [docs/LICENSING.md](docs/LICENSING.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

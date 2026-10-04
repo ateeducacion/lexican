@@ -1,9 +1,9 @@
 {
+  "$comment": "Copyright © OASIS Open 2025. All Rights Reserved. OASIS DMLex Version 1.0 JSON schema, reproduced under the OASIS notices (see THIRD_PARTY_NOTICES.md). Original note: This schema can only establish uniqueness for arrays in which the item is the key, i.e. labels, partsOfSpeech, and sameAs. Uniqueness of IDs and validity of ID references cannot be checked at all.",
   "$id": "http://docs.oasis-open.org/lexidma/ns/dmlex-1.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "DMLex",
   "description": "DMLex JSON serialization. This variant of the schema is for documents *not* implementing the Crosslingual Module (but possibly implementing some other modules).",
-  "$comment": "This schema can only establish uniqueness for arrays in which the item is the key, i.e. labels, partsOfSpeech, and sameAs. Uniqueness of IDs and validity of ID references cannot be checked at all.",
   "type": "object",
   "oneOf": [
     {
@@ -16,7 +16,9 @@
   "$defs": {
     "lexicographicResource": {
       "type": "object",
-      "required": ["langCode"],
+      "required": [
+        "langCode"
+      ],
       "properties": {
         "title": {
           "type": "string",
@@ -106,7 +108,9 @@
     },
     "entry": {
       "type": "object",
-      "required": ["headword"],
+      "required": [
+        "headword"
+      ],
       "properties": {
         "headword": {
           "type": "string",
@@ -167,7 +171,9 @@
     },
     "inflectedForm": {
       "type": "object",
-      "required": ["text"],
+      "required": [
+        "text"
+      ],
       "properties": {
         "tag": {
           "type": "string",
@@ -226,7 +232,9 @@
     },
     "definition": {
       "type": "object",
-      "required": ["text"],
+      "required": [
+        "text"
+      ],
       "properties": {
         "definitionType": {
           "type": "string"
@@ -254,10 +262,14 @@
       "type": "object",
       "anyOf": [
         {
-          "required": ["soundFile"]
+          "required": [
+            "soundFile"
+          ]
         },
         {
-          "required": ["transcriptions"],
+          "required": [
+            "transcriptions"
+          ],
           "properties": {
             "transcriptions": {
               "minItems": 1
@@ -287,7 +299,9 @@
     },
     "transcription": {
       "type": "object",
-      "required": ["text"],
+      "required": [
+        "text"
+      ],
       "properties": {
         "scheme": {
           "type": "string"
@@ -301,7 +315,9 @@
     },
     "example": {
       "type": "object",
-      "required": ["text"],
+      "required": [
+        "text"
+      ],
       "properties": {
         "sourceIdentity": {
           "type": "string"
@@ -341,7 +357,9 @@
     },
     "partOfSpeechTag": {
       "type": "object",
-      "required": ["tag"],
+      "required": [
+        "tag"
+      ],
       "properties": {
         "tag": {
           "type": "string",
@@ -367,7 +385,9 @@
     },
     "inflectedFormTag": {
       "type": "object",
-      "required": ["tag"],
+      "required": [
+        "tag"
+      ],
       "properties": {
         "tag": {
           "type": "string",
@@ -393,7 +413,9 @@
     },
     "definitionTypeTag": {
       "type": "object",
-      "required": ["tag"],
+      "required": [
+        "tag"
+      ],
       "properties": {
         "tag": {
           "type": "string",
@@ -415,7 +437,9 @@
     },
     "labelTag": {
       "type": "object",
-      "required": ["tag"],
+      "required": [
+        "tag"
+      ],
       "properties": {
         "tag": {
           "type": "string",
@@ -445,7 +469,9 @@
     },
     "labelTypeTag": {
       "type": "object",
-      "required": ["tag"],
+      "required": [
+        "tag"
+      ],
       "properties": {
         "tag": {
           "type": "string",
@@ -467,7 +493,9 @@
     },
     "sourceIdentityTag": {
       "type": "object",
-      "required": ["tag"],
+      "required": [
+        "tag"
+      ],
       "properties": {
         "tag": {
           "type": "string",
@@ -489,7 +517,9 @@
     },
     "transcriptionSchemeTag": {
       "type": "object",
-      "required": ["tag"],
+      "required": [
+        "tag"
+      ],
       "properties": {
         "tag": {
           "type": "string"
@@ -507,7 +537,9 @@
     },
     "relation": {
       "type": "object",
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "properties": {
         "type": {
           "type": "string",
@@ -529,7 +561,9 @@
     },
     "member": {
       "type": "object",
-      "required": ["ref"],
+      "required": [
+        "ref"
+      ],
       "properties": {
         "ref": {
           "type": "string"
@@ -546,7 +580,9 @@
     },
     "relationType": {
       "type": "object",
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "properties": {
         "type": {
           "type": "string",
@@ -555,7 +591,11 @@
         "scopeRestriction": {
           "type": "string",
           "minLength": 1,
-          "enum": ["sameEntry", "sameResource", "any"]
+          "enum": [
+            "sameEntry",
+            "sameResource",
+            "any"
+          ]
         },
         "description": {
           "type": "string",
@@ -579,7 +619,9 @@
     },
     "memberType": {
       "type": "object",
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "properties": {
         "role": {
           "type": "string"
@@ -587,7 +629,11 @@
         "type": {
           "type": "string",
           "minLength": 1,
-          "enum": ["sense", "entry", "collocate"]
+          "enum": [
+            "sense",
+            "entry",
+            "collocate"
+          ]
         },
         "min": {
           "type": "integer",
@@ -600,7 +646,11 @@
         "hint": {
           "type": "string",
           "minLength": 1,
-          "enum": ["embed", "navigate", "none"]
+          "enum": [
+            "embed",
+            "navigate",
+            "none"
+          ]
         },
         "description": {
           "type": "string",
@@ -618,7 +668,10 @@
     },
     "placeholderMarker": {
       "type": "object",
-      "required": ["startIndex", "endIndex"],
+      "required": [
+        "startIndex",
+        "endIndex"
+      ],
       "properties": {
         "startIndex": {
           "type": "integer",
@@ -633,7 +686,10 @@
     },
     "headwordMarker": {
       "type": "object",
-      "required": ["startIndex", "endIndex"],
+      "required": [
+        "startIndex",
+        "endIndex"
+      ],
       "properties": {
         "startIndex": {
           "type": "integer",
@@ -648,7 +704,10 @@
     },
     "collocateMarker": {
       "type": "object",
-      "required": ["startIndex", "endIndex"],
+      "required": [
+        "startIndex",
+        "endIndex"
+      ],
       "properties": {
         "startIndex": {
           "type": "integer",
@@ -666,7 +725,7 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/label"
-           },
+          },
           "uniqueItems": true
         },
         "id": {
@@ -692,7 +751,9 @@
     },
     "etymon": {
       "type": "object",
-      "required": ["etymonUnits"],
+      "required": [
+        "etymonUnits"
+      ],
       "properties": {
         "when": {
           "type": "string"
@@ -709,12 +770,16 @@
             "$ref": "#/$defs/etymonUnit"
           },
           "minItems": 1
-        }      },
+        }
+      },
       "additionalProperties": false
     },
     "etymonUnit": {
       "type": "object",
-      "required": ["langCode", "text"],
+      "required": [
+        "langCode",
+        "text"
+      ],
       "properties": {
         "langCode": {
           "type": "string"
@@ -740,7 +805,9 @@
     },
     "etymonType": {
       "type": "object",
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "properties": {
         "type": {
           "type": "string",
@@ -762,7 +829,9 @@
     },
     "etymonLanguage": {
       "type": "object",
-      "required": ["langCode"],
+      "required": [
+        "langCode"
+      ],
       "properties": {
         "langCode": {
           "type": "string"
@@ -793,4 +862,3 @@
     }
   }
 }
-

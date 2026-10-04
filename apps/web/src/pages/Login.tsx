@@ -60,7 +60,11 @@ export function Component() {
   return (
     <div className={styles.wrap}>
       <section className={styles.intro}>
-        <PageTitle title="Entrar">LexiCán</PageTitle>
+        <PageTitle title="Entrar">
+          <span className="wordmark">
+            Lexi<span>Cán</span>
+          </span>
+        </PageTitle>
         <p className={styles.lead}>
           Diccionarios personales y de aula para aprender vocabulario: cada alumno crea sus palabras
           y el profesorado las revisa y publica en el diccionario de la clase.

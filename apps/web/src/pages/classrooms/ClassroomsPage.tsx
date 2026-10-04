@@ -2,17 +2,10 @@ import { JoinInput, type DictionaryView } from '@lexican/core';
 import { useState, type FormEvent } from 'react';
 import { Link, useLoaderData, useNavigate } from 'react-router';
 import { getApi } from '../../api/index.ts';
-import {
-  EmptyState,
-  ErrorMessage,
-  Field,
-  PageTitle,
-  useAction,
-  useNotify,
-} from '../../components/ui.tsx';
+import { EmptyState, ErrorMessage, Field, useAction, useNotify } from '../../components/ui.tsx';
 import { useSession } from '../../session.ts';
 import styles from './Classrooms.module.css';
-import { ClassroomState, JoinCode } from './shared.tsx';
+import { ClassroomState, JoinCode, PageHeader } from './shared.tsx';
 
 export async function loader() {
   return (await getApi()).myClassrooms({});
@@ -28,33 +21,37 @@ export function Component() {
 
   return (
     <>
-      <div className="spread">
-        <PageTitle>Mis aulas</PageTitle>
+      <PageHeader eyebrow="Diccionario de aula" title="Mis aulas">
         {canCreate && (
           <Link className="btn btn-primary" to="/aulas/nueva">
             Nuevo diccionario de aula
           </Link>
         )}
-      </div>
+      </PageHeader>
 
       {teaching.length > 0 && (
         <section aria-labelledby="teaching-title">
           <h2 id="teaching-title">Diccionarios que coordino</h2>
-          <p className="muted">
+          <p className="muted small">
             {pending === 0
               ? 'No tienes envíos pendientes de revisar.'
               : `Tienes ${pending} ${pending === 1 ? 'envío pendiente' : 'envíos pendientes'} de revisar.`}
           </p>
-          <ul className="grid" style={{ listStyle: 'none', padding: 0 }}>
+          <ul className={styles.cards}>
             {teaching.map((c) => (
-              <li key={c.id} className="card">
+              <li key={c.id} className={styles.dcard}>
                 <h3>
                   <Link to={`/aulas/${c.id}`}>{c.title}</Link>
                 </h3>
                 <ClassroomState dictionary={c} />
-                <p className="small">
-                  {c.entryCount} {c.entryCount === 1 ? 'entrada publicada' : 'entradas publicadas'}{' '}
-                  · Código <JoinCode code={c.classroom?.joinCode ?? ''} />
+                <p className={styles.stats}>
+                  <span>
+                    <strong>{c.entryCount}</strong>{' '}
+                    {c.entryCount === 1 ? 'entrada publicada' : 'entradas publicadas'}
+                  </span>
+                  <span>
+                    Código <JoinCode code={c.classroom?.joinCode ?? ''} />
+                  </span>
                 </p>
                 <div className={styles.cardActions}>
                   {c.pendingCount > 0 ? (
@@ -94,9 +91,9 @@ export function Component() {
               <p>Pide el código a tu profesor o profesora y escríbelo abajo para unirte.</p>
             </EmptyState>
           ) : (
-            <ul className="grid" style={{ listStyle: 'none', padding: 0 }}>
+            <ul className={styles.cards}>
               {learning.map((c) => (
-                <li key={c.id} className="card">
+                <li key={c.id} className={styles.dcard}>
                   <h3>
                     <Link to={`/aulas/${c.id}`}>{c.title}</Link>
                   </h3>

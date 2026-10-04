@@ -1,4 +1,5 @@
 import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
@@ -18,7 +19,14 @@ export default defineConfig(({ mode }) => ({
   plugins: [react()],
   define: {
     __DEMO__: JSON.stringify(mode === 'demo'),
-    __APP_VERSION__: JSON.stringify(process.env.npm_package_version ?? '2.0.0'),
+    // Product version lives in the root package.json (workspaces are 0.0.0).
+    __APP_VERSION__: JSON.stringify(
+      (
+        JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as {
+          version: string;
+        }
+      ).version,
+    ),
     __APP_COMMIT__: JSON.stringify(commit),
   },
   optimizeDeps: { exclude: ['@electric-sql/pglite'] },

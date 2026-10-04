@@ -4,8 +4,9 @@ import {
   type DictionaryView,
   type WindowState,
 } from '@lexican/core';
+import type { ReactNode } from 'react';
 import { Link } from 'react-router';
-import { formatDate } from '../../components/ui.tsx';
+import { PageTitle, formatDate } from '../../components/ui.tsx';
 import styles from './Classrooms.module.css';
 
 export const WINDOW_LABEL: Record<WindowState, string> = {
@@ -28,7 +29,7 @@ export function ClassroomState({ dictionary }: { dictionary: DictionaryView }) {
         Curso {formatSchoolYear(c.schoolYear)}
         {c.groupLabel && ` · Grupo ${c.groupLabel}`}
       </li>
-      <li className={c.current ? styles.ok : styles.off}>
+      <li className={c.current ? styles.ok : undefined}>
         <span aria-hidden="true">{c.current ? '●' : '○'}</span>{' '}
         {c.current
           ? last === null
@@ -37,7 +38,7 @@ export function ClassroomState({ dictionary }: { dictionary: DictionaryView }) {
           : 'No vigente'}
       </li>
       {c.current && (
-        <li className={window === 'open' ? styles.ok : styles.off}>
+        <li className={window === 'open' ? styles.ok : undefined}>
           <span aria-hidden="true">{window === 'open' ? '✉' : '✕'}</span> {WINDOW_LABEL[window]}
           {window === 'open' &&
             c.submissionsEndAt &&
@@ -48,11 +49,41 @@ export function ClassroomState({ dictionary }: { dictionary: DictionaryView }) {
         </li>
       )}
       {!c.visibleToStudents && (
-        <li className={styles.off}>
+        <li>
           <span aria-hidden="true">◌</span> Oculto para el alumnado
         </li>
       )}
     </ul>
+  );
+}
+
+/** White header strip of classroom pages: back link, eyebrow, the page h1 and actions on the right. */
+export function PageHeader({
+  back,
+  eyebrow,
+  title,
+  docTitle,
+  children,
+}: {
+  back?: ReactNode;
+  eyebrow?: ReactNode;
+  title: ReactNode;
+  docTitle?: string;
+  children?: ReactNode;
+}) {
+  return (
+    <div className={styles.strip}>
+      <div>
+        {back && <p className={`no-print small ${styles.back}`}>{back}</p>}
+        {eyebrow && (
+          <p className="eyebrow" style={{ margin: 0 }}>
+            {eyebrow}
+          </p>
+        )}
+        <PageTitle {...(docTitle ? { title: docTitle } : {})}>{title}</PageTitle>
+      </div>
+      {children}
+    </div>
   );
 }
 

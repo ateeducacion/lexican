@@ -1,6 +1,6 @@
 # Baseline — lexican (legacy, `1er-prompt.md` §7)
 
-- Date: 2026-10-04 · Commit measured: `0a270cd` (legacy code = vendor import `c80ff65`)
+- Date: 2026-10-04 · Measured: legacy (`upstream`, vendor import `c80ff65`). Scans exclude the non-legacy files listed below.
 - Run from the repo root. Every scan excludes `analysis/`, `legacy/` (symlink to the repo itself), `.git/` and `1er-prompt.md`.
 - The legacy app was **not** run (user instruction; Laravel 8 does not run on the local PHP 8.5). Rows that need a running
   legacy are marked **not measured**, with what it would take to measure them.
@@ -86,7 +86,7 @@
 | Vendored JS not referenced by any view/config | `jquery.min.js`, `swiper-bundle.min.js`, `dropify.min.js` (served publicly anyway) | `grep -rln <file> resources app config webpack.mix.js` → empty |
 | `.DS_Store` | 7 tracked, 7 on disk | `git ls-files \| grep -c '\.DS_Store$'` · `find . -path ./legacy -prune -o -name .DS_Store -print \| wc -l` |
 | Other accidental artifacts | `public/exports/data_export_2023-06-26.csv` (aggregate counts only); `storage/.DS_Store` | `git ls-files \| grep -iE '\.(sql\|csv\|…)$\|storage/'` |
-| Git history | 3 commits; legacy is a single vendor import, so no change-frequency signal | `git log --oneline \| wc -l` |
+| Git history | legacy (`upstream`) is a single vendor import commit, so no change-frequency signal | `git log --oneline origin/upstream \| wc -l` |
 | CI | none (`.github/` absent) | `ls .github` |
 
 ## Tests
