@@ -31,6 +31,7 @@
     "test:migration": "vitest run tools",
     "e2e": "playwright test",
     "e2e:demo": "playwright test --project='demo-*'",
+    "e2e:webkit": "playwright test --project=demo-webkit --workers=1",
     "db:generate": "npm run generate --workspace @lexican/db",
     "db:migrate": "npm run db:migrate --workspace @lexican/api",
     "db:seed": "npm run db:seed --workspace @lexican/api",

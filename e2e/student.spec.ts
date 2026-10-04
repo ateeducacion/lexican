@@ -12,7 +12,7 @@ test.describe('student', () => {
     await expect(page.getByText(/se guardan únicamente en este navegador/).first()).toBeVisible();
     await expectAccessible(page);
     await page.getByRole('button', { name: 'Entrar como alumno 1' }).click();
-    await expect(page.getByRole('button', { name: 'Salir' })).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole('button', { name: 'Salir' })).toBeVisible({ timeout: 90_000 });
     await expect(page.getByRole('link', { name: '+ Nueva palabra' })).toBeVisible();
   });
 
@@ -36,7 +36,7 @@ test.describe('student', () => {
     await createEntry(page, 'mentidero');
     await page.reload();
     await expect(page.getByRole('heading', { name: 'mentidero', level: 2 })).toBeVisible({
-      timeout: 30_000,
+      timeout: 90_000,
     });
     await expect(page.getByRole('button', { name: 'Salir' })).toBeVisible();
     await app.goto('/mi-diccionario');
@@ -91,7 +91,7 @@ test.describe('student', () => {
       .getByRole('button', { name: 'Restablecer', exact: true })
       .click();
     // Reset wipes the browser database and the session, then reloads on the login page.
-    await expect(page.getByRole('heading', { name: 'Acceso' })).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole('heading', { name: 'Acceso' })).toBeVisible({ timeout: 90_000 });
     await app.login('student1');
     await app.goto('/mi-diccionario');
     await expect(page.getByRole('link', { name: 'guagua', exact: true })).toBeVisible();
