@@ -1,5 +1,5 @@
 import { openAsBlob } from 'node:fs';
-import { mkdir, readdir, rename, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, rename, rm, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { MediaStorage } from '@lexican/app';
 
@@ -33,12 +33,15 @@ export function fsMediaStorage(root: string): MediaStorage {
       }
     },
     async open(key) {
+      const path = pathFor(root, key);
+      // stat first: for a missing file openAsBlob throws ENOENT on macOS but ERR_INVALID_ARG_VALUE on Linux.
       try {
-        return await openAsBlob(pathFor(root, key));
+        if (!(await stat(path)).isFile()) return null;
       } catch (e) {
         if (isMissing(e)) return null;
         throw e;
       }
+      return openAsBlob(path);
     },
     async delete(key) {
       await rm(pathFor(root, key), { force: true });
