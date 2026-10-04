@@ -43,13 +43,13 @@ integration:
 e2e:
 	bun run e2e
 
-## Lint and typecheck
+## Lint, format and import order (Biome) and typecheck
 lint:
 	bun run lint && bun run typecheck
 
-## Fix lint and formatting
+## Fix lint, formatting and import order (Biome)
 fix:
-	bunx eslint . --fix && bun run format
+	bun run fix
 
 ## Full local quality gate
 check:

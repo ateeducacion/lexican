@@ -54,8 +54,8 @@ Los paquetes se importan como TypeScript fuente (sin compilar entre ellos); la A
 | `bun run dev` / `dev:demo` / `dev:api` | Vite (producción), Vite (demo), API con recarga |
 | `bun run build` | web (`apps/web/dist`) + API (`apps/api/dist`) |
 | `bun run build:demo` / `preview:demo` | demo estática (`apps/web/dist-demo`) / servirla como Pages en http://localhost:4317/lexican/ (sin *fallback*) |
-| `bun run check` | `lint` + `format:check` + `typecheck` + `test` |
-| `bun run lint` / `format` / `format:check` / `typecheck` | ESLint, Prettier, `tsc` |
+| `bun run check` | `lint` + `typecheck` + `test` |
+| `bun run lint` / `fix` / `format` / `typecheck` | Biome (`biome check .`: lint, formato y orden de importaciones) / lo mismo arreglando (`--write`) / solo formato / `tsc`. Atajos: `make lint`, `make fix` |
 | `bun run test` / `test:watch` / `test:coverage` | Vitest |
 | `bun run test:contracts` / `test:integration` / `test:migration` | Vitest de `packages/app`, `apps/api`, `tools` |
 | `bun run e2e` / `e2e:demo` | Playwright: todo / solo proyectos `demo-*` |
@@ -132,7 +132,7 @@ Migración con MariaDB y cobertura: [docs/TESTING.md](docs/TESTING.md).
 - Validación siempre con los esquemas Zod de `packages/core`; nada de validar a mano en la UI o en la API.
 - Fechas en UTC en la base; el curso escolar se calcula con `SCHOOL_YEAR_START` y un reloj inyectado.
 - Interfaz en español; código, comentarios, commits y PR en inglés.
-- Sin `console.log` (ESLint permite `warn` y `error`).
+- Sin `console.log` (Biome permite `warn` y `error`).
 - Commits Conventional Commits en inglés, sin atribución a herramientas de IA.
 
 ## Publicar una versión

@@ -1,9 +1,9 @@
 import {
   bindPath,
-  operations,
   type MediaKind,
   type MediaView,
   type OperationName,
+  operations,
 } from '@lexican/core';
 import { ApiError, type WebApi } from './types.ts';
 

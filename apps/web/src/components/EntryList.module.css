@@ -140,7 +140,7 @@
   border-color: var(--brand-teal-text);
   color: var(--brand-teal-text);
 }
-.letters a[aria-current='page'] {
+.letters a[aria-current="page"] {
   background: var(--brand-teal-text);
   border-color: var(--brand-teal-text);
   color: var(--c-surface);
@@ -195,7 +195,7 @@
   outline: none;
 }
 .railLink::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -212,7 +212,7 @@
   color: var(--c-muted);
 }
 .status::before {
-  content: '';
+  content: "";
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -281,11 +281,11 @@
     font-size: 1.3rem;
   }
   /* No reading pane beside the phone list: only a real page selection is highlighted. */
-  .railItem:has([aria-current='true']) {
+  .railItem:has([aria-current="true"]) {
     background: var(--c-surface);
     box-shadow: none;
   }
-  .railItem:has([aria-current='true']) .railLink {
+  .railItem:has([aria-current="true"]) .railLink {
     color: var(--c-text);
   }
 }

@@ -1,22 +1,22 @@
 import {
   DomainError,
-  SENSE_FIELDS,
-  headwordKey,
-  submissionWindowState,
   type EntrySnapshot,
   type EntryView,
+  headwordKey,
   type ParsedInput,
   type PublishResult,
+  SENSE_FIELDS,
   type SenseField,
-  type SubmitResult,
   type SubmissionView,
+  type SubmitResult,
+  submissionWindowState,
   type WindowState,
 } from '@lexican/core';
 import { dictionaries, entries, entryRevisions, submissions, users } from '@lexican/db';
 import { and, desc, eq, inArray, isNull, ne } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { assertEditable, classroomAccess, type SettingsRow } from './access.ts';
-import { audit, iso, notFound, requireUser, type Actor, type Deps } from './context.ts';
+import { type Actor, audit, type Deps, iso, notFound, requireUser } from './context.ts';
 import { addRevision, inputFromSnapshot, insertEntry, replaceEntry } from './entries.ts';
 import { entryViews } from './views.ts';
 

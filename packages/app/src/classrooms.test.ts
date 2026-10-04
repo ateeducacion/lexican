@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { generateJoinCode, type Actor } from './index.ts';
-import { appFixture, type AppFixture } from './testing/fixture.ts';
+import { type Actor, generateJoinCode } from './index.ts';
+import { type AppFixture, appFixture } from './testing/fixture.ts';
 
 describe('generateJoinCode', () => {
   it('maps random bytes onto the unambiguous 32-character alphabet', () => {

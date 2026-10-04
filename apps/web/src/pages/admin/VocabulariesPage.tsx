@@ -4,7 +4,7 @@ import {
   type Vocabulary,
   type VocabularyValue,
 } from '@lexican/core';
-import { useState, type FormEvent } from 'react';
+import { type FormEvent, useState } from 'react';
 import { useLoaderData, useRevalidator, useSearchParams } from 'react-router';
 import { getApi } from '../../api/index.ts';
 import { ErrorMessage, PageTitle, useAction, useNotify } from '../../components/ui.tsx';

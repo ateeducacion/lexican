@@ -1,10 +1,10 @@
 import { GLOBAL_ROLES, type GlobalRole, type UserView } from '@lexican/core';
 import {
   Form,
+  type LoaderFunctionArgs,
   useLoaderData,
   useRevalidator,
   useSearchParams,
-  type LoaderFunctionArgs,
 } from 'react-router';
 import { getApi } from '../../api/index.ts';
 import { ErrorMessage, PageTitle, useAction, useNotify } from '../../components/ui.tsx';

@@ -5,6 +5,11 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
 
 ## [Sin publicar]
 
+### Cambiado — Biome
+
+- Biome 2.5.15 sustituye a ESLint y Prettier (`bun run lint`/`fix`, `make lint`/`make fix`): mismas reglas efectivas,
+  incluida la prohibición de APIs de servidor en el código compartido, más avisos de accesibilidad revisados uno a uno.
+
 ### Eliminado — árbol Laravel
 
 - Código PHP/Laravel, sus migraciones, vistas, recursos, `public/`, scripts de despliegue, `Dockerfile.apache81`,

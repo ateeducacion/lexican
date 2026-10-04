@@ -1,4 +1,4 @@
-import { safeError, type SessionCarrier } from '@lexican/http';
+import { type SessionCarrier, safeError } from '@lexican/http';
 import type { DemoContext, DemoContextUpdate, FromWorker, ToWorker } from './protocol.ts';
 
 /** What the worker serves: the Hono app's `fetch`, called with the demo context as its env. */
@@ -12,17 +12,25 @@ export type Fetcher = {
 type Bindings = { ctx: DemoContext; update: DemoContextUpdate };
 
 /** The session id and CAS state live in the page (localStorage / sessionStorage) and ride on each message. */
+const env = (c: { env: unknown }) => c.env as Bindings;
 export const demoCarrier: SessionCarrier = {
-  getSession: (c) => (c.env as Bindings).ctx.session ?? undefined,
-  setSession: (c, id) => void ((c.env as Bindings).update.session = id),
-  clearSession: (c) => void ((c.env as Bindings).update.session = null),
+  getSession: (c) => env(c).ctx.session ?? undefined,
+  setSession: (c, id) => {
+    env(c).update.session = id;
+  },
+  clearSession: (c) => {
+    env(c).update.session = null;
+  },
   getCasState: (c) => {
-    const s = (c.env as Bindings).ctx.casState;
+    const s = env(c).ctx.casState;
     return s && s.exp > Date.now() ? s.value : undefined;
   },
-  setCasState: (c, value, maxAgeS) =>
-    void ((c.env as Bindings).update.casState = { value, exp: Date.now() + maxAgeS * 1000 }),
-  clearCasState: (c) => void ((c.env as Bindings).update.casState = null),
+  setCasState: (c, value, maxAgeS) => {
+    env(c).update.casState = { value, exp: Date.now() + maxAgeS * 1000 };
+  },
+  clearCasState: (c) => {
+    env(c).update.casState = null;
+  },
 };
 
 /**

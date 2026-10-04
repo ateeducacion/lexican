@@ -1,4 +1,4 @@
-import type { VocabularyValue, Vocabulary } from '@lexican/core';
+import type { Vocabulary, VocabularyValue } from '@lexican/core';
 import { useSession } from '../session.ts';
 
 /** Lookup helpers over the controlled vocabularies loaded at the root. */

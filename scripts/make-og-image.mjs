@@ -1,9 +1,10 @@
 // Renders the link-preview card (Open Graph / Twitter, 1200x630) into apps/web/public/og-image.jpg:
 // LexiCán's wordmark plus a real capture of the demo, in the same visual family as Tonga and Aritmates.
 // Usage: bun run og-image
-import { chromium } from '@playwright/test';
+
 import { spawn } from 'node:child_process';
 import { readFileSync, statSync } from 'node:fs';
+import { chromium } from '@playwright/test';
 
 const PORT = 4196;
 const OUT = 'apps/web/public/og-image.jpg';

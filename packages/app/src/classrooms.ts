@@ -1,35 +1,35 @@
 import {
-  DomainError,
-  JOIN_CODE_ALPHABET,
-  schoolYearOf,
   type ClassroomInput,
   type DictionaryView,
+  DomainError,
+  JOIN_CODE_ALPHABET,
   type MemberView,
   type ParsedInput,
+  schoolYearOf,
 } from '@lexican/core';
 import {
   classroomSettings,
+  type Db,
   dictionaries,
   dictionaryMemberships,
   submissions,
   users,
-  type Db,
 } from '@lexican/db';
 import { and, asc, eq, isNull, sql } from 'drizzle-orm';
 import {
   assertEditable,
   classroomAccess,
-  dictionaryAccess,
   type DictionaryAccess,
+  dictionaryAccess,
 } from './access.ts';
 import {
+  type Actor,
   audit,
+  type Deps,
   isUniqueViolation,
   notFound,
   requireRole,
   requireUser,
-  type Actor,
-  type Deps,
 } from './context.ts';
 import { dictionaryViews } from './views.ts';
 

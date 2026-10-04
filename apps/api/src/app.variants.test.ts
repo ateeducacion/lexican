@@ -6,9 +6,9 @@ import { authIdentities } from '@lexican/db';
 import { openPglite, type TestDb } from '@lexican/db/testing';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { buildApp } from './app.ts';
-import { testApp } from './testing/inject.ts';
 import { fakeDirectory, type InstitutionalDirectory } from './cauce.ts';
-import { loadConfig, type Config } from './config.ts';
+import { type Config, loadConfig } from './config.ts';
+import { testApp } from './testing/inject.ts';
 
 /** The HTTP adapter under configurations other than the main app.test.ts one. */
 const HTTPS = 'https://lexican.example.test';

@@ -1,23 +1,23 @@
 import {
   CommentInput,
-  formatSchoolYear,
   type CommentView,
   type DictionaryView,
+  formatSchoolYear,
   type MemberView,
   type PublishResult,
   type SubmissionStatus,
   type SubmissionView,
 } from '@lexican/core';
-import { useState, type FormEvent } from 'react';
+import { type FormEvent, useState } from 'react';
 import {
   Form,
   Link,
+  type LoaderFunctionArgs,
   useLoaderData,
   useNavigate,
   useParams,
   useRevalidator,
   useSearchParams,
-  type LoaderFunctionArgs,
 } from 'react-router';
 import { ApiError, getApi } from '../../api/index.ts';
 import { EntryContent } from '../../components/EntryContent.tsx';
@@ -25,8 +25,8 @@ import {
   Dialog,
   ErrorMessage,
   Field,
-  StatusBadge,
   formatDate,
+  StatusBadge,
   useAction,
   useNotify,
 } from '../../components/ui.tsx';

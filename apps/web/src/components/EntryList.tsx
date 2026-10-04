@@ -1,5 +1,5 @@
 import { ALPHABET, type EntrySummary } from '@lexican/core';
-import { useEffect, useState, type FormEvent } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router';
 import { getApi } from '../api/index.ts';
 import styles from './EntryList.module.css';
@@ -165,6 +165,7 @@ export function EntryList({
         Entradas
       </h2>
       <div className={styles.filters}>
+        {/* biome-ignore lint/a11y/useSemanticElements: <search> is not yet safe on every browser LexiCán targets. */}
         <form role="search" onSubmit={search} className={styles.search}>
           <label htmlFor="entry-search" className="visually-hidden">
             Buscar una palabra

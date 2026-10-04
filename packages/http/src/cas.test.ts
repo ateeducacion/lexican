@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
+  type CasServer,
+  CasUnavailable,
   casEndpoint,
   casLoginUrl,
   casLogoutUrl,
-  CasUnavailable,
   parseLogoutRequest,
   parseServiceResponse,
   validateTicket,
-  type CasServer,
 } from './cas.ts';
 
 const OK =

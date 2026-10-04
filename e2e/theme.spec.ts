@@ -20,9 +20,11 @@ test('a missing code chunk after a deployment reloads once instead of showing an
   test.skip(!app.demo, 'demo build only');
   let fail = true;
   // The lazily loaded demo engine chunk (demo/transport.ts).
-  await page.route(/assets\/transport-.*\.js$/, (r) =>
-    fail ? ((fail = false), r.fulfill({ status: 404, body: '' })) : r.continue(),
-  );
+  await page.route(/assets\/transport-.*\.js$/, (r) => {
+    if (!fail) return r.continue();
+    fail = false;
+    return r.fulfill({ status: 404, body: '' });
+  });
   // The forced 404 itself is logged by the browser; that is the scenario under test.
   page.removeAllListeners('console');
   // Depending on the browser the reload happens while the login page preloads the database chunk or on the

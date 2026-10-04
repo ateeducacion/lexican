@@ -1,11 +1,11 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { PGlite } from '@electric-sql/pglite';
-import { drizzle as drizzlePglite } from 'drizzle-orm/pglite';
 import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres';
+import { drizzle as drizzlePglite } from 'drizzle-orm/pglite';
 import pg from 'pg';
 import type { Db } from './db.ts';
-import { migrateBundled, type Journal } from './migrate.ts';
+import { type Journal, migrateBundled } from './migrate.ts';
 import * as schema from './schema.ts';
 
 /** Node-side helpers to load migrations and open both drivers (tests, CLI). */

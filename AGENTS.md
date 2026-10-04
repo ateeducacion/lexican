@@ -28,7 +28,8 @@ Esta versión (2.x) es una reconstrucción completa del Laravel 8 + Voyager orig
 |---|---|---|
 | Bun | `1.4.2` | gestor de paquetes (`bun.lock`, `bun ci`, `linker = "hoisted"`) y runtime del servidor (imagen `oven/bun:1.4.2-alpine`); nunca APIs de Bun en paquetes compartidos |
 | Node.js | `>=24` (CI en 24) | solo ejecuta herramientas: Vite, Vitest y Playwright (que no se pasan a Bun) |
-| TypeScript | `~6.0` | `typescript-eslint` 8.x exige `<6.1`; TypeScript 7 no se adopta hasta que lo soporte. Dependabot lo ignora |
+| TypeScript | `~6.0` | solo `tsc --noEmit`; TypeScript 7 se adopta en una PR aparte |
+| Biome | `2.5.15` (exacta) | lint, formato y orden de importaciones (`bun run lint`, `bun run fix`, `make lint`, `make fix`); sustituye a ESLint y Prettier |
 | React / Vite / react-router | 19.3 / 8.3 / 8.4 | router en modo datos; sin TanStack Query ni Redux |
 | Hono | `^4.13.13` | la API, la misma en el servidor y en el Worker de la demo ([ADR 0009](docs/adr/0009-hono-bun-worker.md)) |
 | Drizzle ORM / drizzle-kit | `^0.45.3` / `^0.31.11` | v1 cambia las migraciones: *majors* a mano |
@@ -58,7 +59,7 @@ tools/legacy-migrator  MariaDB → PostgreSQL (solo para migrar)
   `packages/app` + prueba de contrato + UI.
 - Las rutas no deciden permisos: solo *sesión → validación → servicio → respuesta*.
 - `packages/core` no importa React, Hono ni Drizzle. `packages/http` no importa `node:*`, `pg`, Bun ni configuración
-  institucional (ESLint lo impide).
+  institucional (Biome lo impide: `noRestrictedImports`, `noRestrictedGlobals`).
 - React no llama a los servicios: todo pasa por la API (también en la demo; lo comprueba `transport.test.ts`).
 - Sin interfaces de repositorio: los servicios usan Drizzle directamente ([ADR 0003](docs/adr/0003-drizzle-pglite.md)).
 
@@ -165,7 +166,8 @@ bun run dev:api                  # API en :3000
 bun run dev                      # web en :5173 contra la API
 bun run dev:demo                 # demo (Worker + PGlite), sin backend
 docker compose --profile app up --build   # imagen Bun local: CAS de pruebas + datos ficticios en :3000
-bun run check                    # lint + format:check + typecheck + test
+bun run check                    # lint (Biome) + typecheck + test
+make fix                         # Biome arregla lint, formato e importaciones
 bun run e2e:demo                 # E2E de la demo
 bun run build && bun run build:demo && bun run check:dist
 bun run db:generate              # nueva migración tras editar schema.ts

@@ -1,10 +1,10 @@
 import { openAsBlob } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { extname, resolve, sep } from 'node:path';
-import { testDirectory, type InstitutionalDirectory, type MediaStorage } from '@lexican/app';
+import { type InstitutionalDirectory, type MediaStorage, testDirectory } from '@lexican/app';
 import type { Db } from '@lexican/db';
 import { createApi, type Logger, type SessionCarrier } from '@lexican/http';
-import { Hono, type Context } from 'hono';
+import { type Context, Hono } from 'hono';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import proxyaddr from 'proxy-addr';
 import { httpDirectory } from './cauce.ts';

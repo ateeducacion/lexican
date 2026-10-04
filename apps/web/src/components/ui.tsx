@@ -1,15 +1,15 @@
+import type { SubmissionStatus } from '@lexican/core';
 import {
   createContext,
+  type ReactNode,
   useCallback,
   useContext,
   useEffect,
   useId,
   useRef,
   useState,
-  type ReactNode,
 } from 'react';
-import type { SubmissionStatus } from '@lexican/core';
-import { toApiError, type ApiError } from '../api/index.ts';
+import { type ApiError, toApiError } from '../api/index.ts';
 
 /** Sets the document title and gives the page a single h1 (§61 headings, route announcements). */
 export function PageTitle({ children, title }: { children: ReactNode; title?: string }) {

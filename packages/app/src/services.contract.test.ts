@@ -1,8 +1,8 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import type { EntryInput, OperationName, OperationOutputs } from '@lexican/core';
 import { seedVocabulary, vocabularyValues } from '@lexican/db';
 import { openPglite, openPostgres, type TestDb } from '@lexican/db/testing';
-import type { EntryInput, OperationName, OperationOutputs } from '@lexican/core';
-import { createPasswordUser, createServices, type Actor, memoryMediaStorage } from './index.ts';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { type Actor, createPasswordUser, createServices, memoryMediaStorage } from './index.ts';
 
 /**
  * Persistence contract (§75): the same application journey against PGlite and real PostgreSQL.

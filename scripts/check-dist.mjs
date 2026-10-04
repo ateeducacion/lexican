@@ -5,8 +5,9 @@
 // - production web (apps/web/dist): no PGlite, WASM, worker, demo API or demo passwords (it may name the test CAS:
 //   the same SPA serves the local Docker profile; the server decides, and refuses it in production);
 // - API bundle (apps/api/dist): no secrets, no test CAS host baked in except as the APP_ENV=local default.
-import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
+
 import { createHash } from 'node:crypto';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const files = (dir) =>

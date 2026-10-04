@@ -1,12 +1,12 @@
 import {
-  isClassroomCurrent,
-  schoolYearOf,
-  DomainError,
-  validityToReactivate,
   type AdminClassroomView,
+  DomainError,
+  isClassroomCurrent,
   type ParsedInput,
   type StatsView,
+  schoolYearOf,
   type VocabularyValue,
+  validityToReactivate,
 } from '@lexican/core';
 import {
   auditEvents,
@@ -20,12 +20,12 @@ import {
 } from '@lexican/db';
 import { and, asc, desc, eq, ilike, isNull, or, sql } from 'drizzle-orm';
 import {
+  type Actor,
   audit,
+  type Deps,
   isUniqueViolation,
   notFound,
   requireRole,
-  type Actor,
-  type Deps,
 } from './context.ts';
 import { toUserView, toVocabularyValue } from './views.ts';
 

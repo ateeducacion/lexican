@@ -16,11 +16,11 @@ import {
   memberRoleOf,
   normalizeLabel,
   orderSenses,
+  type SenseData,
   safeFileName,
   sniffMedia,
   submissionStatusOf,
   vocabularyOfField,
-  type SenseData,
 } from './transform.ts';
 
 const bytes = (...b: (number | string)[]) =>

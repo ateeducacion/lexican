@@ -77,7 +77,7 @@ apps/web ──► packages/core (siempre)
          └─► Worker: packages/http + packages/app + packages/db + PGlite (solo build demo, carga diferida)
 apps/api ──► packages/http ──► packages/app ──► packages/db ──► PostgreSQL
                                            └─► packages/core
-packages/core, packages/app, packages/http: solo APIs web (sin node:*, pg ni Bun; ESLint lo comprueba)
+packages/core, packages/app, packages/http: solo APIs web (sin node:*, pg ni Bun; Biome lo comprueba)
 ```
 
 ## Rutas de la interfaz

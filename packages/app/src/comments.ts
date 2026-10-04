@@ -1,4 +1,4 @@
-import { DomainError, type CommentView, type ParsedInput } from '@lexican/core';
+import { type CommentView, DomainError, type ParsedInput } from '@lexican/core';
 import {
   classroomSettings,
   comments,
@@ -11,7 +11,7 @@ import {
 import { and, desc, eq, inArray, isNull, lte, or, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { assertEditable, classroomAccess } from './access.ts';
-import { audit, notFound, requireUser, type Actor, type Deps } from './context.ts';
+import { type Actor, audit, type Deps, notFound, requireUser } from './context.ts';
 
 /** Teacher feedback: plain text only (no HTML, RULE-046/186 XSS removed), one student per comment. */
 export function commentServices(deps: Deps) {

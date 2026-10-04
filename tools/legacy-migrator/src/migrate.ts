@@ -1,16 +1,16 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { copyFile, mkdir, readFile, readdir, stat as fsStat } from 'node:fs/promises';
+import { copyFile, stat as fsStat, mkdir, readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import {
-  SENSE_FIELD_CODES,
+  type EntrySnapshot,
   headwordKey,
   initialOf,
-  normalizeText,
-  sortKeyOf,
-  type EntrySnapshot,
   type MediaKind,
   type MemberRole,
+  normalizeText,
+  SENSE_FIELD_CODES,
   type SenseField,
+  sortKeyOf,
   type Vocabulary,
 } from '@lexican/core';
 import {
@@ -18,6 +18,7 @@ import {
   authIdentities,
   classroomSettings,
   comments,
+  type Db,
   dictionaries,
   dictionaryMemberships,
   entries,
@@ -32,14 +33,12 @@ import {
   userSchools,
   users,
   vocabularyValues,
-  type Db,
 } from '@lexican/db';
-import { eq, sql, type SQL } from 'drizzle-orm';
+import { eq, type SQL, sql } from 'drizzle-orm';
 import type { Acepcion, DpEntrada, LegacyData, Master, Medio, Tematica } from './legacy.ts';
 import { COUNTED_ONLY } from './legacy.ts';
-import { anomaly, newReport, orphan, stat, type Report } from './report.ts';
+import { anomaly, newReport, orphan, type Report, stat } from './report.ts';
 import {
-  LEGACY_MEDIA,
   buildSnapshot,
   codeFromLabel,
   commentsVisibilityOf,
@@ -52,17 +51,18 @@ import {
   htmlLosses,
   htmlToText,
   isJoinCode,
+  LEGACY_MEDIA,
   legacyJoinCode,
   maxSensesOf,
   memberRoleOf,
   normalizeLabel,
   orderSenses,
   originalNameOf,
+  type SenseData,
   safeFileName,
   sniffMedia,
   submissionStatusOf,
   vocabularyOfField,
-  type SenseData,
 } from './transform.ts';
 
 export interface MigrateOptions {

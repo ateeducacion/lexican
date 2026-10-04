@@ -1,7 +1,7 @@
 import {
-  NOT_AUTHORIZED,
   type InstitutionalDirectory,
   type InstitutionalProfile,
+  NOT_AUTHORIZED,
 } from '@lexican/app';
 import { DomainError } from '@lexican/core';
 import { parseXmlSafe } from '@lexican/http';

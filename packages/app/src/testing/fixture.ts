@@ -8,9 +8,9 @@ import type {
 import { seedVocabulary, vocabularyValues } from '@lexican/db';
 import { openPglite } from '@lexican/db/testing';
 import {
+  type Actor,
   createPasswordUser,
   createServices,
-  type Actor,
   type Deps,
   memoryMediaStorage,
 } from '../index.ts';
