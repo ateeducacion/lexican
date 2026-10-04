@@ -4,8 +4,14 @@ import type { ErrorCode, LexicanApi, MediaView } from '@lexican/core';
 export type WebApi = LexicanApi & {
   /** URL usable in <img>/<audio>/<video>: the API route in production, an object URL in the demo. */
   mediaSrc(media: Pick<MediaView, 'id' | 'url'>): Promise<string>;
-  /** Demo only: wipe the browser database and reload with fresh demo data. */
+  /** Demo only: wipe the browser database, media and session, then reload with fresh demo data. */
   resetDemo?: () => Promise<void>;
+  /** Demo only: start a login with the public test CAS (navigates away). */
+  startCasLogin?: () => Promise<void>;
+  /** Demo only: end the local session and the test CAS SSO session (navigates away). */
+  casLogout?: () => Promise<void>;
+  /** Demo only: validate a CAS callback once; returns the in-app path to go to. */
+  completeCasLogin?: (p: { ticket: string | null; state: string | null }) => Promise<string>;
 };
 
 export type ApiErrorCode = ErrorCode | 'network' | 'internal';

@@ -8,8 +8,7 @@
     "dev": "vite",
     "dev:demo": "vite --mode demo",
     "build": "vite build",
-    "build:demo": "vite build --mode demo",
-    "preview:demo": "vite preview --mode demo"
+    "build:demo": "vite build --mode demo"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",
