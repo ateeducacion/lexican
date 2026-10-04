@@ -4,7 +4,7 @@ import { migrateBundled, schema, type Db, type Journal } from '@lexican/db';
 import journal from '../../../../packages/db/migrations/meta/_journal.json';
 
 /** Bump the suffix when the demo schema or seed changes incompatibly: browsers start from a fresh database. */
-export const DATA_DIR = 'lexican-demo-v1';
+export const DATA_DIR = 'lexican-demo-v2';
 
 const sqlFiles = import.meta.glob<string>('../../../../packages/db/migrations/*.sql', {
   query: '?raw',

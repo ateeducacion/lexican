@@ -5,7 +5,7 @@ export const CLASSROOM = 'Canarismos de 2º ESO B';
 
 /** From the personal home: create an entry with two senses (both with part of speech) and land on its page. */
 export async function createEntry(page: Page, headword: string) {
-  await page.getByRole('link', { name: '+ Nueva palabra' }).click();
+  await page.getByRole('link', { name: 'Añadir entrada' }).click();
   await expect(page.getByRole('heading', { name: 'Nueva palabra', level: 1 })).toBeVisible();
   await page.getByLabel('Palabra (obligatorio)').fill(headword);
   await page

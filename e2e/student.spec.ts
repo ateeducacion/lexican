@@ -12,8 +12,10 @@ test.describe('student', () => {
     await expect(page.getByText(/se guardan únicamente en este navegador/).first()).toBeVisible();
     await expectAccessible(page);
     await page.getByRole('button', { name: 'Entrar como alumno 1' }).click();
-    await expect(page.getByRole('button', { name: 'Salir' })).toBeVisible({ timeout: 90_000 });
-    await expect(page.getByRole('link', { name: '+ Nueva palabra' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Desconectar' })).toBeVisible({
+      timeout: 90_000,
+    });
+    await expect(page.getByRole('link', { name: 'Añadir entrada' })).toBeVisible();
   });
 
   test('§77 journey: create, search, send and see the pending status', async ({ page, app }) => {
@@ -38,7 +40,7 @@ test.describe('student', () => {
     await expect(page.getByRole('heading', { name: 'mentidero', level: 2 })).toBeVisible({
       timeout: 90_000,
     });
-    await expect(page.getByRole('button', { name: 'Salir' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Desconectar' })).toBeVisible();
     await app.goto('/mi-diccionario');
     await findAndOpen(page, 'mentidero');
   });

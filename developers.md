@@ -115,7 +115,7 @@ Migración con MariaDB y cobertura: [docs/TESTING.md](docs/TESTING.md).
 
 ## Depurar la base de la demo en el navegador
 
-- La base está en IndexedDB: DevTools → *Application* → *IndexedDB* → `/pglite/lexican-demo-v1`. El usuario activo está
+- La base está en IndexedDB: DevTools → *Application* → *IndexedDB* → `/pglite/lexican-demo-v2`. El usuario activo está
   en *Local storage* → `lexican-demo-session`.
 - Empezar de cero: botón «Restablecer datos de demostración», o borrar esa base y recargar.
 - Para consultar con SQL, reproducir el estado en Node: `openPglite()` (`packages/db/src/testing.ts`) + `seedDemo()`

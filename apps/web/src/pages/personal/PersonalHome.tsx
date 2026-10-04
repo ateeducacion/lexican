@@ -1,7 +1,8 @@
 import type { DictionaryView } from '@lexican/core';
-import { Link, useLoaderData } from 'react-router';
+import { Link, useLoaderData, useSearchParams } from 'react-router';
 import { getApi } from '../../api/index.ts';
 import { EntryList } from '../../components/EntryList.tsx';
+import { Tile, Tiles } from '../../components/Tiles.tsx';
 import { PageTitle } from '../../components/ui.tsx';
 import { Avatar } from './Avatar.tsx';
 import styles from './personal.module.css';
@@ -12,6 +13,7 @@ export async function loader(): Promise<DictionaryView> {
 
 export function Component() {
   const dict = useLoaderData<DictionaryView>();
+  const [params] = useSearchParams();
   return (
     <div className="stack">
       <header className={styles.header}>
@@ -25,26 +27,18 @@ export function Component() {
         </div>
       </header>
 
-      <div className={styles.actions}>
-        <Link to="/mi-diccionario/nueva" className="btn btn-primary">
-          + Nueva palabra
-        </Link>
-        <Link to="/mi-diccionario/enviar" className="btn">
-          Enviar al aula
-        </Link>
-        <Link to={`/diccionarios/${dict.id}/imprimir`} className="btn">
-          Imprimir o exportar
-        </Link>
-        <Link to="/mi-diccionario/ajustes" className="btn">
-          Ajustes
-        </Link>
-      </div>
+      <Tiles label="Acciones del diccionario personal">
+        <Tile to="/mi-diccionario/nueva" icon="add" label="Añadir entrada" />
+        <Tile to="/mi-diccionario/enviar" icon="send" label="Enviar al aula" />
+        <Tile to={`/diccionarios/${dict.id}/imprimir`} icon="export" label="Imprimir o exportar" />
+        <Tile to="/mi-diccionario/ajustes" icon="manage" label="Gestión del diccionario" />
+      </Tiles>
 
-      <details className="card" open={dict.entryCount === 0 || undefined}>
+      <details className="card" open={dict.entryCount === 0 || params.has('ayuda') || undefined}>
         <summary className={styles.helpSummary}>¿Qué puedo hacer?</summary>
         <ol className={styles.steps}>
           <li>
-            Pulsa <strong>Nueva palabra</strong>, escribe la palabra y su definición. Puedes añadir
+            Pulsa <strong>Añadir entrada</strong>, escribe la palabra y su definición. Puedes añadir
             un ejemplo, temáticas, una imagen, un audio o un vídeo.
           </li>
           <li>

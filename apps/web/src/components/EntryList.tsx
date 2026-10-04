@@ -141,8 +141,12 @@ export function EntryList({
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
           />
-          <button type="submit" className="btn">
-            Buscar
+          <button type="submit" className={styles.searchButton}>
+            <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22">
+              <circle cx="10.5" cy="10.5" r="6.5" />
+              <path d="m15.5 15.5 5 5" />
+            </svg>
+            <span className="visually-hidden">Buscar</span>
           </button>
         </form>
         {topics.length > 0 && (

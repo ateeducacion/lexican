@@ -29,7 +29,7 @@ flowchart TB
   W --> S[Servicios de aplicación<br/>packages/app]
   S --> C[packages/core]
   S --> D[Drizzle PGlite]
-  D --> I[(PostgreSQL WASM<br/>IndexedDB lexican-demo-v1)]
+  D --> I[(PostgreSQL WASM<br/>IndexedDB lexican-demo-v2)]
 ```
 
 No hay API: el navegador ejecuta los **mismos** servicios con la **misma** autorización sobre la **misma** migración.

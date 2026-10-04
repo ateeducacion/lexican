@@ -1,20 +1,28 @@
-/* LexiCán — design tokens and base components. Page-specific styles live in *.module.css. */
+/* LexiCán — design tokens and base components. Page-specific styles live in *.module.css.
+   Brand palette from the original LexiCán: dark blue header (#0F4C81), turquoise band (#3EB1BA) and the mint
+   «CÁN» of the wordmark (#B2FFE3). Turquoise is decorative only: text and buttons use AA-contrast shades. */
 
 :root {
   color-scheme: light dark;
   --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, sans-serif;
   --font-serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
 
-  --c-bg: #f7f5f0;
+  --brand-blue: #0f4c81;
+  --brand-blue-dark: #0b3a63;
+  --brand-teal: #3eb1ba;
+  --brand-teal-text: #1b6f77;
+  --brand-mint: #b2ffe3;
+
+  --c-bg: #ffffff;
   --c-surface: #ffffff;
-  --c-surface-2: #f0ede6;
-  --c-text: #1d2422;
-  --c-muted: #5a6662;
-  --c-border: #d9d4c9;
-  --c-primary: #14635a;
-  --c-primary-hover: #0e4d46;
+  --c-surface-2: #eef6f7;
+  --c-text: #1f2a33;
+  --c-muted: #56636d;
+  --c-border: #c9d3d8;
+  --c-primary: var(--brand-blue);
+  --c-primary-hover: var(--brand-blue-dark);
   --c-on-primary: #ffffff;
-  --c-accent: #f2c14e;
+  --c-accent: var(--brand-teal);
   --c-focus: #1a73e8;
   --c-danger: #b3261e;
   --c-danger-bg: #fdecea;
@@ -39,15 +47,16 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --c-bg: #141917;
-    --c-surface: #1c2220;
-    --c-surface-2: #242b29;
-    --c-text: #e7ece9;
-    --c-muted: #a6b3ae;
-    --c-border: #34403c;
-    --c-primary: #5fc4b3;
-    --c-primary-hover: #82d6c8;
-    --c-on-primary: #0b1f1c;
+    --brand-teal-text: #7fd6dd;
+    --c-bg: #10181f;
+    --c-surface: #17222b;
+    --c-surface-2: #1e2c37;
+    --c-text: #e6eef3;
+    --c-muted: #a3b3bf;
+    --c-border: #2f414f;
+    --c-primary: #8cc8ff;
+    --c-primary-hover: #b3dbff;
+    --c-on-primary: #08233b;
     --c-focus: #8ab4f8;
     --c-danger: #f2b8b5;
     --c-danger-bg: #3a1d1b;
@@ -87,6 +96,7 @@ h3 {
 }
 h1 {
   font-size: clamp(1.5rem, 2.5vw + 1rem, 2rem);
+  color: var(--c-primary);
 }
 h2 {
   font-size: 1.3rem;
@@ -101,6 +111,11 @@ p {
 a {
   color: var(--c-primary);
   text-underline-offset: 2px;
+}
+
+/* Containers focused programmatically for route announcements get no ring. */
+[tabindex='-1']:focus {
+  outline: none;
 }
 
 :focus-visible {
@@ -432,11 +447,12 @@ dialog::backdrop {
   border: 1px solid var(--c-border);
 }
 
-/* Alphabet bar */
+/* Alphabet bar: circled letters, as in the original LexiCán */
 .alphabet {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.2rem;
+  justify-content: center;
+  gap: 0.3rem;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -445,15 +461,48 @@ dialog::backdrop {
 .alphabet span {
   display: inline-grid;
   place-items: center;
-  min-width: 2.1rem;
-  min-height: 2.1rem;
-  border-radius: var(--radius-sm);
+  min-width: 2.2rem;
+  height: 2.2rem;
+  padding: 0 0.5rem;
+  border: 1.5px solid #747474;
+  border-radius: 999px;
   text-decoration: none;
-  font-weight: 600;
+  font-family: Arial, var(--font);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #4a4a4a;
+}
+.alphabet a:hover {
+  border-color: var(--brand-teal-text);
+  color: var(--brand-teal-text);
 }
 .alphabet a[aria-current='page'] {
-  background: var(--c-primary);
-  color: var(--c-on-primary);
+  background: var(--brand-teal-text);
+  border-color: var(--brand-teal-text);
+  color: #fff;
+}
+@media (prefers-color-scheme: dark) {
+  .alphabet a,
+  .alphabet span {
+    border-color: #8a9aa5;
+    color: var(--c-text);
+  }
+  .alphabet a[aria-current='page'] {
+    color: #08233b;
+  }
+}
+
+/* Wordmark «LEXICÁN» */
+.wordmark {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-transform: uppercase;
+}
+.wordmark span {
+  color: var(--brand-mint);
+  font-weight: 900;
 }
 
 @media (prefers-reduced-motion: no-preference) {

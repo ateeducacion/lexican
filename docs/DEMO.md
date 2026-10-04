@@ -13,9 +13,9 @@ Aparecen debajo del formulario de acceso, cada una con un botón «Entrar como�
 
 | Cuenta | Correo | Contraseña | Rol |
 |---|---|---|---|
-| Profesora (Laura Méndez) | `profesor@ejemplo.com` | `profesor` | profesorado |
-| Alumno 1 (Daniel Suárez) | `alumno1@ejemplo.com` | `alumno1` | alumnado |
-| Alumna 2 (Aitana Perera) | `alumno2@ejemplo.com` | `alumno2` | alumnado |
+| Profesora (Yaiza Tutoriales) | `profesor@ejemplo.com` | `profesor` | profesorado |
+| Alumno 1 (Alumno Padrón Armas) | `alumno1@ejemplo.com` | `alumno1` | alumnado |
+| Alumna 2 (Alumna Armas Padrón) | `alumno2@ejemplo.com` | `alumno2` | alumnado |
 | Administración | `admin@ejemplo.com` | `admin` | administración |
 
 Todos los nombres, correos y el centro son ficticios.
@@ -41,7 +41,7 @@ La semilla se ejecuta una sola vez y marca `app_settings.demo_seed_version`.
 
 ## Persistencia
 
-- Base de datos: IndexedDB `idb://lexican-demo-v1` (en el navegador, `/pglite/lexican-demo-v1`). El sufijo se sube
+- Base de datos: IndexedDB `idb://lexican-demo-v2` (en el navegador, `/pglite/lexican-demo-v2`). El sufijo se sube
   (`DATA_DIR` en `apps/web/src/demo/db.ts`) cuando el esquema o la semilla cambian de forma incompatible.
 - Usuario activo: clave `lexican-demo-session` de `localStorage` (solo el identificador del usuario ficticio).
 - Al recargar se conservan datos y sesión.

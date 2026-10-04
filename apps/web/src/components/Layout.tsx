@@ -36,41 +36,68 @@ export function Layout() {
       <a className="skip-link" href="#contenido">
         Saltar al contenido
       </a>
+      {__DEMO__ && <DemoBanner />}
       <header role="banner" className={styles.header}>
-        <div className={`container ${styles.bar}`}>
-          <NavLink
-            to={user ? '/' : '/entrar'}
-            className={styles.brand}
-            aria-label="LexiCán, inicio"
-          >
-            <span aria-hidden="true" className={styles.logo}>
-              L
-            </span>
-            LexiCán
-          </NavLink>
-          {user && (
-            <nav aria-label="Principal" className={styles.nav}>
-              <NavLink to="/mi-diccionario">Mi diccionario</NavLink>
-              <NavLink to="/aulas">Mis aulas</NavLink>
-              <NavLink to="/comentarios">Comentarios</NavLink>
-              {staff && <NavLink to="/admin">Administración</NavLink>}
-            </nav>
-          )}
-          {user && (
-            <div className={styles.user}>
-              <span className="small">
-                {user.displayName}
-                <span className="muted"> · {ROLE_LABEL[user.globalRole]}</span>
+        <div className={styles.top}>
+          <div className={`container ${styles.bar}`}>
+            <NavLink
+              to={user ? '/' : '/entrar'}
+              className={styles.brand}
+              aria-label="LexiCán, inicio"
+            >
+              <span className="wordmark" aria-hidden="true">
+                Lexi<span>Cán</span>
               </span>
-              <button type="button" className="btn btn-sm" onClick={logout}>
-                Salir
-              </button>
-            </div>
-          )}
+            </NavLink>
+            {user && (
+              <div className={styles.user}>
+                <span className={styles.userName}>
+                  {user.displayName}
+                  <span className={styles.role}> · {ROLE_LABEL[user.globalRole]}</span>
+                </span>
+                <button type="button" className={styles.logout} onClick={logout}>
+                  Desconectar
+                </button>
+              </div>
+            )}
+          </div>
         </div>
+        <div className={styles.band}>
+          <div className={`container ${styles.bandInner}`}>
+            {user && (
+              <>
+                <NavLink to="/mi-diccionario?ayuda" className={styles.help}>
+                  ¿Qué puedo hacer?
+                </NavLink>
+                <span className={styles.avatar} aria-hidden="true">
+                  {initials(user.displayName)}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+        {user && (
+          <nav aria-label="Principal" className="container">
+            <ul className={styles.tabs}>
+              <li>
+                <NavLink to="/mi-diccionario">Diccionario personal</NavLink>
+              </li>
+              <li>
+                <NavLink to="/aulas">Diccionario de aula</NavLink>
+              </li>
+              <li>
+                <NavLink to="/comentarios">Comentarios</NavLink>
+              </li>
+              {staff && (
+                <li>
+                  <NavLink to="/admin">Administración</NavLink>
+                </li>
+              )}
+            </ul>
+          </nav>
+        )}
         {navigation.state === 'loading' && <div className={styles.progress} aria-hidden="true" />}
       </header>
-      {__DEMO__ && <DemoBanner />}
       <main id="contenido" ref={main} tabIndex={-1} className={`container ${styles.main}`}>
         <Outlet />
       </main>
@@ -83,6 +110,14 @@ export function Layout() {
     </NotifyProvider>
   );
 }
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]!.toLocaleUpperCase('es'))
+    .join('');
 
 function DemoBanner() {
   const [confirm, setConfirm] = useState(false);

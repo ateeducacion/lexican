@@ -7,12 +7,12 @@
 
 - `vite build --mode demo` genera `apps/web/dist-demo` con `base: '/lexican/'` y enrutado por *hash* (no hace falta
   `404.html`). El modo se decide en el build (`import.meta.env.MODE`), nunca por el nombre del host.
-- PGlite 0.5.8 en el hilo principal con `idb://lexican-demo-v1`. Se carga con `import()` dinámico solo en la demo: la
+- PGlite 0.5.8 en el hilo principal con `idb://lexican-demo-v2`. Se carga con `import()` dinámico solo en la demo: la
   pantalla de acceso se pinta antes de descargar los ≈5 MB comprimidos de WASM, y el build de producción no contiene
   PGlite (`scripts/check-dist.mjs` lo comprueba).
 - Primera visita: crear base → migrar → sembrar datos ficticios (`packages/app/src/demo-seed.ts`) → marcar
   `app_settings.demo_seed_version`. Recargas posteriores conservan los datos.
-- «Restablecer datos de demostración» cierra PGlite, borra la base IndexedDB `/pglite/lexican-demo-v1` y recarga.
+- «Restablecer datos de demostración» cierra PGlite, borra la base IndexedDB `/pglite/lexican-demo-v2` y recarga.
 - La demo ejecuta **los mismos servicios** (`createServices`) que la API: mismas reglas y la misma autorización.
 - El acceso de demo no es una frontera de seguridad: solo elige qué usuario ficticio actúa.
 - No se usa `relaxedDurability` (perdió escrituras al recargar en las pruebas).

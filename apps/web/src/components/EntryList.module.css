@@ -10,8 +10,30 @@
 }
 .search {
   display: flex;
-  gap: var(--space-2);
   flex: 1 1 18rem;
+}
+.search input {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+/* Square turquoise search button, as in the original. */
+.searchButton {
+  display: grid;
+  place-items: center;
+  min-width: 48px;
+  border: 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--brand-teal-text);
+  color: #fff;
+  cursor: pointer;
+}
+.searchButton:hover {
+  background: var(--brand-blue);
+}
+.searchButton svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
 }
 .topic {
   display: grid;

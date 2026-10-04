@@ -151,7 +151,7 @@ Diagrama, tabla de entidades, estados y trazabilidad legacy: [DATA-MODEL.md](DAT
 
 El build `demo` del mismo frontend carga PGlite con `import()` dinámico tras pintar el acceso, aplica las migraciones
 SQL de `packages/db/migrations` con `migrateBundled` (mismas filas en `drizzle.__drizzle_migrations` que en
-PostgreSQL), siembra datos ficticios a través de los servicios y guarda todo en IndexedDB `lexican-demo-v1`. Las
+PostgreSQL), siembra datos ficticios a través de los servicios y guarda todo en IndexedDB `lexican-demo-v2`. Las
 operaciones llaman en proceso a los mismos servicios que usa la API. «Restablecer datos de demostración» borra la base
 y vuelve a sembrar. Detalle: [DEMO.md](DEMO.md) y [ADR 0004](adr/0004-demo-pglite.md).
 
