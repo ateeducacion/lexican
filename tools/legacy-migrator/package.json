@@ -10,5 +10,8 @@
     "drizzle-orm": "^0.45.3",
     "mysql2": "^3.24.5",
     "pg": "^8.23.1"
+  },
+  "scripts": {
+    "migrate:legacy": "tsx src/cli.ts"
   }
 }

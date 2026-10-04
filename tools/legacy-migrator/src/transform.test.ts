@@ -1,0 +1,199 @@
+import { describe, expect, it } from 'vitest';
+import {
+  buildSnapshot,
+  codeFromLabel,
+  commentsVisibilityOf,
+  csvLine,
+  entryStateOf,
+  fieldCodeOf,
+  generateJoinCode,
+  globalRoleOf,
+  groupLabelOf,
+  htmlLosses,
+  htmlToText,
+  legacyJoinCode,
+  maxSensesOf,
+  memberRoleOf,
+  normalizeLabel,
+  orderSenses,
+  safeFileName,
+  sniffMedia,
+  submissionStatusOf,
+  vocabularyOfField,
+  type SenseData,
+} from './transform.ts';
+
+const bytes = (...b: (number | string)[]) =>
+  new Uint8Array(
+    b.flatMap((x) => (typeof x === 'string' ? [...x].map((c) => c.charCodeAt(0)) : [x])),
+  );
+
+describe('label matching', () => {
+  it('is trimmed, case- and accent-insensitive', () => {
+    expect(normalizeLabel('  GASTRONOMÍA ')).toBe('gastronomia');
+    expect(normalizeLabel(' inglés')).toBe(normalizeLabel('Inglés'));
+    expect(codeFromLabel(' Élfico  ficticio (o élfico)')).toBe('elfico_ficticio_o_elfico');
+  });
+
+  it('maps mst_campos_entrada by label in production and fresh-seed spellings', () => {
+    expect(fieldCodeOf('Temáticas generales')).toBe('topics');
+    expect(fieldCodeOf('Frase ejemplo')).toBe('extra_info');
+    expect(fieldCodeOf('Otros lenguajes')).toBe('language');
+    expect(fieldCodeOf('Ejemplo de uso')).toBe('example');
+    expect(fieldCodeOf('Imagen')).toBe('image');
+    expect(fieldCodeOf('Campo inventado')).toBeNull();
+    expect(vocabularyOfField('Lengua')).toBe('language');
+    expect(vocabularyOfField('Imagen')).toBeNull();
+  });
+});
+
+describe('roles by name (RULE-203/206)', () => {
+  it('maps global and classroom roles', () => {
+    expect(['admin', 'user', 'docente', 'alumno', 'otro'].map(globalRoleOf)).toEqual([
+      'admin',
+      'support',
+      'teacher',
+      'student',
+      null,
+    ]);
+    expect(['docente', 'alumno', 'admin'].map(memberRoleOf)).toEqual(['teacher', 'student', null]);
+  });
+});
+
+describe('estado mappings', () => {
+  const t = new Date('2024-10-05T10:00:00Z');
+  it('entries and senses: 0 deleted, 1 visible, 2 hidden', () => {
+    expect(entryStateOf('1', null, t)).toEqual({ hidden: false, deletedAt: null });
+    expect(entryStateOf('2', null, t)).toEqual({ hidden: true, deletedAt: null });
+    expect(entryStateOf('0', null, t)).toEqual({ hidden: false, deletedAt: t });
+    expect(entryStateOf('1', t, null).deletedAt).toEqual(t);
+    expect(entryStateOf('1', new Date('invalid'), null).deletedAt).toBeNull(); // MySQL zero date
+  });
+
+  it('submissions: publication row wins, then 1 pending, else withdrawn', () => {
+    expect(submissionStatusOf('2', null, true)).toBe('published'); // «oculta» written on a published row
+    expect(submissionStatusOf('1', null, false)).toBe('pending');
+    expect(submissionStatusOf('3', null, false)).toBe('withdrawn');
+    expect(submissionStatusOf('0', null, false)).toBe('withdrawn');
+    expect(submissionStatusOf('1', t, false)).toBe('withdrawn');
+  });
+
+  it('comment visibility 0/1/2', () => {
+    expect(commentsVisibilityOf('0', null)).toEqual({
+      visibility: 'hidden',
+      before: null,
+      problem: null,
+    });
+    expect(commentsVisibilityOf('1', t).visibility).toBe('visible');
+    expect(commentsVisibilityOf('2', t)).toEqual({
+      visibility: 'before_date',
+      before: t,
+      problem: null,
+    });
+    expect(commentsVisibilityOf('2', null).problem).toMatch(/sin fecha/);
+  });
+
+  it('max senses: the legacy boolean is no limit', () => {
+    expect([null, 0, 1, 2, 10].map(maxSensesOf)).toEqual([null, null, null, 2, 10]);
+  });
+
+  it('group letter 0 means no group', () => {
+    expect(groupLabelOf('0')).toBe('');
+    expect(groupLabelOf('B')).toBe('B');
+  });
+});
+
+describe('join codes', () => {
+  it('keeps valid legacy codes uppercased', () => {
+    expect(legacyJoinCode(' abc123 ')).toBe('ABC123');
+    expect(legacyJoinCode('X!')).toBeNull();
+    expect(legacyJoinCode('ABCDEFG')).toBeNull();
+    expect(legacyJoinCode(null)).toBeNull();
+  });
+  it('generates 6 unambiguous characters', () => {
+    expect(generateJoinCode(() => new Uint8Array([0, 1, 2, 3, 4, 31]))).toBe('ABCDE9');
+    expect(generateJoinCode()).toMatch(/^[A-HJ-NP-Z2-9]{6}$/);
+  });
+});
+
+describe('htmlToText', () => {
+  it('turns TinyMCE HTML into plain text', () => {
+    expect(
+      htmlToText(
+        '<p>Normas:</p><ul><li>Uno</li><li>Dos &amp; tres</li></ul><p>Ortograf&iacute;a&nbsp;y <b>acentos</b><br>fin &#191;s&iacute;? &#x41;</p>',
+      ),
+    ).toBe('Normas:\n\n- Uno\n- Dos & tres\n\nOrtografía y acentos\nfin ¿sí? A');
+    expect(htmlToText('<script>alert(1)</script>hola')).toBe('hola');
+    expect(htmlToText('<p></p>')).toBe('');
+  });
+  it('reports constructs that are lost', () => {
+    expect(htmlLosses('<p><img src="a.png"><table></table></p>')).toEqual(['img', 'table']);
+    expect(htmlLosses('<p>texto</p>')).toEqual([]);
+  });
+});
+
+describe('senses', () => {
+  it('orders by (orden, id) and flags renumbering', () => {
+    const r = orderSenses([
+      { id: 3, orden: 5 },
+      { id: 1, orden: 1 },
+      { id: 2, orden: 2 },
+    ]);
+    expect(r.rows.map((x) => x.id)).toEqual([1, 2, 3]);
+    expect(r.renumbered).toBe(true);
+    expect(orderSenses([{ id: 9, orden: 1 }]).renumbered).toBe(false);
+  });
+
+  it('snapshots skip hidden senses like the app (positions 1..n, empty urls)', () => {
+    const s = (definition: string, hidden: boolean): SenseData => ({
+      definition,
+      extraInfo: '',
+      example: '',
+      partOfSpeechId: null,
+      genderId: null,
+      numberId: null,
+      languageId: null,
+      foreignForm: '',
+      hidden,
+      topicIds: [],
+      media: [{ id: 'm1', kind: 'image', mime: 'image/png', originalName: 'a.png' }],
+    });
+    const snap = buildSnapshot('Casa', [s('uno', false), s('oculta', true), s('dos', false)]);
+    expect(snap.senses.map((x) => [x.position, x.definition])).toEqual([
+      [1, 'uno'],
+      [2, 'dos'],
+    ]);
+    expect(snap.senses[0]!.media[0]!.url).toBe('');
+    expect(snap.senses[0]).not.toHaveProperty('hidden');
+  });
+});
+
+describe('media', () => {
+  it('sniffs the accepted formats by content', () => {
+    expect(sniffMedia(bytes(0x89, 'PNG', 0x0d, 0x0a, 0x1a, 0x0a), 'image')?.mime).toBe('image/png');
+    expect(sniffMedia(bytes(0xff, 0xd8, 0xff, 0xe0), 'image')?.ext).toBe('jpg');
+    expect(sniffMedia(bytes('GIF89a'), 'image')?.mime).toBe('image/gif');
+    expect(sniffMedia(bytes('RIFF', 0, 0, 0, 0, 'WEBP'), 'image')?.mime).toBe('image/webp');
+    expect(sniffMedia(bytes('RIFF', 0, 0, 0, 0, 'WAVE'), 'audio')?.mime).toBe('audio/wav');
+    expect(sniffMedia(bytes('ID3', 3, 0), 'audio')?.mime).toBe('audio/mpeg');
+    expect(sniffMedia(bytes(0xff, 0xfb, 0x90), 'audio')?.kind).toBe('audio');
+    expect(sniffMedia(bytes('OggS'), 'audio')?.mime).toBe('audio/ogg');
+    expect(sniffMedia(bytes(0, 0, 0, 0x18, 'ftypmp42'), 'video')?.mime).toBe('video/mp4');
+    expect(sniffMedia(bytes(0x1a, 0x45, 0xdf, 0xa3), 'audio')?.mime).toBe('audio/webm');
+    expect(sniffMedia(bytes(0x1a, 0x45, 0xdf, 0xa3), 'video')?.mime).toBe('video/webm');
+    expect(sniffMedia(bytes('BM'), 'image')).toBeNull(); // bmp: accepted by legacy, not by the new app
+    expect(sniffMedia(new Uint8Array(), 'image')).toBeNull();
+  });
+
+  it('only accepts plain stored file names', () => {
+    expect(safeFileName('11_1_2_abc.png')).toBe('11_1_2_abc.png');
+    expect(safeFileName('../etc/passwd')).toBeNull();
+    expect(safeFileName('a/b.png')).toBeNull();
+    expect(safeFileName('..')).toBeNull();
+    expect(safeFileName('  ')).toBeNull();
+  });
+});
+
+it('writes RFC 4180 CSV', () => {
+  expect(csvLine(['a', 1, null, 'x,"y"\nz'])).toBe('a,1,,"x,""y""\nz"');
+});
