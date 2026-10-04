@@ -14,6 +14,7 @@ export function AppInfo({ role }: { role: GlobalRole | null }) {
     setOpen((current) => (current === which ? null : current));
   return (
     <div className={styles.infoButtons}>
+      <ThemeToggle />
       <button
         type="button"
         className={styles.iconButton}
@@ -261,5 +262,62 @@ function LicensesPanel({
         </ul>
       )}
     </dialog>
+  );
+}
+
+type Theme = 'light' | 'dark';
+const currentTheme = (): Theme =>
+  document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+
+/** Light/dark switch. The first visit follows the system; an explicit choice is remembered in this browser. */
+function ThemeToggle() {
+  const [theme, setTheme] = useState<Theme>(currentTheme);
+  useEffect(() => {
+    // Follow system changes while the user has not chosen explicitly.
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = () => {
+      let saved: string | null = null;
+      try {
+        saved = localStorage.getItem('lexican-theme');
+      } catch {
+        /* storage unavailable */
+      }
+      if (saved) return;
+      document.documentElement.dataset.theme = mq.matches ? 'dark' : 'light';
+      setTheme(currentTheme());
+    };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  const toggle = () => {
+    const next: Theme = theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem('lexican-theme', next);
+    } catch {
+      /* storage unavailable: applies until reload */
+    }
+    setTheme(next);
+  };
+  const dark = theme === 'dark';
+  return (
+    <button
+      type="button"
+      className={styles.iconButton}
+      aria-label={dark ? 'Activar tema claro' : 'Activar tema oscuro'}
+      title={dark ? 'Tema claro' : 'Tema oscuro'}
+      onClick={toggle}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        {dark ? (
+          <>
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+          </>
+        ) : (
+          <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" />
+        )}
+      </svg>
+    </button>
   );
 }

@@ -55,29 +55,32 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --brand-teal-text: #7fd6dd;
-    --c-bg: #10181f;
-    --c-surface: #17222b;
-    --c-surface-2: #1e2c37;
-    --c-selected: #173a45;
-    --c-text: #e6eef3;
-    --c-muted: #a3b3bf;
-    --c-border: #2f414f;
-    --c-primary: #8cc8ff;
-    --c-primary-hover: #b3dbff;
-    --c-on-primary: #08233b;
-    --c-focus: #8ab4f8;
-    --c-danger: #f2b8b5;
-    --c-danger-bg: #3a1d1b;
-    --c-success: #9fd8ac;
-    --c-success-bg: #1a3322;
-    --c-warning: #f5d17a;
-    --c-warning-bg: #3a2f12;
-    --c-info-bg: #1b2a3a;
-    --shadow: none;
-  }
+/* Dark theme: chosen with the top-bar toggle, or the system preference (public/theme-init.js sets data-theme). */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --brand-teal-text: #7fd6dd;
+  --c-bg: #10181f;
+  --c-surface: #17222b;
+  --c-surface-2: #1e2c37;
+  --c-selected: #173a45;
+  --c-text: #e6eef3;
+  --c-muted: #a3b3bf;
+  --c-border: #2f414f;
+  --c-primary: #8cc8ff;
+  --c-primary-hover: #b3dbff;
+  --c-on-primary: #08233b;
+  --c-focus: #8ab4f8;
+  --c-danger: #f2b8b5;
+  --c-danger-bg: #3a1d1b;
+  --c-success: #9fd8ac;
+  --c-success-bg: #1a3322;
+  --c-warning: #f5d17a;
+  --c-warning-bg: #3a2f12;
+  --c-info-bg: #1b2a3a;
+  --shadow: none;
 }
 
 *,
@@ -562,15 +565,13 @@ dialog::backdrop {
   border-color: var(--brand-teal-text);
   color: #fff;
 }
-@media (prefers-color-scheme: dark) {
-  .alphabet a,
-  .alphabet span {
-    border-color: #8a9aa5;
-    color: var(--c-text);
-  }
-  .alphabet a[aria-current='page'] {
-    color: #08233b;
-  }
+[data-theme='dark'] .alphabet a,
+[data-theme='dark'] .alphabet span {
+  border-color: #8a9aa5;
+  color: var(--c-text);
+}
+[data-theme='dark'] .alphabet a[aria-current='page'] {
+  color: #08233b;
 }
 
 /* Wordmark «LEXICÁN» */

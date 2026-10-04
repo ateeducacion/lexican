@@ -340,10 +340,8 @@
   height: 36px;
   width: auto;
 }
-@media (prefers-color-scheme: dark) {
-  .ateLogo {
-    filter: brightness(0) invert(1);
-  }
+:global([data-theme='dark']) .ateLogo {
+  filter: brightness(0) invert(1);
 }
 
 /* Licences side panel */
