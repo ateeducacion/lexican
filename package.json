@@ -1,36 +1,47 @@
 {
-    "private": true,
-    "scripts": {
-        "development": "mix",
-        "watch": "mix watch",
-        "watch-poll": "mix watch -- --watch-options-poll=1000",
-        "hot": "mix watch --hot",
-        "production": "mix --production",
-        "docs": "jsdoc -c confDoc.js"
-    },
-    "devDependencies": {
-        "axios": "^0.21.4",
-        "cross-env": "^5.2.1",
-        "jsdoc": "^4.0.2",
-        "laravel-mix": "^6.0.49",
-        "lodash": "^4.17.21",
-        "postcss": "^8.3.1",
-        "resolve-url-loader": "^5.0.0",
-        "sass": "^1.54.9",
-        "sass-loader": "^8",
-        "vue-template-compiler": "^2.7.8"
-    },
-    "dependencies": {
-        "@yarnpkg/esbuild-plugin-pnp": "^1.0.1-rc.8",
-        "bootstrap": "^4.6.2",
-        "bootstrap-icons": "^1.9.1",
-        "bootstrap-table": "^1.21.0",
-        "dropify": "^0.2.2",
-        "jquery": "^3.6.1",
-        "jquery-typeahead": "^2.11.1",
-        "popper.js": "^1.16.1",
-        "sweetalert2": "11.4.8",
-        "swiper": "^6.8.4",
-        "tinymce": "^5.10.5"
-    }
+  "name": "lexican",
+  "version": "2.0.0-dev",
+  "private": true,
+  "description": "LexiCán: diccionarios personales y de aula para el aprendizaje del léxico",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @lexican/web",
+    "dev:demo": "npm run dev:demo --workspace @lexican/web",
+    "dev:api": "npm run dev --workspace @lexican/api",
+    "build": "npm run build --workspace @lexican/web && npm run build --workspace @lexican/api",
+    "build:demo": "npm run build:demo --workspace @lexican/web",
+    "preview:demo": "npm run preview:demo --workspace @lexican/web",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "e2e": "playwright test",
+    "e2e:demo": "playwright test --project=demo-chromium",
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm test",
+    "audit": "npm audit --omit=dev --audit-level=high"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^24.19.1",
+    "@vitest/coverage-v8": "^5.0.3",
+    "eslint": "^10.12.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.9",
+    "typescript": "~6.0",
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^5.0.3"
+  }
 }

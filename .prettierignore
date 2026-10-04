@@ -1,0 +1,21 @@
+# Legacy Laravel tree (frozen until the cleanup phase)
+app/
+bootstrap/
+config/
+database/
+documentos/
+hooks/
+public/
+resources/
+routes/
+storage/
+tests/
+archivos/
+*.php
+*.md
+analysis/
+legacy/
+packages/db/migrations/
+package-lock.json
+dist/
+coverage/
