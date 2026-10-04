@@ -38,6 +38,21 @@ export default defineConfig(({ mode }) => ({
     target: 'es2022',
     outDir: mode === 'demo' ? 'dist-demo' : 'dist',
     sourcemap: mode === 'demo',
+    rolldownOptions: {
+      output: {
+        // PGlite (the in-browser PostgreSQL, demo only) in its own long-cached chunk, separate from app code.
+        codeSplitting: {
+          groups: [{ name: 'pglite', test: /node_modules[\\/]@electric-sql[\\/]pglite/ }],
+        },
+      },
+      // PGlite's Emscripten glue uses direct eval internally (never with user data); keep the warning for our code.
+      onLog(level, log, handler) {
+        if (log.code === 'EVAL' && log.id?.includes('@electric-sql/pglite')) return;
+        handler(level, log);
+      },
+    },
+    // The PGlite engine chunk (~650 kB, ~150 kB gzip) is loaded lazily after the login screen paints.
+    chunkSizeWarningLimit: mode === 'demo' ? 700 : 500,
   },
   server: { proxy: { '/api': 'http://localhost:3000', '/media': 'http://localhost:3000' } },
 }));
