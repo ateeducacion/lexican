@@ -29,7 +29,12 @@ interface Loaded {
   error: unknown;
 }
 
-export function EntryList({ dictionaryId, entryHref, canEdit, showSubmissions = false }: EntryListProps) {
+export function EntryList({
+  dictionaryId,
+  entryHref,
+  canEdit,
+  showSubmissions = false,
+}: EntryListProps) {
   const v = useVocab();
   const [params, setParams] = useSearchParams();
   const q = params.get('q') ?? '';
@@ -78,7 +83,14 @@ export function EntryList({ dictionaryId, entryHref, canEdit, showSubmissions = 
         }));
       })
       .catch((e: unknown) => {
-        if (live) setData((prev) => ({ key, offset, items: prev?.key === key ? prev.items : [], total: prev?.total ?? 0, error: e }));
+        if (live)
+          setData((prev) => ({
+            key,
+            offset,
+            items: prev?.key === key ? prev.items : [],
+            total: prev?.total ?? 0,
+            error: e,
+          }));
       });
     return () => {
       live = false;
@@ -136,7 +148,11 @@ export function EntryList({ dictionaryId, entryHref, canEdit, showSubmissions = 
         {topics.length > 0 && (
           <div className={styles.topic}>
             <label htmlFor="entry-topic">Temática</label>
-            <select id="entry-topic" value={topic} onChange={(e) => update('tematica', e.target.value)}>
+            <select
+              id="entry-topic"
+              value={topic}
+              onChange={(e) => update('tematica', e.target.value)}
+            >
               <option value="">Todas</option>
               {topics.map((t) => (
                 <option key={t.id} value={t.id}>
@@ -167,10 +183,14 @@ export function EntryList({ dictionaryId, entryHref, canEdit, showSubmissions = 
 
       <ErrorMessage error={current?.error} />
       <p className="small muted" role="status">
-        {loading && offset === 0 ? 'Cargando…' : `${total} ${total === 1 ? 'entrada' : 'entradas'}${filtered ? ' encontradas' : ''}`}
+        {loading && offset === 0
+          ? 'Cargando…'
+          : `${total} ${total === 1 ? 'entrada' : 'entradas'}${filtered ? ' encontradas' : ''}`}
       </p>
 
-      {!loading && !current.error && items.length === 0 &&
+      {!loading &&
+        !current.error &&
+        items.length === 0 &&
         (filtered ? (
           <EmptyState title="No hay resultados">
             <p>Prueba con otra palabra, otra letra o quita los filtros.</p>
@@ -180,7 +200,11 @@ export function EntryList({ dictionaryId, entryHref, canEdit, showSubmissions = 
           </EmptyState>
         ) : (
           <EmptyState title="Todavía no hay entradas">
-            <p className="muted">{canEdit ? 'Cuando añadas palabras aparecerán aquí.' : 'Aún no se ha publicado ninguna palabra.'}</p>
+            <p className="muted">
+              {canEdit
+                ? 'Cuando añadas palabras aparecerán aquí.'
+                : 'Aún no se ha publicado ninguna palabra.'}
+            </p>
           </EmptyState>
         ))}
 
@@ -214,7 +238,11 @@ export function EntryList({ dictionaryId, entryHref, canEdit, showSubmissions = 
 
       {loading && offset > 0 && <Loading />}
       {!loading && items.length < total && (
-        <button type="button" className="btn" onClick={() => setMore({ key, offset: items.length })}>
+        <button
+          type="button"
+          className="btn"
+          onClick={() => setMore({ key, offset: items.length })}
+        >
           Cargar más ({total - items.length} restantes)
         </button>
       )}

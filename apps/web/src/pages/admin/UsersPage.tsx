@@ -1,5 +1,11 @@
 import { GLOBAL_ROLES, type GlobalRole, type UserView } from '@lexican/core';
-import { Form, useLoaderData, useRevalidator, useSearchParams, type LoaderFunctionArgs } from 'react-router';
+import {
+  Form,
+  useLoaderData,
+  useRevalidator,
+  useSearchParams,
+  type LoaderFunctionArgs,
+} from 'react-router';
 import { getApi } from '../../api/index.ts';
 import { ErrorMessage, PageTitle, useAction, useNotify } from '../../components/ui.tsx';
 import { ROLE_LABEL, useSession } from '../../session.ts';
@@ -28,14 +34,21 @@ export function Component() {
       <PageTitle>Usuarios y roles</PageTitle>
       <AdminNav />
       <p className="muted prose">
-        Profesorado y alumnado se asignan automáticamente desde el directorio educativo en cada acceso. Aquí solo se
-        conceden los roles de administración y oficina técnica.
+        Profesorado y alumnado se asignan automáticamente desde el directorio educativo en cada
+        acceso. Aquí solo se conceden los roles de administración y oficina técnica.
       </p>
       <Form role="search" className="row" style={{ marginBottom: 'var(--space-4)' }}>
         <label htmlFor="q" className="visually-hidden">
           Buscar por nombre o correo
         </label>
-        <input id="q" type="search" name="q" defaultValue={params.get('q') ?? ''} placeholder="Nombre o correo" style={{ maxWidth: '20rem' }} />
+        <input
+          id="q"
+          type="search"
+          name="q"
+          defaultValue={params.get('q') ?? ''}
+          placeholder="Nombre o correo"
+          style={{ maxWidth: '20rem' }}
+        />
         <button className="btn" type="submit">
           Buscar
         </button>

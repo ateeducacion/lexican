@@ -24,7 +24,10 @@ export function Component() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
-  const [providers, setProviders] = useState<{ cas: boolean; password: boolean }>({ cas: !IS_DEMO, password: IS_DEMO });
+  const [providers, setProviders] = useState<{ cas: boolean; password: boolean }>({
+    cas: !IS_DEMO,
+    password: IS_DEMO,
+  });
 
   useEffect(() => {
     if (IS_DEMO) {
@@ -40,7 +43,9 @@ export function Component() {
   const login = useAction(async (credentials: { email: string; password: string }) => {
     const parsed = LoginInput.safeParse(credentials);
     if (!parsed.success) {
-      setFieldErrors(Object.fromEntries(parsed.error.issues.map((i) => [String(i.path[0]), [i.message]])));
+      setFieldErrors(
+        Object.fromEntries(parsed.error.issues.map((i) => [String(i.path[0]), [i.message]])),
+      );
       return;
     }
     setFieldErrors({});
@@ -58,8 +63,8 @@ export function Component() {
       <section className={styles.intro}>
         <PageTitle title="Entrar">LexiCán</PageTitle>
         <p className={styles.lead}>
-          Diccionarios personales y de aula para aprender vocabulario: cada alumno crea sus palabras y el profesorado
-          las revisa y publica en el diccionario de la clase.
+          Diccionarios personales y de aula para aprender vocabulario: cada alumno crea sus palabras
+          y el profesorado las revisa y publica en el diccionario de la clase.
         </p>
       </section>
 
@@ -76,7 +81,15 @@ export function Component() {
           <form onSubmit={submit} noValidate>
             <Field label="Correo electrónico" error={fieldErrors.email}>
               {(p) => (
-                <input {...p} type="email" name="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <input
+                  {...p}
+                  type="email"
+                  name="email"
+                  autoComplete="username"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               )}
             </Field>
             <Field label="Contraseña" error={fieldErrors.password}>
@@ -104,8 +117,8 @@ export function Component() {
         <section className="card" aria-labelledby="demo-title">
           <h2 id="demo-title">Cuentas de demostración</h2>
           <p className="small">
-            Este es un entorno de demostración. Los usuarios, contraseñas y datos son ficticios y se guardan únicamente
-            en este navegador.
+            Este es un entorno de demostración. Los usuarios, contraseñas y datos son ficticios y se
+            guardan únicamente en este navegador.
           </p>
           <ul className={styles.accounts}>
             {DEMO_ACCOUNTS.map((a) => (

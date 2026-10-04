@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { NavLink, Outlet, useLocation, useNavigate, useNavigation, useRouteLoaderData } from 'react-router';
+import {
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useNavigation,
+  useRouteLoaderData,
+} from 'react-router';
 import { getApi } from '../api/index.ts';
 import { APP_COMMIT, APP_VERSION, IS_DEMO, SOURCE_URL } from '../env.ts';
 import { ROLE_LABEL, type RootData } from '../session.ts';
@@ -31,7 +38,11 @@ export function Layout() {
       </a>
       <header role="banner" className={styles.header}>
         <div className={`container ${styles.bar}`}>
-          <NavLink to={user ? '/' : '/entrar'} className={styles.brand} aria-label="LexiCán, inicio">
+          <NavLink
+            to={user ? '/' : '/entrar'}
+            className={styles.brand}
+            aria-label="LexiCán, inicio"
+          >
             <span aria-hidden="true" className={styles.logo}>
               L
             </span>
@@ -79,17 +90,28 @@ function DemoBanner() {
     <div className={`no-print ${styles.demo}`}>
       <div className="container spread">
         <p className="small" style={{ margin: 0 }}>
-          <strong>Entorno de demostración.</strong> Los usuarios, contraseñas y datos son ficticios y se guardan
-          únicamente en este navegador.
+          <strong>Entorno de demostración.</strong> Los usuarios, contraseñas y datos son ficticios
+          y se guardan únicamente en este navegador.
         </p>
         <button type="button" className="btn btn-sm" onClick={() => setConfirm(true)}>
           Restablecer datos de demostración
         </button>
       </div>
-      <Dialog open={confirm} onClose={() => setConfirm(false)} title="Restablecer datos de demostración">
-        <p>Se borrará todo lo que hayas creado en este navegador y se cargarán de nuevo los datos de ejemplo.</p>
+      <Dialog
+        open={confirm}
+        onClose={() => setConfirm(false)}
+        title="Restablecer datos de demostración"
+      >
+        <p>
+          Se borrará todo lo que hayas creado en este navegador y se cargarán de nuevo los datos de
+          ejemplo.
+        </p>
         <div className="row">
-          <button type="button" className="btn btn-primary" onClick={async () => (await getApi()).resetDemo?.()}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={async () => (await getApi()).resetDemo?.()}
+          >
             Restablecer
           </button>
           <button type="button" className="btn" onClick={() => setConfirm(false)}>

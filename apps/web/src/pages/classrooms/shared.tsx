@@ -1,4 +1,9 @@
-import { formatSchoolYear, lastCurrentSchoolYear, type DictionaryView, type WindowState } from '@lexican/core';
+import {
+  formatSchoolYear,
+  lastCurrentSchoolYear,
+  type DictionaryView,
+  type WindowState,
+} from '@lexican/core';
 import { Link } from 'react-router';
 import { formatDate } from '../../components/ui.tsx';
 import styles from './Classrooms.module.css';
@@ -25,13 +30,21 @@ export function ClassroomState({ dictionary }: { dictionary: DictionaryView }) {
       </li>
       <li className={c.current ? styles.ok : styles.off}>
         <span aria-hidden="true">{c.current ? '●' : '○'}</span>{' '}
-        {c.current ? (last === null ? 'Vigente sin caducidad' : `Vigente hasta ${formatSchoolYear(last)}`) : 'No vigente'}
+        {c.current
+          ? last === null
+            ? 'Vigente sin caducidad'
+            : `Vigente hasta ${formatSchoolYear(last)}`
+          : 'No vigente'}
       </li>
       {c.current && (
         <li className={window === 'open' ? styles.ok : styles.off}>
           <span aria-hidden="true">{window === 'open' ? '✉' : '✕'}</span> {WINDOW_LABEL[window]}
-          {window === 'open' && c.submissionsEndAt && ` hasta el ${formatDate(c.submissionsEndAt, true)}`}
-          {window === 'not_started' && c.submissionsStartAt && `: empieza el ${formatDate(c.submissionsStartAt, true)}`}
+          {window === 'open' &&
+            c.submissionsEndAt &&
+            ` hasta el ${formatDate(c.submissionsEndAt, true)}`}
+          {window === 'not_started' &&
+            c.submissionsStartAt &&
+            `: empieza el ${formatDate(c.submissionsStartAt, true)}`}
         </li>
       )}
       {!c.visibleToStudents && (
@@ -44,7 +57,11 @@ export function ClassroomState({ dictionary }: { dictionary: DictionaryView }) {
 }
 
 /** Back link to the classroom viewer, used by all classroom sub-pages. */
-export function BackToClassroom({ dictionary }: { dictionary: Pick<DictionaryView, 'id' | 'title'> }) {
+export function BackToClassroom({
+  dictionary,
+}: {
+  dictionary: Pick<DictionaryView, 'id' | 'title'>;
+}) {
   return (
     <p className="no-print small">
       <Link to={`/aulas/${dictionary.id}`}>← {dictionary.title}</Link>

@@ -17,6 +17,11 @@ export function useVocab() {
     list: (vocabulary: Vocabulary): VocabularyValue[] =>
       vocab
         .filter((v) => v.vocabulary === vocabulary && v.active)
-        .sort((a, b) => Number(b.featured) - Number(a.featured) || a.position - b.position || a.label.localeCompare(b.label, 'es')),
+        .sort(
+          (a, b) =>
+            Number(b.featured) - Number(a.featured) ||
+            a.position - b.position ||
+            a.label.localeCompare(b.label, 'es'),
+        ),
   };
 }

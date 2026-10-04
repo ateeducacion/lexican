@@ -8,15 +8,25 @@ import { httpDirectory, parseCauceResponse } from './cauce.ts';
 import { loadConfig } from './config.ts';
 import { fsMediaStorage } from './media-storage.ts';
 
-const fixture = (n: string) => readFileSync(new URL(`./__fixtures__/${n}`, import.meta.url), 'utf8');
+const fixture = (n: string) =>
+  readFileSync(new URL(`./__fixtures__/${n}`, import.meta.url), 'utf8');
 
 afterEach(() => vi.unstubAllGlobals());
 
 describe('CAS XML', () => {
   it('parses success and failure responses', async () => {
-    expect(parseServiceResponse(fixture('cas-success.xml'))).toEqual({ ok: true, user: 'cficticia' });
-    expect(parseServiceResponse(fixture('cas-failure.xml'))).toEqual({ ok: false, code: 'INVALID_TICKET' });
-    expect(parseServiceResponse('<html>oops</html>')).toEqual({ ok: false, code: 'INVALID_RESPONSE' });
+    expect(parseServiceResponse(fixture('cas-success.xml'))).toEqual({
+      ok: true,
+      user: 'cficticia',
+    });
+    expect(parseServiceResponse(fixture('cas-failure.xml'))).toEqual({
+      ok: false,
+      code: 'INVALID_TICKET',
+    });
+    expect(parseServiceResponse('<html>oops</html>')).toEqual({
+      ok: false,
+      code: 'INVALID_RESPONSE',
+    });
   });
 
   it('rejects DTDs and entity declarations', () => {
@@ -99,18 +109,31 @@ describe('filesystem media storage', () => {
 });
 
 describe('config', () => {
-  const base = { DATABASE_URL: 'postgres://x', PUBLIC_URL: 'https://lexican.example.org/', MEDIA_DIR: '/data/media' };
+  const base = {
+    DATABASE_URL: 'postgres://x',
+    PUBLIC_URL: 'https://lexican.example.org/',
+    MEDIA_DIR: '/data/media',
+  };
 
   it('derives secure cookies and CAS service URL from PUBLIC_URL', () => {
-    const c = loadConfig({ ...base, CAS_BASE_URL: 'https://cas.example.org/cas', CAUCE_URL: 'https://c.example.org/', CAUCE_TOKEN: 't' });
+    const c = loadConfig({
+      ...base,
+      CAS_BASE_URL: 'https://cas.example.org/cas',
+      CAUCE_URL: 'https://c.example.org/',
+      CAUCE_TOKEN: 't',
+    });
     expect(c.secureCookies).toBe(true);
     expect(c.cas?.serviceUrl).toBe('https://lexican.example.org/api/auth/cas/callback');
     expect(loadConfig({ ...base, PUBLIC_URL: 'http://localhost:3000' }).secureCookies).toBe(false);
   });
 
   it('fails closed on unsafe combinations without echoing secrets', () => {
-    expect(() => loadConfig({ ...base, NODE_ENV: 'production', AUTH_DEV_LOGIN: 'true' })).toThrow(/AUTH_DEV_LOGIN/);
+    expect(() => loadConfig({ ...base, NODE_ENV: 'production', AUTH_DEV_LOGIN: 'true' })).toThrow(
+      /AUTH_DEV_LOGIN/,
+    );
     expect(() => loadConfig({ ...base, CAS_BASE_URL: 'https://cas.example.org' })).toThrow(/CAUCE/);
-    expect(() => loadConfig({ ...base, DATABASE_URL: '', CAUCE_TOKEN: 'secret-value' })).toThrow(/^(?!.*secret-value)/);
+    expect(() => loadConfig({ ...base, DATABASE_URL: '', CAUCE_TOKEN: 'secret-value' })).toThrow(
+      /^(?!.*secret-value)/,
+    );
   });
 });

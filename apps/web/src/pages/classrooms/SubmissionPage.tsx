@@ -1,9 +1,29 @@
-import { CommentInput, type CommentView, type DictionaryView, type SubmissionView } from '@lexican/core';
+import {
+  CommentInput,
+  type CommentView,
+  type DictionaryView,
+  type SubmissionView,
+} from '@lexican/core';
 import { useState, type FormEvent } from 'react';
-import { Link, useLoaderData, useNavigate, useRevalidator, type LoaderFunctionArgs } from 'react-router';
+import {
+  Link,
+  useLoaderData,
+  useNavigate,
+  useRevalidator,
+  type LoaderFunctionArgs,
+} from 'react-router';
 import { ApiError, getApi } from '../../api/index.ts';
 import { EntryContent } from '../../components/EntryContent.tsx';
-import { Dialog, ErrorMessage, Field, PageTitle, StatusBadge, formatDate, useAction, useNotify } from '../../components/ui.tsx';
+import {
+  Dialog,
+  ErrorMessage,
+  Field,
+  PageTitle,
+  StatusBadge,
+  formatDate,
+  useAction,
+  useNotify,
+} from '../../components/ui.tsx';
 import styles from './Classrooms.module.css';
 import { BackToClassroom } from './shared.tsx';
 
@@ -67,7 +87,9 @@ export function Component() {
       <p className="no-print small">
         <Link to={base}>← Todos los envíos</Link>
       </p>
-      <PageTitle title={`Envío: ${s.snapshot.headword}`}>Envío de {s.submittedBy.displayName}</PageTitle>
+      <PageTitle title={`Envío: ${s.snapshot.headword}`}>
+        Envío de {s.submittedBy.displayName}
+      </PageTitle>
       <p className="row">
         <StatusBadge status={s.status} />
         <span className="small muted">Enviada el {formatDate(s.submittedAt, true)}</span>
@@ -81,20 +103,31 @@ export function Component() {
       <div className={styles.split}>
         <div className="stack">
           <div className="card">
-            <EntryContent headword={s.snapshot.headword} senses={s.snapshot.senses} visibleFields={d.classroom?.visibleFields} />
+            <EntryContent
+              headword={s.snapshot.headword}
+              senses={s.snapshot.senses}
+              visibleFields={d.classroom?.visibleFields}
+            />
           </div>
 
           {s.conflict && (
             <div className="alert alert-warning">
               <strong>
-                <span aria-hidden="true">⚠ </span>Ya hay una entrada «{s.conflict.headword}» publicada en este diccionario.
+                <span aria-hidden="true">⚠ </span>Ya hay una entrada «{s.conflict.headword}»
+                publicada en este diccionario.
               </strong>{' '}
-              No se puede publicar este envío mientras exista. <Link to={`/aulas/${d.id}/entradas/${s.conflict.entryId}`}>Ver la entrada publicada</Link>
+              No se puede publicar este envío mientras exista.{' '}
+              <Link to={`/aulas/${d.id}/entradas/${s.conflict.entryId}`}>
+                Ver la entrada publicada
+              </Link>
             </div>
           )}
           {s.status === 'published' && s.publishedEntryId && (
             <div className="alert alert-success">
-              Publicada en el diccionario. <Link to={`/aulas/${d.id}/entradas/${s.publishedEntryId}`}>Ver la entrada publicada</Link>
+              Publicada en el diccionario.{' '}
+              <Link to={`/aulas/${d.id}/entradas/${s.publishedEntryId}`}>
+                Ver la entrada publicada
+              </Link>
             </div>
           )}
           {s.status === 'rejected' && (
@@ -108,7 +141,12 @@ export function Component() {
               <h2 id="review-title">Revisión</h2>
               <ErrorMessage error={publish.error} />
               <div className="row">
-                <button type="button" className="btn btn-primary" disabled={publish.busy || !!s.conflict} onClick={() => void publish.run()}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  disabled={publish.busy || !!s.conflict}
+                  onClick={() => void publish.run()}
+                >
                   {publish.busy ? 'Publicando…' : 'Publicar'}
                 </button>
                 <button type="button" className="btn" onClick={() => setRejecting(true)}>
@@ -127,16 +165,29 @@ export function Component() {
         <Comments dictionary={d} submission={s} comments={comments} onChange={revalidate} />
       </div>
 
-      <Dialog open={rejecting} onClose={() => setRejecting(false)} title={`Devolver «${s.snapshot.headword}»`}>
+      <Dialog
+        open={rejecting}
+        onClose={() => setRejecting(false)}
+        title={`Devolver «${s.snapshot.headword}»`}
+      >
         <form
           onSubmit={(e) => {
             e.preventDefault();
             void reject.run();
           }}
         >
-          <p className="small">La entrada vuelve al alumno o alumna, que podrá corregirla y enviarla de nuevo.</p>
+          <p className="small">
+            La entrada vuelve al alumno o alumna, que podrá corregirla y enviarla de nuevo.
+          </p>
           <Field label="Nota para el alumno o alumna" hint="Opcional. Explica qué debe mejorar.">
-            {(p) => <textarea {...p} maxLength={1000} value={note} onChange={(e) => setNote(e.target.value)} />}
+            {(p) => (
+              <textarea
+                {...p}
+                maxLength={1000}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
+            )}
           </Field>
           <ErrorMessage error={reject.error} />
           <div className="row">
@@ -198,18 +249,33 @@ function Comments({
     <section className="card" aria-labelledby="comments-title">
       <h2 id="comments-title">Comentarios a {submission.submittedBy.displayName}</h2>
       {comments.length === 0 ? (
-        <p className="muted small">Todavía no hay comentarios para este alumno o alumna en este diccionario.</p>
+        <p className="muted small">
+          Todavía no hay comentarios para este alumno o alumna en este diccionario.
+        </p>
       ) : (
         <ul className={styles.comments}>
           {comments.map((c) => (
             <li key={c.id}>
               <p className="small muted" style={{ marginBottom: 'var(--space-1)' }}>
-                {c.submissionId === submission.id ? 'Sobre esta entrada' : c.headword ? `Sobre «${c.headword}»` : 'Comentario general'} · {c.author.displayName} ·{' '}
-                {formatDate(c.createdAt, true)}
+                {c.submissionId === submission.id
+                  ? 'Sobre esta entrada'
+                  : c.headword
+                    ? `Sobre «${c.headword}»`
+                    : 'Comentario general'}{' '}
+                · {c.author.displayName} · {formatDate(c.createdAt, true)}
               </p>
               <p className="prose">{c.body}</p>
-              <button type="button" className="btn btn-sm btn-link" disabled={del.busy} onClick={() => void del.run(c.id)}>
-                Borrar<span className="visually-hidden"> comentario del {formatDate(c.createdAt, true)}</span>
+              <button
+                type="button"
+                className="btn btn-sm btn-link"
+                disabled={del.busy}
+                onClick={() => void del.run(c.id)}
+              >
+                Borrar
+                <span className="visually-hidden">
+                  {' '}
+                  comentario del {formatDate(c.createdAt, true)}
+                </span>
               </button>
             </li>
           ))}
@@ -218,7 +284,14 @@ function Comments({
       <ErrorMessage error={del.error} />
       <form onSubmit={submit} noValidate>
         <Field label="Nuevo comentario sobre esta entrada" error={fieldError}>
-          {(p) => <textarea {...p} maxLength={2000} value={body} onChange={(e) => setBody(e.target.value)} />}
+          {(p) => (
+            <textarea
+              {...p}
+              maxLength={2000}
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+            />
+          )}
         </Field>
         <ErrorMessage error={add.error} />
         <button type="submit" className="btn" disabled={add.busy}>

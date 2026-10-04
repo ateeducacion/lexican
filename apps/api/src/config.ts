@@ -13,7 +13,11 @@ const Env = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
   HOST: z.string().default('0.0.0.0'),
   PUBLIC_URL: z.url(),
-  SESSION_TTL_HOURS: z.coerce.number().positive().max(24 * 30).default(8),
+  SESSION_TTL_HOURS: z.coerce
+    .number()
+    .positive()
+    .max(24 * 30)
+    .default(8),
   MEDIA_DIR: z.string().min(1),
   MAX_UPLOAD_MB: z.coerce.number().positive().max(100).default(10),
   CAS_BASE_URL: optionalUrl,
@@ -21,7 +25,10 @@ const Env = z.object({
   CAUCE_TOKEN: z.string().optional(),
   CAS_ALLOWED_SLO_HOSTS: z.string().default(''),
   AUTH_DEV_LOGIN: bool,
-  SCHOOL_YEAR_START: z.string().regex(/^\d{2}-\d{2}$/).default('08-30'),
+  SCHOOL_YEAR_START: z
+    .string()
+    .regex(/^\d{2}-\d{2}$/)
+    .default('08-30'),
   WEB_DIST: z.string().optional(),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   /** Fastify `trustProxy`: `true` or a comma list of proxy IPs/CIDRs. */
@@ -62,7 +69,9 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
   if (e.AUTH_DEV_LOGIN && production)
     throw new Error('AUTH_DEV_LOGIN=true is not allowed with NODE_ENV=production.');
   if (e.CAS_BASE_URL && (!e.CAUCE_URL || !e.CAUCE_TOKEN))
-    throw new Error('CAS is enabled (CAS_BASE_URL) but CAUCE_URL/CAUCE_TOKEN are missing: refusing to start.');
+    throw new Error(
+      'CAS is enabled (CAS_BASE_URL) but CAUCE_URL/CAUCE_TOKEN are missing: refusing to start.',
+    );
 
   const publicUrl = e.PUBLIC_URL.replace(/\/+$/, '');
   const [startMonth, startDay] = e.SCHOOL_YEAR_START.split('-').map(Number) as [number, number];
@@ -82,7 +91,9 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
       ? {
           baseUrl: e.CAS_BASE_URL.replace(/\/+$/, ''),
           serviceUrl: `${publicUrl}/api/auth/cas/callback`,
-          sloHosts: e.CAS_ALLOWED_SLO_HOSTS.split(',').map((s) => s.trim()).filter(Boolean),
+          sloHosts: e.CAS_ALLOWED_SLO_HOSTS.split(',')
+            .map((s) => s.trim())
+            .filter(Boolean),
         }
       : null,
     cauce: e.CAUCE_URL && e.CAUCE_TOKEN ? { url: e.CAUCE_URL, token: e.CAUCE_TOKEN } : null,

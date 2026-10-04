@@ -12,14 +12,21 @@ export async function loader(): Promise<StatsView> {
 
 const csv = (s: StatsView) =>
   ['curso,diccionarios_aula,vigentes,participantes,entradas_publicadas']
-    .concat(s.bySchoolYear.map((y) => [formatSchoolYear(y.schoolYear), y.classrooms, y.current, y.members, y.published].join(',')))
+    .concat(
+      s.bySchoolYear.map((y) =>
+        [formatSchoolYear(y.schoolYear), y.classrooms, y.current, y.members, y.published].join(','),
+      ),
+    )
     .join('\n');
 
 export function Component() {
   const s = useLoaderData() as StatsView;
   const download = () => {
     const url = URL.createObjectURL(new Blob([csv(s)], { type: 'text/csv;charset=utf-8' }));
-    const a = Object.assign(document.createElement('a'), { href: url, download: 'lexican-estadisticas.csv' });
+    const a = Object.assign(document.createElement('a'), {
+      href: url,
+      download: 'lexican-estadisticas.csv',
+    });
     a.click();
     URL.revokeObjectURL(url);
   };

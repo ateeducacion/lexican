@@ -67,11 +67,17 @@ export function Field({
   label: ReactNode;
   hint?: ReactNode;
   error?: string[] | string | undefined;
-  children: (props: { id: string; 'aria-describedby'?: string; 'aria-invalid'?: true }) => ReactNode;
+  children: (props: {
+    id: string;
+    'aria-describedby'?: string;
+    'aria-invalid'?: true;
+  }) => ReactNode;
 }) {
   const id = useId();
   const errors = typeof error === 'string' ? [error] : (error ?? []);
-  const describedBy = [hint ? `${id}-hint` : null, errors.length ? `${id}-error` : null].filter(Boolean).join(' ');
+  const describedBy = [hint ? `${id}-hint` : null, errors.length ? `${id}-error` : null]
+    .filter(Boolean)
+    .join(' ');
   return (
     <div className="field">
       <label htmlFor={id}>{label}</label>
@@ -139,10 +145,24 @@ export function NotifyProvider({ children }: { children: ReactNode }) {
       <div
         aria-live="polite"
         role="status"
-        style={{ position: 'fixed', bottom: '1rem', right: '1rem', left: '1rem', display: 'grid', justifyItems: 'end', gap: '0.5rem', zIndex: 20, pointerEvents: 'none' }}
+        style={{
+          position: 'fixed',
+          bottom: '1rem',
+          right: '1rem',
+          left: '1rem',
+          display: 'grid',
+          justifyItems: 'end',
+          gap: '0.5rem',
+          zIndex: 20,
+          pointerEvents: 'none',
+        }}
       >
         {notices.map((n) => (
-          <div key={n.id} className={`alert alert-${n.tone === 'info' ? 'info' : n.tone}`} style={{ margin: 0, boxShadow: 'var(--shadow)', maxWidth: '28rem' }}>
+          <div
+            key={n.id}
+            className={`alert alert-${n.tone === 'info' ? 'info' : n.tone}`}
+            style={{ margin: 0, boxShadow: 'var(--shadow)', maxWidth: '28rem' }}
+          >
             {n.text}
           </div>
         ))}
@@ -185,5 +205,8 @@ export function Loading({ label = 'Cargando…' }: { label?: string }) {
 
 export const formatDate = (iso: string | null | undefined, withTime = false): string =>
   iso
-    ? new Intl.DateTimeFormat('es-ES', withTime ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' }).format(new Date(iso))
+    ? new Intl.DateTimeFormat(
+        'es-ES',
+        withTime ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' },
+      ).format(new Date(iso))
     : '';

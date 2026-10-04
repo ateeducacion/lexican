@@ -1,9 +1,29 @@
-import type { CommentView, DictionaryView, EntryView, SubmitResult, WindowState } from '@lexican/core';
+import type {
+  CommentView,
+  DictionaryView,
+  EntryView,
+  SubmitResult,
+  WindowState,
+} from '@lexican/core';
 import { useState } from 'react';
-import { Link, useLoaderData, useNavigate, useRevalidator, type LoaderFunctionArgs } from 'react-router';
+import {
+  Link,
+  useLoaderData,
+  useNavigate,
+  useRevalidator,
+  type LoaderFunctionArgs,
+} from 'react-router';
 import { getApi } from '../../api/index.ts';
 import { EntryContent } from '../../components/EntryContent.tsx';
-import { Dialog, ErrorMessage, PageTitle, StatusBadge, formatDate, useAction, useNotify } from '../../components/ui.tsx';
+import {
+  Dialog,
+  ErrorMessage,
+  PageTitle,
+  StatusBadge,
+  formatDate,
+  useAction,
+  useNotify,
+} from '../../components/ui.tsx';
 import styles from './personal.module.css';
 import { CLOSED_WINDOW } from './windowLabels.ts';
 
@@ -21,9 +41,12 @@ export async function loader({ params }: LoaderFunctionArgs): Promise<Data> {
     api.listComments({}),
   ]);
   const ids = new Set(entry.submissions.map((s) => s.id));
-  return { entry, classrooms, comments: comments.filter((c) => c.submissionId && ids.has(c.submissionId)) };
+  return {
+    entry,
+    classrooms,
+    comments: comments.filter((c) => c.submissionId && ids.has(c.submissionId)),
+  };
 }
-
 
 export function Component() {
   const { entry, classrooms, comments } = useLoaderData<Data>();
@@ -64,11 +87,14 @@ export function Component() {
       </p>
       {/* The visible headword comes from EntryContent (h2); the h1 names the page for assistive tech. */}
       <div className="visually-hidden">
-        <PageTitle title={entry.headword}>{`Entrada «${entry.headword}» de mi diccionario`}</PageTitle>
+        <PageTitle
+          title={entry.headword}
+        >{`Entrada «${entry.headword}» de mi diccionario`}</PageTitle>
       </div>
       {entry.hidden && (
         <p className="alert alert-warning">
-          Esta entrada está <strong>oculta</strong>: no aparece al enviar varias palabras ni al exportar.
+          Esta entrada está <strong>oculta</strong>: no aparece al enviar varias palabras ni al
+          exportar.
         </p>
       )}
 
@@ -79,7 +105,12 @@ export function Component() {
         <button type="button" className="btn" onClick={() => setSending(true)}>
           Enviar al aula
         </button>
-        <button type="button" className="btn" disabled={hide.busy} onClick={() => void hide.run(!entry.hidden)}>
+        <button
+          type="button"
+          className="btn"
+          disabled={hide.busy}
+          onClick={() => void hide.run(!entry.hidden)}
+        >
           {entry.hidden ? 'Mostrar entrada' : 'Ocultar entrada'}
         </button>
         <button type="button" className="btn btn-danger" onClick={() => setConfirmDelete(true)}>
@@ -90,7 +121,12 @@ export function Component() {
 
       <div className={styles.layout}>
         <div className="card">
-          <EntryContent headword={entry.headword} senses={entry.senses} showHidden headingLevel={2} />
+          <EntryContent
+            headword={entry.headword}
+            senses={entry.senses}
+            showHidden
+            headingLevel={2}
+          />
           {entry.senses.length > 1 && (
             <section aria-labelledby="sense-vis" className={styles.senseVis}>
               <h3 id="sense-vis">Acepciones visibles</h3>
@@ -99,9 +135,15 @@ export function Component() {
                 {entry.senses.map((s, i) => (
                   <li key={s.id}>
                     <span className="small">
-                      {i + 1}. {s.definition.length > 60 ? `${s.definition.slice(0, 60)}…` : s.definition}
+                      {i + 1}.{' '}
+                      {s.definition.length > 60 ? `${s.definition.slice(0, 60)}…` : s.definition}
                     </span>
-                    <button type="button" className="btn btn-sm" disabled={hideSense.busy} onClick={() => void hideSense.run(s.id, !s.hidden)}>
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      disabled={hideSense.busy}
+                      onClick={() => void hideSense.run(s.id, !s.hidden)}
+                    >
                       {s.hidden ? 'Mostrar' : 'Ocultar'}
                       <span className="visually-hidden"> acepción {i + 1}</span>
                     </button>
@@ -143,8 +185,14 @@ export function Component() {
                       </blockquote>
                     ))}
                     {s.status === 'pending' && (
-                      <button type="button" className="btn btn-sm" disabled={withdraw.busy} onClick={() => void withdraw.run(s.id)}>
-                        Retirar<span className="visually-hidden"> el envío a {s.classroomTitle}</span>
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        disabled={withdraw.busy}
+                        onClick={() => void withdraw.run(s.id)}
+                      >
+                        Retirar
+                        <span className="visually-hidden"> el envío a {s.classroomTitle}</span>
                       </button>
                     )}
                   </li>
@@ -155,14 +203,34 @@ export function Component() {
         </aside>
       </div>
 
-      <SendDialog open={sending} onClose={() => setSending(false)} entry={entry} classrooms={classrooms} onDone={() => void revalidate()} />
+      <SendDialog
+        open={sending}
+        onClose={() => setSending(false)}
+        entry={entry}
+        classrooms={classrooms}
+        onDone={() => void revalidate()}
+      />
 
-      <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)} title={`¿Borrar «${entry.headword}»?`}>
+      <Dialog
+        open={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title={`¿Borrar «${entry.headword}»?`}
+      >
         <p>La palabra desaparecerá de tu diccionario.</p>
-        {hasPending && <p>Los envíos pendientes de revisión se retirarán. Las palabras ya publicadas en un aula se mantienen.</p>}
+        {hasPending && (
+          <p>
+            Los envíos pendientes de revisión se retirarán. Las palabras ya publicadas en un aula se
+            mantienen.
+          </p>
+        )}
         <ErrorMessage error={remove.error} />
         <div className="row">
-          <button type="button" className="btn btn-danger" disabled={remove.busy} onClick={() => void remove.run()}>
+          <button
+            type="button"
+            className="btn btn-danger"
+            disabled={remove.busy}
+            onClick={() => void remove.run()}
+          >
             Borrar entrada
           </button>
           <button type="button" className="btn" onClick={() => setConfirmDelete(false)}>
@@ -190,7 +258,9 @@ function SendDialog({
   const notify = useNotify();
   const openOnes = classrooms.filter((c) => c.classroom?.windowState === 'open');
   const closed = classrooms.filter((c) => c.classroom && c.classroom.windowState !== 'open');
-  const [chosen, setChosen] = useState<string[]>(() => (openOnes.length === 1 ? [openOnes[0]!.id] : []));
+  const [chosen, setChosen] = useState<string[]>(() =>
+    openOnes.length === 1 ? [openOnes[0]!.id] : [],
+  );
   const [check, setCheck] = useState<SubmitResult | null>(null);
 
   const close = () => {
@@ -204,7 +274,9 @@ function SendDialog({
     close();
   };
   const send = useAction(async () => {
-    const dry = await (await getApi()).submitEntries({ entryIds: [entry.id], classroomIds: chosen, dryRun: true });
+    const dry = await (
+      await getApi()
+    ).submitEntries({ entryIds: [entry.id], classroomIds: chosen, dryRun: true });
     if (dry.problems.length === 0) return submit(chosen);
     setCheck(dry);
   });
@@ -225,7 +297,9 @@ function SendDialog({
                 checked={chosen.includes(c.id)}
                 onChange={(e) => {
                   setCheck(null);
-                  setChosen(e.target.checked ? [...chosen, c.id] : chosen.filter((x) => x !== c.id));
+                  setChosen(
+                    e.target.checked ? [...chosen, c.id] : chosen.filter((x) => x !== c.id),
+                  );
                 }}
               />
               {c.title}
@@ -245,7 +319,11 @@ function SendDialog({
           </ul>
         </div>
       )}
-      {entry.hidden && <p className="alert alert-warning">La entrada está oculta, pero puedes enviarla igualmente.</p>}
+      {entry.hidden && (
+        <p className="alert alert-warning">
+          La entrada está oculta, pero puedes enviarla igualmente.
+        </p>
+      )}
 
       {check && (
         <div className="alert alert-warning" role="alert">
@@ -266,12 +344,22 @@ function SendDialog({
 
       <div className="row">
         {check && okIds.length > 0 ? (
-          <button type="button" className="btn btn-primary" disabled={sendRest.busy} onClick={() => void sendRest.run()}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={sendRest.busy}
+            onClick={() => void sendRest.run()}
+          >
             Enviar solo a las aulas sin problemas
           </button>
         ) : (
           openOnes.length > 0 && (
-            <button type="button" className="btn btn-primary" disabled={chosen.length === 0 || send.busy || !!check} onClick={() => void send.run()}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={chosen.length === 0 || send.busy || !!check}
+              onClick={() => void send.run()}
+            >
               {send.busy ? 'Comprobando…' : 'Enviar'}
             </button>
           )

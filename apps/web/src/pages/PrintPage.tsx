@@ -1,4 +1,11 @@
-import { formatSchoolYear, toCsv, toDmlex, toJson, type DictionaryView, type EntryView } from '@lexican/core';
+import {
+  formatSchoolYear,
+  toCsv,
+  toDmlex,
+  toJson,
+  type DictionaryView,
+  type EntryView,
+} from '@lexican/core';
 import { useMemo, useState } from 'react';
 import { Link, useLoaderData, useSearchParams, type LoaderFunctionArgs } from 'react-router';
 import { getApi } from '../api/index.ts';
@@ -47,7 +54,9 @@ export function Component() {
 
   const usedTopics = useMemo(() => {
     const ids = new Set(entries.flatMap((e) => e.senses.flatMap((s) => s.topicIds)));
-    return [...ids].map((id) => ({ id, label: v.label(id) })).sort((a, b) => a.label.localeCompare(b.label, 'es'));
+    return [...ids]
+      .map((id) => ({ id, label: v.label(id) }))
+      .sort((a, b) => a.label.localeCompare(b.label, 'es'));
   }, [entries, v]);
 
   const shown = useMemo(() => {
@@ -63,7 +72,12 @@ export function Component() {
     return [...g.entries()];
   }, [shown]);
 
-  const authors = d.kind === 'classroom' ? [...new Set(shown.map((e) => e.author?.displayName).filter((x): x is string => !!x))].sort((a, b) => a.localeCompare(b, 'es')) : [];
+  const authors =
+    d.kind === 'classroom'
+      ? [...new Set(shown.map((e) => e.author?.displayName).filter((x): x is string => !!x))].sort(
+          (a, b) => a.localeCompare(b, 'es'),
+        )
+      : [];
   const file = slug(d.title);
   const back = d.kind === 'personal' ? '/mi-diccionario' : `/aulas/${d.id}`;
 
@@ -97,7 +111,11 @@ export function Component() {
           {usedTopics.length > 0 && (
             <>
               <label className="check">
-                <input type="checkbox" checked={byTopic} onChange={(e) => setByTopic(e.target.checked)} />
+                <input
+                  type="checkbox"
+                  checked={byTopic}
+                  onChange={(e) => setByTopic(e.target.checked)}
+                />
                 <span>Solo las temáticas seleccionadas</span>
               </label>
               {byTopic && (
@@ -127,19 +145,51 @@ export function Component() {
             </>
           )}
           <p className="small muted" role="status">
-            {shown.length} {shown.length === 1 ? 'entrada' : 'entradas'} {shown.length !== entries.length && `de ${entries.length}`}
+            {shown.length} {shown.length === 1 ? 'entrada' : 'entradas'}{' '}
+            {shown.length !== entries.length && `de ${entries.length}`}
           </p>
           <div className="row">
-            <button type="button" className="btn btn-primary" onClick={() => window.print()} disabled={shown.length === 0}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => window.print()}
+              disabled={shown.length === 0}
+            >
               Imprimir / Guardar como PDF
             </button>
-            <button type="button" className="btn" onClick={() => download(`${file}.csv`, '﻿' + toCsv(shown, vocab), 'text/csv;charset=utf-8')}>
+            <button
+              type="button"
+              className="btn"
+              onClick={() =>
+                download(`${file}.csv`, '﻿' + toCsv(shown, vocab), 'text/csv;charset=utf-8')
+              }
+            >
               CSV
             </button>
-            <button type="button" className="btn" onClick={() => download(`${file}.json`, JSON.stringify(toJson(d, shown, vocab), null, 2), 'application/json')}>
+            <button
+              type="button"
+              className="btn"
+              onClick={() =>
+                download(
+                  `${file}.json`,
+                  JSON.stringify(toJson(d, shown, vocab), null, 2),
+                  'application/json',
+                )
+              }
+            >
               JSON
             </button>
-            <button type="button" className="btn" onClick={() => download(`${file}.dmlex.json`, JSON.stringify(toDmlex(d, shown, vocab), null, 2), 'application/json')}>
+            <button
+              type="button"
+              className="btn"
+              onClick={() =>
+                download(
+                  `${file}.dmlex.json`,
+                  JSON.stringify(toDmlex(d, shown, vocab), null, 2),
+                  'application/json',
+                )
+              }
+            >
               DMLex JSON
             </button>
           </div>
@@ -147,9 +197,7 @@ export function Component() {
             En el cuadro de impresión elige «Guardar como PDF» para obtener un fichero.
           </p>
         </section>
-        <h2 className={styles.previewTitle}>
-          Vista previa
-        </h2>
+        <h2 className={styles.previewTitle}>Vista previa</h2>
       </div>
 
       <div className={styles.sheet}>
@@ -157,10 +205,13 @@ export function Component() {
           <PageTitle title={`Imprimir: ${d.title}`}>{d.title}</PageTitle>
           {d.description && <p className={styles.lead}>{d.description}</p>}
           <p className="muted">
-            {d.classroom ? `Diccionario de aula · Curso ${formatSchoolYear(d.classroom.schoolYear)}` : `Diccionario personal de ${d.owner.displayName}`}
+            {d.classroom
+              ? `Diccionario de aula · Curso ${formatSchoolYear(d.classroom.schoolYear)}`
+              : `Diccionario personal de ${d.owner.displayName}`}
           </p>
           <p className="small muted">
-            {shown.length} {shown.length === 1 ? 'entrada' : 'entradas'} · {formatDate(new Date().toISOString())} · LexiCán
+            {shown.length} {shown.length === 1 ? 'entrada' : 'entradas'} ·{' '}
+            {formatDate(new Date().toISOString())} · LexiCán
           </p>
           {authors.length > 0 && (
             <p className="small">
@@ -170,7 +221,9 @@ export function Component() {
         </header>
 
         {shown.length === 0 ? (
-          <EmptyState title="No hay entradas que imprimir">{byTopic && <p>Selecciona alguna temática.</p>}</EmptyState>
+          <EmptyState title="No hay entradas que imprimir">
+            {byTopic && <p>Selecciona alguna temática.</p>}
+          </EmptyState>
         ) : (
           groups.map(([letter, list]) => (
             <section key={letter} className={styles.letter} aria-labelledby={`letra-${letter}`}>
@@ -179,7 +232,13 @@ export function Component() {
               </h2>
               {list.map((e) => (
                 <div key={e.id} className={styles.entry}>
-                  <EntryContent headword={e.headword} senses={e.senses} visibleFields={d.classroom?.visibleFields} showHidden={includeHidden} headingLevel={3} />
+                  <EntryContent
+                    headword={e.headword}
+                    senses={e.senses}
+                    visibleFields={d.classroom?.visibleFields}
+                    showHidden={includeHidden}
+                    headingLevel={3}
+                  />
                 </div>
               ))}
             </section>

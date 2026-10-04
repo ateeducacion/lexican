@@ -94,12 +94,20 @@ const REQUIRED_CHECK: Record<SenseField, [string, (s: SenseDraft) => boolean]> =
   video: ['media-video', (s) => s.media.some((m) => m.kind === 'video')],
 };
 
-export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave, onCancel }: EntryEditorProps) {
+export function EntryEditor({
+  entry,
+  classroom,
+  submitLabel = 'Guardar',
+  onSave,
+  onCancel,
+}: EntryEditorProps) {
   const v = useVocab();
   const notify = useNotify();
   const form = useRef<HTMLFormElement>(null);
   const [headword, setHeadword] = useState(entry?.headword ?? '');
-  const [senses, setSenses] = useState<SenseDraft[]>(() => (entry?.senses.length ? entry.senses.map(fromView) : [blankSense()]));
+  const [senses, setSenses] = useState<SenseDraft[]>(() =>
+    entry?.senses.length ? entry.senses.map(fromView) : [blankSense()],
+  );
   const [errors, setErrors] = useState<Errors>({});
   const [serverError, setServerError] = useState<ApiError | null>(null);
   const [saving, setSaving] = useState(false);
@@ -122,7 +130,8 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
     );
 
   useEffect(() => {
-    if (focusErrors) form.current?.querySelector<HTMLElement>('[aria-invalid="true"], [data-invalid]')?.focus();
+    if (focusErrors)
+      form.current?.querySelector<HTMLElement>('[aria-invalid="true"], [data-invalid]')?.focus();
   }, [focusErrors]);
   // Focus requested by an action (moved/added sense), applied once the DOM reflects it.
   useEffect(() => {
@@ -176,7 +185,11 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
     try {
       const m = await (await getApi()).uploadMedia(file, file.name);
       if (m.kind !== kind) throw new Error(`El archivo no es ${MEDIA_LABEL[kind].toLowerCase()}`);
-      setSenses((list) => list.map((s) => (s.key === sense.key ? { ...s, media: [...s.media.filter((x) => x.kind !== kind), m] } : s)));
+      setSenses((list) =>
+        list.map((s) =>
+          s.key === sense.key ? { ...s, media: [...s.media.filter((x) => x.kind !== kind), m] } : s,
+        ),
+      );
       setErrors(({ [k]: _drop, ...rest }) => rest);
     } catch (e) {
       const message = e instanceof Error && !('code' in e) ? e.message : toApiError(e).message;
@@ -208,15 +221,18 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
     const parsed = EntryInput.safeParse(raw);
     const found: Errors = {};
     const addErr = (key: string, msg: string) => (found[key] ??= []).push(msg);
-    if (!parsed.success) for (const i of parsed.error.issues) addErr(i.path.join('.') || 'form', i.message);
+    if (!parsed.success)
+      for (const i of parsed.error.issues) addErr(i.path.join('.') || 'form', i.message);
     if (settings) {
       senses.forEach((s, i) => {
         for (const f of settings.requiredFields) {
           const [key, ok] = REQUIRED_CHECK[f];
-          if (show(f) && !ok(s)) addErr(`senses.${i}.${key}`, 'Este campo es obligatorio en este diccionario de aula');
+          if (show(f) && !ok(s))
+            addErr(`senses.${i}.${key}`, 'Este campo es obligatorio en este diccionario de aula');
         }
       });
-      if (max && senses.length > max) addErr('form', `Este diccionario admite como máximo ${max} acepciones por entrada`);
+      if (max && senses.length > max)
+        addErr('form', `Este diccionario admite como máximo ${max} acepciones por entrada`);
     }
     setErrors(found);
     if (Object.keys(found).length || !parsed.success) {
@@ -263,7 +279,14 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
         </div>
       )}
 
-      <Field label={<>Palabra <span className={styles.req}>(obligatorio)</span></>} error={err('headword')}>
+      <Field
+        label={
+          <>
+            Palabra <span className={styles.req}>(obligatorio)</span>
+          </>
+        }
+        error={err('headword')}
+      >
         {(p) => (
           <input
             {...p}
@@ -281,7 +304,9 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
       <div className="spread">
         <h2 className={styles.sectionTitle}>Acepciones</h2>
         <span className="small muted" aria-live="polite">
-          {max ? `${senses.length} de ${max} como máximo` : `${senses.length} ${senses.length === 1 ? 'acepción' : 'acepciones'}`}
+          {max
+            ? `${senses.length} de ${max} como máximo`
+            : `${senses.length} ${senses.length === 1 ? 'acepción' : 'acepciones'}`}
         </span>
       </div>
       {err('senses') && <p className="error">{err('senses')?.join(' ')}</p>}
@@ -298,24 +323,61 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
                   {s.hidden && <span className="badge badge-hidden">Oculta</span>}
                 </h3>
                 <div className="row">
-                  <button type="button" data-focus={`${s.key}-up`} className="btn btn-sm" disabled={i === 0} onClick={() => move(i, -1)}>
-                    <span aria-hidden="true">↑</span> Subir<span className="visually-hidden"> acepción {i + 1}</span>
+                  <button
+                    type="button"
+                    data-focus={`${s.key}-up`}
+                    className="btn btn-sm"
+                    disabled={i === 0}
+                    onClick={() => move(i, -1)}
+                  >
+                    <span aria-hidden="true">↑</span> Subir
+                    <span className="visually-hidden"> acepción {i + 1}</span>
                   </button>
-                  <button type="button" data-focus={`${s.key}-down`} className="btn btn-sm" disabled={i === senses.length - 1} onClick={() => move(i, 1)}>
-                    <span aria-hidden="true">↓</span> Bajar<span className="visually-hidden"> acepción {i + 1}</span>
+                  <button
+                    type="button"
+                    data-focus={`${s.key}-down`}
+                    className="btn btn-sm"
+                    disabled={i === senses.length - 1}
+                    onClick={() => move(i, 1)}
+                  >
+                    <span aria-hidden="true">↓</span> Bajar
+                    <span className="visually-hidden"> acepción {i + 1}</span>
                   </button>
-                  <button type="button" className="btn btn-sm" disabled={!!max && senses.length >= max} onClick={() => duplicate(i)}>
+                  <button
+                    type="button"
+                    className="btn btn-sm"
+                    disabled={!!max && senses.length >= max}
+                    onClick={() => duplicate(i)}
+                  >
                     Duplicar<span className="visually-hidden"> acepción {i + 1}</span>
                   </button>
-                  <button type="button" className="btn btn-sm btn-danger" disabled={senses.length === 1} onClick={() => setToDelete(s.key)}>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-danger"
+                    disabled={senses.length === 1}
+                    onClick={() => setToDelete(s.key)}
+                  >
                     Borrar<span className="visually-hidden"> acepción {i + 1}</span>
                   </button>
                 </div>
               </div>
 
-              <Field label={<>Definición <span className={styles.req}>(obligatorio)</span></>} error={err(`${base}.definition`)}>
+              <Field
+                label={
+                  <>
+                    Definición <span className={styles.req}>(obligatorio)</span>
+                  </>
+                }
+                error={err(`${base}.definition`)}
+              >
                 {(p) => (
-                  <textarea {...p} data-focus={`${s.key}-definition`} maxLength={1000} value={s.definition} onChange={(e) => patch(s.key, { definition: e.target.value })} />
+                  <textarea
+                    {...p}
+                    data-focus={`${s.key}-definition`}
+                    maxLength={1000}
+                    value={s.definition}
+                    onChange={(e) => patch(s.key, { definition: e.target.value })}
+                  />
                 )}
               </Field>
 
@@ -325,7 +387,13 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
                   .map(([key, text, f]) => (
                     <Field key={key} label={label(text, f)} error={err(`${base}.${key}`)}>
                       {(p) => (
-                        <select {...p} value={s[key]} onChange={(e) => patch(s.key, { [key]: e.target.value } as Partial<SenseDraft>)}>
+                        <select
+                          {...p}
+                          value={s[key]}
+                          onChange={(e) =>
+                            patch(s.key, { [key]: e.target.value } as Partial<SenseDraft>)
+                          }
+                        >
                           <option value="">—</option>
                           {v.list(f).map((o) => (
                             <option key={o.id} value={o.id}>
@@ -342,7 +410,11 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
                 <div className={styles.cols}>
                   <Field label={label('Otra lengua', 'language')} error={err(`${base}.languageId`)}>
                     {(p) => (
-                      <select {...p} value={s.languageId} onChange={(e) => patch(s.key, { languageId: e.target.value })}>
+                      <select
+                        {...p}
+                        value={s.languageId}
+                        onChange={(e) => patch(s.key, { languageId: e.target.value })}
+                      >
                         <option value="">—</option>
                         {v.list('language').map((o) => (
                           <option key={o.id} value={o.id}>
@@ -354,7 +426,14 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
                   </Field>
                   <Field label="Palabra en esa lengua" error={err(`${base}.foreignForm`)}>
                     {(p) => (
-                      <input {...p} type="text" maxLength={150} lang="und" value={s.foreignForm} onChange={(e) => patch(s.key, { foreignForm: e.target.value })} />
+                      <input
+                        {...p}
+                        type="text"
+                        maxLength={150}
+                        lang="und"
+                        value={s.foreignForm}
+                        onChange={(e) => patch(s.key, { foreignForm: e.target.value })}
+                      />
                     )}
                   </Field>
                 </div>
@@ -362,12 +441,28 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
 
               {show('extra_info') && (
                 <Field label={label('Más datos', 'extra_info')} error={err(`${base}.extraInfo`)}>
-                  {(p) => <input {...p} type="text" maxLength={255} value={s.extraInfo} onChange={(e) => patch(s.key, { extraInfo: e.target.value })} />}
+                  {(p) => (
+                    <input
+                      {...p}
+                      type="text"
+                      maxLength={255}
+                      value={s.extraInfo}
+                      onChange={(e) => patch(s.key, { extraInfo: e.target.value })}
+                    />
+                  )}
                 </Field>
               )}
               {show('example') && (
                 <Field label={label('Ejemplo de uso', 'example')} error={err(`${base}.example`)}>
-                  {(p) => <input {...p} type="text" maxLength={255} value={s.example} onChange={(e) => patch(s.key, { example: e.target.value })} />}
+                  {(p) => (
+                    <input
+                      {...p}
+                      type="text"
+                      maxLength={255}
+                      value={s.example}
+                      onChange={(e) => patch(s.key, { example: e.target.value })}
+                    />
+                  )}
                 </Field>
               )}
 
@@ -390,7 +485,12 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
                     return (
                       <Field
                         key={kind}
-                        label={label(current ? `Cambiar ${MEDIA_LABEL[kind].toLowerCase()}` : MEDIA_LABEL[kind], kind)}
+                        label={label(
+                          current
+                            ? `Cambiar ${MEDIA_LABEL[kind].toLowerCase()}`
+                            : MEDIA_LABEL[kind],
+                          kind,
+                        )}
                         hint={busy ? 'Subiendo…' : undefined}
                         error={err(`${base}.media-${kind}`)}
                       >
@@ -398,11 +498,16 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
                           <>
                             {current && (
                               <div className={styles.preview}>
-                                <Media media={current} alt={`${headword || 'Entrada'}: ${MEDIA_LABEL[kind].toLowerCase()}`} />
+                                <Media
+                                  media={current}
+                                  alt={`${headword || 'Entrada'}: ${MEDIA_LABEL[kind].toLowerCase()}`}
+                                />
                                 <button
                                   type="button"
                                   className="btn btn-sm btn-link"
-                                  onClick={() => patch(s.key, { media: s.media.filter((m) => m.kind !== kind) })}
+                                  onClick={() =>
+                                    patch(s.key, { media: s.media.filter((m) => m.kind !== kind) })
+                                  }
                                 >
                                   Quitar {MEDIA_LABEL[kind].toLowerCase()}
                                 </button>
@@ -430,7 +535,12 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
       </ol>
 
       <div>
-        <button type="button" className="btn" onClick={add} disabled={!!max && senses.length >= max}>
+        <button
+          type="button"
+          className="btn"
+          onClick={add}
+          disabled={!!max && senses.length >= max}
+        >
           + Añadir acepción
         </button>
       </div>
@@ -462,10 +572,15 @@ export function EntryEditor({ entry, classroom, submitLabel = 'Guardar', onSave,
       <Dialog open={!!deleting} onClose={() => setToDelete(null)} title="¿Borrar esta acepción?">
         <p>
           Se quitará la acepción {deleting ? senses.indexOf(deleting) + 1 : ''}
-          {deleting?.definition ? <> («{deleting.definition.slice(0, 80)}»)</> : null}. El cambio se aplica al guardar la entrada.
+          {deleting?.definition ? <> («{deleting.definition.slice(0, 80)}»)</> : null}. El cambio se
+          aplica al guardar la entrada.
         </p>
         <div className="row">
-          <button type="button" className="btn btn-danger" onClick={() => toDelete && remove(toDelete)}>
+          <button
+            type="button"
+            className="btn btn-danger"
+            onClick={() => toDelete && remove(toDelete)}
+          >
             Borrar acepción
           </button>
           <button type="button" className="btn" onClick={() => setToDelete(null)}>
@@ -495,7 +610,8 @@ function TopicPicker({
   const norm = (t: string) => t.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
   const shown = options.filter((o) => norm(o.label).includes(norm(filter)));
   const names = options.filter((o) => selected.includes(o.id)).map((o) => o.label);
-  const toggle = (id: string, on: boolean) => onChange(on ? [...selected, id] : selected.filter((x) => x !== id));
+  const toggle = (id: string, on: boolean) =>
+    onChange(on ? [...selected, id] : selected.filter((x) => x !== id));
   return (
     <div className="field">
       <details className={styles.topics} open={error ? true : undefined}>
@@ -504,11 +620,21 @@ function TopicPicker({
         </summary>
         <fieldset>
           <legend className="visually-hidden">{label}</legend>
-          <input type="search" aria-label="Filtrar temáticas" placeholder="Filtrar temáticas" value={filter} onChange={(e) => setFilter(e.target.value)} />
+          <input
+            type="search"
+            aria-label="Filtrar temáticas"
+            placeholder="Filtrar temáticas"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          />
           <div className={styles.topicList}>
             {shown.map((o) => (
               <label key={o.id} className="check">
-                <input type="checkbox" checked={selected.includes(o.id)} onChange={(e) => toggle(o.id, e.target.checked)} />
+                <input
+                  type="checkbox"
+                  checked={selected.includes(o.id)}
+                  onChange={(e) => toggle(o.id, e.target.checked)}
+                />
                 {o.label}
               </label>
             ))}

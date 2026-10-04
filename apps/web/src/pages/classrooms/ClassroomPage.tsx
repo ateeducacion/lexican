@@ -19,7 +19,9 @@ export function Component() {
   const c = d.classroom;
   const teacher = d.myRole === 'teacher';
   const studentBlocked = d.myRole === 'student' && c && !c.visibleToStudents;
-  const meta = [c ? v.label(c.studyLevelId) : '', c ? v.label(c.subjectId) : ''].filter(Boolean).join(' · ');
+  const meta = [c ? v.label(c.studyLevelId) : '', c ? v.label(c.subjectId) : '']
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     <>
@@ -33,7 +35,10 @@ export function Component() {
 
       {teacher && (
         <nav aria-label="Herramientas del profesorado" className={`no-print ${styles.toolbar}`}>
-          <Link className={`btn ${d.pendingCount > 0 ? 'btn-primary' : ''}`} to={`/aulas/${d.id}/envios`}>
+          <Link
+            className={`btn ${d.pendingCount > 0 ? 'btn-primary' : ''}`}
+            to={`/aulas/${d.id}/envios`}
+          >
             Revisar envíos{d.pendingCount > 0 && ` (${d.pendingCount})`}
           </Link>
           <Link className="btn" to={`/aulas/${d.id}/participantes`}>
@@ -54,7 +59,11 @@ export function Component() {
       )}
 
       {c?.guidelines && (
-        <details open={params.has('pautas')} className={`card ${styles.guidelines}`} style={{ marginBottom: 'var(--space-5)' }}>
+        <details
+          open={params.has('pautas')}
+          className={`card ${styles.guidelines}`}
+          style={{ marginBottom: 'var(--space-5)' }}
+        >
           <summary>Pautas del diccionario</summary>
           <p className="prose">{c.guidelines}</p>
         </details>
@@ -62,14 +71,21 @@ export function Component() {
 
       {studentBlocked ? (
         <EmptyState title="Este diccionario aún no está visible">
-          <p>Tu profesor o profesora todavía no lo ha abierto al alumnado. Mientras tanto puedes seguir trabajando en tu diccionario personal.</p>
+          <p>
+            Tu profesor o profesora todavía no lo ha abierto al alumnado. Mientras tanto puedes
+            seguir trabajando en tu diccionario personal.
+          </p>
           <Link className="btn btn-primary" to="/mi-diccionario">
             Ir a mi diccionario
           </Link>
         </EmptyState>
       ) : (
         <section aria-label="Entradas">
-          <EntryList dictionaryId={d.id} entryHref={(id) => `/aulas/${d.id}/entradas/${id}`} canEdit={teacher} />
+          <EntryList
+            dictionaryId={d.id}
+            entryHref={(id) => `/aulas/${d.id}/entradas/${id}`}
+            canEdit={teacher}
+          />
         </section>
       )}
     </>

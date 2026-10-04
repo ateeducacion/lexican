@@ -34,7 +34,11 @@ export function parseServiceResponse(xml: string): CasResult {
   return { ok: false, code: typeof code === 'string' ? code : 'INVALID_RESPONSE' };
 }
 
-export async function validateTicket(casBaseUrl: string, service: string, ticket: string): Promise<CasResult> {
+export async function validateTicket(
+  casBaseUrl: string,
+  service: string,
+  ticket: string,
+): Promise<CasResult> {
   const url = new URL(`${casBaseUrl}/p3/serviceValidate`);
   url.search = new URLSearchParams({ service, ticket }).toString();
   const res = await fetch(url, { signal: AbortSignal.timeout(5000), redirect: 'error' });

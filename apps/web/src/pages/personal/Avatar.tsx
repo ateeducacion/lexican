@@ -10,7 +10,15 @@ export const AVATARS = [
   { id: 'cardon', label: 'Turquesa cardón', color: '#0f6470' },
 ] as const;
 
-export function Avatar({ id, title, size = 56 }: { id: string | null; title: string; size?: number }) {
+export function Avatar({
+  id,
+  title,
+  size = 56,
+}: {
+  id: string | null;
+  title: string;
+  size?: number;
+}) {
   const color = (AVATARS.find((a) => a.id === id) ?? AVATARS[0]).color;
   return (
     <span

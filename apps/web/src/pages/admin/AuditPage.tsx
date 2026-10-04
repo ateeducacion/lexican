@@ -32,7 +32,9 @@ export function Component() {
     <>
       <PageTitle>Auditoría</PageTitle>
       <AdminNav />
-      <p className="muted prose">Últimas acciones sensibles. No se guardan contenidos ni datos personales.</p>
+      <p className="muted prose">
+        Últimas acciones sensibles. No se guardan contenidos ni datos personales.
+      </p>
       <div className="table-wrap">
         <table>
           <caption className="visually-hidden">Eventos de auditoría</caption>

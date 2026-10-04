@@ -12,7 +12,13 @@ const sqlFiles = import.meta.glob<string>('../../../../packages/db/migrations/*.
   eager: true,
 });
 const sqlByTag = Object.fromEntries(
-  Object.entries(sqlFiles).map(([path, sql]) => [path.split('/').pop()!.replace(/\.sql$/, ''), sql]),
+  Object.entries(sqlFiles).map(([path, sql]) => [
+    path
+      .split('/')
+      .pop()!
+      .replace(/\.sql$/, ''),
+    sql,
+  ]),
 );
 
 export async function openDemoDb(): Promise<{ client: PGlite; db: Db }> {

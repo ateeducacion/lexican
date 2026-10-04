@@ -18,5 +18,7 @@ export function Media({ media, alt }: { media: MediaView; alt: string }) {
   if (!src) return <span className="muted small">{media.originalName || 'Archivo'}</span>;
   if (media.kind === 'image') return <img src={src} alt={alt} loading="lazy" />;
   if (media.kind === 'audio') return <audio controls src={src} aria-label={alt} preload="none" />;
-  return <video controls src={src} aria-label={alt} preload="metadata" style={{ maxHeight: 240 }} />;
+  return (
+    <video controls src={src} aria-label={alt} preload="metadata" style={{ maxHeight: 240 }} />
+  );
 }

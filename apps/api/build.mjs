@@ -5,7 +5,11 @@ import { build } from 'esbuild';
 const workspace = /^@lexican\//;
 rmSync('dist', { recursive: true, force: true });
 await build({
-  entryPoints: { server: 'src/server.ts', 'cli/migrate': 'src/cli/migrate.ts', 'cli/seed': 'src/cli/seed.ts' },
+  entryPoints: {
+    server: 'src/server.ts',
+    'cli/migrate': 'src/cli/migrate.ts',
+    'cli/seed': 'src/cli/seed.ts',
+  },
   outdir: 'dist',
   bundle: true,
   platform: 'node',
@@ -18,7 +22,9 @@ await build({
       name: 'externalize-npm-deps',
       setup(b) {
         b.onResolve({ filter: /^[^./]/ }, (args) =>
-          workspace.test(args.path) || args.kind === 'entry-point' ? undefined : { path: args.path, external: true },
+          workspace.test(args.path) || args.kind === 'entry-point'
+            ? undefined
+            : { path: args.path, external: true },
         );
       },
     },

@@ -159,7 +159,9 @@ const auditJson = (() => {
     return err.stdout?.toString() ?? '{}';
   }
 })();
-const audit = { productionVulnerabilities: JSON.parse(auditJson).metadata?.vulnerabilities?.total ?? null };
+const audit = {
+  productionVulnerabilities: JSON.parse(auditJson).metadata?.vulnerabilities?.total ?? null,
+};
 
 console.log(
   JSON.stringify({ generatedAt: new Date().toISOString(), legacy, modern, audit }, null, 2),

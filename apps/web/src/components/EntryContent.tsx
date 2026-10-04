@@ -56,18 +56,25 @@ export function EntryContent({
                 )}
                 {show('language') && s.languageId && s.foreignForm && (
                   <p className="small">
-                    <strong>{v.label(s.languageId)}:</strong> <span lang="und">{s.foreignForm}</span>
+                    <strong>{v.label(s.languageId)}:</strong>{' '}
+                    <span lang="und">{s.foreignForm}</span>
                   </p>
                 )}
                 {show('topics') && s.topicIds.length > 0 && (
-                  <p className="small muted">Temáticas: {s.topicIds.map((t) => v.label(t)).join(', ')}</p>
+                  <p className="small muted">
+                    Temáticas: {s.topicIds.map((t) => v.label(t)).join(', ')}
+                  </p>
                 )}
                 {s.media.some((m) => show(m.kind)) && (
                   <div className="sense-media">
                     {s.media
                       .filter((m) => show(m.kind))
                       .map((m) => (
-                        <Media key={m.id} media={m} alt={`${headword}: ${m.kind === 'image' ? 'imagen' : m.kind}`} />
+                        <Media
+                          key={m.id}
+                          media={m}
+                          alt={`${headword}: ${m.kind === 'image' ? 'imagen' : m.kind}`}
+                        />
                       ))}
                   </div>
                 )}

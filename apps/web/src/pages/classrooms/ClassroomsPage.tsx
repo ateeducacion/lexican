@@ -2,7 +2,14 @@ import { JoinInput, type DictionaryView } from '@lexican/core';
 import { useState, type FormEvent } from 'react';
 import { Link, useLoaderData, useNavigate } from 'react-router';
 import { getApi } from '../../api/index.ts';
-import { EmptyState, ErrorMessage, Field, PageTitle, useAction, useNotify } from '../../components/ui.tsx';
+import {
+  EmptyState,
+  ErrorMessage,
+  Field,
+  PageTitle,
+  useAction,
+  useNotify,
+} from '../../components/ui.tsx';
 import { useSession } from '../../session.ts';
 import styles from './Classrooms.module.css';
 import { ClassroomState, JoinCode } from './shared.tsx';
@@ -34,7 +41,9 @@ export function Component() {
         <section aria-labelledby="teaching-title">
           <h2 id="teaching-title">Diccionarios que coordino</h2>
           <p className="muted">
-            {pending === 0 ? 'No tienes envíos pendientes de revisar.' : `Tienes ${pending} ${pending === 1 ? 'envío pendiente' : 'envíos pendientes'} de revisar.`}
+            {pending === 0
+              ? 'No tienes envíos pendientes de revisar.'
+              : `Tienes ${pending} ${pending === 1 ? 'envío pendiente' : 'envíos pendientes'} de revisar.`}
           </p>
           <ul className="grid" style={{ listStyle: 'none', padding: 0 }}>
             {teaching.map((c) => (
@@ -44,7 +53,8 @@ export function Component() {
                 </h3>
                 <ClassroomState dictionary={c} />
                 <p className="small">
-                  {c.entryCount} {c.entryCount === 1 ? 'entrada publicada' : 'entradas publicadas'} · Código <JoinCode code={c.classroom?.joinCode ?? ''} />
+                  {c.entryCount} {c.entryCount === 1 ? 'entrada publicada' : 'entradas publicadas'}{' '}
+                  · Código <JoinCode code={c.classroom?.joinCode ?? ''} />
                 </p>
                 <div className={styles.cardActions}>
                   {c.pendingCount > 0 ? (
@@ -70,8 +80,15 @@ export function Component() {
       )}
 
       {(learning.length > 0 || teaching.length === 0) && (
-        <section aria-labelledby="learning-title" className={teaching.length ? styles.section : undefined}>
-          <h2 id="learning-title">{teaching.length ? 'Otros diccionarios de aula' : 'Diccionarios de aula en los que participo'}</h2>
+        <section
+          aria-labelledby="learning-title"
+          className={teaching.length ? styles.section : undefined}
+        >
+          <h2 id="learning-title">
+            {teaching.length
+              ? 'Otros diccionarios de aula'
+              : 'Diccionarios de aula en los que participo'}
+          </h2>
           {learning.length === 0 ? (
             <EmptyState title="Todavía no participas en ningún diccionario de aula">
               <p>Pide el código a tu profesor o profesora y escríbelo abajo para unirte.</p>
@@ -135,11 +152,23 @@ function JoinForm() {
   return (
     <section aria-labelledby="join-title" className={`card ${styles.section}`}>
       <h2 id="join-title">Unirse con un código</h2>
-      <p className="small muted">Tu profesor o profesora te dará un código de 4 a 6 letras o números.</p>
+      <p className="small muted">
+        Tu profesor o profesora te dará un código de 4 a 6 letras o números.
+      </p>
       <form onSubmit={submit} noValidate className={styles.joinForm}>
         <Field label="Código del diccionario de aula" error={fieldError}>
           {(p) => (
-            <input {...p} type="text" name="code" autoComplete="off" autoCapitalize="characters" spellCheck={false} maxLength={6} value={code} onChange={(e) => setCode(e.target.value)} />
+            <input
+              {...p}
+              type="text"
+              name="code"
+              autoComplete="off"
+              autoCapitalize="characters"
+              spellCheck={false}
+              maxLength={6}
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+            />
           )}
         </Field>
         <button type="submit" className="btn btn-primary" disabled={join.busy}>

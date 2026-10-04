@@ -13,13 +13,32 @@ const NO_SCHOOL = { code: '00000000', name: 'Sin centro educativo' };
 
 /** Legacy CAUCE responses may carry HTML named entities (&aacute;) that XML does not define (§11 TODO). */
 const HTML_ENTITIES: Record<string, string> = {
-  aacute: 'á', eacute: 'é', iacute: 'í', oacute: 'ó', uacute: 'ú', ntilde: 'ñ', uuml: 'ü', ccedil: 'ç',
-  Aacute: 'Á', Eacute: 'É', Iacute: 'Í', Oacute: 'Ó', Uacute: 'Ú', Ntilde: 'Ñ', Uuml: 'Ü', Ccedil: 'Ç',
-  ordf: 'ª', ordm: 'º', nbsp: ' ',
+  aacute: 'á',
+  eacute: 'é',
+  iacute: 'í',
+  oacute: 'ó',
+  uacute: 'ú',
+  ntilde: 'ñ',
+  uuml: 'ü',
+  ccedil: 'ç',
+  Aacute: 'Á',
+  Eacute: 'É',
+  Iacute: 'Í',
+  Oacute: 'Ó',
+  Uacute: 'Ú',
+  Ntilde: 'Ñ',
+  Uuml: 'Ü',
+  Ccedil: 'Ç',
+  ordf: 'ª',
+  ordm: 'º',
+  nbsp: ' ',
 };
 const text = (v: unknown): string =>
-  typeof v === 'string' ? v.replace(/&([A-Za-z]+);/g, (m, n: string) => HTML_ENTITIES[n] ?? m).trim() : '';
-const rec = (v: unknown): Record<string, unknown> => (v && typeof v === 'object' ? (v as Record<string, unknown>) : {});
+  typeof v === 'string'
+    ? v.replace(/&([A-Za-z]+);/g, (m, n: string) => HTML_ENTITIES[n] ?? m).trim()
+    : '';
+const rec = (v: unknown): Record<string, unknown> =>
+  v && typeof v === 'object' ? (v as Record<string, unknown>) : {};
 
 /**
  * Map a `CheckUsuarioAutorizadoResponse` to a profile. Only names, optional email and schools are read:
@@ -41,10 +60,20 @@ export function parseCauceResponse(subject: string, xml: string): InstitutionalP
       : { ...NO_SCHOOL, role: text(r.Rol) };
   });
   const email = text(info.Email ?? info.CorreoElectronico);
-  return { subject, firstName, lastName, email: /^[^@\s]+@[^@\s]+$/.test(email) ? email : null, schools };
+  return {
+    subject,
+    firstName,
+    lastName,
+    email: /^[^@\s]+@[^@\s]+$/.test(email) ? email : null,
+    schools,
+  };
 }
 
-export function httpDirectory(cfg: { url: string; token: string; timeoutMs?: number }): InstitutionalDirectory {
+export function httpDirectory(cfg: {
+  url: string;
+  token: string;
+  timeoutMs?: number;
+}): InstitutionalDirectory {
   return {
     async lookup(subject) {
       let res: Response;
@@ -56,9 +85,16 @@ export function httpDirectory(cfg: { url: string; token: string; timeoutMs?: num
           redirect: 'error',
         });
       } catch {
-        throw new DomainError('unavailable', 'El directorio institucional no responde. Inténtalo más tarde.');
+        throw new DomainError(
+          'unavailable',
+          'El directorio institucional no responde. Inténtalo más tarde.',
+        );
       }
-      if (!res.ok) throw new DomainError('unavailable', 'El directorio institucional no responde. Inténtalo más tarde.');
+      if (!res.ok)
+        throw new DomainError(
+          'unavailable',
+          'El directorio institucional no responde. Inténtalo más tarde.',
+        );
       try {
         return parseCauceResponse(subject, await res.text());
       } catch (e) {
@@ -70,7 +106,9 @@ export function httpDirectory(cfg: { url: string; token: string; timeoutMs?: num
 }
 
 /** Fixed profiles for tests and local development (no network). */
-export function fakeDirectory(profiles: Record<string, Omit<InstitutionalProfile, 'subject'>>): InstitutionalDirectory {
+export function fakeDirectory(
+  profiles: Record<string, Omit<InstitutionalProfile, 'subject'>>,
+): InstitutionalDirectory {
   return {
     async lookup(subject) {
       const p = profiles[subject];

@@ -3,7 +3,8 @@ import type { DictionaryView, EntryView, VocabularyValue } from './types.ts';
 /** Client-side exports of a dictionary (brief §5, inventory §12). Pure functions over `exportDictionary` output. */
 
 const vocabMap = (vocab: VocabularyValue[]) => new Map(vocab.map((v) => [v.id, v]));
-const labelOf = (m: Map<string, VocabularyValue>, id: string | null) => (id ? (m.get(id)?.label ?? '') : '');
+const labelOf = (m: Map<string, VocabularyValue>, id: string | null) =>
+  id ? (m.get(id)?.label ?? '') : '';
 
 export const CSV_HEADER = [
   'Entrada',
@@ -121,7 +122,11 @@ export const EXTRA_INFO_DEFINITION_TYPE = 'mas-datos';
  * gender, number and topics become typed sense labels; "más datos" becomes a second, typed definition.
  * Lost: other-language forms (crosslingual module not used), media, hidden flags (caller filters).
  */
-export function toDmlex(dictionary: DictionaryView, entries: EntryView[], vocab: VocabularyValue[]): DmlexResource {
+export function toDmlex(
+  dictionary: DictionaryView,
+  entries: EntryView[],
+  vocab: VocabularyValue[],
+): DmlexResource {
   const m = vocabMap(vocab);
   const pos = new Map<string, DmlexTag>();
   const labels = new Map<string, DmlexTag>();
@@ -159,7 +164,12 @@ export function toDmlex(dictionary: DictionaryView, entries: EntryView[], vocab:
         ...(s.example ? { examples: [{ text: s.example }] } : {}),
       };
     });
-    return { id: e.id, headword: e.headword, ...(entryPos.length ? { partsOfSpeech: entryPos } : {}), senses };
+    return {
+      id: e.id,
+      headword: e.headword,
+      ...(entryPos.length ? { partsOfSpeech: entryPos } : {}),
+      senses,
+    };
   });
 
   return {
@@ -171,6 +181,8 @@ export function toDmlex(dictionary: DictionaryView, entries: EntryView[], vocab:
     ...(usedTypes.size
       ? { labelTypeTags: [...usedTypes].map((t) => ({ tag: t, description: LABEL_TYPES[t] })) }
       : {}),
-    ...(usedExtra ? { definitionTypeTags: [{ tag: EXTRA_INFO_DEFINITION_TYPE, description: 'Más datos' }] } : {}),
+    ...(usedExtra
+      ? { definitionTypeTags: [{ tag: EXTRA_INFO_DEFINITION_TYPE, description: 'Más datos' }] }
+      : {}),
   };
 }

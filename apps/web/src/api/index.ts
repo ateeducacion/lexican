@@ -11,6 +11,8 @@ let api: Promise<WebApi> | null = null;
  * so the login screen appears immediately (§15); production never bundles it (dead branch).
  */
 export function getApi(): Promise<WebApi> {
-  api ??= IS_DEMO ? import('../demo/client.ts').then((m) => m.createDemoClient()) : Promise.resolve(createHttpClient());
+  api ??= IS_DEMO
+    ? import('../demo/client.ts').then((m) => m.createDemoClient())
+    : Promise.resolve(createHttpClient());
   return api;
 }

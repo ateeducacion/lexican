@@ -19,7 +19,8 @@ export function Component() {
         <div className={styles.headerText}>
           <PageTitle title="Mi diccionario">{dict.title}</PageTitle>
           <p className="muted small">
-            {dict.entryCount} {dict.entryCount === 1 ? 'palabra' : 'palabras'} en tu diccionario personal
+            {dict.entryCount} {dict.entryCount === 1 ? 'palabra' : 'palabras'} en tu diccionario
+            personal
           </p>
         </div>
       </header>
@@ -43,17 +44,20 @@ export function Component() {
         <summary className={styles.helpSummary}>¿Qué puedo hacer?</summary>
         <ol className={styles.steps}>
           <li>
-            Pulsa <strong>Nueva palabra</strong>, escribe la palabra y su definición. Puedes añadir un ejemplo, temáticas,
-            una imagen, un audio o un vídeo.
-          </li>
-          <li>Pulsa <strong>Guardar</strong>. La palabra queda en tu diccionario; solo tú la ves.</li>
-          <li>
-            Ábrela y pulsa <strong>Enviar al aula</strong> para mandarla al diccionario de tu clase (antes tienes que
-            unirte con el código que te dé tu profesor o profesora en <Link to="/aulas">Mis aulas</Link>).
+            Pulsa <strong>Nueva palabra</strong>, escribe la palabra y su definición. Puedes añadir
+            un ejemplo, temáticas, una imagen, un audio o un vídeo.
           </li>
           <li>
-            Mira el estado del envío: <em>Pendiente de revisión</em>, <em>Publicada</em> o <em>Devuelta</em>. Si te la
-            devuelven, corrígela y vuelve a enviarla.
+            Pulsa <strong>Guardar</strong>. La palabra queda en tu diccionario; solo tú la ves.
+          </li>
+          <li>
+            Ábrela y pulsa <strong>Enviar al aula</strong> para mandarla al diccionario de tu clase
+            (antes tienes que unirte con el código que te dé tu profesor o profesora en{' '}
+            <Link to="/aulas">Mis aulas</Link>).
+          </li>
+          <li>
+            Mira el estado del envío: <em>Pendiente de revisión</em>, <em>Publicada</em> o{' '}
+            <em>Devuelta</em>. Si te la devuelven, corrígela y vuelve a enviarla.
           </li>
           <li>
             Lee lo que te escribe el profesorado en <Link to="/comentarios">Comentarios</Link>.
@@ -61,7 +65,12 @@ export function Component() {
         </ol>
       </details>
 
-      <EntryList dictionaryId={dict.id} entryHref={(id) => `/mi-diccionario/entradas/${id}`} canEdit showSubmissions />
+      <EntryList
+        dictionaryId={dict.id}
+        entryHref={(id) => `/mi-diccionario/entradas/${id}`}
+        canEdit
+        showSubmissions
+      />
     </div>
   );
 }

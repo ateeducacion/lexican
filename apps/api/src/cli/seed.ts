@@ -14,9 +14,18 @@ try {
   if (demo) {
     if (config.production) throw new Error('--demo is not allowed with NODE_ENV=production.');
     const dir = new URL('../../../web/public/demo/', import.meta.url);
-    const images = ['guagua.png', 'gofio.png'].map((name) => ({ name, bytes: new Uint8Array(readFileSync(new URL(name, dir))) }));
+    const images = ['guagua.png', 'gofio.png'].map((name) => ({
+      name,
+      bytes: new Uint8Array(readFileSync(new URL(name, dir))),
+    }));
     await seedDemo(
-      { db, clock: () => new Date(), media: fsMediaStorage(config.mediaDir), mediaUrl: (id) => `/media/${id}`, schoolYear: config.schoolYear },
+      {
+        db,
+        clock: () => new Date(),
+        media: fsMediaStorage(config.mediaDir),
+        mediaUrl: (id) => `/media/${id}`,
+        schoolYear: config.schoolYear,
+      },
       images,
     );
   }

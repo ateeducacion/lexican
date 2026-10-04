@@ -11,8 +11,11 @@ import { fsMediaStorage } from './media-storage.ts';
 const ORIGIN = 'http://localhost:3999';
 const CAS = 'https://cas.example.test/cas';
 const CAUCE = 'https://cauce.example.test/check/';
-const fixture = (n: string) => readFileSync(new URL(`./__fixtures__/${n}`, import.meta.url), 'utf8');
-const demoPng = new Uint8Array(readFileSync(new URL('../../web/public/demo/gofio.png', import.meta.url)));
+const fixture = (n: string) =>
+  readFileSync(new URL(`./__fixtures__/${n}`, import.meta.url), 'utf8');
+const demoPng = new Uint8Array(
+  readFileSync(new URL('../../web/public/demo/gofio.png', import.meta.url)),
+);
 
 let t: TestDb;
 let mediaDir: string;
@@ -50,19 +53,31 @@ afterAll(async () => {
 afterEach(() => vi.unstubAllGlobals());
 
 async function login(email: string, password: string): Promise<string> {
-  const r = await app.inject({ method: 'POST', url: '/api/auth/login', headers: { origin: ORIGIN }, payload: { email, password } });
+  const r = await app.inject({
+    method: 'POST',
+    url: '/api/auth/login',
+    headers: { origin: ORIGIN },
+    payload: { email, password },
+  });
   expect(r.statusCode).toBe(200);
   const c = r.cookies.find((x) => x.name === 'sid');
   return `sid=${c!.value}`;
 }
 
-const get = (url: string, cookie?: string) => app.inject({ method: 'GET', url, headers: cookie ? { cookie } : {} });
-const send = (method: 'POST' | 'PUT' | 'PATCH' | 'DELETE', url: string, cookie: string, payload: object) =>
-  app.inject({ method, url, headers: { cookie, origin: ORIGIN }, payload });
+const get = (url: string, cookie?: string) =>
+  app.inject({ method: 'GET', url, headers: cookie ? { cookie } : {} });
+const send = (
+  method: 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+  url: string,
+  cookie: string,
+  payload: object,
+) => app.inject({ method, url, headers: { cookie, origin: ORIGIN }, payload });
 
 function multipart(bytes: Uint8Array, filename: string, type: string) {
   const b = 'lexicanTestBoundary';
-  const head = Buffer.from(`--${b}\r\nContent-Disposition: form-data; name="file"; filename="${filename}"\r\nContent-Type: ${type}\r\n\r\n`);
+  const head = Buffer.from(
+    `--${b}\r\nContent-Disposition: form-data; name="file"; filename="${filename}"\r\nContent-Type: ${type}\r\n\r\n`,
+  );
   return {
     payload: Buffer.concat([head, Buffer.from(bytes), Buffer.from(`\r\n--${b}--\r\n`)]),
     headers: { 'content-type': `multipart/form-data; boundary=${b}` },
@@ -75,7 +90,9 @@ describe('platform', () => {
     expect(r.statusCode).toBe(200);
     expect(r.json()).toEqual({ ok: true });
     expect(r.headers['content-security-policy']).toContain("frame-ancestors 'none'");
-    expect(r.headers['content-security-policy']).toContain(`form-action 'self' https://cas.example.test`);
+    expect(r.headers['content-security-policy']).toContain(
+      `form-action 'self' https://cas.example.test`,
+    );
     expect(r.headers['referrer-policy']).toBe('strict-origin-when-cross-origin');
     expect(r.headers['x-content-type-options']).toBe('nosniff');
   });
@@ -100,8 +117,15 @@ describe('auth and sessions', () => {
 
   it('rejects unsafe methods without an allowed Origin (403)', async () => {
     const payload = { email: 'profesor@ejemplo.com', password: 'profesor' };
-    expect((await app.inject({ method: 'POST', url: '/api/auth/login', payload })).statusCode).toBe(403);
-    const evil = await app.inject({ method: 'POST', url: '/api/auth/login', headers: { origin: 'https://evil.example' }, payload });
+    expect((await app.inject({ method: 'POST', url: '/api/auth/login', payload })).statusCode).toBe(
+      403,
+    );
+    const evil = await app.inject({
+      method: 'POST',
+      url: '/api/auth/login',
+      headers: { origin: 'https://evil.example' },
+      payload,
+    });
     expect(evil.statusCode).toBe(403);
   });
 
@@ -137,33 +161,50 @@ describe('operations', () => {
   it('validation errors are 400 with details', async () => {
     const cookie = await login('alumno1@ejemplo.com', 'alumno1');
     const dict = (await get('/api/me/dictionary', cookie)).json();
-    const r = await send('POST', `/api/dictionaries/${dict.id}/entries`, cookie, { entry: { headword: '', senses: [] } });
+    const r = await send('POST', `/api/dictionaries/${dict.id}/entries`, cookie, {
+      entry: { headword: '', senses: [] },
+    });
     expect(r.statusCode).toBe(400);
     const body = r.json();
     expect(body.code).toBe('validation');
-    expect(Object.keys(body.details)).toEqual(expect.arrayContaining(['entry.headword', 'entry.senses']));
+    expect(Object.keys(body.details)).toEqual(
+      expect.arrayContaining(['entry.headword', 'entry.senses']),
+    );
   });
 
   it('a student cannot publish submissions (403/404)', async () => {
     const teacher = await login('profesor@ejemplo.com', 'profesor');
     const [classroom] = (await get('/api/classrooms', teacher)).json();
-    const subs = (await get(`/api/classrooms/${classroom.id}/submissions?status=pending`, teacher)).json();
+    const subs = (
+      await get(`/api/classrooms/${classroom.id}/submissions?status=pending`, teacher)
+    ).json();
     expect(subs.length).toBeGreaterThan(0);
     const student = await login('alumno2@ejemplo.com', 'alumno2');
-    const r = await send('POST', '/api/submissions/publish', student, { submissionIds: [subs[0].id] });
+    const r = await send('POST', '/api/submissions/publish', student, {
+      submissionIds: [subs[0].id],
+    });
     expect([403, 404]).toContain(r.statusCode);
   });
 
   it('stale versions are 409 conflicts', async () => {
     const cookie = await login('alumno2@ejemplo.com', 'alumno2');
     const dict = (await get('/api/me/dictionary', cookie)).json();
-    const entry = { headword: 'jairo', senses: [{ definition: 'Nombre de prueba para el conflicto.' }] };
+    const entry = {
+      headword: 'jairo',
+      senses: [{ definition: 'Nombre de prueba para el conflicto.' }],
+    };
     const res = await send('POST', `/api/dictionaries/${dict.id}/entries`, cookie, { entry });
     expect(res.statusCode, res.body).toBe(200);
     const created = res.json();
-    const ok = await send('PUT', `/api/entries/${created.id}`, cookie, { version: created.version, entry });
+    const ok = await send('PUT', `/api/entries/${created.id}`, cookie, {
+      version: created.version,
+      entry,
+    });
     expect(ok.statusCode, ok.body).toBe(200);
-    const stale = await send('PUT', `/api/entries/${created.id}`, cookie, { version: created.version, entry });
+    const stale = await send('PUT', `/api/entries/${created.id}`, cookie, {
+      version: created.version,
+      entry,
+    });
     expect(stale.statusCode).toBe(409);
     expect(stale.json().code).toBe('conflict');
   });
@@ -172,7 +213,11 @@ describe('operations', () => {
 describe('media', () => {
   it('accepts a PNG and serves it only to authorized users', async () => {
     const owner = await login('alumno1@ejemplo.com', 'alumno1');
-    const up = await app.inject({ method: 'POST', url: '/api/media', ...withAuth(multipart(demoPng, 'evil.php', 'application/x-php'), owner) });
+    const up = await app.inject({
+      method: 'POST',
+      url: '/api/media',
+      ...withAuth(multipart(demoPng, 'evil.php', 'application/x-php'), owner),
+    });
     expect(up.statusCode).toBe(200);
     const m = up.json();
     expect(m).toMatchObject({ kind: 'image', mime: 'image/png', url: `/media/${m.id}` });
@@ -194,7 +239,11 @@ describe('media', () => {
   it('rejects script bytes disguised as an image', async () => {
     const cookie = await login('alumno1@ejemplo.com', 'alumno1');
     const bytes = new TextEncoder().encode('<script>alert(1)</script>');
-    const r = await app.inject({ method: 'POST', url: '/api/media', ...withAuth(multipart(bytes, 'x.png', 'image/png'), cookie) });
+    const r = await app.inject({
+      method: 'POST',
+      url: '/api/media',
+      ...withAuth(multipart(bytes, 'x.png', 'image/png'), cookie),
+    });
     expect([400, 415]).toContain(r.statusCode);
     expect(r.json().code).toBe('validation');
   });
@@ -203,19 +252,33 @@ describe('media', () => {
     const cookie = await login('alumno1@ejemplo.com', 'alumno1');
     const big = new Uint8Array(80 * 1024);
     big.set(demoPng.slice(0, 64));
-    const r = await app.inject({ method: 'POST', url: '/api/media', ...withAuth(multipart(big, 'big.png', 'image/png'), cookie) });
+    const r = await app.inject({
+      method: 'POST',
+      url: '/api/media',
+      ...withAuth(multipart(big, 'big.png', 'image/png'), cookie),
+    });
     expect(r.statusCode).toBe(413);
-    expect(r.json()).toMatchObject({ code: 'validation', message: 'El archivo es demasiado grande.' });
+    expect(r.json()).toMatchObject({
+      code: 'validation',
+      message: 'El archivo es demasiado grande.',
+    });
   });
 
   it('requires a session to upload', async () => {
-    const r = await app.inject({ method: 'POST', url: '/api/media', ...withAuth(multipart(demoPng, 'a.png', 'image/png'), '') });
+    const r = await app.inject({
+      method: 'POST',
+      url: '/api/media',
+      ...withAuth(multipart(demoPng, 'a.png', 'image/png'), ''),
+    });
     expect(r.statusCode).toBe(401);
   });
 });
 
 function withAuth(m: { payload: Buffer; headers: Record<string, string> }, cookie: string) {
-  return { payload: m.payload, headers: { ...m.headers, origin: ORIGIN, ...(cookie ? { cookie } : {}) } };
+  return {
+    payload: m.payload,
+    headers: { ...m.headers, origin: ORIGIN, ...(cookie ? { cookie } : {}) },
+  };
 }
 
 /** Fake CAS + CAUCE over fetch; records requested URLs and auth headers. */
@@ -235,7 +298,9 @@ describe('CAS', () => {
   it('login redirects to CAS with the fixed service URL', async () => {
     const r = await get('/api/auth/cas/login');
     expect(r.statusCode).toBe(302);
-    expect(r.headers.location).toBe(`${CAS}/login?service=${encodeURIComponent(`${ORIGIN}/api/auth/cas/callback`)}`);
+    expect(r.headers.location).toBe(
+      `${CAS}/login?service=${encodeURIComponent(`${ORIGIN}/api/auth/cas/callback`)}`,
+    );
   });
 
   it('callback validates the ticket, queries CAUCE and opens a session; SLO closes it', async () => {
@@ -244,7 +309,9 @@ describe('CAS', () => {
     expect(r.statusCode).toBe(302);
     expect(r.headers.location).toBe(`${ORIGIN}/`);
     expect(calls[0]!.url).toContain('ticket=ST-1-abc');
-    expect(calls[0]!.url).toContain(`service=${encodeURIComponent(`${ORIGIN}/api/auth/cas/callback`)}`);
+    expect(calls[0]!.url).toContain(
+      `service=${encodeURIComponent(`${ORIGIN}/api/auth/cas/callback`)}`,
+    );
     expect(calls[1]).toEqual({ url: `${CAUCE}cficticia`, auth: 'Bearer test-token' });
 
     const cookie = `sid=${r.cookies.find((c) => c.name === 'sid')!.value}`;
@@ -295,15 +362,32 @@ describe('SPA serving', () => {
   it('serves index.html for client routes, never for /api', async () => {
     const dist = mkdtempSync(join(tmpdir(), 'lexican-web-'));
     writeFileSync(join(dist, 'index.html'), '<!doctype html><title>LexiCán</title>');
-    const config = loadConfig({ DATABASE_URL: 'x', PUBLIC_URL: ORIGIN, MEDIA_DIR: mediaDir, WEB_DIST: dist });
+    const config = loadConfig({
+      DATABASE_URL: 'x',
+      PUBLIC_URL: ORIGIN,
+      MEDIA_DIR: mediaDir,
+      WEB_DIST: dist,
+    });
     const spa = await buildApp({ config, db: t.db, logger: false });
     try {
       const page = await spa.inject({ method: 'GET', url: '/aulas/123' });
       expect(page.statusCode).toBe(200);
       expect(page.body).toContain('LexiCán');
       expect((await spa.inject({ method: 'GET', url: '/api/missing' })).statusCode).toBe(404);
-      expect((await spa.inject({ method: 'GET', url: '/api/auth/providers' })).json()).toEqual({ cas: false, password: false });
-      expect((await spa.inject({ method: 'POST', url: '/api/auth/login', headers: { origin: ORIGIN }, payload: {} })).statusCode).toBe(404);
+      expect((await spa.inject({ method: 'GET', url: '/api/auth/providers' })).json()).toEqual({
+        cas: false,
+        password: false,
+      });
+      expect(
+        (
+          await spa.inject({
+            method: 'POST',
+            url: '/api/auth/login',
+            headers: { origin: ORIGIN },
+            payload: {},
+          })
+        ).statusCode,
+      ).toBe(404);
     } finally {
       await spa.close();
       rmSync(dist, { recursive: true, force: true });

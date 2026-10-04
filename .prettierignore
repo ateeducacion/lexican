@@ -22,3 +22,9 @@ coverage/
 dist-demo/
 composer.json
 webpack.mix.js
+packages/core/src/dmlex-1.0.schema.json
+.yarnrc.yml
+.styleci.yml
+.jsbeautifyrc
+phpdox.xml
+phpunit.xml

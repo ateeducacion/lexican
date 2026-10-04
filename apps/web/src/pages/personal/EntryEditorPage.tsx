@@ -39,8 +39,12 @@ export function Component() {
     } catch (e) {
       // Duplicate headword: point to the entry that already uses it.
       if (toApiError(e).details.headword) {
-        const page = await api.listEntries({ dictionaryId, q: input.headword, includeHidden: true, limit: 20 }).catch(() => null);
-        const match = page?.items.find((i) => headwordKey(i.headword) === headwordKey(input.headword) && i.id !== entry?.id);
+        const page = await api
+          .listEntries({ dictionaryId, q: input.headword, includeHidden: true, limit: 20 })
+          .catch(() => null);
+        const match = page?.items.find(
+          (i) => headwordKey(i.headword) === headwordKey(input.headword) && i.id !== entry?.id,
+        );
         if (match) setExisting({ id: match.id, headword: match.headword });
       }
       throw e;
@@ -55,11 +59,17 @@ export function Component() {
       <PageTitle>{entry ? `Editar «${entry.headword}»` : 'Nueva palabra'}</PageTitle>
       {existing && (
         <p className="alert alert-warning" role="status">
-          Ya tienes la palabra «{existing.headword}». <Link to={`/mi-diccionario/entradas/${existing.id}`}>Abrir la entrada existente</Link>{' '}
+          Ya tienes la palabra «{existing.headword}».{' '}
+          <Link to={`/mi-diccionario/entradas/${existing.id}`}>Abrir la entrada existente</Link>{' '}
           para añadirle acepciones.
         </p>
       )}
-      <EntryEditor key={entry?.version ?? 'new'} entry={entry ?? undefined} onSave={save} onCancel={() => navigate(back)} />
+      <EntryEditor
+        key={entry?.version ?? 'new'}
+        entry={entry ?? undefined}
+        onSave={save}
+        onCancel={() => navigate(back)}
+      />
     </div>
   );
 }

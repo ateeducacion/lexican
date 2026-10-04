@@ -1,10 +1,23 @@
 import type { DictionaryView, EntryView } from '@lexican/core';
 import { useState } from 'react';
-import { Link, useLoaderData, useNavigate, useRevalidator, type LoaderFunctionArgs } from 'react-router';
+import {
+  Link,
+  useLoaderData,
+  useNavigate,
+  useRevalidator,
+  type LoaderFunctionArgs,
+} from 'react-router';
 import { getApi } from '../../api/index.ts';
 import { EntryContent } from '../../components/EntryContent.tsx';
 import { EntryEditor } from '../../components/EntryEditor.tsx';
-import { Dialog, ErrorMessage, PageTitle, formatDate, useAction, useNotify } from '../../components/ui.tsx';
+import {
+  Dialog,
+  ErrorMessage,
+  PageTitle,
+  formatDate,
+  useAction,
+  useNotify,
+} from '../../components/ui.tsx';
 import styles from './Classrooms.module.css';
 import { BackToClassroom } from './shared.tsx';
 
@@ -18,7 +31,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export function Component() {
-  const { dictionary: d, entry } = useLoaderData<{ dictionary: DictionaryView; entry: EntryView }>();
+  const { dictionary: d, entry } = useLoaderData<{
+    dictionary: DictionaryView;
+    entry: EntryView;
+  }>();
   const teacher = d.myRole === 'teacher';
   const { revalidate } = useRevalidator();
   const navigate = useNavigate();
@@ -38,7 +54,11 @@ export function Component() {
   });
 
   const by = entry.author?.displayName;
-  const provenance = by ? (entry.sourceSubmissionId ? `Enviada por ${by}` : `Añadida por ${by}`) : null;
+  const provenance = by
+    ? entry.sourceSubmissionId
+      ? `Enviada por ${by}`
+      : `Añadida por ${by}`
+    : null;
 
   if (editing)
     return (
@@ -50,7 +70,9 @@ export function Component() {
           classroom={d}
           submitLabel="Guardar cambios"
           onSave={async (input) => {
-            const saved = await (await getApi()).updateEntry({ entryId: entry.id, version: entry.version, entry: input });
+            const saved = await (
+              await getApi()
+            ).updateEntry({ entryId: entry.id, version: entry.version, entry: input });
             await revalidate();
             setEditing(false);
             notify('Entrada guardada.');
@@ -69,7 +91,13 @@ export function Component() {
         <PageTitle title={entry.headword}>Entrada: {entry.headword}</PageTitle>
       </div>
       <div className="card">
-        <EntryContent headword={entry.headword} senses={entry.senses} visibleFields={d.classroom?.visibleFields} showHidden={teacher} headingLevel={2} />
+        <EntryContent
+          headword={entry.headword}
+          senses={entry.senses}
+          visibleFields={d.classroom?.visibleFields}
+          showHidden={teacher}
+          headingLevel={2}
+        />
       </div>
       <p className="small muted" style={{ marginTop: 'var(--space-3)' }}>
         {[provenance, `actualizada el ${formatDate(entry.updatedAt)}`].filter(Boolean).join(' · ')}
@@ -82,7 +110,11 @@ export function Component() {
       </p>
 
       {teacher && (
-        <div className={`no-print ${styles.toolbar}`} role="group" aria-label="Acciones de la entrada">
+        <div
+          className={`no-print ${styles.toolbar}`}
+          role="group"
+          aria-label="Acciones de la entrada"
+        >
           <button type="button" className="btn btn-primary" onClick={() => setEditing(true)}>
             Editar
           </button>
@@ -92,8 +124,11 @@ export function Component() {
             disabled={act.busy}
             onClick={async () =>
               void act.run(
-                async () => (await getApi()).setEntryHidden({ entryId: entry.id, hidden: !entry.hidden }),
-                entry.hidden ? 'La entrada vuelve a estar visible.' : 'Entrada oculta para el alumnado.',
+                async () =>
+                  (await getApi()).setEntryHidden({ entryId: entry.id, hidden: !entry.hidden }),
+                entry.hidden
+                  ? 'La entrada vuelve a estar visible.'
+                  : 'Entrada oculta para el alumnado.',
               )
             }
           >
@@ -106,7 +141,6 @@ export function Component() {
       )}
       <ErrorMessage error={act.error} />
 
-
       {teacher && entry.senses.length > 0 && (
         <section className={`card no-print ${styles.section}`} aria-labelledby="senses-title">
           <h2 id="senses-title">Visibilidad de las acepciones</h2>
@@ -114,7 +148,8 @@ export function Component() {
             {entry.senses.map((s, i) => (
               <li key={s.id}>
                 <span>
-                  {i + 1}. {s.definition.length > 80 ? `${s.definition.slice(0, 80)}…` : s.definition}{' '}
+                  {i + 1}.{' '}
+                  {s.definition.length > 80 ? `${s.definition.slice(0, 80)}…` : s.definition}{' '}
                   {s.hidden && <span className="badge badge-hidden">Oculta</span>}
                 </span>
                 <button
@@ -123,8 +158,11 @@ export function Component() {
                   disabled={act.busy}
                   onClick={async () =>
                     void act.run(
-                      async () => (await getApi()).setSenseHidden({ senseId: s.id, hidden: !s.hidden }),
-                      s.hidden ? `Acepción ${i + 1} visible.` : `Acepción ${i + 1} oculta para el alumnado.`,
+                      async () =>
+                        (await getApi()).setSenseHidden({ senseId: s.id, hidden: !s.hidden }),
+                      s.hidden
+                        ? `Acepción ${i + 1} visible.`
+                        : `Acepción ${i + 1} oculta para el alumnado.`,
                     )
                   }
                 >
@@ -137,11 +175,23 @@ export function Component() {
         </section>
       )}
 
-      <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)} title={`¿Despublicar «${entry.headword}»?`}>
-        <p>La entrada desaparecerá del diccionario de aula. La entrada original sigue en el diccionario personal de quien la envió, que podrá volver a enviarla.</p>
+      <Dialog
+        open={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title={`¿Despublicar «${entry.headword}»?`}
+      >
+        <p>
+          La entrada desaparecerá del diccionario de aula. La entrada original sigue en el
+          diccionario personal de quien la envió, que podrá volver a enviarla.
+        </p>
         <ErrorMessage error={remove.error} />
         <div className="row">
-          <button type="button" className="btn btn-danger" onClick={() => void remove.run()} disabled={remove.busy}>
+          <button
+            type="button"
+            className="btn btn-danger"
+            onClick={() => void remove.run()}
+            disabled={remove.busy}
+          >
             Despublicar
           </button>
           <button type="button" className="btn" onClick={() => setConfirmDelete(false)}>

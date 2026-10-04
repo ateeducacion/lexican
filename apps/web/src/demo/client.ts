@@ -41,7 +41,8 @@ export async function createDemoClient(): Promise<WebApi> {
   const svc = createServices(deps);
 
   let sessionUser = readSession();
-  const actor = async (): Promise<Actor | null> => (sessionUser ? svc.auth.actorFor(sessionUser) : null);
+  const actor = async (): Promise<Actor | null> =>
+    sessionUser ? svc.auth.actorFor(sessionUser) : null;
   const objectUrls = new Map<string, string>();
 
   const api = {} as Record<string, unknown>;
@@ -68,7 +69,10 @@ export async function createDemoClient(): Promise<WebApi> {
     ...(api as unknown as WebApi),
     async uploadMedia(file: Blob, name: string): Promise<MediaView> {
       try {
-        return await svc.media.uploadMedia(await actor(), { bytes: new Uint8Array(await file.arrayBuffer()), name });
+        return await svc.media.uploadMedia(await actor(), {
+          bytes: new Uint8Array(await file.arrayBuffer()),
+          name,
+        });
       } catch (e) {
         throw toApiError(e);
       }

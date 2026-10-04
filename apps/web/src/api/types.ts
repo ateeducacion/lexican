@@ -25,8 +25,14 @@ export class ApiError extends Error {
 
 export const toApiError = (e: unknown): ApiError => {
   if (e instanceof ApiError) return e;
-  const d = e as { name?: string; code?: ApiErrorCode; message?: string; details?: Record<string, string[]> };
-  if (d?.name === 'DomainError' && d.code) return new ApiError(d.code, d.message ?? '', d.details ?? {});
+  const d = e as {
+    name?: string;
+    code?: ApiErrorCode;
+    message?: string;
+    details?: Record<string, string[]>;
+  };
+  if (d?.name === 'DomainError' && d.code)
+    return new ApiError(d.code, d.message ?? '', d.details ?? {});
   console.error(e);
   return new ApiError('internal', 'Ha ocurrido un error inesperado. Inténtalo de nuevo.');
 };

@@ -15,7 +15,9 @@ export function Component() {
   const navigate = useNavigate();
   const notify = useNotify();
   const [title, setTitle] = useState(dict.title);
-  const [avatar, setAvatar] = useState(dict.avatar && AVATARS.some((a) => a.id === dict.avatar) ? dict.avatar : AVATARS[0].id);
+  const [avatar, setAvatar] = useState(
+    dict.avatar && AVATARS.some((a) => a.id === dict.avatar) ? dict.avatar : AVATARS[0].id,
+  );
   const [errors, setErrors] = useState<Record<string, string[]>>({});
 
   const save = useAction(async () => {
@@ -43,14 +45,29 @@ export function Component() {
       <PageTitle>Ajustes de mi diccionario</PageTitle>
       <form onSubmit={submit} noValidate className="card">
         <Field label="Título del diccionario" error={errors.title}>
-          {(p) => <input {...p} type="text" maxLength={150} value={title} onChange={(e) => setTitle(e.target.value)} />}
+          {(p) => (
+            <input
+              {...p}
+              type="text"
+              maxLength={150}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          )}
         </Field>
         <fieldset>
           <legend>Imagen del diccionario</legend>
           <div className={styles.avatars}>
             {AVATARS.map((a) => (
               <label key={a.id}>
-                <input type="radio" name="avatar" className="visually-hidden" value={a.id} checked={avatar === a.id} onChange={() => setAvatar(a.id)} />
+                <input
+                  type="radio"
+                  name="avatar"
+                  className="visually-hidden"
+                  value={a.id}
+                  checked={avatar === a.id}
+                  onChange={() => setAvatar(a.id)}
+                />
                 <Avatar id={a.id} title={title} size={40} />
                 <span>{a.label}</span>
               </label>

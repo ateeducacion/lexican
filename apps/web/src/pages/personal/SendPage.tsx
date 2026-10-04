@@ -2,7 +2,14 @@ import type { DictionaryView, EntrySummary, SubmitResult, WindowState } from '@l
 import { useState } from 'react';
 import { Link, useLoaderData, useRevalidator } from 'react-router';
 import { getApi } from '../../api/index.ts';
-import { EmptyState, ErrorMessage, Field, PageTitle, StatusBadge, useAction } from '../../components/ui.tsx';
+import {
+  EmptyState,
+  ErrorMessage,
+  Field,
+  PageTitle,
+  StatusBadge,
+  useAction,
+} from '../../components/ui.tsx';
 import styles from './personal.module.css';
 import { CLOSED_WINDOW } from './windowLabels.ts';
 
@@ -16,10 +23,17 @@ export async function loader(): Promise<Data> {
   const [dict, classrooms] = await Promise.all([api.myDictionary({}), api.myClassrooms({})]);
   // Hidden entries are not offered (brief §5.13); the API maximum per call is 500 entries.
   const page = await api.listEntries({ dictionaryId: dict.id, includeHidden: false, limit: 200 });
-  const rest = page.total > 200 ? await api.listEntries({ dictionaryId: dict.id, includeHidden: false, offset: 200, limit: 200 }) : null;
+  const rest =
+    page.total > 200
+      ? await api.listEntries({
+          dictionaryId: dict.id,
+          includeHidden: false,
+          offset: 200,
+          limit: 200,
+        })
+      : null;
   return { entries: [...page.items, ...(rest?.items ?? [])], classrooms };
 }
-
 
 export function Component() {
   const { entries, classrooms } = useLoaderData<Data>();
@@ -43,14 +57,20 @@ export function Component() {
 
   const verify = useAction(async () => {
     const api = await getApi();
-    const dry = await api.submitEntries({ entryIds: selected, classroomIds: [classroomId], dryRun: true });
+    const dry = await api.submitEntries({
+      entryIds: selected,
+      classroomIds: [classroomId],
+      dryRun: true,
+    });
     if (dry.problems.length) return setCheck(dry);
     setResult(await api.submitEntries({ entryIds: selected, classroomIds: [classroomId] }));
     await revalidate();
   });
   const okIds = selected.filter((id) => !check?.problems.some((p) => p.entryId === id));
   const sendRest = useAction(async () => {
-    setResult(await (await getApi()).submitEntries({ entryIds: okIds, classroomIds: [classroomId] }));
+    setResult(
+      await (await getApi()).submitEntries({ entryIds: okIds, classroomIds: [classroomId] }),
+    );
     setCheck(null);
     await revalidate();
   });
@@ -65,14 +85,15 @@ export function Component() {
       {open.length === 0 ? (
         <EmptyState title="Ningún aula acepta envíos ahora">
           <p>
-            Únete a un diccionario de aula con el código de tu profesor o profesora en <Link to="/aulas">Mis aulas</Link>,
-            o espera a que se abra el plazo de envíos.
+            Únete a un diccionario de aula con el código de tu profesor o profesora en{' '}
+            <Link to="/aulas">Mis aulas</Link>, o espera a que se abra el plazo de envíos.
           </p>
         </EmptyState>
       ) : entries.length === 0 ? (
         <EmptyState title="No tienes palabras para enviar">
           <p>
-            <Link to="/mi-diccionario/nueva">Crea una palabra</Link>. Las entradas ocultas no se pueden enviar desde aquí.
+            <Link to="/mi-diccionario/nueva">Crea una palabra</Link>. Las entradas ocultas no se
+            pueden enviar desde aquí.
           </p>
         </EmptyState>
       ) : (
@@ -123,7 +144,11 @@ export function Component() {
                 return (
                   <li key={x.id}>
                     <label className="check">
-                      <input type="checkbox" checked={selected.includes(x.id)} onChange={(e) => toggle(x.id, e.target.checked)} />
+                      <input
+                        type="checkbox"
+                        checked={selected.includes(x.id)}
+                        onChange={(e) => toggle(x.id, e.target.checked)}
+                      />
                       <span lang="es">{x.headword}</span>
                     </label>
                     <span className="row small">
@@ -147,26 +172,41 @@ export function Component() {
 
           {check && (
             <div className="alert alert-warning" role="alert">
-              {check.problems.length === 1 ? 'Una palabra no se puede enviar' : `${check.problems.length} palabras no se pueden enviar`}{' '}
+              {check.problems.length === 1
+                ? 'Una palabra no se puede enviar'
+                : `${check.problems.length} palabras no se pueden enviar`}{' '}
               tal como están. Corrígelas o envía solo las demás.
             </div>
           )}
           {result && (
             <div className="alert alert-success" role="status">
-              {result.created.length === 1 ? 'Se ha enviado 1 palabra.' : `Se han enviado ${result.created.length} palabras.`} Quedan
-              pendientes de revisión por el profesorado.
+              {result.created.length === 1
+                ? 'Se ha enviado 1 palabra.'
+                : `Se han enviado ${result.created.length} palabras.`}{' '}
+              Quedan pendientes de revisión por el profesorado.
             </div>
           )}
           <ErrorMessage error={verify.error ?? sendRest.error} />
 
           <div className="row">
             {check && okIds.length > 0 ? (
-              <button type="button" className="btn btn-primary" disabled={sendRest.busy} onClick={() => void sendRest.run()}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={sendRest.busy}
+                onClick={() => void sendRest.run()}
+              >
                 Enviar las {okIds.length} sin problemas
               </button>
             ) : (
-              <button type="submit" className="btn btn-primary" disabled={!classroomId || selected.length === 0 || verify.busy || !!check}>
-                {verify.busy ? 'Comprobando…' : `Enviar ${selected.length || ''} ${selected.length === 1 ? 'palabra' : 'palabras'}`}
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={!classroomId || selected.length === 0 || verify.busy || !!check}
+              >
+                {verify.busy
+                  ? 'Comprobando…'
+                  : `Enviar ${selected.length || ''} ${selected.length === 1 ? 'palabra' : 'palabras'}`}
               </button>
             )}
           </div>

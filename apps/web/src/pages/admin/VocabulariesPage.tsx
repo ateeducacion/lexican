@@ -1,4 +1,9 @@
-import { VOCABULARIES, VOCABULARY_LABELS, type Vocabulary, type VocabularyValue } from '@lexican/core';
+import {
+  VOCABULARIES,
+  VOCABULARY_LABELS,
+  type Vocabulary,
+  type VocabularyValue,
+} from '@lexican/core';
 import { useState, type FormEvent } from 'react';
 import { useLoaderData, useRevalidator, useSearchParams } from 'react-router';
 import { getApi } from '../../api/index.ts';
@@ -61,7 +66,11 @@ export function Component() {
       <AdminNav />
       <div className="field" style={{ maxWidth: '22rem' }}>
         <label htmlFor="lista">Lista</label>
-        <select id="lista" value={vocabulary} onChange={(e) => setParams({ lista: e.target.value })}>
+        <select
+          id="lista"
+          value={vocabulary}
+          onChange={(e) => setParams({ lista: e.target.value })}
+        >
           {VOCABULARIES.map((v) => (
             <option key={v} value={v}>
               {VOCABULARY_LABELS[v]}
@@ -74,7 +83,14 @@ export function Component() {
         <label htmlFor="nuevo" className="visually-hidden">
           Nuevo valor
         </label>
-        <input id="nuevo" type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Nuevo valor" style={{ maxWidth: '20rem' }} />
+        <input
+          id="nuevo"
+          type="text"
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
+          placeholder="Nuevo valor"
+          style={{ maxWidth: '20rem' }}
+        />
         <button type="submit" className="btn btn-primary" disabled={save.busy || !label.trim()}>
           Añadir
         </button>
@@ -103,17 +119,31 @@ export function Component() {
                     id={`l-${v.id}`}
                     type="text"
                     defaultValue={v.label}
-                    onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== v.label && save.run({ ...v, label: e.target.value.trim() })}
+                    onBlur={(e) =>
+                      e.target.value.trim() &&
+                      e.target.value.trim() !== v.label &&
+                      save.run({ ...v, label: e.target.value.trim() })
+                    }
                   />
                 </th>
                 <td>
                   <code>{v.code}</code>
                 </td>
                 <td>
-                  <input type="checkbox" aria-label={`Destacar ${v.label}`} checked={v.featured} onChange={(e) => save.run({ ...v, featured: e.target.checked })} />
+                  <input
+                    type="checkbox"
+                    aria-label={`Destacar ${v.label}`}
+                    checked={v.featured}
+                    onChange={(e) => save.run({ ...v, featured: e.target.checked })}
+                  />
                 </td>
                 <td>
-                  <input type="checkbox" aria-label={`${v.label} activo`} checked={v.active} onChange={(e) => save.run({ ...v, active: e.target.checked })} />
+                  <input
+                    type="checkbox"
+                    aria-label={`${v.label} activo`}
+                    checked={v.active}
+                    onChange={(e) => save.run({ ...v, active: e.target.checked })}
+                  />
                 </td>
               </tr>
             ))}

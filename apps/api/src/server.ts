@@ -9,7 +9,8 @@ if (config.migrateOnStart) await runMigrations(pool);
 await mkdir(config.mediaDir, { recursive: true, mode: 0o750 });
 
 const app = await buildApp({ config, db });
-if (!config.cas && !config.devLogin) app.log.warn('No login provider enabled (set CAS_BASE_URL or AUTH_DEV_LOGIN).');
+if (!config.cas && !config.devLogin)
+  app.log.warn('No login provider enabled (set CAS_BASE_URL or AUTH_DEV_LOGIN).');
 
 let closing = false;
 for (const signal of ['SIGTERM', 'SIGINT'] as const) {
