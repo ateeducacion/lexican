@@ -1,18 +1,17 @@
 import { CommentInput, type DictionaryView, type MemberView } from '@lexican/core';
 import { useState, type FormEvent } from 'react';
-import { useLoaderData, useRevalidator, type LoaderFunctionArgs } from 'react-router';
+import { Link, useLoaderData, useRevalidator, type LoaderFunctionArgs } from 'react-router';
 import { getApi } from '../../api/index.ts';
 import {
   Dialog,
   EmptyState,
   ErrorMessage,
   Field,
-  PageTitle,
   useAction,
   useNotify,
 } from '../../components/ui.tsx';
 import { useSession } from '../../session.ts';
-import { BackToClassroom, JoinCode } from './shared.tsx';
+import { JoinCode, PageHeader } from './shared.tsx';
 
 interface Data {
   dictionary: DictionaryView;
@@ -160,14 +159,20 @@ export function Component() {
 
   return (
     <>
-      <BackToClassroom dictionary={d} />
-      <PageTitle title={`Participantes · ${d.title}`}>Participantes</PageTitle>
-      {d.classroom && (
-        <p>
-          Para invitar a alguien, comparte el código <JoinCode code={d.classroom.joinCode} />. Se
-          escribe en «Mis aulas › Unirse con un código».
-        </p>
-      )}
+      <PageHeader
+        back={<Link to={`/aulas/${d.id}`}>← {d.title}</Link>}
+        eyebrow={d.title}
+        title="Participantes"
+        docTitle={`Participantes · ${d.title}`}
+      >
+        {d.classroom && (
+          <p className="small" style={{ margin: 0 }}>
+            Para invitar a alguien, comparte el código <JoinCode code={d.classroom.joinCode} />.
+            <br />
+            Se escribe en «Mis aulas › Unirse con un código».
+          </p>
+        )}
+      </PageHeader>
       <ErrorMessage error={update.error} />
 
       <section aria-labelledby="teachers-title" className="stack">

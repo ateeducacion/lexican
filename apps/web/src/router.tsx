@@ -38,7 +38,15 @@ const routes: RouteObject[] = [
               return redirect(user.globalRole === 'student' ? '/mi-diccionario' : '/aulas');
             },
           },
-          { path: 'mi-diccionario', lazy: page(() => import('./pages/personal/PersonalHome.tsx')) },
+          {
+            // List and reading pane share one workspace: switching entries keeps the list mounted.
+            path: 'mi-diccionario',
+            lazy: page(() => import('./pages/personal/PersonalWorkspace.tsx')),
+            children: [{ index: true }, { path: 'entradas/:entryId' }],
+            // The loader picks the entry for the reading pane, so it reruns when the child :entryId changes.
+            shouldRevalidate: ({ currentUrl, nextUrl, defaultShouldRevalidate }) =>
+              defaultShouldRevalidate || currentUrl.pathname !== nextUrl.pathname,
+          },
           {
             path: 'mi-diccionario/nueva',
             lazy: page(() => import('./pages/personal/EntryEditorPage.tsx')),
@@ -50,10 +58,6 @@ const routes: RouteObject[] = [
           {
             path: 'mi-diccionario/enviar',
             lazy: page(() => import('./pages/personal/SendPage.tsx')),
-          },
-          {
-            path: 'mi-diccionario/entradas/:entryId',
-            lazy: page(() => import('./pages/personal/EntryPage.tsx')),
           },
           {
             path: 'mi-diccionario/entradas/:entryId/editar',

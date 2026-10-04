@@ -30,7 +30,7 @@ export function ErrorMessage({ error }: { error: unknown }) {
   );
 }
 
-const STATUS_LABEL: Record<SubmissionStatus, string> = {
+export const STATUS_LABEL: Record<SubmissionStatus, string> = {
   pending: 'Pendiente de revisión',
   published: 'Publicada',
   rejected: 'Devuelta',

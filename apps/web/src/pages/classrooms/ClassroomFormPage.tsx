@@ -9,20 +9,19 @@ import {
   type SenseField,
 } from '@lexican/core';
 import { useState, type FormEvent } from 'react';
-import { useLoaderData, useNavigate, useRevalidator, type LoaderFunctionArgs } from 'react-router';
-import { getApi } from '../../api/index.ts';
 import {
-  Dialog,
-  ErrorMessage,
-  Field,
-  PageTitle,
-  useAction,
-  useNotify,
-} from '../../components/ui.tsx';
+  Link,
+  useLoaderData,
+  useNavigate,
+  useRevalidator,
+  type LoaderFunctionArgs,
+} from 'react-router';
+import { getApi } from '../../api/index.ts';
+import { Dialog, ErrorMessage, Field, useAction, useNotify } from '../../components/ui.tsx';
 import { useVocab } from '../../components/vocab.ts';
 import { useSession } from '../../session.ts';
 import styles from './Classrooms.module.css';
-import { BackToClassroom, JoinCode } from './shared.tsx';
+import { JoinCode, PageHeader } from './shared.tsx';
 
 export async function loader({ params }: LoaderFunctionArgs) {
   return params.classroomId
@@ -143,8 +142,17 @@ export function Component() {
   const title = editing ? 'Editar diccionario de aula' : 'Nuevo diccionario de aula';
   return (
     <>
-      {dictionary && <BackToClassroom dictionary={dictionary} />}
-      <PageTitle>{title}</PageTitle>
+      <PageHeader
+        back={
+          dictionary ? (
+            <Link to={`/aulas/${dictionary.id}`}>← {dictionary.title}</Link>
+          ) : (
+            <Link to="/aulas">← Mis aulas</Link>
+          )
+        }
+        eyebrow={dictionary?.title ?? 'Diccionario de aula'}
+        title={title}
+      />
       {dictionary?.classroom && !dictionary.classroom.current && (
         <div className="alert alert-warning">
           Este diccionario ya no está vigente: solo se puede consultar y no se pueden guardar

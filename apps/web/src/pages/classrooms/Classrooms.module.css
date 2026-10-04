@@ -1,20 +1,54 @@
+/* Full-bleed white strip without horizontal overflow: the shadow paints the sides, clip-path keeps it flat. */
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-5);
+  margin: 0 0 var(--space-5);
+  padding: var(--space-4) 0 var(--space-4);
+  background: var(--c-surface);
+  box-shadow: 0 0 0 100vmax var(--c-surface);
+  clip-path: inset(0 -100vmax);
+  border-bottom: 1px solid var(--c-border);
+}
+.strip h1 {
+  margin: var(--space-1) 0 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+.strip .back {
+  margin: 0 0 var(--space-2);
+}
+
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
 .state {
   list-style: none;
   padding: 0;
   margin: 0 0 var(--space-3);
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-1) var(--space-3);
-  font-size: 0.875rem;
-  color: var(--c-muted);
+  gap: 0.4rem;
 }
-.ok {
+.state li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  background: var(--c-surface-2);
+  color: var(--c-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.state .ok {
+  background: var(--c-success-bg);
   color: var(--c-success);
-  font-weight: 600;
-}
-.off {
-  color: var(--c-muted);
-  font-weight: 600;
 }
 
 .code {
@@ -26,6 +60,57 @@
   border: 1px dashed var(--c-border);
   border-radius: var(--radius-sm);
   background: var(--c-surface-2);
+}
+
+.cards {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+}
+.dcard {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-surface);
+  box-shadow: var(--shadow);
+}
+.dcard h3 {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+.dcard h3 a {
+  color: var(--c-primary);
+  text-decoration: none;
+}
+.dcard h3 a:hover {
+  text-decoration: underline;
+}
+.dcard .cardActions {
+  margin-top: auto;
+  padding-top: var(--space-3);
+}
+.dcard .cardActions > :first-child {
+  flex: 1 1 100%;
+}
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--c-muted);
+}
+.stats strong {
+  color: var(--c-text);
+  font-size: 1.1rem;
 }
 
 .cardActions {
@@ -62,7 +147,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin: var(--space-3) 0 var(--space-5);
+}
+.serifTitle {
+  font-family: var(--font-serif);
+  font-weight: 700;
 }
 
 .guidelines summary {
@@ -71,64 +159,6 @@
   min-height: 44px;
   display: flex;
   align-items: center;
-}
-
-.tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-  list-style: none;
-  padding: 0;
-  margin: 0 0 var(--space-4);
-  border-bottom: 1px solid var(--c-border);
-}
-.tabs a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 var(--space-3);
-  text-decoration: none;
-  font-weight: 600;
-  color: var(--c-muted);
-  border-bottom: 3px solid transparent;
-}
-.tabs a[aria-current='page'] {
-  color: var(--c-primary);
-  border-bottom-color: currentColor;
-}
-
-.filters {
-  display: grid;
-  gap: var(--space-3);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-  align-items: end;
-}
-.filters :global(.field) {
-  margin: 0;
-}
-
-.split {
-  display: grid;
-  gap: var(--space-5);
-}
-@media (min-width: 900px) {
-  .split {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-    align-items: start;
-  }
-}
-
-.comments {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 var(--space-4);
-  display: grid;
-  gap: var(--space-3);
-}
-.comments li {
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius-sm);
-  padding: var(--space-3);
 }
 
 .fieldsTable td,
@@ -153,4 +183,23 @@
   align-items: center;
   padding: var(--space-2) 0;
   border-top: 1px solid var(--c-border);
+}
+
+/* Published entry: large card with the brand-blue Literata headword, as in the review snapshot. */
+.entryCard {
+  margin-top: var(--space-2);
+  padding: clamp(var(--space-4), 3vw, var(--space-6));
+  border: 1px solid var(--c-border);
+  border-radius: 20px;
+  background: var(--c-surface);
+  box-shadow: var(--shadow);
+}
+.entryCard :global(.headword) {
+  font-size: clamp(2.2rem, 3vw + 1rem, 3.5rem);
+  color: var(--c-primary);
+  margin-bottom: var(--space-3);
+}
+.entryCard :global(.sense) {
+  font-size: 1.1rem;
+  padding: var(--space-4) 0;
 }

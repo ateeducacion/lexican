@@ -1,0 +1,436 @@
+/* Review workspace: header strip, queue · snapshot · decision panel (desktop), stacked on tablet and phone. */
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.tabs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--c-border);
+  background: var(--c-surface);
+  color: var(--c-text);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.tabs a:hover {
+  background: var(--c-surface-2);
+}
+.tabs a[aria-current='page'] {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: var(--c-on-primary);
+  font-weight: 600;
+}
+
+.workspace {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Queue */
+.queue {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-surface);
+  align-self: start;
+}
+.filters summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.6rem;
+  font-size: 0.875rem;
+  color: var(--c-muted);
+  cursor: pointer;
+}
+.filters form {
+  padding: var(--space-2) 0.6rem var(--space-3);
+}
+.filters :global(.field) {
+  margin-bottom: var(--space-2);
+}
+.selectAll {
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.6rem;
+  font-size: 0.875rem;
+  color: var(--c-muted);
+}
+.selectAll input {
+  margin: 0;
+}
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.qcard {
+  position: relative;
+  display: flex;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+}
+.qcard:hover {
+  background: var(--c-surface-2);
+}
+.qcard[data-current] {
+  background: var(--c-selected);
+  border-color: transparent;
+  box-shadow: inset 4px 0 0 var(--brand-teal);
+}
+/* Checkbox stays above the card-wide link target. */
+.qcard input {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0.4rem 0 0;
+}
+.qbody {
+  flex: 1;
+  min-width: 0;
+}
+.qbody p {
+  margin: 0;
+}
+.qhead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 var(--space-2);
+}
+.qhead time {
+  font-size: 0.75rem;
+  color: var(--c-muted);
+}
+.qlink {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--c-text);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.qlink::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.qlink:focus-visible {
+  outline: none;
+}
+.qlink:focus-visible::after {
+  outline: 3px solid var(--c-focus);
+  outline-offset: 2px;
+}
+.qlink:hover {
+  text-decoration: underline;
+}
+.qmeta {
+  font-size: 0.82rem;
+  color: var(--c-muted);
+}
+.qok,
+.qwarn {
+  margin-top: 0.35rem !important;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.qok {
+  color: var(--c-success);
+}
+.qwarn {
+  color: var(--c-warning);
+}
+.emptyQueue {
+  padding: var(--space-4) 0.6rem;
+  color: var(--c-muted);
+}
+.bulk {
+  position: sticky;
+  bottom: var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: 0.85rem;
+  border-radius: 14px;
+  background: var(--brand-blue);
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+/* Snapshot */
+.snapshot {
+  min-width: 0;
+}
+.back {
+  display: none;
+}
+.who {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.who p {
+  margin: 0;
+}
+.avatar,
+.bubbleAvatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius: 50%;
+  font-weight: 700;
+}
+.avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--c-info-bg);
+  color: var(--c-primary);
+  font-size: 0.875rem;
+}
+.whoName {
+  font-weight: 600;
+}
+.whoMeta {
+  font-size: 0.82rem;
+  color: var(--c-muted);
+}
+.entry {
+  padding: clamp(var(--space-4), 3vw, var(--space-6));
+  border: 1px solid var(--c-border);
+  border-radius: 20px;
+  background: var(--c-surface);
+}
+.entry :global(.headword) {
+  font-size: clamp(2.2rem, 3vw + 1rem, 3.25rem);
+  color: var(--c-primary);
+  margin-bottom: var(--space-3);
+}
+.entry :global(.sense) {
+  font-size: 1.15rem;
+  padding: var(--space-4) 0;
+}
+.info {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: var(--c-surface-2);
+  font-size: 0.9rem;
+}
+.info p {
+  margin: 0;
+}
+.info[data-tone='warning'] {
+  background: var(--c-warning-bg);
+}
+.infoIcon {
+  flex: none;
+  font-size: 1.1rem;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--brand-teal-text);
+}
+.info[data-tone='warning'] .infoIcon {
+  color: var(--c-warning);
+}
+.empty {
+  padding: var(--space-6) var(--space-4);
+  border: 1px dashed var(--c-border);
+  border-radius: 20px;
+  text-align: center;
+}
+
+/* Decision panel */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-surface);
+  align-self: start;
+}
+.decide {
+  display: grid;
+  gap: var(--space-3);
+}
+.decide :global(.alert) {
+  margin: 0;
+}
+.decide .publish {
+  min-height: 52px;
+  border-radius: 14px;
+  font-size: 1rem;
+}
+.publish svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.decide > :global(.btn:not(.btn-primary)) {
+  border-radius: 14px;
+}
+.decided {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+}
+.decided p {
+  margin: 0;
+}
+.thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--c-border);
+}
+.thread h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.bubbles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+.bubbles li {
+  display: flex;
+  gap: 0.6rem;
+}
+.bubbles li > div {
+  min-width: 0;
+}
+.bubbleAvatar {
+  width: 1.9rem;
+  height: 1.9rem;
+  background: var(--brand-blue);
+  color: #fff;
+  font-size: 0.7rem;
+}
+.bubbleMeta {
+  margin: 0 0 0.2rem;
+  font-size: 0.75rem;
+  color: var(--c-muted);
+}
+.bubble {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: 4px 14px 14px 14px;
+  background: var(--c-surface-2);
+  font-size: 0.9rem;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.newComment :global(.field) {
+  margin-bottom: var(--space-2);
+}
+.newComment :global(.field label) {
+  font-size: 0.85rem;
+}
+.newComment {
+  display: flex;
+  flex-direction: column;
+}
+.send {
+  align-self: flex-end;
+  background: var(--brand-teal-text);
+  border-color: var(--brand-teal-text);
+  color: #fff;
+}
+.send:hover {
+  background: #155a61;
+}
+
+/* Tablet: queue + snapshot, decision below the snapshot. */
+@media (min-width: 760px) {
+  .workspace {
+    grid-template-columns: minmax(16rem, 300px) minmax(0, 1fr);
+    grid-template-areas:
+      'queue main'
+      'queue panel';
+    align-items: start;
+  }
+  .queue {
+    grid-area: queue;
+    position: sticky;
+    top: var(--space-3);
+    max-height: calc(100vh - 2 * var(--space-3));
+    overflow-y: auto;
+  }
+  .snapshot {
+    grid-area: main;
+  }
+  .panel {
+    grid-area: panel;
+  }
+}
+
+@media (min-width: 1100px) {
+  .workspace {
+    grid-template-columns: 320px minmax(0, 1fr) 360px;
+    grid-template-areas: 'queue main panel';
+  }
+  .panel {
+    position: sticky;
+    top: var(--space-3);
+  }
+}
+
+/* Phone: the queue alone; a selected submission opens on its own with a way back. */
+@media (max-width: 759px) {
+  .workspace:not([data-detail]) .snapshot,
+  .workspace:not([data-detail]) .panel,
+  .workspace[data-detail] .queue {
+    display: none;
+  }
+  .workspace[data-detail] .back {
+    display: block;
+    margin: 0 0 var(--space-3);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .send {
+    color: #08233b;
+  }
+  .send:hover {
+    background: #a6e4e9;
+  }
+}

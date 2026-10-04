@@ -84,10 +84,15 @@ export function Component() {
   return (
     <>
       <div className="no-print">
-        <p className="small">
-          <Link to={back}>← {d.title}</Link>
-        </p>
-        <section className="card" aria-labelledby="options-title">
+        <div className={styles.options}>
+          <p className="small">
+            <Link to={back}>← {d.title}</Link>
+          </p>
+        </div>
+        <section className={`card ${styles.options}`} aria-labelledby="options-title">
+          <p className="eyebrow" style={{ margin: 0 }}>
+            Exportar
+          </p>
           <h2 id="options-title">Imprimir o exportar</h2>
           {canEdit && (
             <label className="check">

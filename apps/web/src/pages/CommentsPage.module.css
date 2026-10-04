@@ -1,7 +1,72 @@
+/* Comments as conversation bubbles, grouped by classroom. */
+.group {
+  max-width: 48rem;
+  padding: var(--space-5);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-surface);
+}
+.group h2 {
+  font-family: var(--font-serif);
+  color: var(--c-primary);
+}
+.group :global(.eyebrow) {
+  margin: 0 0 var(--space-1);
+}
 .list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
+  gap: var(--space-4);
+}
+.list li {
+  display: flex;
   gap: var(--space-3);
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--brand-blue);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.body {
+  min-width: 0;
+}
+.body p {
+  margin: 0;
+}
+.meta {
+  font-size: 0.8rem;
+  color: var(--c-muted);
+  margin-bottom: 0.25rem !important;
+}
+.meta strong {
+  color: var(--c-text);
+  font-weight: 600;
+}
+.bubble {
+  display: inline-block;
+  padding: 0.7rem 0.9rem;
+  border-radius: 4px 16px 16px 16px;
+  background: var(--c-surface-2);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.about {
+  margin-top: 0.35rem !important;
+  font-size: 0.82rem;
+  color: var(--c-muted);
+}
+.about a,
+.about strong {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 0.95rem;
 }

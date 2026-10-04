@@ -4,14 +4,18 @@
   gap: var(--space-1) var(--space-3);
 }
 .previewTitle {
-  margin-top: var(--space-6);
+  max-width: 60rem;
+  margin: var(--space-6) auto var(--space-3);
 }
 
 .sheet {
+  max-width: 60rem;
+  margin-inline: auto;
   background: var(--c-surface);
   border: 1px solid var(--c-border);
-  border-radius: var(--radius);
-  padding: var(--space-5) var(--space-4);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: clamp(var(--space-4), 4vw, var(--space-6));
 }
 .cover {
   text-align: center;
@@ -21,6 +25,7 @@
 }
 .cover h1 {
   font-family: var(--font-serif);
+  color: var(--c-primary);
   font-size: clamp(1.8rem, 4vw + 1rem, 3rem);
 }
 .lead {
@@ -37,7 +42,12 @@
   padding: var(--space-2) 0 var(--space-3);
 }
 .entry h3 {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
+  color: var(--c-primary);
+}
+.options {
+  max-width: 60rem;
+  margin-inline: auto;
 }
 
 @media print {
@@ -47,11 +57,16 @@
   .sheet {
     border: 0;
     padding: 0;
+    box-shadow: none;
   }
   .cover {
     border: 0;
     padding-top: 30vh;
     break-after: page;
+  }
+  .cover h1,
+  .entry h3 {
+    color: #000;
   }
   .letterHeading {
     break-after: avoid;

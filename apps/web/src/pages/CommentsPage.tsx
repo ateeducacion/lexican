@@ -33,29 +33,55 @@ export function Component() {
             </EmptyState>
           )
         : [...groups].map(([classroom, list]) => (
-            <section key={classroom} aria-labelledby={`c-${list[0]!.classroomId}`}>
+            <section
+              key={classroom}
+              aria-labelledby={`c-${list[0]!.classroomId}`}
+              className={styles.group}
+            >
+              <p className="eyebrow">Diccionario de aula</p>
               <h2 id={`c-${list[0]!.classroomId}`}>{classroom}</h2>
-              <ul className={styles.list}>
+              <ol className={styles.list}>
                 {list.map((c) => (
-                  <li key={c.id} className="card">
-                    {c.headword && (
-                      <p className="small">
-                        Sobre la palabra{' '}
-                        <Link to={`/mi-diccionario?q=${encodeURIComponent(c.headword)}`} lang="es">
-                          <strong>{c.headword}</strong>
-                        </Link>
+                  <li key={c.id}>
+                    <span className={styles.avatar} aria-hidden="true">
+                      {initials(c.author.displayName)}
+                    </span>
+                    <div className={styles.body}>
+                      <p className={styles.meta}>
+                        <strong>{c.author.displayName}</strong>
+                        {teacher && ` → ${c.student.displayName}`} ·{' '}
+                        <time dateTime={c.createdAt}>{formatDate(c.createdAt, true)}</time>
                       </p>
-                    )}
-                    <p className="prose">{c.body}</p>
-                    <p className="small muted">
-                      {c.author.displayName} ·{' '}
-                      <time dateTime={c.createdAt}>{formatDate(c.createdAt, true)}</time>
-                    </p>
+                      <p className={styles.bubble}>{c.body}</p>
+                      {c.headword && (
+                        <p className={styles.about}>
+                          Sobre la palabra{' '}
+                          {teacher ? (
+                            <strong lang="es">{c.headword}</strong>
+                          ) : (
+                            <Link
+                              to={`/mi-diccionario?q=${encodeURIComponent(c.headword)}`}
+                              lang="es"
+                            >
+                              {c.headword}
+                            </Link>
+                          )}
+                        </p>
+                      )}
+                    </div>
                   </li>
                 ))}
-              </ul>
+              </ol>
             </section>
           ))}
     </div>
   );
 }
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]!.toLocaleUpperCase('es'))
+    .join('');

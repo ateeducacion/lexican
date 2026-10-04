@@ -12,5 +12,5 @@ test('teacher sees the classroom from the seeded demo data', async ({ app, page 
 
 test('student lands on the personal dictionary', async ({ app, page }) => {
   await app.login('student1');
-  await expect(page.getByText('Mi diccionario personal').first()).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Añadir entrada' })).toBeVisible();
 });

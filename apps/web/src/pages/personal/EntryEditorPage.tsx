@@ -1,4 +1,4 @@
-import { headwordKey, type EntryInput, type EntryView } from '@lexican/core';
+import { headwordKey, type DictionaryView, type EntryInput, type EntryView } from '@lexican/core';
 import { useState } from 'react';
 import { Link, useLoaderData, useNavigate, type LoaderFunctionArgs } from 'react-router';
 import { getApi, toApiError } from '../../api/index.ts';
@@ -8,19 +8,25 @@ import { PageTitle, useNotify } from '../../components/ui.tsx';
 interface Data {
   dictionaryId: string;
   entry: EntryView | null;
+  /** Classrooms the student can send to now, for the editor's checklist. */
+  targets: DictionaryView[];
 }
 
 export async function loader({ params }: LoaderFunctionArgs): Promise<Data> {
   const api = await getApi();
-  const [dict, entry] = await Promise.all([
+  const [dict, entry, classrooms] = await Promise.all([
     api.myDictionary({}),
     params.entryId ? api.getEntry({ entryId: params.entryId }) : Promise.resolve(null),
+    api.myClassrooms({}),
   ]);
-  return { dictionaryId: dict.id, entry };
+  const targets = classrooms.filter(
+    (c) => c.myRole === 'student' && c.classroom?.windowState === 'open',
+  );
+  return { dictionaryId: dict.id, entry, targets };
 }
 
 export function Component() {
-  const { dictionaryId, entry } = useLoaderData<Data>();
+  const { dictionaryId, entry, targets } = useLoaderData<Data>();
   const navigate = useNavigate();
   const notify = useNotify();
   const [existing, setExisting] = useState<{ id: string; headword: string } | null>(null);
@@ -56,7 +62,6 @@ export function Component() {
       <p className="small">
         <Link to={back}>← {entry ? `Volver a «${entry.headword}»` : 'Mi diccionario'}</Link>
       </p>
-      <PageTitle>{entry ? `Editar «${entry.headword}»` : 'Nueva palabra'}</PageTitle>
       {existing && (
         <p className="alert alert-warning" role="status">
           Ya tienes la palabra «{existing.headword}».{' '}
@@ -67,6 +72,8 @@ export function Component() {
       <EntryEditor
         key={entry?.version ?? 'new'}
         entry={entry ?? undefined}
+        heading={<PageTitle>{entry ? `Editar «${entry.headword}»` : 'Nueva palabra'}</PageTitle>}
+        sendTargets={targets}
         onSave={save}
         onCancel={() => navigate(back)}
       />

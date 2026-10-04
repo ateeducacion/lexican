@@ -45,9 +45,12 @@ test('§77 cross-role journey: student sends, teacher comments and publishes, st
     await app.login('student1');
     await app.goto('/mi-diccionario');
     await page.getByRole('link', { name: word, exact: true }).click();
-    const status = page.getByRole('region', { name: 'Estado de los envíos' });
-    await expect(status.getByText('Publicada')).toBeVisible();
-    await expect(status.getByText(comment)).toBeVisible();
+    await expect(
+      page.getByRole('region', { name: 'En el aula' }).getByText('Publicada'),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('region', { name: 'Comentarios del profesorado' }).getByText(comment),
+    ).toBeVisible();
     await page
       .getByRole('navigation', { name: 'Principal' })
       .getByRole('link', { name: 'Comentarios' })

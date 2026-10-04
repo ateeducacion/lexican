@@ -1,11 +1,11 @@
-import type { DictionaryView } from '@lexican/core';
+import { formatSchoolYear, type DictionaryView } from '@lexican/core';
 import { Link, useLoaderData, useSearchParams, type LoaderFunctionArgs } from 'react-router';
 import { getApi } from '../../api/index.ts';
 import { EntryList } from '../../components/EntryList.tsx';
-import { EmptyState, PageTitle } from '../../components/ui.tsx';
+import { EmptyState } from '../../components/ui.tsx';
 import { useVocab } from '../../components/vocab.ts';
 import styles from './Classrooms.module.css';
-import { ClassroomState } from './shared.tsx';
+import { ClassroomState, PageHeader } from './shared.tsx';
 
 export async function loader({ params }: LoaderFunctionArgs) {
   return (await getApi()).getDictionary({ dictionaryId: params.classroomId! });
@@ -25,33 +25,36 @@ export function Component() {
 
   return (
     <>
-      <p className="no-print small">
-        <Link to="/aulas">← Mis aulas</Link>
-      </p>
-      <PageTitle>{d.title}</PageTitle>
+      <PageHeader
+        back={<Link to="/aulas">← Mis aulas</Link>}
+        eyebrow={[meta, c ? `Curso ${formatSchoolYear(c.schoolYear)}` : '']
+          .filter(Boolean)
+          .join(' · ')}
+        title={<span className={styles.serifTitle}>{d.title}</span>}
+        docTitle={d.title}
+      >
+        {teacher && (
+          <nav aria-label="Herramientas del profesorado" className={`no-print ${styles.toolbar}`}>
+            <Link
+              className={`btn ${d.pendingCount > 0 ? 'btn-primary' : ''}`}
+              to={`/aulas/${d.id}/envios`}
+            >
+              Revisar envíos{d.pendingCount > 0 && ` (${d.pendingCount})`}
+            </Link>
+            <Link className="btn" to={`/aulas/${d.id}/participantes`}>
+              Participantes
+            </Link>
+            <Link className="btn" to={`/aulas/${d.id}/editar`}>
+              Editar
+            </Link>
+            <Link className="btn" to={`/diccionarios/${d.id}/imprimir`}>
+              Imprimir / exportar
+            </Link>
+          </nav>
+        )}
+      </PageHeader>
       {d.description && <p className="prose">{d.description}</p>}
-      {meta && <p className="small muted">{meta}</p>}
       <ClassroomState dictionary={d} />
-
-      {teacher && (
-        <nav aria-label="Herramientas del profesorado" className={`no-print ${styles.toolbar}`}>
-          <Link
-            className={`btn ${d.pendingCount > 0 ? 'btn-primary' : ''}`}
-            to={`/aulas/${d.id}/envios`}
-          >
-            Revisar envíos{d.pendingCount > 0 && ` (${d.pendingCount})`}
-          </Link>
-          <Link className="btn" to={`/aulas/${d.id}/participantes`}>
-            Participantes
-          </Link>
-          <Link className="btn" to={`/aulas/${d.id}/editar`}>
-            Editar
-          </Link>
-          <Link className="btn" to={`/diccionarios/${d.id}/imprimir`}>
-            Imprimir / exportar
-          </Link>
-        </nav>
-      )}
       {!teacher && !studentBlocked && (
         <p className="no-print">
           <Link to={`/diccionarios/${d.id}/imprimir`}>Imprimir / exportar</Link>

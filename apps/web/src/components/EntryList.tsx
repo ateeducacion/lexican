@@ -1,6 +1,6 @@
 import { ALPHABET, type EntrySummary } from '@lexican/core';
 import { useEffect, useState, type FormEvent } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { Link, useLocation, useSearchParams } from 'react-router';
 import { getApi } from '../api/index.ts';
 import styles from './EntryList.module.css';
 import { EmptyState, ErrorMessage, Loading, StatusBadge } from './ui.tsx';
@@ -17,6 +17,34 @@ export interface EntryListProps {
   canEdit: boolean;
   /** Personal dictionary only: show submission status chips per classroom. */
   showSubmissions?: boolean;
+  /** `rail`: compact side list of the personal workspace (status dot + text, definition only on phones). */
+  variant?: 'page' | 'rail';
+  /** Entry shown next to the list: highlighted and marked with aria-current. */
+  selectedId?: string;
+  /** Change it to reload the list after a mutation elsewhere on the page. */
+  refreshKey?: unknown;
+}
+
+type RailStatus = 'pending' | 'rejected' | 'published' | 'none' | 'hidden';
+const RAIL_STATUS: Record<RailStatus, string> = {
+  pending: 'Pendiente',
+  rejected: 'Devuelta',
+  published: 'Publicada',
+  none: 'Sin enviar',
+  hidden: 'Oculta',
+};
+
+/** One status per entry: hidden first, then the submission that needs attention most. */
+function railStatus(e: EntrySummary): RailStatus {
+  if (e.hidden) return 'hidden';
+  const has = (s: string) => e.submissions.some((x) => x.status === s);
+  return has('pending')
+    ? 'pending'
+    : has('rejected')
+      ? 'rejected'
+      : has('published')
+        ? 'published'
+        : 'none';
 }
 
 const PAGE = 50;
@@ -34,8 +62,13 @@ export function EntryList({
   entryHref,
   canEdit,
   showSubmissions = false,
+  variant = 'page',
+  selectedId,
+  refreshKey,
 }: EntryListProps) {
   const v = useVocab();
+  const { pathname } = useLocation();
+  const rail = variant === 'rail';
   const [params, setParams] = useSearchParams();
   const q = params.get('q') ?? '';
   const letter = params.get('letra') ?? '';
@@ -49,7 +82,7 @@ export function EntryList({
   }
 
   // Results are tagged with the filters they belong to, so a filter change restarts paging at 0.
-  const key = [dictionaryId, q, letter, topic, canEdit].join('|');
+  const key = [dictionaryId, q, letter, topic, canEdit, String(refreshKey)].join('|');
   const [more, setMore] = useState({ key, offset: 0 });
   const offset = more.key === key ? more.offset : 0;
   const [data, setData] = useState<Loaded | null>(null);
@@ -124,7 +157,10 @@ export function EntryList({
   const filtered = Boolean(q || letter || topic);
 
   return (
-    <section aria-labelledby="entry-list-title" className={styles.wrap}>
+    <section
+      aria-labelledby="entry-list-title"
+      className={`${styles.wrap} ${rail ? styles.rail : ''}`}
+    >
       <h2 id="entry-list-title" className="visually-hidden">
         Entradas
       </h2>
@@ -169,7 +205,7 @@ export function EntryList({
       </div>
 
       <nav aria-label="Buscar por letra inicial">
-        <ul className="alphabet">
+        <ul className={rail ? styles.letters : 'alphabet'}>
           <li>
             <Link to={letterHref('')} replace aria-current={letter ? undefined : 'page'}>
               Todas
@@ -196,12 +232,31 @@ export function EntryList({
         !current.error &&
         items.length === 0 &&
         (filtered ? (
-          <EmptyState title="No hay resultados">
-            <p>Prueba con otra palabra, otra letra o quita los filtros.</p>
-            <button type="button" className="btn" onClick={() => setParams({}, { replace: true })}>
-              Quitar filtros
-            </button>
-          </EmptyState>
+          rail ? (
+            <div className={styles.empty}>
+              <p>No hay resultados. Prueba con otra palabra u otra letra.</p>
+              <button
+                type="button"
+                className="btn btn-sm"
+                onClick={() => setParams({}, { replace: true })}
+              >
+                Quitar filtros
+              </button>
+            </div>
+          ) : (
+            <EmptyState title="No hay resultados">
+              <p>Prueba con otra palabra, otra letra o quita los filtros.</p>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => setParams({}, { replace: true })}
+              >
+                Quitar filtros
+              </button>
+            </EmptyState>
+          )
+        ) : rail ? (
+          <p className={styles.empty}>Cuando añadas palabras aparecerán aquí.</p>
         ) : (
           <EmptyState title="Todavía no hay entradas">
             <p className="muted">
@@ -212,7 +267,36 @@ export function EntryList({
           </EmptyState>
         ))}
 
-      {items.length > 0 && (
+      {items.length > 0 && rail && (
+        <ul className={styles.railList}>
+          {items.map((e) => {
+            const st = railStatus(e);
+            const href = entryHref(e.id);
+            const selected = e.id === selectedId;
+            return (
+              <li key={e.id} className={styles.railItem}>
+                <span className={styles.railHead}>
+                  {/* Only the headword names the link; the whole card is clickable through ::after. */}
+                  <Link
+                    to={href}
+                    className={styles.railLink}
+                    lang="es"
+                    aria-current={
+                      selected ? (href.split('?')[0] === pathname ? 'page' : 'true') : undefined
+                    }
+                  >
+                    {e.headword}
+                  </Link>
+                  <span className={`${styles.status} ${styles[st]}`}>{RAIL_STATUS[st]}</span>
+                </span>
+                {e.firstDefinition && <p className={styles.railDef}>{e.firstDefinition}</p>}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {items.length > 0 && !rail && (
         <ul className={styles.list}>
           {items.map((e) => (
             <li key={e.id} className={styles.item}>
