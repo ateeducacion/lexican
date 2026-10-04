@@ -38,4 +38,13 @@ export default tseslint.config(
     plugins: { 'react-hooks': reactHooks },
     rules: reactHooks.configs.recommended.rules,
   },
+  {
+    // CLI scripts report to stdout; Playwright fixtures use `void` for auto fixtures.
+    files: ['scripts/**', 'apps/api/src/cli/**', 'tools/*/src/cli.ts'],
+    rules: { 'no-console': 'off' },
+  },
+  {
+    files: ['e2e/**'],
+    rules: { '@typescript-eslint/no-invalid-void-type': 'off' },
+  },
 );
