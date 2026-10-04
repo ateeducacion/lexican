@@ -4,6 +4,8 @@ import { execFileSync } from 'node:child_process';
 
 const ALLOWED = new Set([
   'MIT',
+  // Fonts only: self-hosted Lexend and Literata (docs/LICENSING.md).
+  'OFL-1.1',
   'ISC',
   'Apache-2.0',
   'BSD-2-Clause',

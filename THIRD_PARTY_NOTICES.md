@@ -178,3 +178,12 @@ No los usa el código nuevo ni van en sus bundles. Siguen en `main` hasta la fas
 | Carlito | — | `public/fonts/carlito*`, `public/fonts/carlito/` | SIL OFL-1.1, según el proyecto de origen (el repositorio no incluye el texto) |
 | Bundle Laravel Mix | — | `public/js/app.js` (+ `app.js.LICENSE.txt`), `public/js/acepciones.js` | varias, listadas en `app.js.LICENSE.txt` |
 | `composer.phar` | — | raíz | MIT (Composer) |
+
+## Tipografías autoalojadas (interfaz 2026-10)
+
+| Paquete | Licencia | Uso |
+|---|---|---|
+| `@fontsource-variable/lexend` (Lexend, Bonnie Shaver-Troup, Thomas Jockin y colaboradores) | OFL-1.1 | Texto de la interfaz |
+| `@fontsource/literata` (Literata, TypeTogether) | OFL-1.1 | Palabras y ejemplos del diccionario |
+
+Se sirven desde el propio despliegue (sin CDN de terceros). La OFL permite incluirlas y redistribuirlas con la aplicación.
