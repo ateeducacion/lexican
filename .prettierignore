@@ -28,3 +28,4 @@ packages/core/src/dmlex-1.0.schema.json
 .jsbeautifyrc
 phpdox.xml
 phpunit.xml
+sbom.spdx.json

@@ -1,6 +1,6 @@
 version: 2
 updates:
-  - package-ecosystem: npm
+  - package-ecosystem: bun
     directory: /
     schedule:
       interval: weekly
@@ -12,9 +12,8 @@ updates:
       # typescript-eslint 8.x supports TypeScript < 6.1 (docs/adr/0002-stack.md).
       - dependency-name: typescript
         versions: ['>=6.1.0']
-      # Types follow the Node LTS LexiCán targets (engines >=24, CI on Node 24).
-      - dependency-name: '@types/node'
-        update-types: [version-update:semver-major]
+      # Bun types follow the pinned Bun runtime (1.4.2 in the image and CI): upgrade them together.
+      - dependency-name: '@types/bun'
       # Drizzle v1 changes the migration layout; upgrade deliberately (docs/adr/0003-drizzle-pglite.md).
       - dependency-name: drizzle-orm
         update-types: [version-update:semver-major]

@@ -1,3 +1,8 @@
 # Never load .env files implicitly: configuration comes only from the environment or an explicit --env-file
 # (a stray .env, such as the legacy Laravel one, would otherwise change APP_ENV silently).
 env = false
+
+[install]
+# Same node_modules layout npm produced: tools that resolve from the repository root (tsc types such as vite/client,
+# Vitest, Playwright) keep working across workspaces.
+linker = "hoisted"

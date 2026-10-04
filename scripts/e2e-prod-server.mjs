@@ -17,9 +17,9 @@ const run = (cmd, args, env = process.env) => {
 };
 
 if (!existsSync(join(root, 'apps/web/dist/index.html')))
-  run('npm', ['run', 'build', '-w', '@lexican/web']);
+  run('bun', ['run', '--filter', '@lexican/web', 'build']);
 if (!existsSync(join(root, 'apps/api/dist/server.js')))
-  run('npm', ['run', 'build', '-w', '@lexican/api']);
+  run('bun', ['run', '--filter', '@lexican/api', 'build']);
 
 const name = `lexican_e2e_${Date.now().toString(36)}`;
 const admin = new pg.Client({ connectionString: base });

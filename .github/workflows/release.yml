@@ -33,27 +33,27 @@ jobs:
 
       - name: Tag matches package.json
         run: |
-          version="v$(node -p "require('./package.json').version")"
+          version="v$(bun -p "require('./package.json').version")"
           [ "$version" = "$GITHUB_REF_NAME" ] || { echo "::error::Tag $GITHUB_REF_NAME does not match package.json ($version)"; exit 1; }
 
+      # Node runs the tooling (Vite, Vitest, Playwright); Bun installs and runs the scripts.
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
-          cache: npm
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.2
 
-      - run: npm ci
-      - run: npm run audit
-      - run: npm run licenses
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm test
-      - run: npm run build
-      - run: npm run build:demo
-      - run: npm run check:dist
-      - run: npm run sbom
+      - run: bun ci
+      - run: bun run audit
+      - run: bun run licenses
+      - run: bun run lint
+      - run: bun run typecheck
+      - run: bun run test
+      - run: bun run build
+      - run: bun run build:demo
+      - run: bun run check:dist
+      - run: bun run sbom
 
       - name: Package production bundle (no node_modules)
         run: |

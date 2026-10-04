@@ -1,7 +1,7 @@
 # Allowlist: only the TypeScript monorepo goes into the build context (never the legacy tree or secrets).
 *
 !package.json
-!package-lock.json
+!bun.lock
 !tsconfig.json
 !bunfig.toml
 !apps/api

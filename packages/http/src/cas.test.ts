@@ -87,7 +87,9 @@ describe('CAS responses', () => {
 describe('ticket validation', () => {
   it('calls the configured endpoint with the exact service, no credentials, refusing redirects', async () => {
     const f = vi.fn(async (_url: string | URL | Request, _init?: RequestInit) => new Response(OK));
-    expect(await validateTicket(server, SERVICE, 'ST-1', { fetch: f as typeof fetch })).toEqual({
+    expect(
+      await validateTicket(server, SERVICE, 'ST-1', { fetch: f as unknown as typeof fetch }),
+    ).toEqual({
       ok: true,
       user: 'alice',
     });

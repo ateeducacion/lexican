@@ -1,6 +1,6 @@
 // Fails when a production dependency (anything shipped in the API image or the web bundles) has a licence
 // outside the allow-list (§90, docs/LICENSING.md). Dev tooling is reported, not gated.
-import { execFileSync } from 'node:child_process';
+import { packages } from './deps.mjs';
 
 const ALLOWED = new Set([
   'MIT',
@@ -24,13 +24,8 @@ const ok = (lic) =>
     .split(/\s+OR\s+/)
     .some((l) => ALLOWED.has(l.trim()));
 
-const prod = JSON.parse(
-  execFileSync('npm', ['query', ':root .prod'], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }),
-);
 const seen = new Map();
-for (const p of prod)
-  if (p.name && !p.name.startsWith('@lexican/'))
-    seen.set(`${p.name}@${p.version}`, p.license ?? p.licenses?.[0]?.type ?? null);
+for (const p of packages({ prod: true })) seen.set(`${p.name}@${p.version}`, p.license);
 
 const bad = [...seen].filter(([, lic]) => !ok(lic));
 const counts = {};

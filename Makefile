@@ -1,4 +1,4 @@
-# Thin wrapper over npm scripts (package.json is the source of truth).
+# Thin wrapper over bun scripts (package.json is the source of truth).
 .DEFAULT_GOAL := help
 
 .PHONY: up down app dev demo build build-demo test integration e2e lint fix check migrate seed clean help
@@ -15,53 +15,53 @@ app:
 down:
 	docker compose --profile app down
 
-## Web (Vite) against the local API; run `npm run dev:api` in another terminal
+## Web (Vite) against the local API; run `bun run dev:api` in another terminal
 dev:
-	npm run dev
+	bun run dev
 
 ## Demo mode (Hono API + PGlite in a Web Worker, no backend)
 demo:
-	npm run dev:demo
+	bun run dev:demo
 
 ## Production build (web + API)
 build:
-	npm run build
+	bun run build
 
 ## Static GitHub Pages demo build
 build-demo:
-	npm run build:demo
+	bun run build:demo
 
 ## Unit + contract tests (PostgreSQL too when TEST_DATABASE_URL is set)
 test:
-	npm test
+	bun run test
 
 ## API integration tests
 integration:
-	npm run test:integration
+	bun run test:integration
 
 ## End-to-end tests (Playwright)
 e2e:
-	npm run e2e
+	bun run e2e
 
 ## Lint and typecheck
 lint:
-	npm run lint && npm run typecheck
+	bun run lint && bun run typecheck
 
 ## Fix lint and formatting
 fix:
-	npx eslint . --fix && npm run format
+	bunx eslint . --fix && bun run format
 
 ## Full local quality gate
 check:
-	npm run check
+	bun run check
 
 ## Apply database migrations (DATABASE_URL)
 migrate:
-	npm run db:migrate
+	bun run db:migrate
 
 ## Seed vocabularies (and demo data with ARGS=--demo)
 seed:
-	npm run db:seed -- $(ARGS)
+	bun run db:seed -- $(ARGS)
 
 ## Remove build output
 clean:

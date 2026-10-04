@@ -95,19 +95,19 @@ La semilla se ejecuta una sola vez y marca `app_settings.demo_seed_version`.
 
 | Paso | Comando / fichero |
 |---|---|
-| Build estático | `npm run build:demo` → `vite build --mode demo` → `apps/web/dist-demo/` con `base: '/lexican/'` |
+| Build estático | `bun run build:demo` → `vite build --mode demo` → `apps/web/dist-demo/` con `base: '/lexican/'` |
 | Enrutado | *hash* (`createHashRouter`): `…/lexican/#/mi-diccionario`; no hace falta `404.html` |
 | Modo | decidido en el build (`import.meta.env.MODE === 'demo'`, `apps/web/src/env.ts`), nunca por el nombre del host |
-| Comprobación del bundle | `npm run check:dist` (`scripts/check-dist.mjs`): JS, chunk del Worker, CSS, HTML y sourcemaps sin hosts internos, claves ni tokens; `index.html` con `/lexican/`; el Worker y el WASM presentes; el build de producción sin PGlite, WASM, Worker, API demo ni contraseñas |
-| Publicación | `.github/workflows/pages.yml`: en cada *push* a `main` (o manual desde `main`), comprueba que el commit está en `main`, `npm ci`, `typecheck`, `build:demo`, `check:dist`, E2E esenciales (Chromium) sobre ese mismo artefacto, y lo despliega. Ejecuciones en serie: un commit antiguo nunca publica encima de uno nuevo |
+| Comprobación del bundle | `bun run check:dist` (`scripts/check-dist.mjs`): JS, chunk del Worker, CSS, HTML y sourcemaps sin hosts internos, claves ni tokens; `index.html` con `/lexican/`; el Worker y el WASM presentes; el build de producción sin PGlite, WASM, Worker, API demo ni contraseñas |
+| Publicación | `.github/workflows/pages.yml`: en cada *push* a `main` (o manual desde `main`), comprueba que el commit está en `main`, `bun ci`, `typecheck`, `build:demo`, `check:dist`, E2E esenciales (Chromium) sobre ese mismo artefacto, y lo despliega. Ejecuciones en serie: un commit antiguo nunca publica encima de uno nuevo |
 
 ## Ejecutar en local
 
 ```bash
-npm ci
-npm run dev:demo          # Vite en modo demo (http://localhost:5173/lexican/)
+bun ci
+bun run dev:demo          # Vite en modo demo (http://localhost:5173/lexican/)
 # o, igual que en Pages (servidor estático estricto, sin *fallback*):
-npm run build:demo && node scripts/static-pages-server.mjs 4317   # http://localhost:4317/lexican/
+bun run build:demo && node scripts/static-pages-server.mjs 4317   # http://localhost:4317/lexican/
 ```
 
 Los E2E de la demo usan ese servidor estático en el puerto 4317 ([TESTING.md](TESTING.md)).

@@ -8,13 +8,13 @@ import { loadLegacy } from './legacy.ts';
 import { migrateLegacy } from './migrate.ts';
 import { writeReport } from './report.ts';
 
-const USAGE = `Uso: npm run migrate:legacy -- --source mysql://… --target postgres://… \\
+const USAGE = `Uso: bun run migrate:legacy --source mysql://… --target postgres://… \\
   --media-source <storage/app/public legacy> --media-target <raíz de medios nueva> \\
   [--dry-run] [--report informe.json] [--fail-on-orphans]
 
-El destino debe tener el esquema aplicado (npm run db:migrate). Ver docs/MIGRATION.md.`;
+El destino debe tener el esquema aplicado (bun run db:migrate). Ver docs/MIGRATION.md.`;
 
-/** Paths are relative to where `npm run` was launched, not to this workspace. */
+/** Paths are relative to where the command was launched (INIT_CWD when a package manager sets it), not this workspace. */
 const fromCaller = (p: string) => resolve(process.env.INIT_CWD ?? process.cwd(), p);
 const redact = (url: string) => url.replace(/\/\/([^:/@]+):[^@]*@/, '//$1:***@');
 
@@ -50,7 +50,7 @@ async function main(): Promise<number> {
     );
     if (!rows[0]?.t) {
       console.error(
-        'El destino no tiene el esquema de LexiCán: ejecuta antes `npm run db:migrate`.',
+        'El destino no tiene el esquema de LexiCán: ejecuta antes `bun run db:migrate`.',
       );
       return 2;
     }
