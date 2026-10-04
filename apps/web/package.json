@@ -13,7 +13,10 @@
   "dependencies": {
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "react-router": "^8.4.0"
+    "react-router": "^8.4.0",
+    "@lexican/core": "*",
+    "@lexican/app": "*",
+    "@lexican/db": "*"
   },
   "devDependencies": {
     "@types/react": "^19.3.0",

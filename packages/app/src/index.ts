@@ -23,6 +23,7 @@ export type { Actor, Deps, MediaStorage } from './context.ts';
 export { createPasswordUser, hashPassword, roleFromDirectory, type InstitutionalProfile } from './auth.ts';
 export { generateJoinCode } from './classrooms.ts';
 export { submissionProblem } from './submissions.ts';
+export { seedDemo, demoSeedVersion, DEMO_SEED_VERSION } from './demo-seed.ts';
 
 export type OperationHandlers = {
   [K in OperationName]: (actor: Actor | null, input: ParsedInput<K>) => Promise<OperationOutputs[K]>;

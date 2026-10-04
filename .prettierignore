@@ -19,3 +19,4 @@ packages/db/migrations/
 package-lock.json
 dist/
 coverage/
+dist-demo/

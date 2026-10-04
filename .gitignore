@@ -1,6 +1,7 @@
 # --- LexiCán (modern stack) ---
 node_modules/
 dist/
+dist-demo/
 coverage/
 test-results/
 playwright-report/
@@ -139,6 +140,7 @@ typings/
 
 # rollup.js default build output
 dist/
+dist-demo/
 
 # Temporary folders
 tmp/
