@@ -1,4 +1,5 @@
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { openAsBlob } from 'node:fs';
+import { mkdir, readdir, rename, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { MediaStorage } from '@lexican/app';
 
@@ -10,23 +11,48 @@ function pathFor(root: string, key: string): string {
   return join(root, key.slice(0, 2), key);
 }
 
-/** Filesystem storage, sharded by the first two characters of the key; writes are atomic (temp + rename). */
+const isMissing = (e: unknown) => (e as NodeJS.ErrnoException).code === 'ENOENT';
+
+/**
+ * Filesystem storage on the media volume, sharded by the first two characters of the key. Writes are atomic
+ * (exclusive temp file + rename); reads are lazy Blobs (`openAsBlob`), so ranges and streaming never load the
+ * whole file into memory.
+ */
 export function fsMediaStorage(root: string): MediaStorage {
   return {
     async put(key, bytes) {
       const target = pathFor(root, key);
       await mkdir(join(root, key.slice(0, 2)), { recursive: true, mode: 0o750 });
       const tmp = `${target}.${process.pid}.${Date.now()}.tmp`;
-      await writeFile(tmp, bytes, { mode: 0o640, flag: 'wx' });
-      await rename(tmp, target);
-    },
-    async get(key) {
       try {
-        return new Uint8Array(await readFile(pathFor(root, key)));
+        await writeFile(tmp, bytes, { mode: 0o640, flag: 'wx' });
+        await rename(tmp, target);
       } catch (e) {
-        if ((e as NodeJS.ErrnoException).code === 'ENOENT') return null;
+        await rm(tmp, { force: true });
         throw e;
       }
+    },
+    async open(key) {
+      try {
+        return await openAsBlob(pathFor(root, key));
+      } catch (e) {
+        if (isMissing(e)) return null;
+        throw e;
+      }
+    },
+    async delete(key) {
+      await rm(pathFor(root, key), { force: true });
+    },
+    async keys() {
+      const shards = await readdir(root).catch((e: unknown) =>
+        isMissing(e) ? [] : Promise.reject(e),
+      );
+      const out: string[] = [];
+      for (const s of shards) {
+        if (!/^[0-9a-f]{2}$/.test(s)) continue;
+        for (const f of await readdir(join(root, s))) if (KEY.test(f)) out.push(f);
+      }
+      return out;
     },
   };
 }

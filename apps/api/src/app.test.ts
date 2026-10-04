@@ -4,7 +4,9 @@ import { join } from 'node:path';
 import { seedDemo } from '@lexican/app';
 import { openPglite, openPostgres, type TestDb } from '@lexican/db/testing';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { buildApp, errSerializer } from './app.ts';
+import { safeError } from '@lexican/http';
+import { buildApp } from './app.ts';
+import { testApp } from './testing/inject.ts';
 import { loadConfig } from './config.ts';
 import { fsMediaStorage } from './media-storage.ts';
 
@@ -19,7 +21,7 @@ const demoPng = new Uint8Array(
 
 let t: TestDb;
 let mediaDir: string;
-let app: Awaited<ReturnType<typeof buildApp>>;
+let app: ReturnType<typeof testApp>;
 
 beforeAll(async () => {
   const url = process.env.TEST_DATABASE_URL;
@@ -30,18 +32,19 @@ beforeAll(async () => {
     { name: 'gofio.png', bytes: demoPng },
   ]);
   const config = loadConfig({
-    NODE_ENV: 'test',
+    APP_ENV: 'test',
     DATABASE_URL: 'postgres://unused',
     PUBLIC_URL: ORIGIN,
     MEDIA_DIR: mediaDir,
     MAX_UPLOAD_MB: '0.05',
     AUTH_DEV_LOGIN: 'true',
-    CAS_BASE_URL: CAS,
+    CAS_URL: CAS,
+    CAS_PROFILES: 'cauce',
     CAUCE_URL: CAUCE,
     CAUCE_TOKEN: 'test-token',
     LOG_LEVEL: 'silent',
   });
-  app = await buildApp({ config, db: t.db, media, logger: false });
+  app = testApp({ config, db: t.db, media }, buildApp);
 });
 
 afterAll(async () => {
@@ -109,7 +112,10 @@ describe('platform', () => {
   });
 
   it('providers reflect configuration', async () => {
-    expect((await get('/api/auth/providers')).json()).toEqual({ cas: true, password: true });
+    expect((await get('/api/auth/providers')).json()).toEqual({
+      cas: 'institutional',
+      password: true,
+    });
   });
 });
 
@@ -239,6 +245,88 @@ describe('media', () => {
     const other = await login('alumno2@ejemplo.com', 'alumno2');
     expect((await get(m.url, other)).statusCode).toBe(404);
     expect((await get('/media/../../etc/passwd', owner)).statusCode).toBe(404);
+  });
+
+  it('serves byte ranges (206/416) and HEAD, authorizing before any byte or size is sent', async () => {
+    const owner = await login('alumno1@ejemplo.com', 'alumno1');
+    const m = (
+      await app.inject({
+        method: 'POST',
+        url: '/api/media',
+        ...withAuth(multipart(demoPng, 'r.png', 'image/png'), owner),
+      })
+    ).json();
+    const size = demoPng.byteLength;
+    const range = (h: string, cookie = owner) =>
+      app.inject({ method: 'GET', url: m.url, headers: { cookie, range: h } });
+    const part = await range('bytes=1-3');
+    expect(part.statusCode).toBe(206);
+    expect(part.headers['content-range']).toBe(`bytes 1-3/${size}`);
+    expect(part.headers['content-length']).toBe('3');
+    expect(part.rawPayload.equals(Buffer.from(demoPng.slice(1, 4)))).toBe(true);
+    expect((await range(`bytes=-4`)).rawPayload.equals(Buffer.from(demoPng.slice(size - 4)))).toBe(
+      true,
+    );
+    expect((await range(`bytes=${size}-`)).statusCode).toBe(416);
+    expect((await range(`bytes=${size}-`)).headers['content-range']).toBe(`bytes */${size}`);
+    expect((await range('bytes=0-1,4-5')).statusCode).toBe(200);
+    const head = await app.inject({ method: 'HEAD', url: m.url, headers: { cookie: owner } });
+    expect(head.statusCode).toBe(200);
+    expect(head.headers['content-length']).toBe(String(size));
+    expect(head.headers['accept-ranges']).toBe('bytes');
+    expect(head.rawPayload.byteLength).toBe(0);
+    // Unauthorized: same 404 as a missing file, no Content-Range or length leaks.
+    const other = await login('alumno2@ejemplo.com', 'alumno2');
+    const denied = await range('bytes=0-1', other);
+    expect(denied.statusCode).toBe(404);
+    expect(denied.headers['content-range']).toBeUndefined();
+    expect((await app.inject({ method: 'HEAD', url: m.url })).statusCode).toBe(401);
+  });
+
+  it('limits streamed uploads without Content-Length and refuses extra multipart parts', async () => {
+    const cookie = await login('alumno1@ejemplo.com', 'alumno1');
+    const chunk = new Uint8Array(16 * 1024);
+    let sent = 0;
+    const body = new ReadableStream<Uint8Array>({
+      pull(ctrl) {
+        // Endless body: the limit must stop reading it, not wait for the end.
+        sent += chunk.byteLength;
+        ctrl.enqueue(chunk);
+      },
+    });
+    const r = await app.app.fetch(
+      new Request(`http://localhost/api/media`, {
+        method: 'POST',
+        headers: { cookie, origin: ORIGIN, 'content-type': 'multipart/form-data; boundary=x' },
+        body,
+        duplex: 'half',
+      } as RequestInit),
+      { remoteAddress: '127.0.0.1' },
+    );
+    expect(r.status).toBe(413);
+    expect(sent).toBeLessThan(1024 * 1024);
+
+    const b = 'B';
+    const two = Buffer.from(
+      `--${b}\r\nContent-Disposition: form-data; name="file"; filename="a.png"\r\nContent-Type: image/png\r\n\r\n${Buffer.from(demoPng).toString('latin1')}\r\n--${b}\r\nContent-Disposition: form-data; name="extra"\r\n\r\nx\r\n--${b}--\r\n`,
+      'latin1',
+    );
+    const extra = await app.inject({
+      method: 'POST',
+      url: '/api/media',
+      headers: { cookie, origin: ORIGIN, 'content-type': `multipart/form-data; boundary=${b}` },
+      payload: two,
+    });
+    expect(extra.statusCode).toBe(400);
+    const malformed = await app.inject({
+      method: 'POST',
+      url: '/api/media',
+      headers: { cookie, origin: ORIGIN, 'content-type': `multipart/form-data; boundary=${b}` },
+      payload: 'not multipart at all',
+    });
+    expect(malformed.statusCode).toBe(400);
+    const json = await send('POST', '/api/media', cookie, { file: 'x' });
+    expect(json.statusCode).toBe(415);
   });
 
   it('rejects script bytes disguised as an image', async () => {
@@ -391,13 +479,14 @@ describe('media authorization regressions', () => {
 
   it('enforces a per-user daily upload quota (SEC-004)', async () => {
     const config = loadConfig({
+      APP_ENV: 'test',
       DATABASE_URL: 'x',
       PUBLIC_URL: ORIGIN,
       MEDIA_DIR: mediaDir,
       AUTH_DEV_LOGIN: 'true',
       MEDIA_QUOTA_MB_PER_DAY: '0.01',
     });
-    const quotaApp = await buildApp({ config, db: t.db, logger: false });
+    const quotaApp = testApp({ config, db: t.db }, buildApp);
     try {
       const r = await quotaApp.inject({
         method: 'POST',
@@ -564,6 +653,30 @@ describe('CAS', () => {
     expect(r.headers.location).toBe(`${ORIGIN}/entrar?error=unavailable`);
   });
 
+  it('a ticket callback runs once: the state is single-use (double callback, reload, StrictMode)', async () => {
+    const calls = stubNetwork(fixture('cas-success.xml'), fixture('cauce-teacher.xml'));
+    const s = await casLogin();
+    const first = await callback('ST-8', s);
+    expect(first.headers.location).toBe(`${ORIGIN}/`);
+    // Even if the browser still holds the old state cookie (the clearing response was lost), the ticket that
+    // already opened a session is refused locally, without asking CAS again.
+    const again = await callback('ST-8', s);
+    expect(again.headers.location).toBe(`${ORIGIN}/entrar?error=cas`);
+    expect(again.cookies.find((c) => c.name === 'sid')).toBeUndefined();
+    expect(calls.filter((c) => c.url.includes('ST-8'))).toHaveLength(1);
+    expect(first.cookies.find((c) => c.name === 'cas_state')?.value).toBe('');
+  });
+
+  it('a CAS redirect or timeout is unavailable, never a session', async () => {
+    vi.stubGlobal('fetch', async (_u: string, init: RequestInit) => {
+      expect(init.redirect).toBe('error');
+      throw new TypeError('redirect mode is set to error');
+    });
+    const r = await callback('ST-9', await casLogin());
+    expect(r.headers.location).toBe(`${ORIGIN}/entrar?error=unavailable`);
+    expect(r.cookies.find((c) => c.name === 'sid')).toBeUndefined();
+  });
+
   it('cas logout redirects to the CAS logout endpoint', async () => {
     const r = await get('/api/auth/cas/logout');
     expect(r.headers.location).toBe(`${CAS}/logout?service=${encodeURIComponent(`${ORIGIN}/`)}`);
@@ -582,11 +695,11 @@ describe('logging', () => {
       { name: 'DrizzleQueryError', cause: pgError },
     );
     for (const e of [drizzle, pgError]) {
-      const out = errSerializer(e);
+      const out = safeError(e);
       expect(JSON.stringify(out)).not.toMatch(/secreto|insert|duplicate/);
       expect(out.code).toBe('23505');
     }
-    expect(errSerializer(new TypeError('boom'))).toMatchObject({
+    expect(safeError(new TypeError('boom'))).toMatchObject({
       type: 'TypeError',
       message: 'boom',
     });
@@ -598,19 +711,20 @@ describe('SPA serving', () => {
     const dist = mkdtempSync(join(tmpdir(), 'lexican-web-'));
     writeFileSync(join(dist, 'index.html'), '<!doctype html><title>LexiCán</title>');
     const config = loadConfig({
+      APP_ENV: 'test',
       DATABASE_URL: 'x',
       PUBLIC_URL: ORIGIN,
       MEDIA_DIR: mediaDir,
       WEB_DIST: dist,
     });
-    const spa = await buildApp({ config, db: t.db, logger: false });
+    const spa = testApp({ config, db: t.db }, buildApp);
     try {
       const page = await spa.inject({ method: 'GET', url: '/aulas/123' });
       expect(page.statusCode).toBe(200);
       expect(page.body).toContain('LexiCán');
       expect((await spa.inject({ method: 'GET', url: '/api/missing' })).statusCode).toBe(404);
       expect((await spa.inject({ method: 'GET', url: '/api/auth/providers' })).json()).toEqual({
-        cas: false,
+        cas: null,
         password: false,
       });
       expect(

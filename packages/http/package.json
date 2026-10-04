@@ -1,0 +1,19 @@
+{
+  "name": "@lexican/http",
+  "version": "0.0.0",
+  "license": "AGPL-3.0-or-later",
+  "private": true,
+  "type": "module",
+  "description": "The LexiCán HTTP API (Hono): one app for the server (Bun + PostgreSQL) and the demo Web Worker (PGlite)",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@lexican/app": "*",
+    "@lexican/core": "*",
+    "@lexican/db": "*",
+    "drizzle-orm": "^0.45.3",
+    "fast-xml-parser": "^5.11.2",
+    "hono": "^4.13.13"
+  }
+}

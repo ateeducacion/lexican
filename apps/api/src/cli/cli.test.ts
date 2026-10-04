@@ -71,7 +71,7 @@ describe.skipIf(!server)('database CLIs on PostgreSQL', () => {
     DATABASE_URL: db.url,
     PUBLIC_URL: 'http://localhost:3999',
     MEDIA_DIR: mediaDir,
-    NODE_ENV: 'test',
+    APP_ENV: 'test',
   });
 
   it('seed loads vocabularies only, idempotently', async () => {
@@ -83,7 +83,7 @@ describe.skipIf(!server)('database CLIs on PostgreSQL', () => {
   });
 
   it('seed --demo is refused in production', async () => {
-    await expect(run('seed', { ...env(), NODE_ENV: 'production' }, ['--demo'])).rejects.toThrow(
+    await expect(run('seed', { ...env(), APP_ENV: 'production' }, ['--demo'])).rejects.toThrow(
       '--demo is not allowed',
     );
     expect(await count('users')).toBe(0);

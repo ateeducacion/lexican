@@ -2,9 +2,11 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createPasswordUser } from '@lexican/app';
+import { authIdentities } from '@lexican/db';
 import { openPglite, type TestDb } from '@lexican/db/testing';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { buildApp } from './app.ts';
+import { testApp } from './testing/inject.ts';
 import { fakeDirectory, type InstitutionalDirectory } from './cauce.ts';
 import { loadConfig, type Config } from './config.ts';
 
@@ -39,6 +41,7 @@ afterEach(() => vi.unstubAllGlobals());
 
 const config = (env: Record<string, string> = {}) =>
   loadConfig({
+    APP_ENV: 'test',
     DATABASE_URL: 'postgres://unused',
     PUBLIC_URL: HTTP,
     MEDIA_DIR: mediaDir,
@@ -50,7 +53,7 @@ async function app(
   cfg: Config,
   extra: { clock?: () => Date; directory?: InstitutionalDirectory; db?: TestDb['db'] } = {},
 ) {
-  const a = await buildApp({ config: cfg, db: extra.db ?? t.db, logger: false, ...extra });
+  const a = testApp({ config: cfg, db: extra.db ?? t.db, ...extra }, buildApp);
   apps.push(a);
   return a;
 }
@@ -213,7 +216,8 @@ describe('CAS variants', () => {
     env: Record<string, string> = {},
   ) {
     const cfg = config({
-      CAS_BASE_URL: CAS,
+      CAS_URL: CAS,
+      CAS_PROFILES: 'cauce',
       CAUCE_URL: 'https://cauce.example.test/',
       CAUCE_TOKEN: 'fake-token',
       ...env,
@@ -261,6 +265,47 @@ describe('CAS variants', () => {
       }),
     );
     expect((await ok.callback('ST-3')).headers.location).toBe(`${HTTP}/`);
+  });
+
+  it('the test CAS profile signs fixture subjects in under their own issuer, without CAUCE', async () => {
+    const db = await openPglite();
+    try {
+      const a = await app(config({ CAS_URL: CAS, CAS_PROFILES: 'test' }), {
+        db: db.db,
+        directory: undefined,
+      });
+      let user = 'alice';
+      vi.stubGlobal('fetch', async (u: string) => {
+        expect(u.startsWith(`${CAS}/p3/serviceValidate?`)).toBe(true);
+        return new Response(CAS_OK.replace('cficticia', user));
+      });
+      expect((await a.inject({ method: 'GET', url: '/api/auth/providers' })).json()).toEqual({
+        cas: 'test',
+        password: true,
+      });
+      const go = async (ticket: string) => {
+        const login = await a.inject({ method: 'GET', url: '/api/auth/cas/login' });
+        const state = login.cookies.find((c) => c.name === 'cas_state')!.value;
+        return a.inject({
+          method: 'GET',
+          url: `/api/auth/cas/callback?ticket=${ticket}&state=${state}`,
+          headers: { cookie: `cas_state=${state}` },
+        });
+      };
+      const r = await go('ST-a');
+      expect(r.headers.location).toBe(`${HTTP}/`);
+      const sid = r.cookies.find((c) => c.name === 'sid')!.value;
+      const me = (
+        await a.inject({ method: 'GET', url: '/api/me', headers: { cookie: `sid=${sid}` } })
+      ).json().user;
+      expect(me).toMatchObject({ globalRole: 'teacher', lastName: 'Tutoriales' });
+      user = 'mallory';
+      expect((await go('ST-m')).headers.location).toBe(`${HTTP}/entrar?error=forbidden`);
+      const rows = await db.db.select().from(authIdentities);
+      expect(rows.map((i) => `${i.provider}:${i.subject}`)).toEqual(['cas_test:alice']);
+    } finally {
+      await db.close();
+    }
   });
 
   it('back-channel logout only from allowed proxies-resolved IPs, with a logoutRequest', async () => {
