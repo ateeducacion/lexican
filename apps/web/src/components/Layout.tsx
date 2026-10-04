@@ -83,7 +83,12 @@ export function Layout() {
         <div className={styles.band} />
         {navigation.state === 'loading' && <div className={styles.progress} aria-hidden="true" />}
       </header>
-      <main id="contenido" ref={main} tabIndex={-1} className={`container ${styles.main}`}>
+      <main
+        id="contenido"
+        ref={main}
+        tabIndex={-1}
+        className={`container ${styles.main} ${__DEMO__ ? styles.mainDemo : ''}`}
+      >
         <Outlet />
       </main>
       {user && (
@@ -159,8 +164,8 @@ function DemoNotice() {
       {!hidden && (
         <aside className={`no-print ${styles.demo}`} aria-label="Entorno de demostración">
           <p>
-            <strong>Entorno de demostración.</strong> Los usuarios, contraseñas y datos son
-            ficticios y se guardan únicamente en este navegador.
+            <strong>Demostración.</strong> Usuarios y datos ficticios, guardados solo en este
+            navegador.
           </p>
           <button type="button" className="btn btn-sm" onClick={() => setConfirm(true)}>
             Restablecer datos de demostración

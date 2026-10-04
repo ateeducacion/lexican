@@ -20,6 +20,9 @@ test('§77 cross-role journey: student sends, teacher comments and publishes, st
 
   await test.step('teacher reviews, comments and publishes', async () => {
     await app.login('teacher');
+    // The floating demo notice sits bottom-right, over the review panel on short screens: hide it as a user would.
+    const notice = page.getByRole('button', { name: 'Ocultar el aviso de demostración' });
+    if (await notice.isVisible()) await notice.click();
     await app.goto('/aulas');
     await page.getByRole('link', { name: CLASSROOM, exact: true }).click();
     await page.getByRole('link', { name: /^Revisar envíos/ }).click();

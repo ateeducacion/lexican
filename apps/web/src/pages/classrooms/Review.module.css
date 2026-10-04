@@ -390,8 +390,8 @@
   .queue {
     grid-area: queue;
     position: sticky;
-    top: var(--space-3);
-    max-height: calc(100vh - 2 * var(--space-3));
+    top: calc(var(--header-h) + var(--space-3));
+    max-height: calc(100vh - var(--header-h) - 2 * var(--space-3));
     overflow-y: auto;
   }
   .snapshot {
@@ -409,7 +409,7 @@
   }
   .panel {
     position: sticky;
-    top: var(--space-3);
+    top: calc(var(--header-h) + var(--space-3));
   }
 }
 

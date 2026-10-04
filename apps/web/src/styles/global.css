@@ -44,7 +44,15 @@
   --space-5: 1.5rem;
   --space-6: 2rem;
   --measure: 72ch;
+  /* Height of the fixed top bar (blue bar + turquoise band); sticky panels sit below it. */
+  --header-h: 70px;
   --page: 1440px;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --header-h: 62px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {

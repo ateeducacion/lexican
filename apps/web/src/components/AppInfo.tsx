@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import type { GlobalRole } from '@lexican/core';
 import { APP_COMMIT, APP_VERSION, SOURCE_URL } from '../env.ts';
@@ -7,8 +7,11 @@ import { Dialog } from './ui.tsx';
 
 /** "?" (help adapted to the role) and "i" (version, licence, source code) buttons for the top bar. */
 export function AppInfo({ role }: { role: GlobalRole | null }) {
-  const [open, setOpen] = useState<'help' | 'about' | null>(null);
+  const [open, setOpen] = useState<'help' | 'about' | 'licenses' | null>(null);
   const close = () => setOpen(null);
+  // A native dialog also fires `close` when we switch to another one: only clear our own state.
+  const closeIf = (which: 'help' | 'about' | 'licenses') => () =>
+    setOpen((current) => (current === which ? null : current));
   return (
     <div className={styles.infoButtons}>
       <button
@@ -36,7 +39,7 @@ export function AppInfo({ role }: { role: GlobalRole | null }) {
         </svg>
       </button>
 
-      <Dialog open={open === 'help'} onClose={close} title="¿Qué puedo hacer?">
+      <Dialog open={open === 'help'} onClose={closeIf('help')} title="¿Qué puedo hacer?">
         {role === 'teacher' || role === 'admin' ? <TeacherHelp onNavigate={close} /> : null}
         {role === 'student' || role === 'support' ? <StudentHelp onNavigate={close} /> : null}
         {role === null && (
@@ -52,47 +55,65 @@ export function AppInfo({ role }: { role: GlobalRole | null }) {
         </div>
       </Dialog>
 
-      <Dialog open={open === 'about'} onClose={close} title="Acerca de LexiCán">
+      <Dialog open={open === 'about'} onClose={closeIf('about')} title="Acerca de LexiCán">
+        <div className={styles.aboutHero}>
+          <span className="wordmark" aria-hidden="true">
+            Lexi<span>Cán</span>
+          </span>
+          <span>
+            Versión {APP_VERSION} <span className={styles.commit}>({APP_COMMIT})</span>
+          </span>
+        </div>
         <p>
           Diccionarios personales y de aula para aprender vocabulario: cada alumno crea sus palabras
           y el profesorado las revisa y publica en el diccionario de la clase.
         </p>
-        <dl className={styles.about}>
-          <dt>Versión</dt>
-          <dd>
-            {APP_VERSION} <span className="muted">({APP_COMMIT})</span>
-          </dd>
-          <dt>Licencia</dt>
-          <dd>
-            Software libre bajo{' '}
-            <a href={`${SOURCE_URL}/blob/main/LICENSE`} rel="license">
-              GNU AGPL-3.0 o posterior
+        <ul className={styles.aboutLinks}>
+          <li>
+            <a href={SOURCE_URL}>
+              <svg viewBox="0 0 16 16" aria-hidden="true" className={styles.github}>
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+              </svg>
+              <span>
+                Código fuente
+                <small>github.com/ateeducacion/lexican</small>
+              </span>
             </a>
-          </dd>
-          <dt>Código fuente</dt>
-          <dd>
-            <a href={SOURCE_URL}>github.com/ateeducacion/lexican</a>
-          </dd>
-          <dt>Componentes de terceros</dt>
-          <dd>
-            <a href={`${SOURCE_URL}/blob/main/THIRD_PARTY_NOTICES.md`}>Licencias y avisos</a>
-          </dd>
-          <dt>Privacidad</dt>
-          <dd>
-            {__DEMO__
-              ? 'Demostración: los datos son ficticios y solo se guardan en este navegador.'
-              : 'Sin analítica ni servicios de terceros. '}
-            {!__DEMO__ && <a href={`${SOURCE_URL}/blob/main/docs/PRIVACY.md`}>Más información</a>}
-          </dd>
-          <dt>Desarrollo</dt>
-          <dd>Área de Tecnología Educativa · Gobierno de Canarias</dd>
-        </dl>
+          </li>
+          <li>
+            <button type="button" onClick={() => setOpen('licenses')}>
+              <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.lineIcon}>
+                <path d="M7 3h7l5 5v13H7z" />
+                <path d="M14 3v5h5M10 13h6M10 17h6" />
+              </svg>
+              <span>
+                Licencias
+                <small>GNU AGPL-3.0 o posterior y componentes de terceros</small>
+              </span>
+            </button>
+          </li>
+        </ul>
+        <p className="small muted">
+          {__DEMO__
+            ? 'Demostración: los datos son ficticios y solo se guardan en este navegador.'
+            : 'Sin analítica ni servicios de terceros.'}
+        </p>
+        <div className={styles.aboutFooter}>
+          <img src={`${import.meta.env.BASE_URL}ate-logo.png`} alt="" className={styles.ateLogo} />
+          <span>Área de Tecnología Educativa · Gobierno de Canarias</span>
+        </div>
         <div className="row">
           <button type="button" className="btn btn-primary" onClick={close}>
             Cerrar
           </button>
         </div>
       </Dialog>
+
+      <LicensesPanel
+        open={open === 'licenses'}
+        onClose={closeIf('licenses')}
+        onBack={() => setOpen('about')}
+      />
     </div>
   );
 }
@@ -160,5 +181,85 @@ function TeacherHelp({ onNavigate }: { onNavigate: () => void }) {
         propio.
       </li>
     </ol>
+  );
+}
+
+interface BundledPackage {
+  name: string;
+  version: string;
+  license: string;
+}
+
+/** Right-hand side panel with LexiCán's licence and the third-party packages bundled in this build. */
+function LicensesPanel({
+  open,
+  onClose,
+  onBack,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onBack: () => void;
+}) {
+  const ref = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
+  const [packages, setPackages] = useState<BundledPackage[] | null>(null);
+  useEffect(() => {
+    const d = ref.current;
+    if (!d) return;
+    if (open && !d.open) d.showModal();
+    if (!open && d.open) d.close();
+    if (open && !packages)
+      fetch(`${import.meta.env.BASE_URL}licenses.json`)
+        .then((r) => (r.ok ? (r.json() as Promise<BundledPackage[]>) : []))
+        .then(setPackages)
+        .catch(() => setPackages([]));
+  }, [open, packages]);
+  return (
+    <dialog ref={ref} className={styles.drawer} aria-labelledby={titleId} onClose={onClose}>
+      <div className={styles.drawerHead}>
+        <button type="button" className="btn btn-sm" onClick={onBack}>
+          ← Acerca de
+        </button>
+        <button type="button" className={styles.drawerClose} onClick={onClose} aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6 6 18" />
+          </svg>
+        </button>
+      </div>
+      <h2 id={titleId}>Licencias</h2>
+      <section className={styles.licenseCard}>
+        <span className="eyebrow">LexiCán</span>
+        <p>
+          <strong>GNU Affero General Public License v3.0 o posterior</strong> (AGPL-3.0-or-later).
+          Puedes usar, estudiar, modificar y compartir LexiCán; si ofreces una versión modificada a
+          través de la red, debes publicar su código fuente con la misma licencia.
+        </p>
+        <p className="row">
+          <a href={`${SOURCE_URL}/blob/main/LICENSE`}>Texto completo de la licencia</a>
+          <a href={`${SOURCE_URL}/blob/main/THIRD_PARTY_NOTICES.md`}>Avisos de terceros</a>
+        </p>
+      </section>
+      <h3>Componentes incluidos en esta aplicación</h3>
+      {!packages ? (
+        <p className="muted">Cargando…</p>
+      ) : (
+        <ul className={styles.packageList}>
+          {packages.map((p) => (
+            <li key={p.name}>
+              <span>
+                <strong>{p.name}</strong> <span className="muted small">{p.version}</span>
+              </span>
+              <span className="chip">{p.license}</span>
+            </li>
+          ))}
+          <li>
+            <span>
+              <strong>Ilustraciones de la demostración</strong>
+            </span>
+            <span className="chip">CC0-1.0</span>
+          </li>
+        </ul>
+      )}
+    </dialog>
   );
 }
