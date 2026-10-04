@@ -8,8 +8,8 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import { getApi } from '../api/index.ts';
-import { APP_COMMIT, APP_VERSION, SOURCE_URL } from '../env.ts';
 import { ROLE_LABEL, type RootData } from '../session.ts';
+import { AppInfo } from './AppInfo.tsx';
 import styles from './Layout.module.css';
 import { Dialog, NotifyProvider } from './ui.tsx';
 
@@ -64,6 +64,7 @@ export function Layout() {
               ))}
             </nav>
           )}
+          <AppInfo role={user?.globalRole ?? null} />
           {user && (
             <div className={styles.user}>
               <span className={styles.avatar} aria-hidden="true">
@@ -85,12 +86,6 @@ export function Layout() {
       <main id="contenido" ref={main} tabIndex={-1} className={`container ${styles.main}`}>
         <Outlet />
       </main>
-      <footer role="contentinfo" className={`container ${styles.footer}`}>
-        <span>
-          LexiCán {APP_VERSION} ({APP_COMMIT})
-        </span>
-        <a href={SOURCE_URL}>Código fuente</a>
-      </footer>
       {user && (
         <nav aria-label="Principal (móvil)" className={styles.bottomNav}>
           {sections.map((s) => (

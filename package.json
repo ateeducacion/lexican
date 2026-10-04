@@ -42,7 +42,8 @@
     "audit": "npm audit --omit=dev --audit-level=high",
     "licenses": "node scripts/licenses.mjs",
     "sbom": "npm sbom --sbom-format spdx --omit dev > sbom.spdx.json",
-    "metrics": "node scripts/metrics.mjs"
+    "metrics": "node scripts/metrics.mjs",
+    "og-image": "npm run build:demo && node scripts/make-og-image.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

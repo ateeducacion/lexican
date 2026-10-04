@@ -51,6 +51,8 @@ scan('apps/web/dist-demo');
 const demoIndex = existsSync('apps/web/dist-demo/index.html')
   ? readFileSync('apps/web/dist-demo/index.html', 'utf8')
   : '';
+if (!existsSync('apps/web/dist-demo/og-image.jpg')) fail('missing og-image.jpg in the demo build');
+if (!demoIndex.includes('og:image')) fail('demo index.html has no og:image');
 if (!demoIndex.includes('/lexican/'))
   fail('demo index.html is not built for the /lexican/ base path');
 
