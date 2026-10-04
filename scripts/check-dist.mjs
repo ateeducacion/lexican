@@ -1,6 +1,10 @@
-// Guards the published bundles (§87, §59):
-// - demo (apps/web/dist-demo): static, no secrets, no internal hosts, no API calls;
-// - production web (apps/web/dist): no PGlite and no demo passwords.
+// Guards the published bundles (§87, §59). Every text file is scanned: JS chunks, the demo Web Worker chunk, CSS,
+// HTML and sourcemaps (whose embedded sources would leak anything the code contains).
+// - demo (apps/web/dist-demo): static, no secrets, no internal hosts; the public test CAS host is the one external
+//   address allowed, and only here;
+// - production web (apps/web/dist): no PGlite, WASM, worker, demo API or demo passwords (it may name the test CAS:
+//   the same SPA serves the local Docker profile; the server decides, and refuses it in production);
+// - API bundle (apps/api/dist): no secrets, no test CAS host baked in except as the APP_ENV=local default.
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
@@ -48,6 +52,10 @@ function scan(dir, extra = []) {
 }
 
 scan('apps/web/dist-demo');
+const demoFiles = existsSync('apps/web/dist-demo') ? files('apps/web/dist-demo') : [];
+if (!demoFiles.some((f) => /assets\/worker-[\w-]+\.js$/.test(f)))
+  fail('demo build has no Web Worker chunk');
+if (!demoFiles.some((f) => f.endsWith('.wasm'))) fail('demo build has no PGlite WASM asset');
 const demoIndex = existsSync('apps/web/dist-demo/index.html')
   ? readFileSync('apps/web/dist-demo/index.html', 'utf8')
   : '';
@@ -60,10 +68,18 @@ if (existsSync('apps/web/dist')) {
   scan('apps/web/dist', [
     [/pglite/i, 'PGlite in the production bundle'],
     [/contraseña: |alumno1@ejemplo\.com/, 'demo credentials in the production bundle'],
+    [
+      /lexican-demo-database|lexican-demo-media|Origen de la petición no permitido/,
+      'demo API in the production bundle',
+    ],
   ]);
   if (files('apps/web/dist').some((f) => f.endsWith('.wasm')))
     fail('WASM in the production bundle');
+  if (files('apps/web/dist').some((f) => /worker-[\w-]+\.js$/.test(f)))
+    fail('worker in the production bundle');
 }
+
+if (existsSync('apps/api/dist')) scan('apps/api/dist');
 
 if (failures) process.exit(1);
 console.log('✓ dist checks passed');
