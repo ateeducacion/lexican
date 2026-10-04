@@ -1,3 +1,4 @@
+import { isChunkLoadError, reloadForNewVersion } from '../staleReload.ts';
 import { createHttpClient } from './http.ts';
 import type { WebApi } from './types.ts';
 
@@ -15,6 +16,9 @@ export function getApi(): Promise<WebApi> {
         .then((m) => m.createDemoClient())
         .catch((e: unknown) => {
           api = null; // a failed or aborted load is retried on the next call
+          // A chunk removed by a newer deployment: reload once to get the current version.
+          if (isChunkLoadError(e) && reloadForNewVersion())
+            return new Promise<never>(() => undefined);
           throw e;
         })
     : Promise.resolve(createHttpClient());

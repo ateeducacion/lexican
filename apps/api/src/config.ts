@@ -22,6 +22,8 @@ const Env = z.object({
   MEDIA_DIR: z.string().min(1),
   MAX_UPLOAD_MB: z.coerce.number().positive().max(100).default(10),
   MEDIA_QUOTA_MB_PER_DAY: z.coerce.number().positive().max(100_000).default(100),
+  /** Password-login attempts per minute and IP (dev/test provider only). */
+  LOGIN_RATE_LIMIT: z.coerce.number().int().min(1).max(10_000).default(10),
   CAS_BASE_URL: optionalUrl,
   CAUCE_URL: optionalUrl,
   CAUCE_TOKEN: z.string().optional(),
@@ -59,6 +61,7 @@ export interface Config {
   trustProxy: false | number | string[];
   mediaQuotaBytesPerDay: number;
   migrateOnStart: boolean;
+  loginRateLimit: number;
 }
 
 /** Parse and validate the environment; throws a readable error (never echoing values) when invalid. */
@@ -114,6 +117,7 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
     trustProxy,
     mediaQuotaBytesPerDay: Math.round(e.MEDIA_QUOTA_MB_PER_DAY * 1024 * 1024),
     migrateOnStart: e.MIGRATE_ON_START,
+    loginRateLimit: e.LOGIN_RATE_LIMIT,
   };
 }
 
