@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
+  formatSchoolYear,
   isClassroomCurrent,
+  lastCurrentSchoolYear,
   schoolYearOf,
   submissionWindowState,
   validityToReactivate,
@@ -70,4 +72,19 @@ describe('RULE-009 submission window', () => {
   });
   it('closes when the classroom expired', () =>
     expect(submissionWindowState(base, d('2025-09-10'))).toBe('expired'));
+});
+
+describe('school year helpers', () => {
+  it('formats a school year label', () => expect(formatSchoolYear(2024)).toBe('2024-2025'));
+  it('last current school year is start + validity - 1, none when timeless', () => {
+    expect(lastCurrentSchoolYear({ schoolYear: 2022, validityYears: 3, timeless: false })).toBe(
+      2024,
+    );
+    expect(
+      lastCurrentSchoolYear({ schoolYear: 2022, validityYears: 3, timeless: true }),
+    ).toBeNull();
+  });
+  it('reactivating a classroom of a future school year needs at least one year', () => {
+    expect(validityToReactivate(2026, d('2024-10-01'))).toBe(1);
+  });
 });
