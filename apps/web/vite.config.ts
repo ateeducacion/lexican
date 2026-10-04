@@ -17,10 +17,15 @@ export default defineConfig(({ mode }) => ({
   base: mode === 'demo' ? (process.env.DEMO_BASE ?? '/lexican/') : '/',
   plugins: [react()],
   define: {
+    __DEMO__: JSON.stringify(mode === 'demo'),
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version ?? '2.0.0'),
     __APP_COMMIT__: JSON.stringify(commit),
   },
   optimizeDeps: { exclude: ['@electric-sql/pglite'] },
-  build: { target: 'es2022', outDir: mode === 'demo' ? 'dist-demo' : 'dist', sourcemap: true },
+  build: {
+    target: 'es2022',
+    outDir: mode === 'demo' ? 'dist-demo' : 'dist',
+    sourcemap: mode === 'demo',
+  },
   server: { proxy: { '/api': 'http://localhost:3000', '/media': 'http://localhost:3000' } },
 }));

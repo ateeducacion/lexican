@@ -6,7 +6,8 @@ test('§77 cross-role journey: student sends, teacher comments and publishes, st
   page,
   app,
 }) => {
-  const word = 'tenderete';
+  // Distinct from student.spec.ts: production E2E shares one database across tests.
+  const word = 'ventorrillo';
   const comment = 'Muy bien: añade un ejemplo de uso la próxima vez.';
 
   await test.step('student 1 creates and sends an entry', async () => {
@@ -34,7 +35,7 @@ test('§77 cross-role journey: student sends, teacher comments and publishes, st
 
   await test.step('teacher finds it in the classroom viewer', async () => {
     await page.getByRole('link', { name: `← ${CLASSROOM}` }).click();
-    await page.getByRole('searchbox', { name: 'Buscar una palabra' }).fill('TENDERETE');
+    await page.getByRole('searchbox', { name: 'Buscar una palabra' }).fill(word.toUpperCase());
     await page.getByRole('button', { name: 'Buscar' }).click();
     await expect(page.getByRole('link', { name: word, exact: true })).toBeVisible();
     await app.logout();

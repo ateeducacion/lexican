@@ -2,7 +2,6 @@ import type { UserView, VocabularyValue } from '@lexican/core';
 import { redirect, useRouteLoaderData } from 'react-router';
 import { getApi } from './api/index.ts';
 import { readDemoSession } from './demo/session.ts';
-import { IS_DEMO } from './env.ts';
 
 export interface RootData {
   user: UserView | null;
@@ -14,7 +13,7 @@ let vocabCache: VocabularyValue[] | null = null;
 /** Root loader: who is signed in, plus the controlled vocabularies (cached for the session). */
 export async function rootLoader(): Promise<RootData> {
   // Demo without a session: render immediately; PGlite starts loading from the login page.
-  if (IS_DEMO && !readDemoSession()) return { user: null, vocab: [] };
+  if (__DEMO__ && !readDemoSession()) return { user: null, vocab: [] };
   const api = await getApi();
   const { user } = await api.me({});
   if (user && !vocabCache) vocabCache = await api.vocabularies({});
@@ -33,7 +32,7 @@ export function useSession(): RootData & { user: UserView } {
 
 /** Loader guard for authenticated routes; keeps the requested path to come back after login. */
 export async function requireUserLoader(request: Request): Promise<UserView> {
-  const { user } = IS_DEMO && !readDemoSession() ? { user: null } : await (await getApi()).me({});
+  const { user } = __DEMO__ && !readDemoSession() ? { user: null } : await (await getApi()).me({});
   if (!user) {
     const url = new URL(request.url);
     throw redirect(`/entrar?volver=${encodeURIComponent(url.pathname + url.search)}`);

@@ -8,7 +8,7 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import { getApi } from '../api/index.ts';
-import { APP_COMMIT, APP_VERSION, IS_DEMO, SOURCE_URL } from '../env.ts';
+import { APP_COMMIT, APP_VERSION, SOURCE_URL } from '../env.ts';
 import { ROLE_LABEL, type RootData } from '../session.ts';
 import styles from './Layout.module.css';
 import { Dialog, NotifyProvider } from './ui.tsx';
@@ -70,7 +70,7 @@ export function Layout() {
         </div>
         {navigation.state === 'loading' && <div className={styles.progress} aria-hidden="true" />}
       </header>
-      {IS_DEMO && <DemoBanner />}
+      {__DEMO__ && <DemoBanner />}
       <main id="contenido" ref={main} tabIndex={-1} className={`container ${styles.main}`}>
         <Outlet />
       </main>

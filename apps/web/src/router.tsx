@@ -1,7 +1,6 @@
 import { createBrowserRouter, createHashRouter, redirect, type RouteObject } from 'react-router';
 import { Layout } from './components/Layout.tsx';
 import { RouteError } from './pages/RouteError.tsx';
-import { IS_DEMO } from './env.ts';
 import { requireUserLoader, rootLoader } from './session.ts';
 
 /** Every page module exports `Component` and optionally `loader`; pages load on demand. */
@@ -110,4 +109,4 @@ const routes: RouteObject[] = [
 ];
 
 // Hash routing on GitHub Pages (no server rewrites, no 404 hack); real paths in production (§60).
-export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)(routes);
+export const router = (__DEMO__ ? createHashRouter : createBrowserRouter)(routes);

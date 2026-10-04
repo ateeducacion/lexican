@@ -3,12 +3,11 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { redirect, useNavigate, useSearchParams } from 'react-router';
 import { getApi } from '../api/index.ts';
 import { ErrorMessage, Field, PageTitle, useAction } from '../components/ui.tsx';
-import { IS_DEMO } from '../env.ts';
 import styles from './Login.module.css';
 
 export async function loader() {
   // Production: no PGlite involved, the call is cheap. Demo: do not block the first paint on the database.
-  if (!IS_DEMO) {
+  if (!__DEMO__) {
     const { user } = await (await getApi()).me({});
     if (user) throw redirect('/');
   }
@@ -25,12 +24,12 @@ export function Component() {
   const [password, setPassword] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [providers, setProviders] = useState<{ cas: boolean; password: boolean }>({
-    cas: !IS_DEMO,
-    password: IS_DEMO,
+    cas: !__DEMO__,
+    password: __DEMO__,
   });
 
   useEffect(() => {
-    if (IS_DEMO) {
+    if (__DEMO__) {
       void getApi(); // start downloading PGlite while the user reads the page
       return;
     }
@@ -107,13 +106,13 @@ export function Component() {
             </Field>
             <ErrorMessage error={login.error} />
             <button type="submit" className="btn btn-primary" disabled={login.busy}>
-              {login.busy ? (IS_DEMO ? 'Preparando la base de datos…' : 'Entrando…') : 'Entrar'}
+              {login.busy ? (__DEMO__ ? 'Preparando la base de datos…' : 'Entrando…') : 'Entrar'}
             </button>
           </form>
         )}
       </section>
 
-      {IS_DEMO && (
+      {__DEMO__ && (
         <section className="card" aria-labelledby="demo-title">
           <h2 id="demo-title">Cuentas de demostración</h2>
           <p className="small">

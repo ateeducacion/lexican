@@ -1,4 +1,3 @@
-import { IS_DEMO } from '../env.ts';
 import { createHttpClient } from './http.ts';
 import type { WebApi } from './types.ts';
 
@@ -11,7 +10,7 @@ let api: Promise<WebApi> | null = null;
  * so the login screen appears immediately (§15); production never bundles it (dead branch).
  */
 export function getApi(): Promise<WebApi> {
-  api ??= IS_DEMO
+  api ??= __DEMO__
     ? import('../demo/client.ts').then((m) => m.createDemoClient())
     : Promise.resolve(createHttpClient());
   return api;
