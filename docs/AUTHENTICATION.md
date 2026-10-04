@@ -112,7 +112,7 @@ la API no arranca sin ella. Detrás de un proxy inverso hay que fijar `TRUST_PRO
 
 ## Proveedor de contraseña (desarrollo)
 
-- `AUTH_DEV_LOGIN=true` habilita `POST /api/auth/login` con las cuentas sembradas por `npm run db:seed -- --demo`
+- `AUTH_DEV_LOGIN=true` habilita `POST /api/auth/login` con las cuentas sembradas por `bun run db:seed --demo`
   (las mismas de la demo).
 - `loadConfig()` **rechaza arrancar** con `AUTH_DEV_LOGIN=true` en `APP_ENV=production` (el valor por defecto);
   `db:seed --demo` también se niega si `APP_ENV` no es `local` o `test`.

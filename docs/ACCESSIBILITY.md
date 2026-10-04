@@ -16,7 +16,7 @@ revisión manual de abajo.
 | Móvil (Pixel 7): crear y buscar sin *scroll* horizontal | `e2e/student.spec.ts` (`@mobile`, proyecto `demo-mobile`) |
 | Chromium, Firefox y WebKit | `playwright.config.ts` |
 
-Ejecutar: `npm run e2e:demo` ([TESTING.md](TESTING.md)).
+Ejecutar: `bun run e2e:demo` ([TESTING.md](TESTING.md)).
 
 ## Prácticas en el código
 

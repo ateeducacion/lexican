@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "One-off MariaDB/MySQL (legacy Laravel) → PostgreSQL migration tool. Not a runtime dependency.",
+  "description": "One-off MariaDB/MySQL (legacy Laravel) \u2192 PostgreSQL migration tool. Not a runtime dependency.",
   "license": "AGPL-3.0-or-later",
   "dependencies": {
     "@lexican/core": "*",
@@ -11,8 +11,5 @@
     "drizzle-orm": "^0.45.3",
     "mysql2": "^3.24.5",
     "pg": "^8.23.1"
-  },
-  "scripts": {
-    "migrate:legacy": "bun --no-env-file src/cli.ts"
   }
 }

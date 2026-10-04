@@ -5,6 +5,12 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
 
 ## [Sin publicar]
 
+### Cambiado — Bun como gestor de paquetes
+
+- `bun.lock` sustituye a `package-lock.json`; `bun ci` en CI y Docker, `bun run` para los scripts, `bun audit`,
+  licencias con `bun pm licenses` y SBOM SPDX con `scripts/sbom.mjs`. Dependabot usa el ecosistema `bun`. Node 24
+  sigue ejecutando Vite, Vitest y Playwright.
+
 ### Cambiado — una API para Docker y Pages ([ADR 0009](docs/adr/0009-hono-bun-worker.md))
 
 - La API pasa de Fastify a **Hono** (`packages/http`) y el servidor se ejecuta con **Bun 1.4.2**; imagen Alpine sin

@@ -25,8 +25,8 @@ Esta versión (2.x) es una reconstrucción completa del Laravel 8 + Voyager orig
 
 | Pieza | Versión | Nota |
 |---|---|---|
-| Bun | `1.4.2` | runtime del servidor (imagen `oven/bun:1.4.2-alpine`); nunca APIs de Bun en paquetes compartidos |
-| Node.js / npm | `>=24` (CI en 24) | herramientas: instalación (`package-lock.json`), Vite, Vitest, Playwright, auditoría |
+| Bun | `1.4.2` | gestor de paquetes (`bun.lock`, `bun ci`, `linker = "hoisted"`) y runtime del servidor (imagen `oven/bun:1.4.2-alpine`); nunca APIs de Bun en paquetes compartidos |
+| Node.js | `>=24` (CI en 24) | solo ejecuta herramientas: Vite, Vitest y Playwright (que no se pasan a Bun) |
 | TypeScript | `~6.0` | `typescript-eslint` 8.x exige `<6.1`; TypeScript 7 no se adopta hasta que lo soporte. Dependabot lo ignora |
 | React / Vite / react-router | 19.3 / 8.3 / 8.4 | router en modo datos; sin TanStack Query ni Redux |
 | Hono | `^4.13.13` | la API, la misma en el servidor y en el Worker de la demo ([ADR 0009](docs/adr/0009-hono-bun-worker.md)) |
@@ -71,14 +71,14 @@ Detalle: [ARCHITECTURE.md](docs/ARCHITECTURE.md), [DATA-MODEL.md](docs/DATA-MODE
 - **Demo** (GitHub Pages, `/lexican/`): el mismo frontend con `vite build --mode demo`; un Web Worker ejecuta la
   misma API Hono sobre PGlite (IndexedDB) y los medios son Blobs en IndexedDB. Cuentas ficticias. Enrutado por *hash*.
 - El modo se decide en el build (`import.meta.env.MODE`), **nunca** por el nombre del host.
-- El build de producción no puede contener PGlite, WASM, el Worker ni contraseñas demo (`npm run check:dist`).
+- El build de producción no puede contener PGlite, WASM, el Worker ni contraseñas demo (`bun run check:dist`).
 - La demo no es una frontera de seguridad y no debe aparentarlo ([DEMO.md](docs/DEMO.md)).
 
 ## Base de datos y migraciones
 
 - **PostgreSQL es la única base de producción.** PGlite solo en la demo y en los tests.
 - Un único esquema: `packages/db/src/schema.ts`. Sin extensiones de PostgreSQL.
-- Cambiar el esquema: editar `schema.ts` → `npm run db:generate` (drizzle-kit genera SQL en `packages/db/migrations/`)
+- Cambiar el esquema: editar `schema.ts` → `bun run db:generate` (drizzle-kit genera SQL en `packages/db/migrations/`)
   → **revisar el SQL** → commit del SQL y del *snapshot*. **Nunca `drizzle-kit push`.** Nunca editar una migración ya
   publicada en `main`.
 - La demo aplica las mismas migraciones en el navegador (`migrateBundled`). Si un cambio rompe los datos guardados en
@@ -125,7 +125,7 @@ no se silencian. Detalle: [TESTING.md](docs/TESTING.md).
 
 ## Migración legacy
 
-- Herramienta aparte (`tools/legacy-migrator`, `npm run migrate:legacy`): idempotente, con `--dry-run` e informe.
+- Herramienta aparte (`tools/legacy-migrator`, `bun run migrate:legacy`): idempotente, con `--dry-run` e informe.
 - No hay escritura doble ni sincronización con el legacy.
 - No migra NIF/NIE, CIAL ni pasaporte. Los ids legacy no se reutilizan como ids nuevos.
 - Ensayos con datos reales solo fuera del repositorio sobre una copia autorizada.
@@ -155,20 +155,20 @@ teclado a cualquier arrastre. Cero errores de axe no basta: checklist manual en
 ## Comandos
 
 ```bash
-npm ci
+bun ci
 docker compose up -d db          # PostgreSQL local
 cp apps/api/.env.example apps/api/.env
 set -a; . apps/api/.env; set +a  # las CLI y la API leen el entorno, no el fichero
-npm run db:migrate && npm run db:seed -- --demo
-npm run dev:api                  # API en :3000
-npm run dev                      # web en :5173 contra la API
-npm run dev:demo                 # demo (Worker + PGlite), sin backend
+bun run db:migrate && bun run db:seed --demo
+bun run dev:api                  # API en :3000
+bun run dev                      # web en :5173 contra la API
+bun run dev:demo                 # demo (Worker + PGlite), sin backend
 docker compose --profile app up --build   # imagen Bun local: CAS de pruebas + datos ficticios en :3000
-npm run check                    # lint + format:check + typecheck + test
-npm run e2e:demo                 # E2E de la demo
-npm run build && npm run build:demo && npm run check:dist
-npm run db:generate              # nueva migración tras editar schema.ts
-npm run audit && npm run licenses
+bun run check                    # lint + format:check + typecheck + test
+bun run e2e:demo                 # E2E de la demo
+bun run build && bun run build:demo && bun run check:dist
+bun run db:generate              # nueva migración tras editar schema.ts
+bun run audit && bun run licenses
 ```
 
 `make help` lista los atajos. Más en [developers.md](developers.md).

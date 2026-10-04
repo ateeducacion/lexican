@@ -1,7 +1,7 @@
 # Modelo de datos
 
 Fuente de verdad: `packages/db/src/schema.ts`. Migraciones revisables en `packages/db/migrations/` (generadas con
-`npm run db:generate`, aplicadas con `npm run db:migrate`; la demo aplica las mismas en el navegador).
+`bun run db:generate`, aplicadas con `bun run db:migrate`; la demo aplica las mismas en el navegador).
 
 ```mermaid
 erDiagram

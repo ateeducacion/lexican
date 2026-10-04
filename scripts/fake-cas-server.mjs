@@ -5,7 +5,7 @@
 // - GET /p3/serviceValidate?service=…&ticket=… → CAS XML; success only for a known, unused ticket issued for that
 //   exact service. Access-Control-Allow-Origin is sent only for `cors` tickets.
 // - GET /logout?service=… → 302 to service.
-// Usage: node scripts/fake-cas-server.mjs [port]
+// Usage: bun scripts/fake-cas-server.mjs [port]
 import { createServer } from 'node:http';
 
 const port = Number(process.argv[2] ?? 4318);

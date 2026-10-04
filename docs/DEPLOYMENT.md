@@ -31,7 +31,7 @@ puede tocar los datos de un Docker.
 
 `Dockerfile` multi-stage, imágenes fijadas por *digest*:
 
-1. `build` (`node:24-alpine` + binario de Bun 1.4.2): `npm ci`, build de la web (Vite) y de la API (`bun build`: un
+1. `build` (`node:24-alpine` + binario de Bun 1.4.2): `bun ci`, build de la web (Vite) y de la API (`bun build`: un
    bundle autosuficiente con sus dependencias; las migraciones SQL se copian a `apps/api/dist/migrations`).
 2. `runtime` (`oven/bun:1.4.2-alpine`, amd64 y arm64): solo `api/` (bundle) y `web/` (SPA); **sin `node_modules`**;
    usuario `bun` (no root); `VOLUME /data/media`; `EXPOSE 3000`; `HEALTHCHECK` contra `/api/health` (comprueba la
@@ -115,8 +115,8 @@ docker run --rm --env-file lexican.env lexican bun --no-env-file api/cli/migrate
 MIGRATE_ON_START=true
 ```
 
-Desde el repositorio: `npm run db:migrate` (lee `DATABASE_URL`). Vocabularios: `bun --no-env-file api/cli/seed.js` en la
-imagen o `npm run db:seed` desde el repositorio (idempotente). Con varias réplicas, migrar como paso previo y no con
+Desde el repositorio: `bun run db:migrate` (lee `DATABASE_URL`). Vocabularios: `bun --no-env-file api/cli/seed.js` en la
+imagen o `bun run db:seed` desde el repositorio (idempotente). Con varias réplicas, migrar como paso previo y no con
 `MIGRATE_ON_START`.
 
 ## Proxy inverso y TLS

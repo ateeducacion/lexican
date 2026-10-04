@@ -48,8 +48,8 @@ Más detalles en [docs/DEMO.md](docs/DEMO.md).
 Requisitos: Node.js 24 o superior, Bun 1.4.2 (API) y Docker.
 
 ```bash
-npm ci
-npm run dev:demo                         # demo sin backend: http://localhost:5173/lexican/
+bun ci
+bun run dev:demo                         # demo sin backend: http://localhost:5173/lexican/
 ```
 
 Con API y PostgreSQL:
@@ -57,10 +57,10 @@ Con API y PostgreSQL:
 ```bash
 docker compose up -d db
 cp apps/api/.env.example apps/api/.env      # APP_ENV=local: CAS de pruebas + datos ficticios
-npm run db:migrate
-npm run db:seed -- --demo                # vocabularios + cuentas y datos ficticios
-npm run dev:api                          # API en http://localhost:3000
-npm run dev                              # en otra terminal: web en http://localhost:5173
+bun run db:migrate
+bun run db:seed --demo                # vocabularios + cuentas y datos ficticios
+bun run dev:api                          # API en http://localhost:3000
+bun run dev                              # en otra terminal: web en http://localhost:5173
 ```
 
 O todo en Docker, como en producción pero con el perfil local: `docker compose --profile app up --build`

@@ -52,21 +52,21 @@ export default defineConfig({
       // build uses the public test CAS. Nothing else differs.
       // E2E_DEMO_PREBUILT: test the already-built artifact as is (Pages workflow).
       command: process.env.E2E_DEMO_PREBUILT
-        ? 'node scripts/static-pages-server.mjs 4317'
-        : 'VITE_CAS_URL=http://localhost:4318 npm run build:demo && node scripts/static-pages-server.mjs 4317',
+        ? 'bun scripts/static-pages-server.mjs 4317'
+        : 'VITE_CAS_URL=http://localhost:4318 bun run build:demo && bun scripts/static-pages-server.mjs 4317',
       url: 'http://localhost:4317/lexican/',
       reuseExistingServer: !CI,
       timeout: 180_000,
     },
     {
-      command: 'node scripts/fake-cas-server.mjs 4318',
+      command: 'bun scripts/fake-cas-server.mjs 4318',
       url: 'http://localhost:4318/health',
       reuseExistingServer: !CI,
     },
     ...(prod
       ? [
           {
-            command: 'node scripts/e2e-prod-server.mjs',
+            command: 'bun scripts/e2e-prod-server.mjs',
             url: 'http://localhost:3100/api/health',
             reuseExistingServer: !CI,
             timeout: 240_000,

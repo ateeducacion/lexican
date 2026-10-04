@@ -1,10 +1,11 @@
 // Reproducible metrics for docs/MODERNIZATION-REPORT.md: upstream (legacy snapshot) vs the working tree.
 // Every number comes from git, the file system or a build; nothing is typed by hand (§98).
-// Usage: npm run build && npm run build:demo && node scripts/metrics.mjs > metrics.json
+// Usage: bun run build && bun run build:demo && bun scripts/metrics.mjs > metrics.json
 import { execFileSync, execSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { join } from 'node:path';
+import { packages } from './deps.mjs';
 
 const git = (...args) =>
   execFileSync('git', args, { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 }).trim();
@@ -85,12 +86,8 @@ const src = walk('.', (p) =>
 );
 const tests = src.filter((p) => /\.test\.tsx?$/.test(p));
 const rootPkg = JSON.parse(readFileSync('package.json', 'utf8'));
-const prodDeps = JSON.parse(
-  execFileSync('npm', ['query', ':root .prod'], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }),
-).filter((p) => !p.name.startsWith('@lexican/'));
-const allDeps = JSON.parse(
-  execFileSync('npm', ['query', '*'], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }),
-).filter((p) => !p.name?.startsWith('@lexican/'));
+const prodDeps = packages({ prod: true });
+const allDeps = packages({ prod: false });
 const workspaceDirect = new Set(
   [
     'package.json',
@@ -151,16 +148,17 @@ const modern = {
   webDemoBundle: bundle('apps/web/dist-demo'),
 };
 
-// npm audit exits non-zero when it finds vulnerabilities; its JSON is on stdout either way.
+// bun audit exits non-zero when it finds vulnerabilities; its JSON is on stdout either way.
 const auditJson = (() => {
   try {
-    return execSync('npm audit --omit=dev --json', { encoding: 'utf8' });
+    return execSync('bun audit --json', { encoding: 'utf8' });
   } catch (err) {
     return err.stdout?.toString() ?? '{}';
   }
 })();
 const audit = {
-  productionVulnerabilities: JSON.parse(auditJson).metadata?.vulnerabilities?.total ?? null,
+  // bun audit --json: { "<package>": [advisory, …] } (all dependencies, dev included).
+  vulnerabilities: Object.values(JSON.parse(auditJson)).flat().length,
 };
 
 console.log(

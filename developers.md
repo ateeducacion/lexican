@@ -5,27 +5,27 @@ rama `upstream` y no aplican aquí. Normas del repositorio: [AGENTS.md](AGENTS.m
 
 ## Requisitos
 
-- Bun 1.4.2 (runtime de la API y de sus CLI: <https://bun.com/docs/installation>).
-- Node.js 24 o superior (`engines` en `package.json`) y npm: instalación, Vite, Vitest y Playwright.
+- Bun 1.4.2: gestor de paquetes (`bun.lock`) y runtime de la API y sus CLI (<https://bun.com/docs/installation>).
+- Node.js 24 o superior (`engines` en `package.json`): ejecuta Vite, Vitest y Playwright, que no se pasan a Bun.
 - Docker, solo para PostgreSQL local (y MariaDB si se prueba la migración).
-- Navegadores de Playwright para los E2E: `npx playwright install chromium firefox webkit`.
+- Navegadores de Playwright para los E2E: `bunx playwright install chromium firefox webkit`.
 
 ## Puesta en marcha
 
 ```bash
-npm ci
+bun ci
 cp apps/api/.env.example apps/api/.env        # valores ficticios para desarrollo
 make up                                       # = docker compose up -d db (PostgreSQL 18 en :5432)
-npm run db:migrate
-npm run db:seed -- --demo                     # vocabularios + cuentas y datos ficticios
-npm run dev:api                               # API (Bun --watch) en :3000; db:* y dev:api leen apps/api/.env
-npm run dev                                   # otra terminal: Vite en :5173, /api y /media van a :3000
+bun run db:migrate
+bun run db:seed --demo                     # vocabularios + cuentas y datos ficticios
+bun run dev:api                               # API (Bun --watch) en :3000; db:* y dev:api leen apps/api/.env
+bun run dev                                   # otra terminal: Vite en :5173, /api y /media van a :3000
 ```
 
 Entra en <http://localhost:5173> con las cuentas de la demo (`AUTH_DEV_LOGIN=true`) o con «Entrar con CAS de pruebas»
 (`alice`/`pwd`, `bob`/`pwd` en el CAS público; el `.env` de ejemplo usa `APP_ENV=local`).
 
-Sin backend: `npm run dev:demo` (<http://localhost:5173/lexican/>): la API Hono y PGlite en un Web Worker.
+Sin backend: `bun run dev:demo` (<http://localhost:5173/lexican/>): la API Hono y PGlite en un Web Worker.
 
 Imagen completa (PostgreSQL + API Bun + SPA): `docker compose --profile app up --build` → <http://localhost:3000>, con
 `APP_ENV=local`: migra, siembra los datos ficticios y activa el CAS de pruebas y el acceso con contraseña. Producción
@@ -51,20 +51,20 @@ Los paquetes se importan como TypeScript fuente (sin compilar entre ellos); la A
 
 | Script | Qué hace |
 |---|---|
-| `npm run dev` / `dev:demo` / `dev:api` | Vite (producción), Vite (demo), API con recarga |
-| `npm run build` | web (`apps/web/dist`) + API (`apps/api/dist`) |
-| `npm run build:demo` / `preview:demo` | demo estática (`apps/web/dist-demo`) / servirla como Pages en http://localhost:4317/lexican/ (sin *fallback*) |
-| `npm run check` | `lint` + `format:check` + `typecheck` + `test` |
-| `npm run lint` / `format` / `format:check` / `typecheck` | ESLint, Prettier, `tsc` |
-| `npm test` / `test:watch` / `test:coverage` | Vitest |
-| `npm run test:contracts` / `test:integration` / `test:migration` | Vitest de `packages/app`, `apps/api`, `tools` |
-| `npm run e2e` / `e2e:demo` | Playwright: todo / solo proyectos `demo-*` |
-| `npm run db:generate` | genera una migración SQL a partir de `schema.ts` |
-| `npm run db:migrate` / `db:seed` | aplica migraciones / siembra vocabularios (`-- --demo` añade datos ficticios) |
-| `npm run migrate:legacy -- …` | migrador legacy ([docs/MIGRATION.md](docs/MIGRATION.md)) |
-| `npm run check:dist` | revisa los bundles (secretos, hosts, base `/lexican/`, PGlite fuera de producción) |
-| `npm run audit` / `licenses` / `sbom` | avisos de seguridad / licencias de producción / SBOM SPDX |
-| `npm run metrics` | métricas `upstream` vs árbol actual para el informe de modernización |
+| `bun run dev` / `dev:demo` / `dev:api` | Vite (producción), Vite (demo), API con recarga |
+| `bun run build` | web (`apps/web/dist`) + API (`apps/api/dist`) |
+| `bun run build:demo` / `preview:demo` | demo estática (`apps/web/dist-demo`) / servirla como Pages en http://localhost:4317/lexican/ (sin *fallback*) |
+| `bun run check` | `lint` + `format:check` + `typecheck` + `test` |
+| `bun run lint` / `format` / `format:check` / `typecheck` | ESLint, Prettier, `tsc` |
+| `bun run test` / `test:watch` / `test:coverage` | Vitest |
+| `bun run test:contracts` / `test:integration` / `test:migration` | Vitest de `packages/app`, `apps/api`, `tools` |
+| `bun run e2e` / `e2e:demo` | Playwright: todo / solo proyectos `demo-*` |
+| `bun run db:generate` | genera una migración SQL a partir de `schema.ts` |
+| `bun run db:migrate` / `db:seed` | aplica migraciones / siembra vocabularios (`-- --demo` añade datos ficticios) |
+| `bun run migrate:legacy …` | migrador legacy ([docs/MIGRATION.md](docs/MIGRATION.md)) |
+| `bun run check:dist` | revisa los bundles (secretos, hosts, base `/lexican/`, PGlite fuera de producción) |
+| `bun run audit` / `licenses` / `sbom` | avisos de seguridad / licencias de producción / SBOM SPDX |
+| `bun run metrics` | métricas `upstream` vs árbol actual para el informe de modernización |
 
 `make help` muestra los atajos del `Makefile` (envoltorio fino sobre estos scripts).
 
@@ -90,10 +90,10 @@ Ejemplo: «archivar un aula».
 ## Añadir o cambiar una tabla
 
 1. Editar `packages/db/src/schema.ts`.
-2. `npm run db:generate` → nuevo `packages/db/migrations/NNNN_*.sql` + `meta/`.
+2. `bun run db:generate` → nuevo `packages/db/migrations/NNNN_*.sql` + `meta/`.
 3. Leer el SQL generado (nombres, índices, `NOT NULL` con datos existentes, valores por defecto). Si hace falta
    migrar datos, añadirlo en el mismo SQL.
-4. `npm test` (las migraciones se aplican en PGlite) y con `TEST_DATABASE_URL` (PostgreSQL).
+4. `bun run test` (las migraciones se aplican en PGlite) y con `TEST_DATABASE_URL` (PostgreSQL).
 5. Si la tabla contiene datos personales, actualizar [docs/PRIVACY.md](docs/PRIVACY.md); si recibe datos del legacy,
    añadir `legacy_source`/`legacy_id` y actualizar el migrador y [docs/LEGACY-DATA-MAPPING.md](docs/LEGACY-DATA-MAPPING.md).
 6. Si el cambio invalida datos ya guardados en la demo, subir `DATA_DIR` en `apps/web/src/demo/db.ts`.
@@ -104,14 +104,14 @@ Nunca `drizzle-kit push` ni editar una migración que ya esté en `main`. Detall
 ## Pruebas por nivel
 
 ```bash
-npm test                                   # todo Vitest en PGlite
-npm run test:contracts                     # solo packages/app
-npm run test:integration                   # solo la API
-TEST_DATABASE_URL=postgres://lexican:lexican@localhost:5432/postgres npm test   # también PostgreSQL
-npm run e2e:demo                           # demo, 3 navegadores + móvil
-E2E_DATABASE_URL=postgres://lexican:lexican@localhost:5432/postgres npm run e2e  # + producción
-npx vitest run packages/core/src/school-year.test.ts     # un fichero
-npx playwright test e2e/journey.spec.ts --project=demo-chromium --headed
+bun run test                                   # todo Vitest en PGlite
+bun run test:contracts                     # solo packages/app
+bun run test:integration                   # solo la API
+TEST_DATABASE_URL=postgres://lexican:lexican@localhost:5432/postgres bun run test   # también PostgreSQL
+bun run e2e:demo                           # demo, 3 navegadores + móvil
+E2E_DATABASE_URL=postgres://lexican:lexican@localhost:5432/postgres bun run e2e  # + producción
+bunx vitest run packages/core/src/school-year.test.ts     # un fichero
+bunx playwright test e2e/journey.spec.ts --project=demo-chromium --headed
 ```
 
 Migración con MariaDB y cobertura: [docs/TESTING.md](docs/TESTING.md).
@@ -138,6 +138,6 @@ Migración con MariaDB y cobertura: [docs/TESTING.md](docs/TESTING.md).
 ## Publicar una versión
 
 1. Mover las entradas de `[Sin publicar]` de `CHANGELOG.md` a la nueva versión con fecha.
-2. `npm version X.Y.Z --no-git-tag-version` y PR `chore: release X.Y.Z`.
+2. Cambiar `version` en el `package.json` raíz y PR `chore: release X.Y.Z`.
 3. Tras fusionar: `git tag vX.Y.Z && git push origin vX.Y.Z`. `release.yml` comprueba que la etiqueta coincide con
    `package.json`, repite el gate y publica los artefactos ([docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)).

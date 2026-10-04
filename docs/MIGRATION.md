@@ -19,9 +19,9 @@ el destino (sin filas que los referencien) y se reutilizan en la siguiente ejecu
 
 ## Requisitos
 
-- Node 24 y `npm ci` en la raíz del repositorio.
+- Node 24 y `bun ci` en la raíz del repositorio.
 - Acceso de **solo lectura** a la base legacy (`SELECT` sobre el esquema y `information_schema`).
-- PostgreSQL 16+ con el esquema de LexiCán aplicado (`npm run db:migrate`). El migrador no crea el esquema.
+- PostgreSQL 16+ con el esquema de LexiCán aplicado (`bun run db:migrate`). El migrador no crea el esquema.
 - Lectura del directorio `storage/app/public` legacy (volumen NFS) y escritura en el directorio de medios nuevo
   (el `MEDIA_DIR` de la API).
 - Las fechas legacy están en UTC (`config/app.php`): no hace falta fijar zona horaria.
@@ -29,7 +29,7 @@ el destino (sin filas que los referencien) y se reutilizan en la siguiente ejecu
 ## Comando
 
 ```bash
-npm run migrate:legacy -- \
+bun run migrate:legacy \
   --source "mysql://lector:CLAVE@legacy-db:3306/lexican" \
   --target "$DATABASE_URL" \
   --media-source /mnt/legacy/storage/app/public \
@@ -48,7 +48,7 @@ npm run migrate:legacy -- \
 | `--report` | Ruta del informe JSON (por defecto `legacy-migration-report.json`); el CSV se escribe junto a él |
 | `--fail-on-orphans` | Si hay filas huérfanas, revierte y termina con código 1 |
 
-Las rutas relativas se resuelven desde el directorio donde se lanza `npm run`. Códigos de salida: `0` correcto
+Las rutas relativas se resuelven desde el directorio donde se lanza el comando (`bun run migrate:legacy` desde la raíz). Códigos de salida: `0` correcto
 (también en dry-run), `1` fallo o huérfanos con `--fail-on-orphans`, `2` argumentos o esquema destino ausente.
 Las contraseñas de las URL se ocultan en la salida.
 
@@ -92,8 +92,8 @@ Nunca se prueba por primera vez contra producción.
    docker exec -i lexican-legacy mariadb -uroot -p… -e 'create database lexican'
    docker exec -i lexican-legacy mariadb -uroot -p… lexican < volcado.sql
    ```
-2. **Destino vacío.** Crea una base PostgreSQL nueva y aplica el esquema: `DATABASE_URL=… npm run db:migrate`.
-3. **Dry-run** y revisión del CSV con el equipo funcional: `npm run migrate:legacy -- … --dry-run --report ensayo-dry.json`.
+2. **Destino vacío.** Crea una base PostgreSQL nueva y aplica el esquema: `DATABASE_URL=… bun run db:migrate`.
+3. **Dry-run** y revisión del CSV con el equipo funcional: `bun run migrate:legacy … --dry-run --report ensayo-dry.json`.
    Decide cada `needs rule` y `needs human review` (corregir en el legacy de ensayo, aceptar o cambiar la regla).
 4. **Importación completa**: el mismo comando sin `--dry-run`.
 5. **Recuentos**: en `tables`, `legacy = mapped + skipped + invalid + orphaned` en las tablas principales y `new`
@@ -110,7 +110,7 @@ Nunca se prueba por primera vez contra producción.
    (es un hallazgo de datos), pero hay que entenderla antes del corte.
 8. **Idempotencia**: vuelve a ejecutar; los recuentos de `new` no cambian y `media.migrated` es 0.
 9. **E2E sobre datos migrados**: arranca la API contra la base migrada (`MEDIA_DIR` = `--media-target`) y ejecuta
-   `npm run e2e` (perfil producción) más un recorrido manual con un docente y un alumno reales del ensayo.
+   `bun run e2e` (perfil producción) más un recorrido manual con un docente y un alumno reales del ensayo.
 10. **Comparación manual**: elige 10 entradas personales, 5 envíos publicados y 3 aulas; compara pantalla legacy y
     nueva (acepciones y su orden, temáticas, medios, estado del envío, comentarios, configuración del aula).
 11. **Mide la duración** (`durationMs` y tiempo total) para dimensionar la ventana de corte.
@@ -129,7 +129,7 @@ re-ejecución idempotente y `--fail-on-orphans`. Se ejecuta solo si existen ambo
 docker run -d --name lexican-mariadb -e MARIADB_ROOT_PASSWORD=root -e MARIADB_DATABASE=legacy -p 53306:3306 mariadb:11
 TEST_MARIADB_URL=mysql://root:root@127.0.0.1:53306/legacy \
 TEST_DATABASE_URL=postgres://lexican:lexican@localhost:55432/postgres \
-  npx vitest run tools/legacy-migrator
+  bunx vitest run tools/legacy-migrator
 ```
 
 El test crea una base MariaDB y otra PostgreSQL temporales y las borra al terminar. Las funciones puras
@@ -140,7 +140,7 @@ Para lanzar el CLI a mano contra el fixture:
 ```bash
 docker exec -i lexican-mariadb mariadb -uroot -proot legacy < fixtures/legacy/schema.sql
 docker exec -i lexican-mariadb mariadb -uroot -proot legacy < fixtures/legacy/data.sql
-npm run migrate:legacy -- --source mysql://root:root@127.0.0.1:53306/legacy \
+bun run migrate:legacy --source mysql://root:root@127.0.0.1:53306/legacy \
   --target postgres://lexican:lexican@localhost:55432/lexican_ensayo \
   --media-source fixtures/legacy/media --media-target /tmp/lexican-media --dry-run --report /tmp/informe.json
 ```
@@ -166,8 +166,8 @@ ventana, el siguiente paso es insertar por lotes.
 2. Pon el legacy en **solo lectura**: modo mantenimiento de Laravel (`php artisan down`) y revoca `INSERT/UPDATE/DELETE`
    al usuario de la aplicación (o `SET GLOBAL read_only = ON` si la base es exclusiva).
 3. Haz un volcado del legacy y una copia (snapshot) del volumen de medios. Son el punto de retorno.
-4. Base destino vacía + `npm run db:migrate`.
-5. `npm run migrate:legacy -- … --fail-on-orphans --report corte.json` (si el ensayo aceptó huérfanos conocidos,
+4. Base destino vacía + `bun run db:migrate`.
+5. `bun run migrate:legacy … --fail-on-orphans --report corte.json` (si el ensayo aceptó huérfanos conocidos,
    omite `--fail-on-orphans` y compara con el informe del ensayo).
 6. Valida: `committed: true`, `failure: null`, verificaciones `ok`, recuentos en línea con el último ensayo,
    humo E2E y la comparación manual reducida (3 entradas, 1 aula).
