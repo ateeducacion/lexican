@@ -1,5 +1,9 @@
 version: 2
 updates:
+  # bun.lock must stay at lockfileVersion 1: Dependabot's bun ecosystem runs Bun 1.3.x and rejects v2
+  # ("Unsupported bun.lock 'lockfileVersion' 2"; dependabot-core#16026, fix pending in #16071). Bun 1.4 keeps an existing
+  # v1 lockfile, so the project still runs Bun 1.4.2; `bun run check:lockfile` guards the format in CI (AGENTS.md).
+  # Security updates and the dependency graph do not read bun.lock: `bun audit` in CI covers vulnerabilities.
   - package-ecosystem: bun
     directory: /
     schedule:
