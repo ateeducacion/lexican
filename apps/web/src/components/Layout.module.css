@@ -167,8 +167,14 @@
   .footer {
     padding-bottom: 5.5rem;
   }
+  /* Phones already float the bottom nav, the editor save bar and the add button: the notice sits
+     at the end of the page instead of floating over them. */
   .demo {
-    bottom: calc(68px + var(--space-3) + env(safe-area-inset-bottom));
+    position: static;
+    transform: none;
+    width: auto;
+    margin: 0 var(--space-4) calc(68px + var(--space-4) + env(safe-area-inset-bottom));
+    box-shadow: none;
   }
   .bottomNav {
     position: fixed;

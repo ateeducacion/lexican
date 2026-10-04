@@ -103,3 +103,21 @@ test.describe('student', () => {
     await expect(page.getByRole('link', { name: 'efímera', exact: true })).toHaveCount(0);
   });
 });
+
+test('demo notice floats at the bottom and can be dismissed for the visit', async ({
+  page,
+  app,
+}) => {
+  test.skip(!app.demo, 'demo build only');
+  await app.goto('/entrar');
+  const notice = page.getByRole('complementary', { name: 'Entorno de demostración' });
+  await expect(notice).toBeVisible();
+  const box = await notice.boundingBox();
+  if (!test.info().project.name.includes('mobile'))
+    expect(box!.y + box!.height).toBeGreaterThan(page.viewportSize()!.height - 120);
+  await notice.getByRole('button', { name: 'Ocultar el aviso de demostración' }).click();
+  await expect(notice).toBeHidden();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Cuentas de demostración' })).toBeVisible();
+  await expect(notice).toBeHidden();
+});
