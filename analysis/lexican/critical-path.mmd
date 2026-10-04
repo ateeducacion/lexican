@@ -1,0 +1,43 @@
+flowchart TD
+  subgraph F0["Alumno: Crear una entrada con sus acepciones"]
+    F0S0["Opens the personal dictionary<br/><small>routes/web, DiccionarioPersonalController, view:diccionario/personal</small>"]
+    F0S1["Starts a new entry from the search box<br/><small>DiccionarioPersonalController, view:diccionario/dpEntrada/masterEntrada, view:layouts/part</small>"]
+    F0S0 --> F0S1
+    F0S2["Fills in the sense form (definition, example, topics)<br/><small>view:layouts/partials/dpAcepcion/*, mstEntradaValor_helper</small>"]
+    F0S1 --> F0S2
+    F0S3["Saves the entry together with its first sense<br/><small>DiccionarioPersonalController, dpEntradas_helper, model:DiccionarioPersonalEntrada</small>"]
+    F0S2 --> F0S3
+    F0S4["Stores the sense and its topics<br/><small>dpAcepciones_helper, model:DiccionarioPersonalAcepcion, model:DiccionarioPersonalAcepcionT</small>"]
+    F0S3 --> F0S4
+    F0S5["Attaches an image, audio or video to the sense<br/><small>dpMedios_helper, model:DiccionarioPersonalAcepcionMedio</small>"]
+    F0S4 --> F0S5
+  end
+  subgraph F1["Alumno: Enviar entradas al diccionario de aula"]
+    F1S0["Picks the classroom dictionaries to send to<br/><small>EnviosController, view:layouts/partials/components/*, model:DicAula</small>"]
+    F0S5 --> F1S0
+    F1S1["Or chooses to send the whole personal dictionary<br/><small>EnviosController, view:diccionario/dpDiccionario/dpDiccionarioEnviarFormulario</small>"]
+    F1S0 --> F1S1
+    F1S2["Submits the entry<br/><small>routes/web, EnviosController, dpEnvios_helper</small>"]
+    F1S1 --> F1S2
+    F1S3["A submission is recorded per classroom dictionary<br/><small>dpEnvios_helper, model:Envio</small>"]
+    F1S2 --> F1S3
+    F1S4["The entry and its senses are copied into the submission<br/><small>model:EnvioEntrada, model:EnvioAcepcion, model:EnvioAcepcionTematica, model:EnvioAcepcionM</small>"]
+    F1S3 --> F1S4
+  end
+  subgraph F2["Profesor: Revisar, publicar y comentar envíos"]
+    F2S0["Opens the list of submitted entries<br/><small>routes/web, DicAulaController, view:diccionario/entradasAula, model:EnvioEntrada</small>"]
+    F1S4 --> F2S0
+    F2S1["Only teachers who coordinate the dictionary may act<br/><small>Providers/AuthServiceProvider, Policies/DicAulaPolicy</small>"]
+    F2S0 --> F2S1
+    F2S2["Corrects a submitted sense<br/><small>EnvioAcepcionController, view:diccionario/aula/acepcionEdit, envioAcepcion_helper, model:E</small>"]
+    F2S1 --> F2S2
+    F2S3["Publishes the entry (one or a list)<br/><small>DicAulaController, dicAula_helper, model:DicAulaEntrada</small>"]
+    F2S2 --> F2S3
+    F2S4["Comments on a single entry<br/><small>dicAula_helper, model:ComentarioEntrada</small>"]
+    F2S3 --> F2S4
+    F2S5["Writes a general comment on a student dictionary<br/><small>ComentariosController, ComentariosHelper, model:ComentarioGeneral</small>"]
+    F2S4 --> F2S5
+    F2S6["The student reads the comments<br/><small>view:comentarios/comentariosDiccionarioVer</small>"]
+    F2S5 --> F2S6
+  end
+  %% no telemetry gathered: no p50/p99 available

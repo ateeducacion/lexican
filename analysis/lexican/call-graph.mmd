@@ -1,0 +1,53 @@
+graph TD
+  entry["Entry points & bootstrap"]
+  auth["Auth (CAS + CAUCE)"]
+  personal["Diccionario personal"]
+  aula["Diccionario de aula"]
+  envios["Envíos"]
+  comentarios["Comentarios"]
+  export["PDF / CSV / Mail"]
+  admin["Admin (Voyager)"]
+  shared["Shared / platform"]
+  models["Eloquent models"]
+  screens["Screens (Blade views)"]
+  partials["Blade partials"]
+  screens -->|34| partials
+  aula -->|30| models
+  personal -->|15| models
+  envios -->|15| models
+  entry -->|15| admin
+  entry -->|12| auth
+  screens -->|12| aula
+  auth -->|9| shared
+  aula -->|9| screens
+  shared -->|9| models
+  export -->|9| models
+  screens -->|9| shared
+  partials -->|9| personal
+  comentarios -->|8| models
+  personal -->|8| shared
+  envios -->|8| shared
+  envios -->|8| personal
+  partials -->|8| aula
+  screens -->|7| personal
+  aula -->|6| partials
+  export -->|5| shared
+  aula -->|5| shared
+  personal -->|5| screens
+  partials -->|5| comentarios
+  partials -->|5| shared
+  entry -->|4| shared
+  export -->|4| personal
+  partials -->|4| envios
+  comentarios -->|3| shared
+  entry -->|3| models
+  admin -->|3| shared
+  models -->|3| shared
+  entry -->|3| export
+  screens -->|3| comentarios
+  screens -->|3| envios
+  partials -->|3| export
+  comentarios -->|2| aula
+  comentarios -->|2| personal
+  classDef entry fill:#ffe9a8,stroke:#b8860b,stroke-width:2px
+  class auth,entry entry
