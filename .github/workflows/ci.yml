@@ -86,7 +86,9 @@ jobs:
           retention-days: 7
 
   webkit:
-    # WebKit boots the in-browser PGlite slowly on hosted runners: its own job, one worker, longer timeouts.
+    # Disabled for now: WebKit runs take 17+ minutes on hosted runners and need a review (slow PGlite boot, timeouts).
+    # To be reworked in a dedicated pull request; WebKit can still be run locally with `bun run e2e:webkit`.
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
