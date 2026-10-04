@@ -56,8 +56,7 @@ jobs:
       - run: bun ci
       - run: bun run audit
       - run: bun run licenses
-      - run: bun run lint
-      - run: bun run format:check
+      - run: bun run lint # Biome: lint, formatting and import order
       - run: bun run typecheck
       # Unit, contract (PGlite AND PostgreSQL), API integration and MariaDB migration tests; fails under 90 %.
       - run: bun run test:coverage

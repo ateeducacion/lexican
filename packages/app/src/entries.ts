@@ -1,18 +1,19 @@
 import {
   DomainError,
-  headwordKey,
-  initialOf,
-  normalizeText,
-  sortKeyOf,
   type EntryInput,
   type EntrySnapshot,
   type EntrySummary,
   type EntryView,
+  headwordKey,
+  initialOf,
+  normalizeText,
   type Page,
   type ParsedInput,
+  sortKeyOf,
   type Vocabulary,
 } from '@lexican/core';
 import {
+  type Db,
   entries,
   entryRevisions,
   entrySenses,
@@ -21,22 +22,21 @@ import {
   senseTopics,
   submissions,
   vocabularyValues,
-  type Db,
 } from '@lexican/db';
 import { and, asc, eq, exists, inArray, isNull, like, notInArray, sql } from 'drizzle-orm';
 import {
   assertEditable,
   assertReadable,
-  dictionaryAccess,
   type DictionaryAccess,
+  dictionaryAccess,
 } from './access.ts';
 import {
+  type Actor,
   audit,
+  type Deps,
   isUniqueViolation,
   notFound,
   requireUser,
-  type Actor,
-  type Deps,
 } from './context.ts';
 import { entryViews, snapshotOf } from './views.ts';
 
@@ -342,10 +342,7 @@ export function entryServices(deps: Deps) {
             )
           : undefined,
       );
-      const [total] = await db
-        .select({ n: sql<number>`count(*)::int` })
-        .from(entries)
-        .where(where);
+      const [total] = await db.select({ n: sql<number>`count(*)::int` }).from(entries).where(where);
       const rows = await db
         .select({ id: entries.id })
         .from(entries)

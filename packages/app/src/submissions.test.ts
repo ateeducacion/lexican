@@ -1,8 +1,8 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { EntryView, SenseField, SenseView } from '@lexican/core';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { SettingsRow } from './access.ts';
-import { submissionProblem, type Actor } from './index.ts';
-import { appFixture, PNG, type AppFixture } from './testing/fixture.ts';
+import { type Actor, submissionProblem } from './index.ts';
+import { type AppFixture, appFixture, PNG } from './testing/fixture.ts';
 
 const sense = (over: Partial<SenseView> = {}): SenseView => ({
   id: crypto.randomUUID(),

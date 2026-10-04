@@ -1,16 +1,16 @@
 import {
-  EntryInput,
-  MEDIA_ACCEPT,
-  SENSE_FIELDS,
   type DictionaryView,
+  EntryInput,
   type EntryView,
+  MEDIA_ACCEPT,
   type MediaKind,
   type MediaView,
+  SENSE_FIELDS,
   type SenseField,
 } from '@lexican/core';
-import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { type FormEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { Link } from 'react-router';
-import { getApi, toApiError, type ApiError } from '../api/index.ts';
+import { type ApiError, getApi, toApiError } from '../api/index.ts';
 import { EntryContent } from './EntryContent.tsx';
 import styles from './EntryEditor.module.css';
 import { Dialog, ErrorMessage, Field, useNotify } from './ui.tsx';
@@ -381,8 +381,8 @@ export function EntryEditor({
                     className={styles.filled}
                     aria-label={`Campos rellenos de la acepción ${i + 1}`}
                   >
-                    {filled.map((f, n) => (
-                      <li key={`${f}-${n}`}>
+                    {filled.map((f) => (
+                      <li key={f}>
                         <span aria-hidden="true">✓</span> {f}
                       </li>
                     ))}
@@ -683,6 +683,7 @@ export function EntryEditor({
       </div>
 
       {/* Focusable so keyboard users can scroll it when it overflows (sticky column). */}
+      {/* biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable region must be keyboard-reachable (WCAG 2.1.1). */}
       <aside aria-label="Vista previa y comprobaciones" className={styles.side} tabIndex={0}>
         <h2 className="eyebrow">Así se verá</h2>
         <div className={styles.preview}>

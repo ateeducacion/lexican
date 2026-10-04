@@ -1,9 +1,9 @@
-import { describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
-import { seedVocabulary } from './seed/vocabulary.ts';
-import { vocabularyValues } from './schema.ts';
-import { loadMigrations, openPglite } from './testing.ts';
+import { describe, expect, it } from 'vitest';
 import { migrateBundled } from './migrate.ts';
+import { vocabularyValues } from './schema.ts';
+import { seedVocabulary } from './seed/vocabulary.ts';
+import { loadMigrations, openPglite } from './testing.ts';
 
 describe('schema on PGlite', () => {
   it('migrates idempotently and seeds vocabularies', async () => {

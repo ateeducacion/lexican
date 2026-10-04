@@ -1,7 +1,7 @@
 import { DomainError, type GlobalRole, type ParsedInput, type UserView } from '@lexican/core';
-import { authIdentities, schools, userSchools, users, type Db } from '@lexican/db';
+import { authIdentities, type Db, schools, userSchools, users } from '@lexican/db';
 import { and, eq, sql } from 'drizzle-orm';
-import { audit, requireUser, type Actor, type Deps } from './context.ts';
+import { type Actor, audit, type Deps, requireUser } from './context.ts';
 import { toUserView } from './views.ts';
 
 const ITERATIONS = 100_000;

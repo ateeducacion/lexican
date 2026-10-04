@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import { schema, type Db } from '@lexican/db';
+import { type Db, schema } from '@lexican/db';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import mysql from 'mysql2/promise';
 import pg from 'pg';

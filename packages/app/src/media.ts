@@ -1,4 +1,4 @@
-import { DomainError, mediaKindOf, type MediaKind, type MediaView } from '@lexican/core';
+import { DomainError, type MediaKind, type MediaView, mediaKindOf } from '@lexican/core';
 import {
   dictionaries,
   dictionaryMemberships,
@@ -12,7 +12,7 @@ import {
 import { and, eq, gte, isNull, sql } from 'drizzle-orm';
 import { fileTypeFromBuffer } from 'file-type';
 import { dictionaryAccess } from './access.ts';
-import { notFound, requireUser, type Actor, type Deps } from './context.ts';
+import { type Actor, type Deps, notFound, requireUser } from './context.ts';
 
 const DEFAULT_MAX_BYTES = 10 * 1024 * 1024;
 /** Sniffed types stored under their canonical name. */

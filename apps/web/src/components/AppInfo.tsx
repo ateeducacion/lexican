@@ -1,6 +1,6 @@
+import type { GlobalRole } from '@lexican/core';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Link } from 'react-router';
-import type { GlobalRole } from '@lexican/core';
 import { APP_COMMIT, APP_VERSION, SOURCE_URL } from '../env.ts';
 import styles from './Layout.module.css';
 import { Dialog } from './ui.tsx';

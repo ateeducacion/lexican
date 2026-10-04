@@ -4,7 +4,10 @@ import { csvLine } from './transform.ts';
 /** Migration report (§70/§71): per-table metrics, media, every anomaly with its class, and post-load checks. */
 
 export type AnomalyClass =
-  'repairable automatically' | 'needs rule' | 'needs human review' | 'cannot migrate';
+  | 'repairable automatically'
+  | 'needs rule'
+  | 'needs human review'
+  | 'cannot migrate';
 
 export interface Anomaly {
   table: string;
@@ -98,14 +101,15 @@ export function newReport(dryRun: boolean): Report {
 }
 
 export function stat(r: Report, table: string): TableStats {
-  return (r.tables[table] ??= {
+  r.tables[table] ??= {
     legacy: 0,
     new: null,
     mapped: 0,
     skipped: 0,
     invalid: 0,
     orphaned: 0,
-  });
+  };
+  return r.tables[table];
 }
 
 export function anomaly(

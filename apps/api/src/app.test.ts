@@ -3,12 +3,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { seedDemo } from '@lexican/app';
 import { openPglite, openPostgres, type TestDb } from '@lexican/db/testing';
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { safeError } from '@lexican/http';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { buildApp } from './app.ts';
-import { testApp } from './testing/inject.ts';
 import { loadConfig } from './config.ts';
 import { fsMediaStorage } from './media-storage.ts';
+import { testApp } from './testing/inject.ts';
 
 const ORIGIN = 'http://localhost:3999';
 const CAS = 'https://cas.example.test/cas';

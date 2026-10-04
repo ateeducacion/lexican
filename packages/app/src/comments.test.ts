@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { Actor } from './index.ts';
-import { appFixture, type AppFixture } from './testing/fixture.ts';
+import { type AppFixture, appFixture } from './testing/fixture.ts';
 
 /** Teacher feedback: who may write, read and delete comments, and the per-classroom visibility (RULE-185). */
 describe('comments', () => {

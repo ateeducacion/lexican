@@ -98,7 +98,10 @@ const clientFor = (w: FakeWorker, opts = {}) => {
     blobs,
     api: createApiClient(tr.fetch, {
       media: 'blob',
-      objectUrl: (_id, b) => (blobs.push(b), `blob:${_id}`),
+      objectUrl: (id, b) => {
+        blobs.push(b);
+        return `blob:${id}`;
+      },
     }),
   };
 };

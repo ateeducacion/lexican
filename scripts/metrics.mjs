@@ -3,8 +3,8 @@
 // Usage: bun run build && bun run build:demo && bun scripts/metrics.mjs > metrics.json
 import { execFileSync, execSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { gzipSync } from 'node:zlib';
 import { join } from 'node:path';
+import { gzipSync } from 'node:zlib';
 import { packages } from './deps.mjs';
 
 const git = (...args) =>

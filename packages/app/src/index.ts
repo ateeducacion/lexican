@@ -1,9 +1,9 @@
 import {
-  DomainError,
-  operations,
   type DictionaryView,
+  DomainError,
   type OperationName,
   type OperationOutputs,
+  operations,
   type ParsedInput,
   type VocabularyValue,
 } from '@lexican/core';
@@ -13,25 +13,25 @@ import { adminServices } from './admin.ts';
 import { authServices } from './auth.ts';
 import { classroomServices } from './classrooms.ts';
 import { commentServices } from './comments.ts';
-import { requireUser, type Actor, type Deps } from './context.ts';
+import { type Actor, type Deps, requireUser } from './context.ts';
 import { entryServices } from './entries.ts';
 import { mediaServices } from './media.ts';
 import { submissionServices } from './submissions.ts';
 import { dictionaryViews, toVocabularyValue } from './views.ts';
 
-export type { Actor, Deps, MediaStorage } from './context.ts';
-export { memoryMediaStorage } from './context.ts';
 export {
+  type CasProvider,
   createPasswordUser,
   hashPassword,
-  roleFromDirectory,
-  type CasProvider,
   type InstitutionalProfile,
+  roleFromDirectory,
 } from './auth.ts';
-export { NOT_AUTHORIZED, testDirectory, type InstitutionalDirectory } from './directory.ts';
 export { generateJoinCode } from './classrooms.ts';
+export type { Actor, Deps, MediaStorage } from './context.ts';
+export { memoryMediaStorage } from './context.ts';
+export { DEMO_SEED_VERSION, demoSeedVersion, seedDemo } from './demo-seed.ts';
+export { type InstitutionalDirectory, NOT_AUTHORIZED, testDirectory } from './directory.ts';
 export { submissionProblem } from './submissions.ts';
-export { seedDemo, demoSeedVersion, DEMO_SEED_VERSION } from './demo-seed.ts';
 
 export type OperationHandlers = {
   [K in OperationName]: (

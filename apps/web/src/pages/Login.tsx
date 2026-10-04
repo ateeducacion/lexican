@@ -1,5 +1,5 @@
 import { DEMO_ACCOUNTS, LoginInput } from '@lexican/core';
-import { useEffect, useState, type FormEvent } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { redirect, useNavigate, useSearchParams } from 'react-router';
 import { getApi } from '../api/index.ts';
 import { ErrorMessage, Field, PageTitle, useAction } from '../components/ui.tsx';
@@ -26,7 +26,7 @@ const CAS_ERRORS: Record<string, string> = {
 type Providers = { cas: 'institutional' | 'test' | null; password: boolean };
 
 /** Only allow in-app return paths after login (no open redirect). */
-const safeReturn = (v: string | null) => (v && v.startsWith('/') && !v.startsWith('//') ? v : '/');
+const safeReturn = (v: string | null) => (v?.startsWith('/') && !v.startsWith('//') ? v : '/');
 
 export function Component() {
   const navigate = useNavigate();

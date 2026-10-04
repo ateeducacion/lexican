@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
 import { fileTypeFromBuffer } from 'file-type';
+import { describe, expect, it } from 'vitest';
 import { classifyMedia } from './media.ts';
 
 const tone = (ext: string) =>

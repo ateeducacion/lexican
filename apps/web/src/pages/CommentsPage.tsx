@@ -1,7 +1,7 @@
 import type { CommentView } from '@lexican/core';
 import { Link, useLoaderData } from 'react-router';
 import { getApi } from '../api/index.ts';
-import { EmptyState, PageTitle, formatDate } from '../components/ui.tsx';
+import { EmptyState, formatDate, PageTitle } from '../components/ui.tsx';
 import { useSession } from '../session.ts';
 import styles from './CommentsPage.module.css';
 

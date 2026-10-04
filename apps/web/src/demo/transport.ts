@@ -79,10 +79,8 @@ export function createWorkerTransport(worker: Worker, opts: WorkerTransportOptio
     }
   };
 
-  let initDone: (err?: {
-    code: InitErrorCode | 'timeout' | 'crash';
-    detail?: string;
-  }) => void = () => undefined;
+  let initDone: (err?: { code: InitErrorCode | 'timeout' | 'crash'; detail?: string }) => void =
+    () => undefined;
   const init = new Promise<void>((resolve, reject) => {
     const timer = setTimeout(() => initDone({ code: 'timeout' }), opts.initTimeoutMs ?? 120_000);
     initDone = (err) => {

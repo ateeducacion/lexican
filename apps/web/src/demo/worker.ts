@@ -1,20 +1,20 @@
 /// <reference lib="webworker" />
 import { PGlite } from '@electric-sql/pglite';
 import { demoSeedVersion, seedDemo, testDirectory } from '@lexican/app';
-import { migrateBundled, schema, type Db, type Journal } from '@lexican/db';
+import { type Db, type Journal, migrateBundled, schema } from '@lexican/db';
 import { createApi, safeError } from '@lexican/http';
 import { drizzle } from 'drizzle-orm/pglite';
 import journal from '../../../../packages/db/migrations/meta/_journal.json';
 import { deleteDatabase, openBlobStore } from './blob-store.ts';
-import { createMessageHandler, demoCarrier as carrier, type Fetcher } from './worker-core.ts';
 import {
   DATA_DIR,
   DEMO_LOCK,
-  MEDIA_DB,
   type FromWorker,
   type InitErrorCode,
+  MEDIA_DB,
   type ToWorker,
 } from './protocol.ts';
+import { demoCarrier as carrier, createMessageHandler, type Fetcher } from './worker-core.ts';
 
 /**
  * The demo "server": the shared Hono API (`@lexican/http`) with the same services, on PGlite (IndexedDB) and media

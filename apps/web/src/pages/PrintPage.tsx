@@ -1,16 +1,16 @@
 import {
+  type DictionaryView,
+  type EntryView,
   formatSchoolYear,
   toCsv,
   toDmlex,
   toJson,
-  type DictionaryView,
-  type EntryView,
 } from '@lexican/core';
 import { useMemo, useState } from 'react';
-import { Link, useLoaderData, useSearchParams, type LoaderFunctionArgs } from 'react-router';
+import { Link, type LoaderFunctionArgs, useLoaderData, useSearchParams } from 'react-router';
 import { getApi } from '../api/index.ts';
 import { EntryContent } from '../components/EntryContent.tsx';
-import { EmptyState, PageTitle, formatDate } from '../components/ui.tsx';
+import { EmptyState, formatDate, PageTitle } from '../components/ui.tsx';
 import { useVocab } from '../components/vocab.ts';
 import { useSession } from '../session.ts';
 import styles from './PrintPage.module.css';

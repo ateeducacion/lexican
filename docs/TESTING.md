@@ -109,7 +109,7 @@ La cifra **no mide**:
 
 | Job | Servicios | Pasos |
 |---|---|---|
-| `quality` | PostgreSQL 18 + MariaDB 11 | `bun ci` → `audit` → `licenses` → `lint` → `format:check` → `typecheck` → `test:coverage` (con `TEST_DATABASE_URL` y `TEST_MARIADB_URL`; umbral 90 %) → subida a Codecov → `build` → `build:demo` → `check:dist` → instalación de navegadores → `bun run e2e` (con `E2E_DATABASE_URL`: demo en 3 navegadores + móvil y producción) → informe de Playwright como artefacto si falla |
+| `quality` | PostgreSQL 18 + MariaDB 11 | `bun ci` → `audit` → `licenses` → `lint` (Biome) → `typecheck` → `test:coverage` (con `TEST_DATABASE_URL` y `TEST_MARIADB_URL`; umbral 90 %) → subida a Codecov → `build` → `build:demo` → `check:dist` → instalación de navegadores → `bun run e2e` (con `E2E_DATABASE_URL`: demo en 3 navegadores + móvil y producción) → informe de Playwright como artefacto si falla |
 | `webkit` | — | E2E de la demo en WebKit (un *worker*). **Desactivado temporalmente** (`if: false`): tarda más de 17 min y se va a revisar en una PR propia; en local, `bun run e2e:webkit` |
 | `docker` | — | construye la imagen, comprueba que sin configuración no arranca y levanta el Compose local (salud, proveedores, SPA) |
 | `migration` | PostgreSQL 18 + MariaDB 11 | `bun ci` → `bun run test:migration` |

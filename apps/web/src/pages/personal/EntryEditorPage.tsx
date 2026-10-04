@@ -1,6 +1,6 @@
-import { headwordKey, type DictionaryView, type EntryInput, type EntryView } from '@lexican/core';
+import { type DictionaryView, type EntryInput, type EntryView, headwordKey } from '@lexican/core';
 import { useState } from 'react';
-import { Link, useLoaderData, useNavigate, type LoaderFunctionArgs } from 'react-router';
+import { Link, type LoaderFunctionArgs, useLoaderData, useNavigate } from 'react-router';
 import { getApi, toApiError } from '../../api/index.ts';
 import { EntryEditor } from '../../components/EntryEditor.tsx';
 import { PageTitle, useNotify } from '../../components/ui.tsx';

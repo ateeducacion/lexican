@@ -1,5 +1,10 @@
 export type ErrorCode =
-  'validation' | 'unauthenticated' | 'forbidden' | 'not_found' | 'conflict' | 'unavailable';
+  | 'validation'
+  | 'unauthenticated'
+  | 'forbidden'
+  | 'not_found'
+  | 'conflict'
+  | 'unavailable';
 
 /** Error raised by application services; adapters map `code` to HTTP status or UI message. */
 export class DomainError extends Error {

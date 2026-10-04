@@ -1,6 +1,6 @@
 import { CommentInput, type DictionaryView, type MemberView } from '@lexican/core';
-import { useState, type FormEvent } from 'react';
-import { Link, useLoaderData, useRevalidator, type LoaderFunctionArgs } from 'react-router';
+import { type FormEvent, useState } from 'react';
+import { Link, type LoaderFunctionArgs, useLoaderData, useRevalidator } from 'react-router';
 import { getApi } from '../../api/index.ts';
 import {
   Dialog,

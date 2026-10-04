@@ -5,8 +5,8 @@
 :root {
   color-scheme: light dark;
   /* Lexend: designed for reading proficiency; Literata: dictionary headwords and examples. */
-  --font: 'Lexend Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-serif: Literata, Georgia, 'Iowan Old Style', serif;
+  --font: "Lexend Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: Literata, Georgia, "Iowan Old Style", serif;
 
   --brand-blue: #0f4c81;
   --brand-blue-dark: #0b3a63;
@@ -56,10 +56,10 @@
 }
 
 /* Dark theme: chosen with the top-bar toggle, or the system preference (public/theme-init.js sets data-theme). */
-:root[data-theme='light'] {
+:root[data-theme="light"] {
   color-scheme: light;
 }
-:root[data-theme='dark'] {
+:root[data-theme="dark"] {
   color-scheme: dark;
   --brand-teal-text: #7fd6dd;
   --c-bg: #10181f;
@@ -128,7 +128,7 @@ a {
 }
 
 /* Containers focused programmatically for route announcements get no ring. */
-[tabindex='-1']:focus {
+[tabindex="-1"]:focus {
   outline: none;
 }
 
@@ -240,7 +240,7 @@ video {
   background: var(--c-surface-2);
 }
 .btn:disabled,
-.btn[aria-disabled='true'] {
+.btn[aria-disabled="true"] {
   opacity: 0.55;
   cursor: not-allowed;
 }
@@ -358,13 +358,13 @@ video {
   font-size: 0.875rem;
   font-weight: 600;
 }
-input[type='text'],
-input[type='email'],
-input[type='password'],
-input[type='search'],
-input[type='number'],
-input[type='date'],
-input[type='datetime-local'],
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
 select,
 textarea {
   font: inherit;
@@ -380,7 +380,7 @@ textarea {
   min-height: 5.5rem;
   resize: vertical;
 }
-[aria-invalid='true'] {
+[aria-invalid="true"] {
   border-color: var(--c-danger);
   outline-color: var(--c-danger);
 }
@@ -507,7 +507,7 @@ dialog::backdrop {
   border-top: 1px solid var(--c-border);
 }
 .sense::before {
-  content: counter(sense) '.';
+  content: counter(sense) ".";
   font-weight: 700;
   color: var(--c-primary);
 }
@@ -560,17 +560,17 @@ dialog::backdrop {
   border-color: var(--brand-teal-text);
   color: var(--brand-teal-text);
 }
-.alphabet a[aria-current='page'] {
+.alphabet a[aria-current="page"] {
   background: var(--brand-teal-text);
   border-color: var(--brand-teal-text);
   color: #fff;
 }
-[data-theme='dark'] .alphabet a,
-[data-theme='dark'] .alphabet span {
+[data-theme="dark"] .alphabet a,
+[data-theme="dark"] .alphabet span {
   border-color: #8a9aa5;
   color: var(--c-text);
 }
-[data-theme='dark'] .alphabet a[aria-current='page'] {
+[data-theme="dark"] .alphabet a[aria-current="page"] {
   color: #08233b;
 }
 
@@ -598,8 +598,8 @@ dialog::backdrop {
 
 @media print {
   .no-print,
-  header[role='banner'],
-  footer[role='contentinfo'],
+  header[role="banner"],
+  footer[role="contentinfo"],
   nav {
     display: none !important;
   }

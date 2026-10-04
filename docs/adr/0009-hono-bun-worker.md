@@ -78,5 +78,5 @@ Android, sin complicar la arquitectura.
   Bun no define `INIT_CWD`: los CLI que reciben rutas se lanzan desde la raíz. Node solo ejecuta Vite, Vitest y
   Playwright. Tipos: `@types/bun` 1.4.2 (incluye los de Node y convive con la `lib` DOM) en lugar de `@types/node` y
   de las declaraciones a mano de `apps/api/src/bun.d.ts`; que el código compartido no use `Bun` lo sigue impidiendo
-  ESLint.
+  Biome (`noRestrictedGlobals`; ESLint hasta que se sustituyó por Biome).
 - Proxy CORS para el CAS público: añadiría un servicio externo sin autorización.

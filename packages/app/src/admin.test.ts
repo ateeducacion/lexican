@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { Actor } from './index.ts';
-import { appFixture, type AppFixture } from './testing/fixture.ts';
+import { type AppFixture, appFixture } from './testing/fixture.ts';
 
 /** Admin screens replacing Voyager: role rules, validity filters, reactivation cap, stats and vocabularies. */
 describe('admin services', () => {

@@ -6,8 +6,8 @@
   gap: var(--space-4) var(--space-5);
   grid-template-columns: 15rem minmax(0, 1fr) 22rem;
   grid-template-areas:
-    'top top top'
-    'outline main side';
+    "top top top"
+    "outline main side";
   align-items: start;
 }
 
@@ -106,7 +106,7 @@
 .outlineItem:hover {
   background: var(--c-surface-2);
 }
-.outlineItem[aria-current='true'] {
+.outlineItem[aria-current="true"] {
   background: var(--c-selected);
   color: var(--c-primary);
   font-weight: 600;
@@ -145,7 +145,7 @@
   width: 24px;
   height: 24px;
 }
-.outlineItem[aria-current='true'] .num,
+.outlineItem[aria-current="true"] .num,
 .numLg {
   background: var(--c-primary);
   color: var(--c-on-primary);
@@ -411,8 +411,8 @@
   outline: 3px solid var(--c-focus);
   outline-offset: 2px;
 }
-.fileInput[aria-invalid='true'] + label,
-.fileInput[aria-invalid='true'] + .fileChip {
+.fileInput[aria-invalid="true"] + label,
+.fileInput[aria-invalid="true"] + .fileChip {
   border-color: var(--c-danger);
 }
 .fileChip {
@@ -527,7 +527,7 @@
   font-weight: 700;
   color: var(--c-success);
 }
-.checkList li[data-ok='false'] > span:first-child {
+.checkList li[data-ok="false"] > span:first-child {
   color: var(--c-danger);
 }
 
@@ -535,7 +535,7 @@
 @media (max-width: 1099px) {
   .form {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: 'top' 'outline' 'main' 'side';
+    grid-template-areas: "top" "outline" "main" "side";
   }
   .outline,
   .side {

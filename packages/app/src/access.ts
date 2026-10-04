@@ -1,7 +1,7 @@
 import { DomainError, isClassroomCurrent, type MemberRole } from '@lexican/core';
-import { classroomSettings, dictionaries, dictionaryMemberships, type Db } from '@lexican/db';
+import { classroomSettings, type Db, dictionaries, dictionaryMemberships } from '@lexican/db';
 import { and, eq, isNull } from 'drizzle-orm';
-import { notFound, requireUser, type Actor, type Deps } from './context.ts';
+import { type Actor, type Deps, notFound, requireUser } from './context.ts';
 
 export type DictionaryRow = typeof dictionaries.$inferSelect;
 export type SettingsRow = typeof classroomSettings.$inferSelect;

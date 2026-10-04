@@ -1,20 +1,20 @@
 import {
   ClassroomInput,
-  MAX_VALIDITY_YEARS,
-  SENSE_FIELDS,
-  formatSchoolYear,
-  schoolYearOf,
   type CommentVisibility,
   type DictionaryView,
+  formatSchoolYear,
+  MAX_VALIDITY_YEARS,
+  SENSE_FIELDS,
   type SenseField,
+  schoolYearOf,
 } from '@lexican/core';
-import { useState, type FormEvent } from 'react';
+import { type FormEvent, useState } from 'react';
 import {
   Link,
+  type LoaderFunctionArgs,
   useLoaderData,
   useNavigate,
   useRevalidator,
-  type LoaderFunctionArgs,
 } from 'react-router';
 import { getApi } from '../../api/index.ts';
 import { Dialog, ErrorMessage, Field, useAction, useNotify } from '../../components/ui.tsx';

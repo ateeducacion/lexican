@@ -1,5 +1,5 @@
-import { formatSchoolYear, type DictionaryView } from '@lexican/core';
-import { Link, useLoaderData, useSearchParams, type LoaderFunctionArgs } from 'react-router';
+import { type DictionaryView, formatSchoolYear } from '@lexican/core';
+import { Link, type LoaderFunctionArgs, useLoaderData, useSearchParams } from 'react-router';
 import { getApi } from '../../api/index.ts';
 import { EntryList } from '../../components/EntryList.tsx';
 import { EmptyState } from '../../components/ui.tsx';

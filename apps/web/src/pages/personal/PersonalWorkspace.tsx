@@ -1,8 +1,8 @@
 import {
-  SENSE_FIELD_CODES,
   type CommentView,
   type DictionaryView,
   type EntryView,
+  SENSE_FIELD_CODES,
   type SenseField,
   type SubmissionBrief,
   type SubmitResult,
@@ -11,13 +11,13 @@ import {
 import { useState } from 'react';
 import {
   Link,
+  type LoaderFunctionArgs,
   useLoaderData,
   useLocation,
   useNavigate,
   useParams,
   useRevalidator,
   useSearchParams,
-  type LoaderFunctionArgs,
 } from 'react-router';
 import { getApi } from '../../api/index.ts';
 import { EntryContent } from '../../components/EntryContent.tsx';
@@ -25,9 +25,9 @@ import { EntryList } from '../../components/EntryList.tsx';
 import {
   Dialog,
   ErrorMessage,
+  formatDate,
   PageTitle,
   STATUS_LABEL,
-  formatDate,
   useAction,
   useNotify,
 } from '../../components/ui.tsx';
@@ -459,7 +459,7 @@ function SubmissionsCard({ entry, onChange }: { entry: EntryView; onChange: () =
             <li key={s.id}>
               <div className={styles.subHead}>
                 <span className={`${styles.subIcon} ${styles[s.status]}`} aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="20" height="20">
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                     <path d={STATUS_ICON[s.status]} />
                   </svg>
                 </span>
@@ -544,9 +544,11 @@ function SendDialog({
     close();
   };
   const send = useAction(async () => {
-    const dry = await (
-      await getApi()
-    ).submitEntries({ entryIds: [entry.id], classroomIds: chosen, dryRun: true });
+    const dry = await (await getApi()).submitEntries({
+      entryIds: [entry.id],
+      classroomIds: chosen,
+      dryRun: true,
+    });
     if (dry.problems.length === 0) return submit(chosen);
     setCheck(dry);
   });

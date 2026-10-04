@@ -1,5 +1,5 @@
 // Applies the saved theme (or the system one) before the first paint; external file so the CSP needs no inline script.
-(function () {
+(() => {
   var saved;
   try {
     saved = localStorage.getItem('lexican-theme');

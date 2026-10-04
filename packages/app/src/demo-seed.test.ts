@@ -1,6 +1,6 @@
-import { expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { openPglite } from '@lexican/db/testing';
+import { expect, it } from 'vitest';
 import { createServices, memoryMediaStorage, seedDemo, testDirectory } from './index.ts';
 
 it('seeds a coherent demo once (idempotent) that exercises every workflow state', async () => {

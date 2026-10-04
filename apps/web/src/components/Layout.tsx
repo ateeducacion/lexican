@@ -22,6 +22,7 @@ export function Layout() {
   const main = useRef<HTMLElement>(null);
 
   // Move focus to the main region after client-side navigation so screen readers announce the new page.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: the path is the trigger, not an input of the effect.
   useEffect(() => {
     main.current?.focus({ preventScroll: true });
   }, [location.pathname]);
@@ -45,6 +46,7 @@ export function Layout() {
       <a className="skip-link" href="#contenido">
         Saltar al contenido
       </a>
+      {/* biome-ignore lint/a11y/noInteractiveElementToNoninteractiveRole: explicit landmark; print styles select header[role=banner]. */}
       <header role="banner" className={styles.header}>
         <div className={`container ${styles.bar}`}>
           <NavLink

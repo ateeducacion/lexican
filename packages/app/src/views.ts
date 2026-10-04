@@ -1,15 +1,15 @@
 import {
-  isClassroomCurrent,
-  submissionWindowState,
   type ClassroomSettingsView,
   type DictionaryView,
   type EntrySnapshot,
   type EntryView,
+  isClassroomCurrent,
   type MediaKind,
   type MemberRole,
   type SenseField,
   type SenseView,
   type SubmissionBrief,
+  submissionWindowState,
   type UserView,
 } from '@lexican/core';
 import {
@@ -25,7 +25,7 @@ import {
 } from '@lexican/db';
 import { and, asc, eq, inArray, isNull, sql } from 'drizzle-orm';
 import type { DictionaryRow, SettingsRow } from './access.ts';
-import { iso, type Actor, type Deps } from './context.ts';
+import { type Actor, type Deps, iso } from './context.ts';
 
 export type UserRow = typeof users.$inferSelect;
 
