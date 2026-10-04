@@ -4,8 +4,9 @@
 
 :root {
   color-scheme: light dark;
-  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, sans-serif;
-  --font-serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  /* Lexend: designed for reading proficiency; Literata: dictionary headwords and examples. */
+  --font: 'Lexend Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: Literata, Georgia, 'Iowan Old Style', serif;
 
   --brand-blue: #0f4c81;
   --brand-blue-dark: #0b3a63;
@@ -13,9 +14,10 @@
   --brand-teal-text: #1b6f77;
   --brand-mint: #b2ffe3;
 
-  --c-bg: #ffffff;
+  --c-bg: #f4f8fa;
   --c-surface: #ffffff;
   --c-surface-2: #eef6f7;
+  --c-selected: #e6f5f6;
   --c-text: #1f2a33;
   --c-muted: #56636d;
   --c-border: #c9d3d8;
@@ -32,8 +34,8 @@
   --c-warning-bg: #fff4d6;
   --c-info-bg: #e8f1fb;
 
-  --radius: 10px;
-  --radius-sm: 6px;
+  --radius: 16px;
+  --radius-sm: 12px;
   --shadow: 0 1px 2px rgb(0 0 0 / 6%), 0 2px 8px rgb(0 0 0 / 5%);
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -42,7 +44,7 @@
   --space-5: 1.5rem;
   --space-6: 2rem;
   --measure: 72ch;
-  --page: 1100px;
+  --page: 1440px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -51,6 +53,7 @@
     --c-bg: #10181f;
     --c-surface: #17222b;
     --c-surface-2: #1e2c37;
+    --c-selected: #173a45;
     --c-text: #e6eef3;
     --c-muted: #a3b3bf;
     --c-border: #2f414f;
@@ -216,7 +219,7 @@ video {
   font-weight: 600;
   line-height: 1.2;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--c-border);
+  border: 1.5px solid var(--c-border);
   background: var(--c-surface);
   color: var(--c-text);
   cursor: pointer;
@@ -252,6 +255,76 @@ video {
   min-height: 36px;
   padding: 0.25rem 0.6rem;
   font-size: 0.875rem;
+}
+
+/* Mint button for dark (brand blue) surfaces */
+.btn-accent {
+  background: var(--brand-mint);
+  border-color: var(--brand-mint);
+  color: var(--brand-blue-dark);
+}
+.btn-accent:hover {
+  background: #d4fff0;
+}
+
+/* Small uppercase label above a title */
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brand-teal-text);
+}
+
+/* Chips and pill choices (radio/checkbox inputs styled as pills; keyboard and screen readers keep native semantics) */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: var(--c-selected);
+  color: var(--brand-teal-text);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.pills label {
+  position: relative;
+}
+.pills input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.pills span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--c-border);
+  background: var(--c-surface);
+  color: var(--c-text);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.pills input:checked + span {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: var(--c-on-primary);
+}
+.pills input:focus-visible + span {
+  outline: 3px solid var(--c-focus);
+  outline-offset: 2px;
 }
 
 /* Forms */

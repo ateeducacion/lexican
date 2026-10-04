@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",
+    "@fontsource-variable/lexend": "^5.3.0",
+    "@fontsource/literata": "^5.3.0",
     "@lexican/app": "*",
     "@lexican/core": "*",
     "@lexican/db": "*",
