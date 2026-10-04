@@ -9,7 +9,7 @@ import mysql from 'mysql2/promise';
 import pg from 'pg';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
-/** `npm run migrate:legacy` runs cli.ts as a script: each import parses argv, runs, and calls process.exit. */
+/** `bun run migrate:legacy` runs cli.ts as a script: each import parses argv, runs, and calls process.exit. */
 async function cli(args: string[]): Promise<{ code: number; stderr: string }> {
   const lines: string[] = [];
   vi.spyOn(console, 'error').mockImplementation((...a: unknown[]) => void lines.push(a.join(' ')));
@@ -38,7 +38,7 @@ describe('legacy migrator CLI arguments', () => {
     const r = await cli(['--help']);
     expect(r).toMatchObject({
       code: 0,
-      stderr: expect.stringMatching(/^Uso: npm run migrate:legacy/),
+      stderr: expect.stringMatching(/^Uso: bun run migrate:legacy/),
     });
   });
 
@@ -137,7 +137,7 @@ describe.skipIf(!MARIADB || !PG)('legacy migrator CLI against the fixture', () =
   it('refuses a target without the schema (exit 2)', async () => {
     const r = await cli(args(await target(false)));
     expect(r.code).toBe(2);
-    expect(r.stderr).toContain('npm run db:migrate');
+    expect(r.stderr).toContain('bun run db:migrate');
   });
 
   it('dry-run writes the JSON and CSV report relative to the caller, redacts passwords and exits 0', async () => {
