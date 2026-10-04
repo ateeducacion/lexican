@@ -369,9 +369,9 @@
   .rail {
     grid-area: rail;
     position: sticky;
-    top: 0;
+    top: var(--header-h);
     align-self: start;
-    max-height: 100vh;
+    max-height: calc(100vh - var(--header-h));
     overflow-y: auto;
     padding: var(--space-5) var(--space-4);
   }

@@ -1,6 +1,9 @@
 /* App shell: brand blue bar with the LEXICÁN wordmark, turquoise band, bottom navigation on phones. */
 .header {
-  position: relative;
+  /* Always visible: the bar never scrolls away. */
+  position: sticky;
+  top: 0;
+  z-index: 30;
 }
 .bar {
   display: flex;
@@ -10,7 +13,7 @@
   background: var(--brand-blue);
   color: #fff;
   max-width: none;
-  padding-inline: max(var(--space-4), calc((100vw - var(--page)) / 2 + var(--space-5)));
+  padding-inline: var(--space-5);
 }
 .brand {
   text-decoration: none;
@@ -37,6 +40,10 @@
   background: rgb(255 255 255 / 16%);
   color: #fff;
   font-weight: 600;
+}
+/* Room to scroll the last controls above the floating demo notice */
+.mainDemo {
+  padding-bottom: 9rem;
 }
 .infoButtons {
   display: flex;
@@ -65,19 +72,6 @@
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-.about {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  gap: var(--space-2) var(--space-4);
-  margin: 0 0 var(--space-4);
-}
-.about dt {
-  font-weight: 600;
-  color: var(--c-muted);
-}
-.about dd {
-  margin: 0;
 }
 .helpSteps {
   display: grid;
@@ -130,31 +124,34 @@
 }
 .demo {
   position: fixed;
-  left: 50%;
+  right: var(--space-4);
   bottom: var(--space-4);
   z-index: 20;
-  transform: translateX(-50%);
-  width: min(720px, calc(100vw - 2 * var(--space-4)));
+  width: min(380px, calc(100vw - 2 * var(--space-4)));
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2) var(--space-3);
-  padding: var(--space-3) 3.25rem var(--space-3) var(--space-4);
+  gap: var(--space-2);
+  padding: var(--space-2) 2.75rem var(--space-2) var(--space-3);
   border: 1px solid #e3cf8f;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   background: var(--c-warning-bg);
-  box-shadow: 0 10px 30px rgb(15 76 129 / 18%);
-  font-size: 0.85rem;
+  box-shadow: 0 8px 24px rgb(15 76 129 / 16%);
+  font-size: 0.78rem;
+  line-height: 1.4;
 }
 .demo p {
-  flex: 1 1 18rem;
+  flex: 1 1 100%;
   margin: 0;
+}
+.demo :global(.btn-sm) {
+  min-height: 32px;
+  font-size: 0.78rem;
 }
 .demoClose {
   position: absolute;
-  top: 50%;
-  right: var(--space-2);
-  transform: translateY(-50%);
+  top: var(--space-1);
+  right: var(--space-1);
   display: grid;
   place-items: center;
   width: 44px;
@@ -205,7 +202,6 @@
      at the end of the page instead of floating over them. */
   .demo {
     position: static;
-    transform: none;
     width: auto;
     margin: 0 var(--space-4) calc(68px + var(--space-4) + env(safe-area-inset-bottom));
     box-shadow: none;
@@ -258,4 +254,154 @@
     margin-left: 0;
     padding-inline: 0.7rem;
   }
+}
+
+/* About dialog */
+.aboutHero {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0 calc(-1 * var(--space-5)) var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--brand-blue);
+  color: #d9e6f2;
+  font-size: 0.85rem;
+}
+.aboutHero :global(.wordmark) {
+  font-size: 2rem;
+}
+.commit {
+  opacity: 0.75;
+}
+.aboutLinks {
+  list-style: none;
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+.aboutLinks a,
+.aboutLinks button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  background: var(--c-surface);
+  color: var(--c-text);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.aboutLinks a:hover,
+.aboutLinks button:hover {
+  border-color: var(--brand-teal);
+  background: var(--c-selected);
+}
+.aboutLinks span {
+  display: grid;
+  font-weight: 600;
+}
+.aboutLinks small {
+  font-weight: 400;
+  color: var(--c-muted);
+}
+.github,
+.lineIcon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+}
+.github {
+  fill: currentColor;
+}
+.lineIcon {
+  fill: none;
+  stroke: var(--brand-teal-text);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.aboutFooter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--c-border);
+  font-size: 0.85rem;
+  color: var(--c-muted);
+}
+.ateLogo {
+  height: 36px;
+  width: auto;
+}
+@media (prefers-color-scheme: dark) {
+  .ateLogo {
+    filter: brightness(0) invert(1);
+  }
+}
+
+/* Licences side panel */
+.drawer {
+  margin: 0 0 0 auto;
+  width: min(460px, 100vw);
+  height: 100dvh;
+  max-height: none;
+  border: 0;
+  border-left: 1px solid var(--c-border);
+  border-radius: 0;
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  overflow-y: auto;
+}
+.drawerHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+.drawerClose {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--c-text);
+  cursor: pointer;
+}
+.drawerClose:hover {
+  background: var(--c-surface-2);
+}
+.drawerClose svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+.licenseCard {
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  border-radius: var(--radius);
+  background: var(--c-surface-2);
+}
+.packageList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.packageList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--c-border);
 }

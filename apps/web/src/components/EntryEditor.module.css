@@ -15,7 +15,7 @@
 .top {
   grid-area: top;
   position: sticky;
-  top: 0;
+  top: var(--header-h);
   z-index: 5;
   display: flex;
   flex-wrap: wrap;

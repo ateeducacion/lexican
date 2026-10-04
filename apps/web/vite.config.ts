@@ -1,7 +1,8 @@
 import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 
 const commit = (() => {
   try {
@@ -13,6 +14,39 @@ const commit = (() => {
   }
 })();
 
+/**
+ * Emits licenses.json with the third-party packages actually bundled into this build (name, version,
+ * licence), read from each module's package.json. Shown in the app's "Licencias" panel.
+ */
+function bundledLicenses(): Plugin {
+  return {
+    name: 'lexican-bundled-licenses',
+    apply: 'build',
+    generateBundle() {
+      const found = new Map<string, { name: string; version: string; license: string }>();
+      for (const id of this.getModuleIds()) {
+        const m = id.match(/^(.*[\\/]node_modules[\\/](?:@[^\\/]+[\\/])?[^\\/]+)/);
+        if (!m) continue;
+        let dir = m[1]!;
+        while (!existsSync(join(dir, 'package.json')) && dir !== dirname(dir)) dir = dirname(dir);
+        const pkg = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')) as {
+          name: string;
+          version: string;
+          license?: string;
+        };
+        if (pkg.name.startsWith('@lexican/')) continue;
+        found.set(pkg.name, {
+          name: pkg.name,
+          version: pkg.version,
+          license: pkg.license ?? 'Ver paquete',
+        });
+      }
+      const list = [...found.values()].sort((a, b) => a.name.localeCompare(b.name));
+      this.emitFile({ type: 'asset', fileName: 'licenses.json', source: JSON.stringify(list) });
+    },
+  };
+}
+
 // Absolute site URL for link previews (og:image); override per deployment:
 // VITE_SITE_URL=https://example.org/ npm run build
 process.env.VITE_SITE_URL ??= 'https://ateeducacion.github.io/lexican/';
@@ -20,7 +54,7 @@ process.env.VITE_SITE_URL ??= 'https://ateeducacion.github.io/lexican/';
 // `demo` mode = static GitHub Pages build with PGlite; any other mode = production SPA against /api.
 export default defineConfig(({ mode }) => ({
   base: mode === 'demo' ? (process.env.DEMO_BASE ?? '/lexican/') : '/',
-  plugins: [react()],
+  plugins: [react(), bundledLicenses()],
   define: {
     __DEMO__: JSON.stringify(mode === 'demo'),
     // Product version lives in the root package.json (workspaces are 0.0.0).

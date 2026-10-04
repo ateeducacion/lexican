@@ -117,6 +117,8 @@ test('demo notice floats at the bottom and can be dismissed for the visit', asyn
     expect(box!.y + box!.height).toBeGreaterThan(page.viewportSize()!.height - 120);
   await notice.getByRole('button', { name: 'Ocultar el aviso de demostración' }).click();
   await expect(notice).toBeHidden();
+  // Let the background PGlite download finish: Firefox reports an aborted fetch inside PGlite otherwise.
+  await page.waitForLoadState('networkidle');
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Cuentas de demostración' })).toBeVisible();
   await expect(notice).toBeHidden();
@@ -133,8 +135,15 @@ test('the top bar offers help and an about dialog with licence, version and sour
   await help.getByRole('button', { name: 'Entendido' }).click();
   await page.getByRole('button', { name: 'Acerca de LexiCán' }).click();
   const about = page.getByRole('dialog', { name: 'Acerca de LexiCán' });
-  await expect(about.getByRole('link', { name: 'GNU AGPL-3.0 o posterior' })).toBeVisible();
-  await expect(about.getByRole('link', { name: 'github.com/ateeducacion/lexican' })).toBeVisible();
-  await expect(about.getByText(/^2\.\d+\.\d+/)).toBeVisible();
+  await expect(about.getByText(/^Versión 2\.\d+\.\d+/)).toBeVisible();
+  await expect(about.getByRole('link', { name: /Código fuente/ })).toHaveAttribute(
+    'href',
+    /github\.com\/ateeducacion\/lexican/,
+  );
+  await expectAccessible(page);
+  await about.getByRole('button', { name: /Licencias/ }).click();
+  const licenses = page.getByRole('dialog', { name: 'Licencias' });
+  await expect(licenses.getByText('AGPL-3.0-or-later', { exact: false }).first()).toBeVisible();
+  await expect(licenses.getByText('react', { exact: true })).toBeVisible();
   await expectAccessible(page);
 });
