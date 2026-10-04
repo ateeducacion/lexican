@@ -41,6 +41,10 @@ export async function createDemoClient(): Promise<WebApi> {
   const svc = createServices(deps);
 
   let sessionUser = readSession();
+  // Once a reset starts the database is closing: park every call until the page reloads
+  // instead of failing (a pending loader would otherwise hit a closed PGlite).
+  let resetting = false;
+  const parked = <T>(): Promise<T> => new Promise<T>(() => undefined);
   const actor = async (): Promise<Actor | null> =>
     sessionUser ? svc.auth.actorFor(sessionUser) : null;
   const objectUrls = new Map<string, string>();
@@ -48,6 +52,7 @@ export async function createDemoClient(): Promise<WebApi> {
   const api = {} as Record<string, unknown>;
   for (const name of Object.keys(svc.handlers) as OperationName[]) {
     api[name] = async (input: unknown = {}) => {
+      if (resetting) return parked();
       try {
         const result = await svc.call(name, await actor(), input);
         if (name === 'login') {
@@ -68,6 +73,7 @@ export async function createDemoClient(): Promise<WebApi> {
   return {
     ...(api as unknown as WebApi),
     async uploadMedia(file: Blob, name: string): Promise<MediaView> {
+      if (resetting) return parked();
       try {
         return await svc.media.uploadMedia(await actor(), {
           bytes: new Uint8Array(await file.arrayBuffer()),
@@ -78,6 +84,7 @@ export async function createDemoClient(): Promise<WebApi> {
       }
     },
     async mediaSrc(m) {
+      if (resetting) return parked();
       const cached = objectUrls.get(m.id);
       if (cached) return cached;
       try {
@@ -90,6 +97,7 @@ export async function createDemoClient(): Promise<WebApi> {
       }
     },
     async resetDemo() {
+      resetting = true;
       writeSession(null);
       await deleteDemoDb(client);
       location.reload();
