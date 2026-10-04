@@ -26,7 +26,7 @@ público (`SOURCE_URL` en `apps/web/src/env.ts`).
 | Tipografías Lexend y Literata (autoalojadas) | OFL-1.1 | paquetes `@fontsource-variable/lexend`, `@fontsource/literata` |
 | Esquema DMLex 1.0 (`packages/core/src/dmlex-1.0.schema.json`) | © OASIS Open 2025, política IPR de OASIS | Las copias están permitidas «sin restricción» si incluyen el aviso de copyright y la sección *Notices*; ese aviso se reproduce en `THIRD_PARTY_NOTICES.md` ([DMLEX-MAPPING.md](DMLEX-MAPPING.md)) |
 | Dependencias de producción (registro npm) | MIT, ISC, BSD-3-Clause, BlueOak-1.0.0, Apache-2.0, OFL-1.1 | `bun run licenses` (`bun pm licenses --prod`; lista permitida en `scripts/licenses.mjs`; CI falla si aparece otra). SBOM SPDX con `bun run sbom` |
-| Activos vendor del legacy (`public/`: jQuery, Bootstrap, TinyMCE, etc.) | las de cada proyecto (ver avisos) | cabeceras de cada fichero; no los usa el código nuevo y se retiran en la fase de limpieza |
+| Activos vendor del legacy (`public/`: jQuery, Bootstrap, TinyMCE, etc.) | las de cada proyecto (ver avisos) | cabeceras de cada fichero; no los usa el código nuevo; retirados de `main`, siguen solo en `upstream` |
 
 Todas estas licencias son compatibles con distribuir el conjunto bajo AGPL-3.0-or-later.
 

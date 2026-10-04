@@ -20,7 +20,11 @@ export interface DictionaryAccess {
 }
 
 /** Central authorization for dictionaries: every service goes through here (fixes RULE-041/053/217). */
-export async function dictionaryAccess(deps: Deps, actor: Actor | null, dictionaryId: string): Promise<DictionaryAccess> {
+export async function dictionaryAccess(
+  deps: Deps,
+  actor: Actor | null,
+  dictionaryId: string,
+): Promise<DictionaryAccess> {
   const a = requireUser(actor);
   const [row] = await deps.db
     .select({ dict: dictionaries, settings: classroomSettings })
@@ -42,29 +46,50 @@ export async function dictionaryAccess(deps: Deps, actor: Actor | null, dictiona
   return { ...row, role, isOwner, canRead, canEdit, current };
 }
 
-export async function memberRole(db: Db, dictionaryId: string, userId: string): Promise<MemberRole | null> {
+export async function memberRole(
+  db: Db,
+  dictionaryId: string,
+  userId: string,
+): Promise<MemberRole | null> {
   const [m] = await db
     .select({ role: dictionaryMemberships.role, active: dictionaryMemberships.active })
     .from(dictionaryMemberships)
-    .where(and(eq(dictionaryMemberships.dictionaryId, dictionaryId), eq(dictionaryMemberships.userId, userId)));
+    .where(
+      and(
+        eq(dictionaryMemberships.dictionaryId, dictionaryId),
+        eq(dictionaryMemberships.userId, userId),
+      ),
+    );
   return m?.active ? m.role : null;
 }
 
 export function assertReadable(acc: DictionaryAccess): void {
   if (!acc.canRead) {
-    if (acc.role === 'student') throw new DomainError('forbidden', 'El profesorado aún no ha hecho visible este diccionario.');
+    if (acc.role === 'student')
+      throw new DomainError(
+        'forbidden',
+        'El profesorado aún no ha hecho visible este diccionario.',
+      );
     throw notFound('El diccionario');
   }
 }
 
 /** Teacher of a classroom (or owner of a personal dictionary); classroom must be current for writes. */
 export function assertEditable(acc: DictionaryAccess, { requireCurrent = true } = {}): void {
-  if (!acc.canEdit) throw new DomainError('forbidden', 'No tienes permiso para modificar este diccionario.');
+  if (!acc.canEdit)
+    throw new DomainError('forbidden', 'No tienes permiso para modificar este diccionario.');
   if (requireCurrent && !acc.current)
-    throw new DomainError('forbidden', 'El diccionario de aula ya no está vigente: solo se puede consultar.');
+    throw new DomainError(
+      'forbidden',
+      'El diccionario de aula ya no está vigente: solo se puede consultar.',
+    );
 }
 
-export async function classroomAccess(deps: Deps, actor: Actor | null, classroomId: string): Promise<DictionaryAccess> {
+export async function classroomAccess(
+  deps: Deps,
+  actor: Actor | null,
+  classroomId: string,
+): Promise<DictionaryAccess> {
   const acc = await dictionaryAccess(deps, actor, classroomId);
   if (acc.dict.kind !== 'classroom') throw notFound('El diccionario de aula');
   return acc;

@@ -1,5 +1,13 @@
 import { DomainError, type CommentView, type ParsedInput } from '@lexican/core';
-import { classroomSettings, comments, dictionaries, dictionaryMemberships, entryRevisions, submissions, users } from '@lexican/db';
+import {
+  classroomSettings,
+  comments,
+  dictionaries,
+  dictionaryMemberships,
+  entryRevisions,
+  submissions,
+  users,
+} from '@lexican/db';
 import { and, desc, eq, inArray, isNull, lte, or, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { assertEditable, classroomAccess } from './access.ts';
@@ -42,24 +50,37 @@ export function commentServices(deps: Deps) {
   }
 
   return {
-    async listComments(actor: Actor | null, q: ParsedInput<'listComments'>): Promise<CommentView[]> {
+    async listComments(
+      actor: Actor | null,
+      q: ParsedInput<'listComments'>,
+    ): Promise<CommentView[]> {
       const a = requireUser(actor);
       if (q.classroomId) {
         const acc = await classroomAccess(deps, a, q.classroomId);
         if (acc.canEdit)
-          return views(and(eq(comments.classroomId, q.classroomId), q.studentId ? eq(comments.studentId, q.studentId) : undefined));
+          return views(
+            and(
+              eq(comments.classroomId, q.classroomId),
+              q.studentId ? eq(comments.studentId, q.studentId) : undefined,
+            ),
+          );
         if (!acc.role) throw notFound('El diccionario');
       }
       // Students only see comments addressed to them, filtered by each classroom's visibility (RULE-185).
       const mine = await db
         .select({ id: dictionaryMemberships.dictionaryId })
         .from(dictionaryMemberships)
-        .where(and(eq(dictionaryMemberships.userId, a.userId), eq(dictionaryMemberships.active, true)));
+        .where(
+          and(eq(dictionaryMemberships.userId, a.userId), eq(dictionaryMemberships.active, true)),
+        );
       if (mine.length === 0) return [];
       return views(
         and(
           eq(comments.studentId, a.userId),
-          inArray(comments.classroomId, mine.map((m) => m.id)),
+          inArray(
+            comments.classroomId,
+            mine.map((m) => m.id),
+          ),
           q.classroomId ? eq(comments.classroomId, q.classroomId) : undefined,
           or(
             eq(classroomSettings.commentsVisibility, 'visible'),
@@ -72,23 +93,44 @@ export function commentServices(deps: Deps) {
       );
     },
 
-    async createComment(actor: Actor | null, input: ParsedInput<'createComment'>): Promise<CommentView> {
+    async createComment(
+      actor: Actor | null,
+      input: ParsedInput<'createComment'>,
+    ): Promise<CommentView> {
       const a = requireUser(actor);
       const acc = await classroomAccess(deps, a, input.classroomId);
       assertEditable(acc, { requireCurrent: false });
       const [m] = await db
         .select()
         .from(dictionaryMemberships)
-        .where(and(eq(dictionaryMemberships.dictionaryId, input.classroomId), eq(dictionaryMemberships.userId, input.studentId)));
+        .where(
+          and(
+            eq(dictionaryMemberships.dictionaryId, input.classroomId),
+            eq(dictionaryMemberships.userId, input.studentId),
+          ),
+        );
       if (!m) throw new DomainError('validation', 'Esa persona no participa en el diccionario.');
       if (input.submissionId) {
-        const [s] = await db.select().from(submissions).where(eq(submissions.id, input.submissionId));
+        const [s] = await db
+          .select()
+          .from(submissions)
+          .where(eq(submissions.id, input.submissionId));
         if (!s || s.classroomId !== input.classroomId || s.submittedBy !== input.studentId)
-          throw new DomainError('validation', 'El envío no corresponde a ese diccionario o alumno.');
+          throw new DomainError(
+            'validation',
+            'El envío no corresponde a ese diccionario o alumno.',
+          );
       }
       const [row] = await db
         .insert(comments)
-        .values({ classroomId: input.classroomId, authorId: a.userId, studentId: input.studentId, submissionId: input.submissionId, body: input.body, createdAt: deps.clock() })
+        .values({
+          classroomId: input.classroomId,
+          authorId: a.userId,
+          studentId: input.studentId,
+          submissionId: input.submissionId,
+          body: input.body,
+          createdAt: deps.clock(),
+        })
         .returning({ id: comments.id });
       await audit(db, a, 'comment.create', 'comment', row!.id);
       return (await views(eq(comments.id, row!.id)))[0]!;
@@ -96,10 +138,14 @@ export function commentServices(deps: Deps) {
 
     async deleteComment(actor: Actor | null, { commentId }: ParsedInput<'deleteComment'>) {
       const a = requireUser(actor);
-      const [c] = await db.select().from(comments).where(and(eq(comments.id, commentId), isNull(comments.deletedAt)));
+      const [c] = await db
+        .select()
+        .from(comments)
+        .where(and(eq(comments.id, commentId), isNull(comments.deletedAt)));
       if (!c) throw notFound('El comentario');
       const acc = await classroomAccess(deps, a, c.classroomId);
-      if (c.authorId !== a.userId && !acc.canEdit) throw new DomainError('forbidden', 'No puedes borrar este comentario.');
+      if (c.authorId !== a.userId && !acc.canEdit)
+        throw new DomainError('forbidden', 'No puedes borrar este comentario.');
       await db.update(comments).set({ deletedAt: new Date() }).where(eq(comments.id, commentId));
       return { ok: true as const };
     },

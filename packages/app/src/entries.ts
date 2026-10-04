@@ -24,14 +24,30 @@ import {
   type Db,
 } from '@lexican/db';
 import { and, asc, eq, exists, inArray, isNull, like, notInArray, sql } from 'drizzle-orm';
-import { assertEditable, assertReadable, dictionaryAccess, type DictionaryAccess } from './access.ts';
-import { audit, isUniqueViolation, notFound, requireUser, type Actor, type Deps } from './context.ts';
+import {
+  assertEditable,
+  assertReadable,
+  dictionaryAccess,
+  type DictionaryAccess,
+} from './access.ts';
+import {
+  audit,
+  isUniqueViolation,
+  notFound,
+  requireUser,
+  type Actor,
+  type Deps,
+} from './context.ts';
 import { entryViews, snapshotOf } from './views.ts';
 
 const duplicate = (headword: string) =>
-  new DomainError('conflict', `Ya existe la entrada «${normalizeText(headword)}» en este diccionario.`, {
-    headword: ['Ya existe una entrada con esta palabra'],
-  });
+  new DomainError(
+    'conflict',
+    `Ya existe la entrada «${normalizeText(headword)}» en este diccionario.`,
+    {
+      headword: ['Ya existe una entrada con esta palabra'],
+    },
+  );
 
 /** Senses may only reference values of the right vocabulary (no cross-vocabulary ids). */
 async function assertVocabulary(db: Db, input: EntryInput): Promise<void> {
@@ -53,7 +69,12 @@ async function assertVocabulary(db: Db, input: EntryInput): Promise<void> {
 }
 
 /** Media must be the actor's own uploads or already attached to this entry; at most one per kind per sense. */
-async function assertMedia(db: Db, actor: Actor, input: EntryInput, entryId: string | null): Promise<Map<string, string>> {
+async function assertMedia(
+  db: Db,
+  actor: Actor,
+  input: EntryInput,
+  entryId: string | null,
+): Promise<Map<string, string>> {
   const ids = [...new Set(input.senses.flatMap((s) => s.mediaIds))];
   if (ids.length === 0) return new Map();
   const assets = await db.select().from(mediaAssets).where(inArray(mediaAssets.id, ids));
@@ -67,24 +88,37 @@ async function assertMedia(db: Db, actor: Actor, input: EntryInput, entryId: str
   const allowed = new Set(attached.map((a) => a.id));
   const kinds = new Map<string, string>();
   for (const a of assets) {
-    if (a.createdBy !== actor.userId && !allowed.has(a.id)) throw new DomainError('forbidden', 'No puedes usar ese archivo.');
+    if (a.createdBy !== actor.userId && !allowed.has(a.id))
+      throw new DomainError('forbidden', 'No puedes usar ese archivo.');
     kinds.set(a.id, a.kind);
   }
   if (kinds.size !== ids.length) throw new DomainError('validation', 'Falta un archivo adjunto.');
   for (const s of input.senses) {
     const k = s.mediaIds.map((m) => kinds.get(m));
     if (new Set(k).size !== k.length)
-      throw new DomainError('validation', 'Cada acepción admite como máximo una imagen, un audio y un vídeo.');
+      throw new DomainError(
+        'validation',
+        'Cada acepción admite como máximo una imagen, un audio y un vídeo.',
+      );
   }
   return kinds;
 }
 
 /** Replace the senses of an entry, keeping ids (and hidden flags) of senses that survive. */
-async function writeSenses(db: Db, entryId: string, input: EntryInput, kinds: Map<string, string>): Promise<void> {
+async function writeSenses(
+  db: Db,
+  entryId: string,
+  input: EntryInput,
+  kinds: Map<string, string>,
+): Promise<void> {
   const keep = input.senses.flatMap((s) => (s.id ? [s.id] : []));
   await db
     .delete(entrySenses)
-    .where(keep.length ? and(eq(entrySenses.entryId, entryId), notInArray(entrySenses.id, keep)) : eq(entrySenses.entryId, entryId));
+    .where(
+      keep.length
+        ? and(eq(entrySenses.entryId, entryId), notInArray(entrySenses.id, keep))
+        : eq(entrySenses.entryId, entryId),
+    );
   for (const [i, s] of input.senses.entries()) {
     const values = {
       position: i + 1,
@@ -106,18 +140,28 @@ async function writeSenses(db: Db, entryId: string, input: EntryInput, kinds: Ma
         .set(values)
         .where(and(eq(entrySenses.id, senseId), eq(entrySenses.entryId, entryId)))
         .returning({ id: entrySenses.id });
-      if (updated.length === 0) throw new DomainError('validation', 'La acepción no pertenece a esta entrada.');
+      if (updated.length === 0)
+        throw new DomainError('validation', 'La acepción no pertenece a esta entrada.');
       await db.delete(senseTopics).where(eq(senseTopics.senseId, senseId));
       await db.delete(senseMedia).where(eq(senseMedia.senseId, senseId));
     } else {
-      const [row] = await db.insert(entrySenses).values({ entryId, ...values }).returning({ id: entrySenses.id });
+      const [row] = await db
+        .insert(entrySenses)
+        .values({ entryId, ...values })
+        .returning({ id: entrySenses.id });
       senseId = row!.id;
     }
     if (s.topicIds.length)
-      await db.insert(senseTopics).values([...new Set(s.topicIds)].map((topicId) => ({ senseId: senseId!, topicId })));
+      await db
+        .insert(senseTopics)
+        .values([...new Set(s.topicIds)].map((topicId) => ({ senseId: senseId!, topicId })));
     if (s.mediaIds.length)
       await db.insert(senseMedia).values(
-        s.mediaIds.map((mediaId) => ({ senseId: senseId!, mediaId, kind: kinds.get(mediaId) as 'image' | 'audio' | 'video' })),
+        s.mediaIds.map((mediaId) => ({
+          senseId: senseId!,
+          mediaId,
+          kind: kinds.get(mediaId) as 'image' | 'audio' | 'video',
+        })),
       );
   }
 }
@@ -221,13 +265,22 @@ export async function addRevision(
 ): Promise<string> {
   const [row] = await deps.db
     .insert(entryRevisions)
-    .values({ entryId: entry.id, number: await nextRevision(deps.db, entry.id), reason, snapshot: snapshotOf(entry), createdBy: actor.userId })
+    .values({
+      entryId: entry.id,
+      number: await nextRevision(deps.db, entry.id),
+      reason,
+      snapshot: snapshotOf(entry),
+      createdBy: actor.userId,
+    })
     .returning({ id: entryRevisions.id });
   return row!.id;
 }
 
 async function loadEntryRow(db: Db, entryId: string) {
-  const [e] = await db.select().from(entries).where(and(eq(entries.id, entryId), isNull(entries.deletedAt)));
+  const [e] = await db
+    .select()
+    .from(entries)
+    .where(and(eq(entries.id, entryId), isNull(entries.deletedAt)));
   if (!e) throw notFound('La entrada');
   return e;
 }
@@ -240,7 +293,11 @@ export async function entryAccess(deps: Deps, actor: Actor | null, entryId: stri
   return { e, acc };
 }
 
-export async function getEntryView(deps: Deps, acc: DictionaryAccess, entryId: string): Promise<EntryView> {
+export async function getEntryView(
+  deps: Deps,
+  acc: DictionaryAccess,
+  entryId: string,
+): Promise<EntryView> {
   const [view] = await entryViews(deps, [entryId], {
     hideHidden: !acc.canEdit,
     withSubmissions: acc.dict.kind === 'personal',
@@ -253,7 +310,10 @@ export function entryServices(deps: Deps) {
   const { db } = deps;
 
   return {
-    async listEntries(actor: Actor | null, q: ParsedInput<'listEntries'>): Promise<Page<EntrySummary>> {
+    async listEntries(
+      actor: Actor | null,
+      q: ParsedInput<'listEntries'>,
+    ): Promise<Page<EntrySummary>> {
       const acc = await dictionaryAccess(deps, actor, q.dictionaryId);
       assertReadable(acc);
       const showHidden = acc.canEdit && q.includeHidden !== false;
@@ -262,7 +322,9 @@ export function entryServices(deps: Deps) {
         isNull(entries.deletedAt),
         showHidden ? undefined : eq(entries.hidden, false),
         // Accent-insensitive like the legacy MySQL collation: "arbol" finds "árbol".
-        q.q ? like(entries.sortKey, `%${sortKeyOf(q.q).replace(/[\\%_]/g, (c) => `\\${c}`)}%`) : undefined,
+        q.q
+          ? like(entries.sortKey, `%${sortKeyOf(q.q).replace(/[\\%_]/g, (c) => `\\${c}`)}%`)
+          : undefined,
         q.initial ? eq(entries.initial, q.initial.toLocaleUpperCase('es')) : undefined,
         q.topicId
           ? exists(
@@ -280,7 +342,10 @@ export function entryServices(deps: Deps) {
             )
           : undefined,
       );
-      const [total] = await db.select({ n: sql<number>`count(*)::int` }).from(entries).where(where);
+      const [total] = await db
+        .select({ n: sql<number>`count(*)::int` })
+        .from(entries)
+        .where(where);
       const rows = await db
         .select({ id: entries.id })
         .from(entries)
@@ -288,10 +353,14 @@ export function entryServices(deps: Deps) {
         .orderBy(sql`${entries.sortKey} collate "C"`, asc(entries.headwordKey))
         .limit(q.limit)
         .offset(q.offset);
-      const views = await entryViews(deps, rows.map((r) => r.id), {
-        hideHidden: !showHidden,
-        withSubmissions: acc.dict.kind === 'personal',
-      });
+      const views = await entryViews(
+        deps,
+        rows.map((r) => r.id),
+        {
+          hideHidden: !showHidden,
+          withSubmissions: acc.dict.kind === 'personal',
+        },
+      );
       return {
         total: total?.n ?? 0,
         items: views.map((v) => ({
@@ -302,7 +371,10 @@ export function entryServices(deps: Deps) {
           senseCount: v.senses.length,
           firstDefinition: v.senses[0]?.definition ?? '',
           updatedAt: v.updatedAt,
-          submissions: latestPerClassroom(v).map((s) => ({ classroomTitle: s.classroomTitle, status: s.status })),
+          submissions: latestPerClassroom(v).map((s) => ({
+            classroomTitle: s.classroomTitle,
+            status: s.status,
+          })),
         })),
       };
     },
@@ -312,18 +384,27 @@ export function entryServices(deps: Deps) {
       return getEntryView(deps, acc, entryId);
     },
 
-    async createEntry(actor: Actor | null, { dictionaryId, entry }: ParsedInput<'createEntry'>): Promise<EntryView> {
+    async createEntry(
+      actor: Actor | null,
+      { dictionaryId, entry }: ParsedInput<'createEntry'>,
+    ): Promise<EntryView> {
       const a = requireUser(actor);
       const acc = await dictionaryAccess(deps, a, dictionaryId);
       if (acc.dict.kind !== 'personal' || !acc.canEdit)
-        throw new DomainError('forbidden', 'Las entradas nuevas se crean en tu diccionario personal.');
+        throw new DomainError(
+          'forbidden',
+          'Las entradas nuevas se crean en tu diccionario personal.',
+        );
       await assertVocabulary(db, entry);
       const kinds = await assertMedia(db, a, entry, null);
       const id = await db.transaction((tx) => insertEntry(tx, a, dictionaryId, entry, kinds));
       return getEntryView(deps, acc, id);
     },
 
-    async updateEntry(actor: Actor | null, { entryId, version, entry }: ParsedInput<'updateEntry'>): Promise<EntryView> {
+    async updateEntry(
+      actor: Actor | null,
+      { entryId, version, entry }: ParsedInput<'updateEntry'>,
+    ): Promise<EntryView> {
       const a = requireUser(actor);
       const { e, acc } = await entryAccess(deps, a, entryId);
       assertEditable(acc);
@@ -333,11 +414,20 @@ export function entryServices(deps: Deps) {
         try {
           const updated = await tx
             .update(entries)
-            .set({ ...headwordColumns(entry.headword), hidden: entry.hidden, version: sql`${entries.version} + 1`, updatedBy: a.userId, updatedAt: new Date() })
+            .set({
+              ...headwordColumns(entry.headword),
+              hidden: entry.hidden,
+              version: sql`${entries.version} + 1`,
+              updatedBy: a.userId,
+              updatedAt: new Date(),
+            })
             .where(and(eq(entries.id, entryId), eq(entries.version, version)))
             .returning({ id: entries.id });
           if (updated.length === 0)
-            throw new DomainError('conflict', 'Otra persona ha modificado esta entrada. Recarga para ver los cambios.');
+            throw new DomainError(
+              'conflict',
+              'Otra persona ha modificado esta entrada. Recarga para ver los cambios.',
+            );
         } catch (err) {
           if (isUniqueViolation(err)) throw duplicate(entry.headword);
           throw err;
@@ -357,7 +447,10 @@ export function entryServices(deps: Deps) {
       const { acc } = await entryAccess(deps, a, entryId);
       assertEditable(acc);
       await db.transaction(async (tx) => {
-        await tx.update(entries).set({ deletedAt: new Date(), updatedBy: a.userId }).where(eq(entries.id, entryId));
+        await tx
+          .update(entries)
+          .set({ deletedAt: new Date(), updatedBy: a.userId })
+          .where(eq(entries.id, entryId));
         // RULE-127: pending submissions of a deleted personal entry are withdrawn; published copies stay.
         await tx
           .update(submissions)
@@ -368,17 +461,34 @@ export function entryServices(deps: Deps) {
       return { ok: true as const };
     },
 
-    async setEntryHidden(actor: Actor | null, { entryId, hidden }: ParsedInput<'setEntryHidden'>): Promise<EntryView> {
+    async setEntryHidden(
+      actor: Actor | null,
+      { entryId, hidden }: ParsedInput<'setEntryHidden'>,
+    ): Promise<EntryView> {
       const a = requireUser(actor);
       const { acc } = await entryAccess(deps, a, entryId);
       assertEditable(acc);
-      await db.update(entries).set({ hidden, updatedBy: a.userId, updatedAt: new Date(), version: sql`${entries.version} + 1` }).where(eq(entries.id, entryId));
+      await db
+        .update(entries)
+        .set({
+          hidden,
+          updatedBy: a.userId,
+          updatedAt: new Date(),
+          version: sql`${entries.version} + 1`,
+        })
+        .where(eq(entries.id, entryId));
       return getEntryView(deps, acc, entryId);
     },
 
-    async setSenseHidden(actor: Actor | null, { senseId, hidden }: ParsedInput<'setSenseHidden'>): Promise<EntryView> {
+    async setSenseHidden(
+      actor: Actor | null,
+      { senseId, hidden }: ParsedInput<'setSenseHidden'>,
+    ): Promise<EntryView> {
       const a = requireUser(actor);
-      const [s] = await db.select({ entryId: entrySenses.entryId }).from(entrySenses).where(eq(entrySenses.id, senseId));
+      const [s] = await db
+        .select({ entryId: entrySenses.entryId })
+        .from(entrySenses)
+        .where(eq(entrySenses.id, senseId));
       if (!s) throw notFound('La acepción');
       const { acc } = await entryAccess(deps, a, s.entryId);
       assertEditable(acc);
@@ -387,23 +497,46 @@ export function entryServices(deps: Deps) {
           .select({ n: sql<number>`count(*)::int` })
           .from(entrySenses)
           .where(and(eq(entrySenses.entryId, s.entryId), eq(entrySenses.hidden, false)));
-        if ((visible?.n ?? 0) <= 1) throw new DomainError('validation', 'La entrada debe conservar al menos una acepción visible.');
+        if ((visible?.n ?? 0) <= 1)
+          throw new DomainError(
+            'validation',
+            'La entrada debe conservar al menos una acepción visible.',
+          );
       }
-      await db.update(entrySenses).set({ hidden, updatedAt: new Date() }).where(eq(entrySenses.id, senseId));
-      await db.update(entries).set({ version: sql`${entries.version} + 1`, updatedAt: new Date() }).where(eq(entries.id, s.entryId));
+      await db
+        .update(entrySenses)
+        .set({ hidden, updatedAt: new Date() })
+        .where(eq(entrySenses.id, senseId));
+      await db
+        .update(entries)
+        .set({ version: sql`${entries.version} + 1`, updatedAt: new Date() })
+        .where(eq(entries.id, s.entryId));
       return getEntryView(deps, acc, s.entryId);
     },
 
-    async exportDictionary(actor: Actor | null, { dictionaryId, includeHidden }: ParsedInput<'exportDictionary'>) {
+    async exportDictionary(
+      actor: Actor | null,
+      { dictionaryId, includeHidden }: ParsedInput<'exportDictionary'>,
+    ) {
       const acc = await dictionaryAccess(deps, actor, dictionaryId);
       assertReadable(acc);
       const showHidden = acc.canEdit && includeHidden;
       const rows = await db
         .select({ id: entries.id })
         .from(entries)
-        .where(and(eq(entries.dictionaryId, dictionaryId), isNull(entries.deletedAt), showHidden ? undefined : eq(entries.hidden, false)))
+        .where(
+          and(
+            eq(entries.dictionaryId, dictionaryId),
+            isNull(entries.deletedAt),
+            showHidden ? undefined : eq(entries.hidden, false),
+          ),
+        )
         .orderBy(sql`${entries.sortKey} collate "C"`, asc(entries.headwordKey));
-      return entryViews(deps, rows.map((r) => r.id), { hideHidden: !showHidden, withSubmissions: false });
+      return entryViews(
+        deps,
+        rows.map((r) => r.id),
+        { hideHidden: !showHidden, withSubmissions: false },
+      );
     },
   };
 }

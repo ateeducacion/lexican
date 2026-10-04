@@ -52,7 +52,8 @@ export function requireUser(actor: Actor | null): Actor {
 
 export function requireRole(actor: Actor | null, ...roles: GlobalRole[]): Actor {
   const a = requireUser(actor);
-  if (!roles.includes(a.globalRole)) throw new DomainError('forbidden', 'No tienes permiso para esta acción.');
+  if (!roles.includes(a.globalRole))
+    throw new DomainError('forbidden', 'No tienes permiso para esta acción.');
   return a;
 }
 
@@ -70,7 +71,9 @@ export async function audit(
   entityId: string | null,
   metadata: Record<string, string | number | boolean | null> = {},
 ): Promise<void> {
-  await db.insert(auditEvents).values({ actorId: actor?.userId ?? null, action, entityType, entityId, metadata });
+  await db
+    .insert(auditEvents)
+    .values({ actorId: actor?.userId ?? null, action, entityType, entityId, metadata });
 }
 
 /** Postgres unique-violation detection on both drivers. */

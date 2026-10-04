@@ -1,4 +1,4 @@
-# Allowlist: only the TypeScript monorepo goes into the build context (never the legacy tree or secrets).
+# Allowlist: only the TypeScript monorepo goes into the build context (never local data, reports or secrets).
 *
 !package.json
 !bun.lock
