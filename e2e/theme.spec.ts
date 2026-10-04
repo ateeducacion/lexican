@@ -19,7 +19,8 @@ test('a missing code chunk after a deployment reloads once instead of showing an
 }) => {
   test.skip(!app.demo, 'demo build only');
   let fail = true;
-  await page.route(/assets\/client-.*\.js$/, (r) =>
+  // The lazily loaded demo engine chunk (demo/transport.ts).
+  await page.route(/assets\/transport-.*\.js$/, (r) =>
     fail ? ((fail = false), r.fulfill({ status: 404, body: '' })) : r.continue(),
   );
   // The forced 404 itself is logged by the browser; that is the scenario under test.

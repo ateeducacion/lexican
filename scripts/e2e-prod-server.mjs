@@ -1,5 +1,5 @@
 // Production E2E server (playwright project `prod-chromium`): throwaway Postgres database, built web + API,
-// migrations + demo seed, API on :3100 serving the SPA. The database and media dir are removed on exit.
+// migrations + demo seed, API on :3100 serving the SPA, run by Bun exactly like the Docker image. The database and media dir are removed on exit.
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -46,8 +46,8 @@ async function cleanup() {
 }
 
 const env = {
-  ...process.env,
-  NODE_ENV: 'test',
+  PATH: process.env.PATH,
+  APP_ENV: 'test',
   DATABASE_URL: url.toString(),
   PORT: String(PORT),
   HOST: '127.0.0.1',
@@ -62,9 +62,13 @@ const env = {
 
 let server;
 try {
-  run('node', ['apps/api/dist/cli/migrate.js'], env);
-  run('node', ['apps/api/dist/cli/seed.js', '--demo'], env);
-  server = spawn('node', ['apps/api/dist/server.js'], { cwd: root, env, stdio: 'inherit' });
+  run('bun', ['--no-env-file', 'apps/api/dist/cli/migrate.js'], env);
+  run('bun', ['--no-env-file', 'apps/api/dist/cli/seed.js', '--demo'], env);
+  server = spawn('bun', ['--no-env-file', 'apps/api/dist/server.js'], {
+    cwd: root,
+    env,
+    stdio: 'inherit',
+  });
 } catch (e) {
   await cleanup();
   throw e;

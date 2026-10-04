@@ -1,4 +1,7 @@
-# Local development. `docker compose up -d db` for Postgres only; `docker compose --profile app up --build` for the full image.
+# LOCAL testing only (APP_ENV=local): public test CAS + fictitious profiles and demo data, plain http on localhost.
+#   docker compose up -d db                 PostgreSQL only (for `npm run dev:api`)
+#   docker compose --profile app up --build  full image: migrations + demo seed, then the app on http://localhost:3000
+# Production uses docker-compose.prod.yml with its own environment file; nothing here applies to it.
 services:
   db:
     image: postgres:18-alpine
@@ -15,16 +18,42 @@ services:
       interval: 5s
       retries: 10
 
-  app:
+  # One-shot: migrations, vocabularies and the fictitious demo dataset (idempotent).
+  setup:
     profiles: ['app']
     build: .
+    image: lexican:local
     depends_on:
       db:
         condition: service_healthy
-    environment:
+    environment: &local-env
+      APP_ENV: local
       DATABASE_URL: postgres://lexican:lexican@db:5432/lexican
       PUBLIC_URL: http://localhost:3000
-      MIGRATE_ON_START: 'true'
+      # Explicit test CAS (also the APP_ENV=local default): https://www.casserverpac4j.dev, accounts alice/bob.
+      CAS_URL: https://www.casserverpac4j.dev
+      CAS_LOGIN_PATH: /login
+      CAS_VALIDATE_PATH: /p3/serviceValidate
+      CAS_LOGOUT_PATH: /logout
+      CAS_PROFILES: test
+      AUTH_DEV_LOGIN: 'true'
+    command:
+      [
+        'sh',
+        '-c',
+        'bun --no-env-file api/cli/migrate.js && bun --no-env-file api/cli/seed.js --demo',
+      ]
+    volumes:
+      - media:/data/media
+    read_only: true
+
+  app:
+    profiles: ['app']
+    image: lexican:local
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+    environment: *local-env
     ports:
       - '3000:3000'
     volumes:
@@ -32,6 +61,7 @@ services:
     read_only: true
     tmpfs:
       - /tmp
+    stop_grace_period: 15s
 
 volumes:
   pgdata:

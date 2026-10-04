@@ -45,7 +45,7 @@ Más detalles en [docs/DEMO.md](docs/DEMO.md).
 
 ## Desarrollo rápido
 
-Requisitos: Node.js 24 o superior y Docker (solo para PostgreSQL).
+Requisitos: Node.js 24 o superior, Bun 1.4.2 (API) y Docker.
 
 ```bash
 npm ci
@@ -56,13 +56,15 @@ Con API y PostgreSQL:
 
 ```bash
 docker compose up -d db
-cp apps/api/.env.example apps/api/.env
-set -a; . apps/api/.env; set +a
+cp apps/api/.env.example apps/api/.env      # APP_ENV=local: CAS de pruebas + datos ficticios
 npm run db:migrate
 npm run db:seed -- --demo                # vocabularios + cuentas y datos ficticios
 npm run dev:api                          # API en http://localhost:3000
 npm run dev                              # en otra terminal: web en http://localhost:5173
 ```
+
+O todo en Docker, como en producción pero con el perfil local: `docker compose --profile app up --build`
+(<http://localhost:3000>).
 
 Guía completa: [developers.md](developers.md). Normas para agentes y contribuciones: [AGENTS.md](AGENTS.md).
 

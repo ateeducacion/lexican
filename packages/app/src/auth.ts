@@ -41,6 +41,8 @@ export interface InstitutionalProfile {
   schools: { code: string; name: string; role: string }[];
 }
 
+export type CasProvider = 'cas' | 'cas_test';
+
 /** CAUCE roles 1 (public school teacher), 4 (teacher-centre staff), 5 (education technician) → teacher (RULE-063). */
 export const TEACHER_ROLE_CODES = new Set(['1', '4', '5']);
 export const roleFromDirectory = (p: InstitutionalProfile): GlobalRole =>
@@ -103,15 +105,23 @@ export function authServices(deps: Deps) {
       return { ok: true as const };
     },
 
-    /** CAS + CAUCE sign-in: create or update the user and recompute the global role on every login. */
-    async signInInstitutional(profile: InstitutionalProfile): Promise<UserView> {
+    /**
+     * CAS sign-in: create or update the user and recompute the global role on every login. `provider` is the issuer:
+     * identities of the test CAS (`cas_test`) and the institutional one (`cas`) never link, even with equal subjects.
+     * Disabled accounts are refused.
+     */
+    async signInInstitutional(profile: InstitutionalProfile, provider: CasProvider = 'cas'): Promise<UserView> {
       const userId = await db.transaction(async (tx) => {
         const displayName = `${profile.firstName} ${profile.lastName}`.trim() || profile.subject;
         const [identity] = await tx
           .select()
           .from(authIdentities)
-          .where(and(eq(authIdentities.provider, 'cas'), eq(authIdentities.subject, profile.subject)));
+          .where(and(eq(authIdentities.provider, provider), eq(authIdentities.subject, profile.subject)));
         let id = identity?.userId;
+        if (id) {
+          const [u] = await tx.select({ status: users.status }).from(users).where(eq(users.id, id));
+          if (u?.status !== 'active') throw new DomainError('forbidden', 'Tu cuenta está desactivada en LexiCán.');
+        }
         const directoryRole = roleFromDirectory(profile);
         if (id) {
           await tx
@@ -132,7 +142,7 @@ export function authServices(deps: Deps) {
           let [u] = await tx.insert(users).values({ ...values, email: profile.email }).onConflictDoNothing().returning({ id: users.id });
           if (!u) [u] = await tx.insert(users).values({ ...values, email: null }).returning({ id: users.id });
           id = u!.id;
-          await tx.insert(authIdentities).values({ userId: id, provider: 'cas', subject: profile.subject, lastLoginAt: deps.clock() });
+          await tx.insert(authIdentities).values({ userId: id, provider, subject: profile.subject, lastLoginAt: deps.clock() });
         }
         await tx.delete(userSchools).where(eq(userSchools.userId, id));
         for (const s of profile.schools) {
@@ -146,7 +156,7 @@ export function authServices(deps: Deps) {
         return id;
       });
       const view = await userView(userId);
-      await audit(db, { userId, globalRole: view.globalRole }, 'auth.login', 'user', userId, { provider: 'cas' });
+      await audit(db, { userId, globalRole: view.globalRole }, 'auth.login', 'user', userId, { provider });
       return view;
     },
 

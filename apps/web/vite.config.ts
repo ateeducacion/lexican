@@ -68,6 +68,8 @@ export default defineConfig(({ mode }) => ({
     __APP_COMMIT__: JSON.stringify(commit),
   },
   optimizeDeps: { exclude: ['@electric-sql/pglite'] },
+  // The demo API runs in a module Web Worker (demo/worker.ts): ES output so it can import chunks and PGlite's assets.
+  worker: { format: 'es' as const },
   build: {
     target: 'es2022',
     outDir: mode === 'demo' ? 'dist-demo' : 'dist',

@@ -1,6 +1,6 @@
 import {
   EntryInput,
-  MEDIA_MIME,
+  MEDIA_ACCEPT,
   SENSE_FIELDS,
   type DictionaryView,
   type EntryView,
@@ -229,7 +229,7 @@ export function EntryEditor({
     const k = `senses.${senses.indexOf(sense)}.media-${kind}`;
     setUploading((u) => ({ ...u, [`${sense.key}-${kind}`]: true }));
     try {
-      const m = await (await getApi()).uploadMedia(file, file.name);
+      const m = await (await getApi()).uploadMedia(file, file.name, kind);
       if (m.kind !== kind) throw new Error(`El archivo no es ${MEDIA_LABEL[kind].toLowerCase()}`);
       setSenses((list) =>
         list.map((s) =>
@@ -874,7 +874,7 @@ function MediaSlot({
         id={id}
         type="file"
         className={`visually-hidden ${styles.fileInput}`}
-        accept={MEDIA_MIME[kind].join(',')}
+        accept={MEDIA_ACCEPT[kind]}
         disabled={busy}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${id}-error` : undefined}

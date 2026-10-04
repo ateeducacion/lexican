@@ -11,14 +11,14 @@ export function openDb(databaseUrl: string): { db: Db; pool: pg.Pool } {
   return { db: drizzle({ client: pool, schema }) as unknown as Db, pool };
 }
 
-/** drizzle-kit migrations: copied next to the bundle by build.mjs, or read from the workspace in dev. */
+/** drizzle-kit migrations: copied next to the bundle by the `build` script, or read from the workspace in dev. */
 function migrationsFolder(): string {
   const here = dirname(fileURLToPath(import.meta.url));
   const candidates = [
     process.env.MIGRATIONS_DIR,
     join(here, 'migrations'), // dist/server.js
     join(here, '../migrations'), // dist/cli/*.js
-    join(here, '../../../packages/db/migrations'), // apps/api/src (tsx)
+    join(here, '../../../packages/db/migrations'), // apps/api/src (bun, tests)
   ];
   const dir = candidates.find((d): d is string => !!d && existsSync(join(d, 'meta/_journal.json')));
   if (!dir) throw new Error('Migrations folder not found (set MIGRATIONS_DIR).');

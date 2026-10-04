@@ -44,6 +44,31 @@ export default tseslint.config(
     rules: { 'no-console': 'off' },
   },
   {
+    // Code that also runs in the browser (demo Web Worker): web APIs only, no server runtime (ADR 0009).
+    files: [
+      'packages/http/src/**',
+      'packages/app/src/**',
+      'packages/core/src/**',
+      'apps/web/src/**',
+    ],
+    ignores: ['**/*.test.ts', '**/testing/**'],
+    rules: {
+      'no-restricted-globals': [
+        'error',
+        { name: 'Bun', message: 'Bun APIs only in apps/api (server).' },
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            { regex: '^node:', message: 'Shared code runs in the browser: no Node modules.' },
+            { regex: '^(pg|proxy-addr|bun)$', message: 'Server-only dependency.' },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['e2e/**'],
     rules: { '@typescript-eslint/no-invalid-void-type': 'off' },
   },

@@ -20,9 +20,11 @@ export interface App {
  * Every test fails on an uncaught page error, a console error or a request leaving the app's origin
  * (no CDNs, fonts, analytics or institutional services — §22, §64).
  */
-export const test = base.extend<{ guard: void; app: App }>({
+export const test = base.extend<{ guard: void; app: App; allowedOrigins: string[] }>({
+  /** Extra origins a test may contact on purpose (a faked CAS server). */
+  allowedOrigins: [[], { option: true }],
   guard: [
-    async ({ page, baseURL }, use) => {
+    async ({ page, baseURL, allowedOrigins }, use) => {
       const problems: string[] = [];
       const origin = new URL(baseURL ?? 'http://localhost').origin;
       page.on('pageerror', (e) => problems.push(`pageerror: ${e.message}`));
@@ -31,7 +33,11 @@ export const test = base.extend<{ guard: void; app: App }>({
       });
       page.on('request', (r) => {
         const u = r.url();
-        if (!/^(data|blob):/.test(u) && new URL(u).origin !== origin)
+        if (
+          !/^(data|blob):/.test(u) &&
+          new URL(u).origin !== origin &&
+          !allowedOrigins.includes(new URL(u).origin)
+        )
           problems.push(`external request: ${u}`);
       });
       await use();

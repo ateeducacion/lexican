@@ -49,6 +49,9 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.2
 
       - run: npm ci
       - run: npm run audit
@@ -70,6 +73,7 @@ jobs:
       - run: npm run check:dist
 
       - run: npx playwright install --with-deps chromium firefox
+      # Demo against a Pages-like static server and a local fake CAS; production E2E on Bun + PostgreSQL.
       - run: npm run e2e -- --project=demo-chromium --project=demo-firefox --project=demo-mobile --project=prod-chromium
         env:
           E2E_DATABASE_URL: postgres://lexican:lexican@localhost:5432/postgres
@@ -93,6 +97,9 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.2
       - run: npm ci
       - run: npx playwright install --with-deps webkit
       - run: npm run e2e:webkit
@@ -102,6 +109,30 @@ jobs:
           name: playwright-report-webkit
           path: playwright-report/
           retention-days: 7
+
+  docker:
+    # The production image: builds, refuses to start unconfigured, and serves the local profile (migrate + seed).
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: docker build -t lexican:local .
+      - name: Unconfigured image refuses to start (APP_ENV defaults to production)
+        run: |
+          if docker run --rm -e DATABASE_URL=postgres://x -e PUBLIC_URL=https://lexican.example.test lexican:local; then
+            echo "::error::the image started without institutional configuration"; exit 1
+          fi
+      - name: Local compose profile comes up healthy
+        run: |
+          docker compose --profile app up -d
+          for i in $(seq 1 30); do curl -fsS http://localhost:3000/api/health && break; sleep 2; done
+          curl -fsS http://localhost:3000/api/health
+          test "$(curl -fsS http://localhost:3000/api/auth/providers)" = '{"cas":"test","password":true}'
+          curl -fsS -o /dev/null http://localhost:3000/
+      - if: always()
+        run: docker compose --profile app logs --no-color && docker compose --profile app down -v
 
   migration:
     # Legacy MariaDB fixture → migrator → PostgreSQL → assertions (§79).
@@ -135,5 +166,8 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.2
       - run: npm ci
       - run: npm run test:migration

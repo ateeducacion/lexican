@@ -8,6 +8,7 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import { getApi } from '../api/index.ts';
+import { DemoStatusBanner } from '../demo/DemoStatusBanner.tsx';
 import { ROLE_LABEL, type RootData } from '../session.ts';
 import { AppInfo } from './AppInfo.tsx';
 import styles from './Layout.module.css';
@@ -89,6 +90,7 @@ export function Layout() {
         tabIndex={-1}
         className={`container ${styles.main} ${__DEMO__ ? styles.mainDemo : ''}`}
       >
+        {__DEMO__ && <DemoStatusBanner />}
         <Outlet />
       </main>
       {user && (

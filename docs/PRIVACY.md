@@ -10,7 +10,7 @@ Esquema: `packages/db/src/schema.ts` ([DATA-MODEL.md](DATA-MODEL.md)).
 | Tabla | Datos personales | Para qué | Conservación | Borrado / anonimización |
 |---|---|---|---|---|
 | `users` | nombre, apellidos, nombre visible, correo (opcional), avatar (de una lista cerrada), rol global, estado | identificar a la persona en sus diccionarios, aulas y comentarios | mientras la cuenta exista | `status = 'disabled'` corta el acceso. El borrado elimina en cascada identidades, sesiones y centros; **no existe todavía** una operación de borrado o anonimización en la interfaz (pendiente) |
-| `auth_identities` | sujeto CAS (identificador de usuario); hash PBKDF2 solo en demo/desarrollo; último acceso | vincular el acceso institucional con la cuenta | como `users` | cascada con `users` |
+| `auth_identities` | emisor (`cas`, `cas_test`, `password`) y sujeto CAS (identificador de usuario); hash PBKDF2 solo en demo/desarrollo; último acceso. `cas_test` solo contiene las cuentas ficticias del CAS de pruebas y nunca existe en producción | vincular el acceso institucional con la cuenta | como `users` | cascada con `users` |
 | `sessions` | hash del identificador de sesión, ticket CAS, fechas | mantener la sesión y el *single logout* | hasta `expires_at` (`SESSION_TTL_HOURS`) | se borran al salir, por SLO, y las caducadas al iniciar sesión |
 | `schools`, `user_schools` | centro y código de rol CAUCE | estadísticas por centro y cálculo del rol | se reescriben en cada acceso | cascada con `users` |
 | `dictionaries`, `classroom_settings`, `dictionary_memberships` | propietario, participación en aulas | funcionamiento de diccionarios y aulas | mientras existan | `deleted_at` (borrado lógico); la participación se desactiva con `active = false` |
@@ -32,8 +32,8 @@ decisión del responsable del tratamiento: **pendiente**.
 
 ## Registros (logs)
 
-- No se registran cookies, cabeceras `Authorization`, `Set-Cookie`, tickets CAS ni `logoutRequest` (`redact` y
-  serializador en `apps/api/src/app.ts`).
+- No se registran cookies, cabeceras `Authorization`, `Set-Cookie`, tickets CAS, `state` ni `logoutRequest` (el
+  registro de peticiones solo recibe método, ruta tachada, estado, duración e IP: `apps/api/src/app.ts`).
 - Las respuestas de CAUCE nunca se registran (el legacy registraba NIF, CIAL y centros); solo un código de error.
 - La configuración inválida se informa por nombre de variable, nunca por valor.
 - La auditoría (`audit_events`) guarda acciones, no contenido.
@@ -49,8 +49,12 @@ decisión del responsable del tratamiento: **pendiente**.
 ## Demo pública
 
 - Usuarios, centro y contenidos ficticios (`packages/core/src/demo.ts`, `packages/app/src/demo-seed.ts`).
-- Todo lo que se escribe en la demo se queda en IndexedDB y `localStorage` **del navegador** de quien la usa; no se
-  envía a ningún servidor ([DEMO.md](DEMO.md)).
+- Todo lo que se escribe en la demo se queda en IndexedDB (`/pglite/lexican-demo-v2`, `lexican-demo-media`),
+  `localStorage` (identificador de sesión) y `sessionStorage` (acceso CAS pendiente) **del navegador** de quien la usa;
+  no se envía a ningún servidor ([DEMO.md](DEMO.md)).
+- Excepción deliberada: «Entrar con CAS de pruebas» lleva al CAS público de pruebas (casserverpac4j.dev, ajeno a la
+  Consejería) y le pide validar el ticket. Solo se usan sus cuentas ficticias; la pantalla advierte de no escribir
+  credenciales institucionales.
 - Las ilustraciones de la demo son propias (CC0).
 
 ## Repositorio y pruebas

@@ -1,31 +1,30 @@
-# Publishes the static PGlite demo to GitHub Pages, only after CI succeeded on main.
+# Fast path to the GitHub Pages demo: on every push to main, build ONE demo artifact, check it (types, bundle
+# guard, essential E2E on a Pages-like static server) and deploy exactly that artifact. It does not wait for the full
+# validation (ci.yml); production releases (release.yml) still require the full gate.
 name: Pages
 
 on:
-  workflow_run:
-    workflows: [CI]
-    types: [completed]
+  push:
     branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
 
-# A deployment in progress is never cut; a newer one waits and replaces any older pending run.
+# Runs are serialized and only the newest pending one is kept: an older commit never deploys after a newer one.
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  build:
-    # Manual runs may only redeploy main; automatic runs only after a successful CI on a push to main.
-    if: (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+  check:
+    # Trusted code only: main of this repository (never forks or pull requests).
+    if: github.ref == 'refs/heads/main' && github.repository == 'ateeducacion/lexican'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           fetch-depth: 0 # origin/main, for the check below
           persist-credentials: false
 
@@ -38,8 +37,15 @@ jobs:
           cache: npm
 
       - run: npm ci
+      - run: npm run typecheck
       - run: npm run build:demo
       - run: npm run check:dist
+
+      # Essential journeys on the very artifact to deploy (the fake-CAS tests need their own build: ci.yml).
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e -- --project=demo-chromium --grep-invert @fakecas
+        env:
+          E2E_DEMO_PREBUILT: '1'
 
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 
@@ -47,8 +53,15 @@ jobs:
         with:
           path: apps/web/dist-demo
 
+      - if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report-pages
+          path: playwright-report/
+          retention-days: 7
+
   deploy:
-    needs: build
+    needs: check
     runs-on: ubuntu-latest
     permissions:
       pages: write

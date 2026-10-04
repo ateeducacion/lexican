@@ -1,6 +1,6 @@
-import { appSettings, schools, seedVocabulary, userSchools, vocabularyValues, type Db } from '@lexican/db';
-import { DEMO_ACCOUNTS, type EntryInput, type OperationName, type OperationOutputs } from '@lexican/core';
-import { eq } from 'drizzle-orm';
+import { appSettings, authIdentities, schools, seedVocabulary, userSchools, vocabularyValues, type Db } from '@lexican/db';
+import { DEMO_ACCOUNTS, DEMO_SCHOOL, type EntryInput, type OperationName, type OperationOutputs } from '@lexican/core';
+import { and, eq } from 'drizzle-orm';
 import { createPasswordUser } from './auth.ts';
 import type { Actor, Deps } from './context.ts';
 import { createServices } from './index.ts';
@@ -21,7 +21,7 @@ export async function seedDemo(
 ): Promise<void> {
   const { db } = deps;
   const [done] = await db.select().from(appSettings).where(eq(appSettings.key, 'demo_seed_version'));
-  if (done) return;
+  if (done) return linkTestCasIdentities(db);
   await seedVocabulary(db);
   const svc = createServices(deps);
   const v: Record<string, string> = {};
@@ -36,7 +36,7 @@ export async function seedDemo(
   const s1 = actors['alumno1@ejemplo.com']!;
   const s2 = actors['alumno2@ejemplo.com']!;
 
-  const [school] = await db.insert(schools).values({ code: '99999999', name: 'IES Ficticio Las Palmeras' }).returning();
+  const [school] = await db.insert(schools).values({ ...DEMO_SCHOOL }).returning();
   await db.insert(userSchools).values([teacher, s1, s2].map((a) => ({ userId: a.userId, schoolId: school!.id })));
 
   const call = <K extends OperationName>(name: K, actor: Actor, input: unknown): Promise<OperationOutputs[K]> =>
@@ -155,6 +155,22 @@ export async function seedDemo(
   await call('setSenseHidden', teacher, { senseId: full.senses[1]!.id, hidden: true });
 
   await db.insert(appSettings).values({ key: 'demo_seed_version', value: DEMO_SEED_VERSION });
+  await linkTestCasIdentities(db);
+}
+
+/**
+ * Deterministic, idempotent link of the public test CAS accounts (alice, bob) to their demo personas, under the
+ * separate `cas_test` issuer. Also runs on databases seeded before the link existed.
+ */
+async function linkTestCasIdentities(db: Db): Promise<void> {
+  for (const a of DEMO_ACCOUNTS) {
+    if (!('casSubject' in a)) continue;
+    const [p] = await db
+      .select({ userId: authIdentities.userId })
+      .from(authIdentities)
+      .where(and(eq(authIdentities.provider, 'password'), eq(authIdentities.subject, a.email)));
+    if (p) await db.insert(authIdentities).values({ userId: p.userId, provider: 'cas_test', subject: a.casSubject }).onConflictDoNothing();
+  }
 }
 
 export async function demoSeedVersion(db: Db): Promise<number | null> {

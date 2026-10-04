@@ -201,6 +201,13 @@ describe('entries, media and service entry points', () => {
       await f.db.update(users).set({ globalRole: 'teacher' }).where(eq(users.id, u.id));
       expect((await f.svc.auth.signInInstitutional({ ...profile, schools: [] })).globalRole).toBe('student');
     });
+
+    it('institutional sign-in refuses a disabled account', async () => {
+      const profile = { subject: 'cas-desactivada', firstName: 'Ana', lastName: 'Baja', email: null, schools: [] };
+      const u = await f.svc.auth.signInInstitutional(profile);
+      await f.db.update(users).set({ status: 'disabled' }).where(eq(users.id, u.id));
+      await expect(f.svc.auth.signInInstitutional(profile)).rejects.toMatchObject({ code: 'forbidden' });
+    });
   });
 
   it('reports the demo seed version (none on an empty database)', async () => {

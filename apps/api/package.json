@@ -5,30 +5,24 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch --env-file-if-exists=.env src/server.ts",
-    "build": "node build.mjs",
-    "start": "node dist/server.js",
-    "db:migrate": "tsx --env-file-if-exists=.env src/cli/migrate.ts",
-    "db:seed": "tsx --env-file-if-exists=.env src/cli/seed.ts"
+    "dev": "bun --no-env-file --env-file=.env --watch src/server.ts",
+    "build": "rm -rf dist && bun build src/server.ts src/cli/migrate.ts src/cli/seed.ts --root src --target bun --outdir dist --sourcemap=linked && cp -R ../../packages/db/migrations dist/migrations",
+    "start": "bun --no-env-file dist/server.js",
+    "db:migrate": "bun --no-env-file --env-file=.env src/cli/migrate.ts",
+    "db:seed": "bun --no-env-file --env-file=.env src/cli/seed.ts"
   },
   "dependencies": {
-    "@fastify/cookie": "^11.1.2",
-    "@fastify/formbody": "^9.0.0",
-    "@fastify/helmet": "^13.1.1",
-    "@fastify/multipart": "^10.1.2",
-    "@fastify/rate-limit": "^11.2.0",
-    "@fastify/static": "^10.1.5",
     "@lexican/app": "*",
     "@lexican/core": "*",
     "@lexican/db": "*",
+    "@lexican/http": "*",
     "drizzle-orm": "^0.45.3",
-    "fast-xml-parser": "^5.11.2",
-    "fastify": "^5.12.5",
+    "hono": "^4.13.13",
     "pg": "^8.23.1",
+    "proxy-addr": "^2.0.7",
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "esbuild": "^0.28.2",
-    "tsx": "^4.23.15"
+    "@types/proxy-addr": "^2.0.3"
   }
 }

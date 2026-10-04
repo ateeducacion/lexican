@@ -2,14 +2,25 @@
 
 <https://ateeducacion.github.io/lexican/>
 
-La demo es el **mismo** frontend React compilado en modo `demo`. No tiene servidor: el navegador ejecuta los servicios
-de `packages/app` sobre PGlite (PostgreSQL compilado a WebAssembly) con el mismo esquema y las mismas migraciones que
-producción. Las reglas de negocio y la autorización son las mismas. Decisión: [ADR 0004](adr/0004-demo-pglite.md).
+La demo es el **mismo** frontend React compilado en modo `demo`. No tiene servidor: un **Web Worker** ejecuta la misma
+API Hono (`packages/http`) que Docker, con los mismos servicios (`packages/app`), sobre PGlite (PostgreSQL compilado a
+WebAssembly) con el mismo esquema y las mismas migraciones. React habla con el Worker con el mismo cliente que usa en
+producción; solo cambia el transporte (mensajes en vez de HTTP). Decisiones: [ADR 0004](adr/0004-demo-pglite.md) y
+[ADR 0009](adr/0009-hono-bun-worker.md).
+
+## Cómo probar un cambio
+
+1. *Push* a `main` → `pages.yml` construye la demo, la comprueba (tipos, `check:dist`, E2E esenciales sobre un
+   servidor estático como Pages) y publica ese mismo artefacto. No espera a la validación completa (`ci.yml`).
+2. Abrir <https://ateeducacion.github.io/lexican/>. En «Acerca de LexiCán» se ven la versión y el *commit* publicados.
+3. Para empezar de cero: «Restablecer datos de demostración».
 
 ## Cuentas
 
-Aparecen debajo del formulario de acceso, cada una con un botón «Entrar como…». Fuente:
-`packages/core/src/demo.ts`.
+Aparecen debajo del formulario de acceso, cada una con un botón «Entrar como…» (acceso rápido). Fuente:
+`packages/core/src/demo.ts`. Además, «Entrar con CAS de pruebas» lleva al CAS público de pruebas (`alice` → profesora,
+`bob` → alumno 1); con ese servidor la validación desde el navegador está bloqueada por CORS y la demo lo indica
+([AUTHENTICATION.md](AUTHENTICATION.md#github-pages)).
 
 | Cuenta | Correo | Contraseña | Rol |
 |---|---|---|---|
@@ -41,22 +52,43 @@ La semilla se ejecuta una sola vez y marca `app_settings.demo_seed_version`.
 
 ## Persistencia
 
-- Base de datos: IndexedDB `idb://lexican-demo-v2` (en el navegador, `/pglite/lexican-demo-v2`). El sufijo se sube
-  (`DATA_DIR` en `apps/web/src/demo/db.ts`) cuando el esquema o la semilla cambian de forma incompatible.
-- Usuario activo: clave `lexican-demo-session` de `localStorage` (solo el identificador del usuario ficticio).
-- Al recargar se conservan datos y sesión.
-- **Restablecer datos de demostración** (en el aviso de demostración de cada pantalla, con confirmación) cierra PGlite, borra la base IndexedDB y
-  recarga: vuelve a sembrarse desde cero.
+- Base de datos: IndexedDB `idb://lexican-demo-v2` (en el navegador, `/pglite/lexican-demo-v2`), durabilidad por
+  defecto (cada escritura llega a IndexedDB antes de responder; no se usa `relaxedDurability`). El sufijo se sube
+  (`DATA_DIR` en `apps/web/src/demo/protocol.ts`) cuando el esquema o la semilla cambian de forma incompatible.
+- Medios: Blobs en la base IndexedDB `lexican-demo-media`, **fuera de PGlite**; la base SQL guarda metadatos, permisos,
+  tamaño, hash y clave. Al actualizar desde la versión anterior, el Worker copia los bytes de `media_blobs` a ese
+  almacén antes de que la migración 0001 elimine la tabla: no se pierden datos.
+- Sesión: clave `lexican-demo-sid` de `localStorage` (identificador opaco de una fila `sessions` de la base del
+  navegador). Acceso CAS pendiente: `sessionStorage` (`lexican-demo-cas-state`).
+- Al recargar o volver del CAS se conservan datos y sesión. Nada depende de `beforeunload`.
+- Semilla versionada (`app_settings.demo_seed_version`): se siembra y se calculan las contraseñas una sola vez.
+- **Restablecer datos de demostración** (en el aviso de demostración, con confirmación) detiene las peticiones nuevas,
+  espera a las que están en curso, cierra PGlite y borra **solo** `/pglite/lexican-demo-v2`, `lexican-demo-media`, la
+  sesión, el acceso CAS pendiente y las URL `blob:`; después recarga y siembra de nuevo.
+
+## Arranque, estado y errores
+
+- El Worker arranca una sola vez por pestaña (también con React StrictMode): toma el bloqueo, abre PGlite, migra,
+  siembra si hace falta, limpia medios huérfanos y avisa de que está listo. Las peticiones esperan como mucho 120 s.
+- Mientras arranca se muestra «Preparando la demo en este navegador…» (`role="status"`). Los errores se muestran con
+  `role="alert"`, un botón «Reintentar» y, cuando es seguro, «Restablecer datos de demostración»; nunca una pantalla
+  en blanco. Peticiones: 30 s (subidas 120 s); tras un *timeout* no se reintenta (la operación pudo completarse).
+- Si el Worker se detiene, todas las peticiones pendientes fallan con un mensaje y se pide recargar.
 
 ## Límites
 
 - **No es una frontera de seguridad.** El acceso solo elige qué usuario ficticio actúa; cualquiera puede leer o
   modificar la base de su navegador.
-- Archivos subidos: máximo **2 MB** por archivo, guardados en la tabla `media_blobs`.
-- Pensada para **una pestaña**: PGlite usa una única conexión (no se usa `PGliteWorker`). Con dos pestañas abiertas a la vez
-  el comportamiento no está garantizado.
-- La primera carga descarga el WASM de PGlite (≈5 MB comprimidos) después de pintar la pantalla de acceso.
-- Sin CAS, CAUCE, correo ni servidor: nada sale del navegador. Los E2E fallan si la página pide algo fuera de su origen.
+- Archivos subidos: mismos límites que el servidor (10 MB por archivo, 100 MB al día).
+- **Una pestaña a la vez**: el Worker toma el Web Lock `lexican-demo-database`; una segunda pestaña no abre la base y
+  explica que la demo ya está abierta en otra. Sin Web Locks la demo no arranca (más seguro que arriesgar los datos).
+- En WebKit con navegación privada, IndexedDB no admite Blobs: los medios se guardan como `ArrayBuffer`.
+- La primera carga descarga el WASM de PGlite (≈5 MB comprimidos) después de pintar la pantalla de acceso; PGlite y la
+  API trabajan en el Worker, no en el hilo de la interfaz.
+- Sin CAUCE, correo ni servidor. La única comunicación externa deliberada es el CAS público de pruebas, y solo si se
+  pulsa «Entrar con CAS de pruebas». Los E2E fallan si la página pide algo más fuera de su origen.
+- No sustituye a las pruebas de Docker: ver la tabla «Qué valida Pages y qué solo valida Docker» en
+  [AUTHENTICATION.md](AUTHENTICATION.md).
 - Los datos no se comparten entre navegadores ni dispositivos.
 
 ## Build y despliegue
@@ -66,16 +98,30 @@ La semilla se ejecuta una sola vez y marca `app_settings.demo_seed_version`.
 | Build estático | `npm run build:demo` → `vite build --mode demo` → `apps/web/dist-demo/` con `base: '/lexican/'` |
 | Enrutado | *hash* (`createHashRouter`): `…/lexican/#/mi-diccionario`; no hace falta `404.html` |
 | Modo | decidido en el build (`import.meta.env.MODE === 'demo'`, `apps/web/src/env.ts`), nunca por el nombre del host |
-| Comprobación del bundle | `npm run check:dist` (`scripts/check-dist.mjs`): sin hosts internos, claves ni tokens; `index.html` con `/lexican/`; el build de producción sin PGlite, WASM ni contraseñas demo |
-| Publicación | `.github/workflows/pages.yml`: solo tras un CI correcto en un *push* a `main` (o manual desde `main`), comprueba que el commit está en `main`, `npm ci`, `build:demo`, `check:dist`, sube `apps/web/dist-demo` y despliega con `actions/deploy-pages` |
+| Comprobación del bundle | `npm run check:dist` (`scripts/check-dist.mjs`): JS, chunk del Worker, CSS, HTML y sourcemaps sin hosts internos, claves ni tokens; `index.html` con `/lexican/`; el Worker y el WASM presentes; el build de producción sin PGlite, WASM, Worker, API demo ni contraseñas |
+| Publicación | `.github/workflows/pages.yml`: en cada *push* a `main` (o manual desde `main`), comprueba que el commit está en `main`, `npm ci`, `typecheck`, `build:demo`, `check:dist`, E2E esenciales (Chromium) sobre ese mismo artefacto, y lo despliega. Ejecuciones en serie: un commit antiguo nunca publica encima de uno nuevo |
 
 ## Ejecutar en local
 
 ```bash
 npm ci
 npm run dev:demo          # Vite en modo demo (http://localhost:5173/lexican/)
-# o, igual que en Pages:
-npm run build:demo && npm run preview:demo
+# o, igual que en Pages (servidor estático estricto, sin *fallback*):
+npm run build:demo && node scripts/static-pages-server.mjs 4317   # http://localhost:4317/lexican/
 ```
 
-Los E2E de la demo usan `preview:demo` en el puerto 4173 ([TESTING.md](TESTING.md)).
+Los E2E de la demo usan ese servidor estático en el puerto 4317 ([TESTING.md](TESTING.md)).
+
+## Comprobación manual en Android (pendiente en dispositivo real)
+
+La emulación de Pixel de Playwright no prueba un Android real. Recorrido en Chrome para Android:
+
+1. Abrir la demo publicada; esperar a «Preparando la demo…» y entrar como alumno 1.
+2. Crear una palabra; en «Audio» elegir una nota de voz grabada con el teléfono (M4A/AAC, OGG/Opus o WebM) y guardar.
+3. Reproducir, pausar y desplazarse por el audio; girar la pantalla.
+4. Cerrar la pestaña, volver a abrir la demo: la palabra y el audio siguen ahí y se reproducen.
+5. Salir y entrar como alumna 2: el audio del alumno 1 no aparece en su diccionario.
+6. Abrir la demo en una segunda pestaña: debe aparecer el aviso «La demo ya está abierta en otra pestaña».
+7. «Entrar con CAS de pruebas» → `bob` / `pwd` en casserverpac4j.dev: al volver debe verse el aviso de CORS (limitación
+   del servidor), sin sesión.
+8. «Restablecer datos de demostración»: vuelve a los datos de ejemplo.

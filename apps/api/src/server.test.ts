@@ -1,12 +1,14 @@
+import { spawn } from 'node:child_process';
 import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { emptyDatabase } from './testing/pg.ts';
 
-/** server.ts is the production entry point: importing it starts the API exactly as `node dist/server.js` does. */
+/** server.ts is the production entry point: started here with Bun, exactly as the image runs it. */
 const serverUrl = process.env.TEST_DATABASE_URL;
+const entry = new URL('./server.ts', import.meta.url).pathname;
 
 const freePort = () =>
   new Promise<number>((resolve) => {
@@ -16,7 +18,7 @@ const freePort = () =>
     });
   });
 
-describe.skipIf(!serverUrl)('server entry point', () => {
+describe.skipIf(!serverUrl)('server entry point (Bun)', () => {
   let db: Awaited<ReturnType<typeof emptyDatabase>>;
   let dir: string;
 
@@ -28,35 +30,40 @@ describe.skipIf(!serverUrl)('server entry point', () => {
     await db?.drop();
     rmSync(dir, { recursive: true, force: true });
   });
-  afterEach(() => {
-    vi.unstubAllEnvs();
-    vi.restoreAllMocks();
-  });
 
-  /** Start server.ts, capturing its signal handlers and process.exit instead of touching the test runner. */
   async function start(env: Record<string, string>) {
     const port = await freePort();
-    const base = {
-      DATABASE_URL: db.url,
-      PUBLIC_URL: 'http://localhost:3999',
-      HOST: '127.0.0.1',
-      PORT: String(port),
-      LOG_LEVEL: 'silent',
-    };
-    for (const [k, v] of Object.entries({ ...base, ...env })) vi.stubEnv(k, v);
-    const handlers = new Map<string, () => Promise<void>>();
-    const once = process.once.bind(process);
-    vi.spyOn(process, 'once').mockImplementation(((event: string, fn: () => Promise<void>) => {
-      if (event === 'SIGTERM' || event === 'SIGINT') handlers.set(event, fn);
-      else once(event, fn);
-      return process;
-    }) as typeof process.once);
-    const exit = vi
-      .spyOn(process, 'exit')
-      .mockImplementation((() => undefined) as typeof process.exit);
-    vi.resetModules();
-    await import('./server.ts');
-    return { url: `http://127.0.0.1:${port}`, handlers, exit };
+    const child = spawn('bun', ['--no-env-file', entry], {
+      env: {
+        PATH: process.env.PATH,
+        APP_ENV: 'test',
+        DATABASE_URL: db.url,
+        PUBLIC_URL: 'http://localhost:3999',
+        HOST: '127.0.0.1',
+        PORT: String(port),
+        LOG_LEVEL: 'silent',
+        ...env,
+      },
+      stdio: ['ignore', 'ignore', 'pipe'],
+    });
+    let stderr = '';
+    child.stderr.on('data', (d: Buffer) => (stderr += d.toString()));
+    const exited = new Promise<number | null>((resolve) =>
+      child.once('exit', (code) => resolve(code)),
+    );
+    const url = `http://127.0.0.1:${port}`;
+    for (let i = 0; i < 100; i++) {
+      if (child.exitCode !== null) throw new Error(`server exited: ${stderr}`);
+      if (
+        await fetch(`${url}/api/health`).then(
+          (r) => r.ok,
+          () => false,
+        )
+      )
+        break;
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    return { url, child, exited, stderr: () => stderr };
   }
 
   it('migrates on start when asked, creates the media dir, serves, and shuts down cleanly on SIGTERM', async () => {
@@ -69,27 +76,40 @@ describe.skipIf(!serverUrl)('server entry point', () => {
     const health = await fetch(`${s.url}/api/health`);
     expect(health.status).toBe(200);
     expect(await health.json()).toEqual({ ok: true });
+    expect(health.headers.get('content-security-policy')).toContain("frame-ancestors 'none'");
     expect(await (await fetch(`${s.url}/api/auth/providers`)).json()).toEqual({
-      cas: false,
+      cas: null,
       password: false,
     });
-    expect([...s.handlers.keys()].sort()).toEqual(['SIGINT', 'SIGTERM']);
-
-    await s.handlers.get('SIGTERM')!();
-    expect(s.exit).toHaveBeenCalledExactlyOnceWith(0);
+    s.child.kill('SIGTERM');
+    expect(await s.exited).toBe(0);
     await expect(fetch(`${s.url}/api/health`)).rejects.toThrow();
-    // A second signal while closing is ignored.
-    await s.handlers.get('SIGINT')!();
-    expect(s.exit).toHaveBeenCalledTimes(1);
   });
 
   it('starts without migrating and with the development login', async () => {
     const s = await start({ MEDIA_DIR: join(dir, 'm2'), AUTH_DEV_LOGIN: 'true' });
     expect(await (await fetch(`${s.url}/api/auth/providers`)).json()).toEqual({
-      cas: false,
+      cas: null,
       password: true,
     });
-    await s.handlers.get('SIGINT')!();
-    expect(s.exit).toHaveBeenCalledWith(0);
+    s.child.kill('SIGINT');
+    expect(await s.exited).toBe(0);
+  });
+
+  it('refuses to start with the default (production) profile and no institutional configuration', async () => {
+    const child = spawn('bun', ['--no-env-file', entry], {
+      env: {
+        PATH: process.env.PATH,
+        DATABASE_URL: db.url,
+        PUBLIC_URL: 'https://lexican.example.test',
+        MEDIA_DIR: join(dir, 'm3'),
+      },
+      stdio: ['ignore', 'ignore', 'pipe'],
+    });
+    let stderr = '';
+    child.stderr.on('data', (d: Buffer) => (stderr += d.toString()));
+    const code = await new Promise<number | null>((resolve) => child.once('exit', resolve));
+    expect(code).not.toBe(0);
+    expect(stderr).toContain('APP_ENV=production requires CAS_URL');
   });
 });

@@ -1,42 +1,33 @@
 # syntax=docker/dockerfile:1
-# Production image: Fastify API + built SPA on one origin. Build: docker build -t lexican .
+# LexiCán production image: Hono API + built SPA on one origin, run by Bun 1.4.2. Build: docker build -t lexican .
+# Configuration comes only from the environment (see apps/api/.env.example and docs/DEPLOYMENT.md). Without it the
+# server refuses to start: APP_ENV defaults to production, which requires the institutional CAS + CAUCE.
 
-FROM node:24-bookworm-slim AS build
+# Build: npm workspaces + Vite (Node) for the web bundle, `bun build` for the self-contained API bundle.
+FROM node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 AS build
+COPY --from=oven/bun:1.4.2-alpine@sha256:d888c0ae6c86d7866ff10c5aafdd9077b36aee6455b33dd270fb93c0dd5cef6f /usr/local/bin/bun /usr/local/bin/bun
 WORKDIR /app
 COPY . .
 RUN npm ci --ignore-scripts --no-audit --no-fund \
  && npm run build --workspace @lexican/web \
  && npm run build --workspace @lexican/api
 
-FROM node:24-bookworm-slim AS deps
-WORKDIR /app
-# Workspace manifests only: npm needs them to resolve the lockfile; sources are already bundled into dist.
-COPY package.json package-lock.json ./
-COPY apps/api/package.json apps/api/
-COPY apps/web/package.json apps/web/
-COPY packages/core/package.json packages/core/
-COPY packages/app/package.json packages/app/
-COPY packages/db/package.json packages/db/
-COPY tools/legacy-migrator/package.json tools/legacy-migrator/
-RUN npm ci --omit=dev --ignore-scripts --no-audit --no-fund --workspace @lexican/api \
- && npm cache clean --force
-
-FROM node:24-bookworm-slim AS runtime
-ENV NODE_ENV=production \
+# Runtime: Bun only. The API bundle includes its dependencies, so there is no node_modules in the image.
+FROM oven/bun:1.4.2-alpine@sha256:d888c0ae6c86d7866ff10c5aafdd9077b36aee6455b33dd270fb93c0dd5cef6f AS runtime
+ENV APP_ENV=production \
     PORT=3000 \
     MEDIA_DIR=/data/media \
-    WEB_DIST=/app/apps/web/dist
+    WEB_DIST=/app/web \
+    DEMO_ASSETS_DIR=/app/web/demo
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/package.json ./
-COPY --from=deps /app/apps/api/package.json ./apps/api/
-COPY --from=build /app/apps/api/dist ./apps/api/dist
-COPY --from=build /app/apps/web/dist ./apps/web/dist
-RUN mkdir -p /data/media && chown node:node /data/media
-USER node
+COPY --from=build /app/apps/api/dist ./api
+COPY --from=build /app/apps/web/dist ./web
+RUN mkdir -p /data/media && chown bun:bun /data/media
+USER bun
 VOLUME ["/data/media"]
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-  CMD ["node", "-e", "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/api/health').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
-# Migrations: docker run --rm <env> lexican node apps/api/dist/cli/migrate.js  (or MIGRATE_ON_START=true)
-CMD ["node", "apps/api/dist/server.js"]
+  CMD ["bun", "--no-env-file", "-e", "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/api/health').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+# Migrations: `docker run --rm <env> lexican bun --no-env-file api/cli/migrate.js` (or MIGRATE_ON_START=true).
+# Bun forwards SIGTERM to the server, which stops accepting requests, drains them and closes the pool.
+CMD ["bun", "--no-env-file", "api/server.js"]

@@ -1,13 +1,15 @@
+import {
+  NOT_AUTHORIZED,
+  type InstitutionalDirectory,
+  type InstitutionalProfile,
+} from '@lexican/app';
 import { DomainError } from '@lexican/core';
-import type { InstitutionalProfile } from '@lexican/app';
-import { parseXmlSafe } from './cas.ts';
+import { parseXmlSafe } from '@lexican/http';
 
-/** Institutional directory (CAUCE) lookup for a CAS subject (FUNCTIONAL_INVENTORY §11, prompt §39). */
-export interface InstitutionalDirectory {
-  lookup(subject: string): Promise<InstitutionalProfile>;
-}
+export type { InstitutionalDirectory };
 
-const NOT_AUTHORIZED = 'Tu usuario no está autorizado en LexiCán.';
+/* Institutional directory (CAUCE) lookup for a CAS subject (FUNCTIONAL_INVENTORY §11, prompt §39). Server only. */
+
 /** Legacy placeholder school for directory rows without a centre code. */
 const NO_SCHOOL = { code: '00000000', name: 'Sin centro educativo' };
 

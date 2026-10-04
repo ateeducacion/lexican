@@ -3,7 +3,6 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { roleFromDirectory } from '@lexican/app';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { parseLogoutRequest, parseServiceResponse } from './cas.ts';
 import { httpDirectory, parseCauceResponse } from './cauce.ts';
 import { loadConfig } from './config.ts';
 import { fsMediaStorage } from './media-storage.ts';
@@ -12,41 +11,6 @@ const fixture = (n: string) =>
   readFileSync(new URL(`./__fixtures__/${n}`, import.meta.url), 'utf8');
 
 afterEach(() => vi.unstubAllGlobals());
-
-describe('CAS XML', () => {
-  it('parses success and failure responses', async () => {
-    expect(parseServiceResponse(fixture('cas-success.xml'))).toEqual({
-      ok: true,
-      user: 'cficticia',
-    });
-    expect(parseServiceResponse(fixture('cas-failure.xml'))).toEqual({
-      ok: false,
-      code: 'INVALID_TICKET',
-    });
-    expect(parseServiceResponse('<html>oops</html>')).toEqual({
-      ok: false,
-      code: 'INVALID_RESPONSE',
-    });
-  });
-
-  it('rejects DTDs and entity declarations', () => {
-    const xxe = `<?xml version="1.0"?><!DOCTYPE r [<!ENTITY x SYSTEM "file:///etc/passwd">]><cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas"><cas:authenticationSuccess><cas:user>&x;</cas:user></cas:authenticationSuccess></cas:serviceResponse>`;
-    expect(() => parseServiceResponse(xxe)).toThrow(/DTD/);
-    expect(() => parseLogoutRequest('<!ENTITY a "b"><LogoutRequest/>')).toThrow(/DTD/);
-  });
-
-  it('extracts the SessionIndex of a logout request', () => {
-    const xml = `<samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"><samlp:SessionIndex>ST-9-x</samlp:SessionIndex></samlp:LogoutRequest>`;
-    expect(parseLogoutRequest(xml)).toBe('ST-9-x');
-    expect(parseLogoutRequest('<samlp:LogoutRequest xmlns:samlp="x"/>')).toBeNull();
-    // Only service tickets can end sessions (SEC-008).
-    expect(
-      parseLogoutRequest(
-        '<samlp:LogoutRequest xmlns:samlp="x"><samlp:SessionIndex>TGT-1</samlp:SessionIndex></samlp:LogoutRequest>',
-      ),
-    ).toBeNull();
-  });
-});
 
 describe('CAUCE directory', () => {
   it('maps a teacher and drops national ids', async () => {
@@ -97,17 +61,27 @@ describe('CAUCE directory', () => {
 });
 
 describe('filesystem media storage', () => {
-  it('round-trips bytes in sharded dirs and refuses unsafe keys', async () => {
+  it('round-trips bytes in sharded dirs as lazy Blobs, lists, deletes and refuses unsafe keys', async () => {
     const root = mkdtempSync(join(tmpdir(), 'lexican-fs-'));
     try {
       const s = fsMediaStorage(root);
+      expect(await s.keys()).toEqual([]);
       const key = '0a1b2c3d-0000-4000-8000-000000000000.png';
-      await s.put(key, new Uint8Array([1, 2, 3]), 'image/png');
-      expect(await s.get(key)).toEqual(new Uint8Array([1, 2, 3]));
+      await s.put(key, new Uint8Array([1, 2, 3, 4]), 'image/png');
+      const blob = (await s.open(key))!;
+      expect(blob.size).toBe(4);
+      expect(new Uint8Array(await blob.slice(1, 3).arrayBuffer())).toEqual(new Uint8Array([2, 3]));
       expect(readdirSync(join(root, '0a'))).toEqual([key]);
-      expect(await s.get('ffffffff-0000-4000-8000-000000000000.png')).toBeNull();
+      expect(await s.keys()).toEqual([key]);
+      expect(await s.open('ffffffff-0000-4000-8000-000000000000.png')).toBeNull();
       await expect(s.put('../../etc/passwd', new Uint8Array([1]), 'x')).rejects.toThrow(/Invalid/);
-      await expect(s.get('../0a/x.png')).rejects.toThrow(/Invalid/);
+      await expect(s.open('../0a/x.png')).rejects.toThrow(/Invalid/);
+      // Exclusive temp file: a failed write leaves nothing behind.
+      await expect(s.put(key, undefined as unknown as Uint8Array, 'image/png')).rejects.toThrow();
+      expect(readdirSync(join(root, '0a'))).toEqual([key]);
+      await s.delete(key);
+      await s.delete(key);
+      expect(await s.keys()).toEqual([]);
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
@@ -120,57 +94,114 @@ describe('config', () => {
     PUBLIC_URL: 'https://lexican.example.org/',
     MEDIA_DIR: '/data/media',
   };
+  const institutional = {
+    CAS_URL: 'https://cas.example.org/cas',
+    CAUCE_URL: 'https://c.example.org/',
+    CAUCE_TOKEN: 't',
+    CAS_ALLOWED_SLO_HOSTS: '10.0.0.5',
+  };
 
-  it('derives secure cookies and CAS service URL from PUBLIC_URL', () => {
-    const c = loadConfig({
-      ...base,
-      CAS_BASE_URL: 'https://cas.example.org/cas',
-      CAUCE_URL: 'https://c.example.org/',
-      CAUCE_TOKEN: 't',
+  it('defaults to production, which needs the institutional CAS + CAUCE and https', () => {
+    expect(() => loadConfig(base)).toThrow(/requires CAS_URL/);
+    const c = loadConfig({ ...base, ...institutional });
+    expect(c).toMatchObject({
+      appEnv: 'production',
+      production: true,
+      secureCookies: true,
+      devLogin: false,
     });
-    expect(c.secureCookies).toBe(true);
-    expect(c.cas?.serviceUrl).toBe('https://lexican.example.org/api/auth/cas/callback');
-    expect(loadConfig({ ...base, PUBLIC_URL: 'http://localhost:3000' }).secureCookies).toBe(false);
+    expect(c.cas).toEqual({
+      url: 'https://cas.example.org/cas',
+      loginPath: '/login',
+      validatePath: '/p3/serviceValidate',
+      logoutPath: '/logout',
+      profiles: 'cauce',
+      sloHosts: ['10.0.0.5'],
+    });
+    expect(() =>
+      loadConfig({ ...base, ...institutional, PUBLIC_URL: 'http://lexican.example.org' }),
+    ).toThrow(/https/);
+    expect(() =>
+      loadConfig({ ...base, ...institutional, CAS_URL: 'http://cas.example.org' }),
+    ).toThrow(/https/);
   });
 
-  it('fails closed on unsafe combinations without echoing secrets', () => {
-    expect(() => loadConfig({ ...base, NODE_ENV: 'production', AUTH_DEV_LOGIN: 'true' })).toThrow(
-      /AUTH_DEV_LOGIN/,
+  it('production refuses the test CAS, fixture profiles, dev login and a missing directory', () => {
+    const bad: Record<string, string>[] = [
+      { CAS_URL: 'https://www.casserverpac4j.dev' },
+      { CAS_PROFILES: 'test' },
+      { AUTH_DEV_LOGIN: 'true' },
+      { CAUCE_TOKEN: '' },
+      { CAS_ALLOWED_SLO_HOSTS: '' },
+    ];
+    for (const b of bad)
+      expect(() => loadConfig({ ...base, ...institutional, ...b }), JSON.stringify(b)).toThrow();
+  });
+
+  it('local uses the public test CAS with fixture profiles and no CAUCE by default', () => {
+    const c = loadConfig({
+      ...base,
+      APP_ENV: 'local',
+      PUBLIC_URL: 'http://localhost:3000',
+      AUTH_DEV_LOGIN: 'true',
+    });
+    expect(c.cas).toMatchObject({
+      url: 'https://www.casserverpac4j.dev',
+      profiles: 'test',
+      validatePath: '/p3/serviceValidate',
+    });
+    expect(c.secureCookies).toBe(false);
+    expect(c.cauce).toBeNull();
+    // Tests start with nothing enabled.
+    expect(loadConfig({ ...base, APP_ENV: 'test' }).cas).toBeNull();
+  });
+
+  it('validates CAS paths and refuses the old CAS_BASE_URL', () => {
+    const local = { ...base, APP_ENV: 'local' };
+    expect(
+      loadConfig({
+        ...local,
+        CAS_URL: 'https://idp.example.org/cas/',
+        CAS_VALIDATE_PATH: '/serviceValidate',
+      }).cas,
+    ).toMatchObject({
+      url: 'https://idp.example.org/cas',
+      validatePath: '/serviceValidate',
+    });
+    for (const p of [
+      'https://evil.example/x',
+      '//evil.example/x',
+      'login',
+      '/a/../b',
+      '/a?x=1',
+      '/a#b',
+    ])
+      expect(() => loadConfig({ ...local, CAS_LOGIN_PATH: p }), p).toThrow(/CAS_LOGIN_PATH/);
+    expect(() => loadConfig({ ...local, CAS_URL: 'https://cas.example.org/?x=1' })).toThrow(
+      /query/,
     );
-    expect(() => loadConfig({ ...base, CAS_BASE_URL: 'https://cas.example.org' })).toThrow(/CAUCE/);
+    expect(() => loadConfig({ ...local, CAS_BASE_URL: 'https://cas.example.org' })).toThrow(
+      /renamed to CAS_URL/,
+    );
+    expect(() => loadConfig({ ...local, CAS_PROFILES: 'cauce' })).toThrow(/CAUCE_URL/);
+  });
+
+  it('fails closed without echoing secrets', () => {
     expect(() => loadConfig({ ...base, DATABASE_URL: '', CAUCE_TOKEN: 'secret-value' })).toThrow(
       /^(?!.*secret-value)/,
     );
   });
-  const cas = {
-    CAS_BASE_URL: 'https://cas.example.org',
-    CAUCE_URL: 'https://c.example.org/',
-    CAUCE_TOKEN: 't',
-  };
-
-  it('requires the SLO allowlist in production when CAS is enabled (SEC-008)', () => {
-    expect(() => loadConfig({ ...base, ...cas, NODE_ENV: 'production' })).toThrow(
-      /CAS_ALLOWED_SLO_HOSTS/,
-    );
-    const ok = loadConfig({
-      ...base,
-      ...cas,
-      NODE_ENV: 'production',
-      CAS_ALLOWED_SLO_HOSTS: '10.0.0.5',
-    });
-    expect(ok.cas?.sloHosts).toEqual(['10.0.0.5']);
-    expect(loadConfig({ ...base, ...cas }).cas?.sloHosts).toEqual([]);
-  });
 
   it('accepts only a hop count or IP/CIDR list as TRUST_PROXY (SEC-007)', () => {
-    expect(loadConfig(base).trustProxy).toBe(false);
-    expect(loadConfig({ ...base, TRUST_PROXY: '1' }).trustProxy).toBe(1);
-    expect(loadConfig({ ...base, TRUST_PROXY: '10.0.0.1, 172.16.0.0/12,::1' }).trustProxy).toEqual([
+    const t = { ...base, APP_ENV: 'test' };
+    expect(loadConfig(t).trustProxy).toBe(false);
+    expect(loadConfig({ ...t, TRUST_PROXY: '1' }).trustProxy).toBe(1);
+    expect(loadConfig({ ...t, TRUST_PROXY: '10.0.0.1, 172.16.0.0/12,::1' }).trustProxy).toEqual([
       '10.0.0.1',
       '172.16.0.0/12',
       '::1',
     ]);
     for (const bad of ['true', 'TRUE', 'loopback', '10.0.0.0/33', '999.1.1.1', '*'])
-      expect(() => loadConfig({ ...base, TRUST_PROXY: bad }), bad).toThrow(/TRUST_PROXY/);
+      expect(() => loadConfig({ ...t, TRUST_PROXY: bad }), bad).toThrow(/TRUST_PROXY/);
   });
 });

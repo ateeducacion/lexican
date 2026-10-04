@@ -1,3 +1,6 @@
+/** Fictitious school of the demo dataset and of the test CAS profiles. */
+export const DEMO_SCHOOL = { code: '99999999', name: 'IES Ficticio Las Palmeras' } as const;
+
 /** Fictitious demo accounts (§16). Shown under the login form in the demo build only. */
 export const DEMO_ACCOUNTS = [
   {
@@ -7,6 +10,8 @@ export const DEMO_ACCOUNTS = [
     firstName: 'Yaiza',
     lastName: 'Tutoriales',
     role: 'teacher',
+    /** Account of the public test CAS (casserverpac4j.dev) mapped to this persona. */
+    casSubject: 'alice',
   },
   {
     label: 'Alumno 1',
@@ -15,6 +20,7 @@ export const DEMO_ACCOUNTS = [
     firstName: 'Alumno',
     lastName: 'Padrón Armas',
     role: 'student',
+    casSubject: 'bob',
   },
   {
     label: 'Alumna 2',

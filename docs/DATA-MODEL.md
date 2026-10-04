@@ -30,7 +30,7 @@ erDiagram
 | Tabla | Propósito | Notas |
 |---|---|---|
 | `users` | persona usuaria | `display_name`, nombre, apellidos, avatar, `global_role` (`student`, `teacher`, `admin`, `support`), `status`. **Sin** NIF/NIE/pasaporte/CIAL |
-| `auth_identities` | identidad de acceso | `provider` `cas` (sujeto CAS) o `password` (solo demo/dev, PBKDF2) |
+| `auth_identities` | identidad de acceso | `provider` `cas` (sujeto del CAS institucional), `cas_test` (sujeto del CAS de pruebas; solo local/demo) o `password` (solo demo/dev, PBKDF2). Único por `(provider, subject)`: emisores distintos nunca comparten cuenta |
 | `sessions` | sesiones de la API | *hash* del identificador, caducidad, ticket CAS para SLO |
 | `schools`, `user_schools` | centros (CAUCE) | solo estadísticas |
 | `vocabulary_values` | listas controladas | `vocabulary` ∈ categoría gramatical, género, número, lenguas, temáticas, niveles, materias, enseñanzas, tipos de diccionario; `code` estable |
@@ -40,8 +40,7 @@ erDiagram
 | `entries` | entrada (palabra) | `headword`, `headword_key` (único por diccionario sin borrar), `initial`, `sort_key`, `hidden`, `version`, `source_submission_id` |
 | `entry_senses` | acepción | posición, definición, «Más datos», ejemplo de uso, categoría, género, número, lengua + forma, `hidden` |
 | `sense_topics` | temáticas de la acepción | |
-| `media_assets`, `sense_media` | imagen/audio/vídeo | uno por tipo y acepción; clave de almacenamiento opaca, SHA-256 |
-| `media_blobs` | bytes en la demo | no se usa en producción |
+| `media_assets`, `sense_media` | imagen/audio/vídeo | uno por tipo y acepción; clave de almacenamiento opaca, SHA-256. Los bytes nunca están en SQL: volumen en Docker, IndexedDB en la demo (`media_blobs` se eliminó en la migración 0001) |
 | `entry_revisions` | instantánea inmutable | motivo `submit`, `publish`, `teacher_edit` |
 | `submissions` | envío al aula | `pending`, `published`, `rejected` (con nota), `withdrawn`; un pendiente por entrada y aula |
 | `comments` | comentario del profesorado | a un alumno, opcionalmente sobre un envío; texto plano |

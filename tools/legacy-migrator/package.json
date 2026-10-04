@@ -13,6 +13,6 @@
     "pg": "^8.23.1"
   },
   "scripts": {
-    "migrate:legacy": "tsx src/cli.ts"
+    "migrate:legacy": "bun --no-env-file src/cli.ts"
   }
 }
