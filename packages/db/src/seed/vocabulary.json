@@ -1,0 +1,2182 @@
+[
+  {
+    "vocabulary": "dictionary_type",
+    "code": "diccionario_general",
+    "label": "Diccionario general",
+    "position": 0
+  },
+  {
+    "vocabulary": "dictionary_type",
+    "code": "canarismos",
+    "label": "Canarismos",
+    "position": 1
+  },
+  {
+    "vocabulary": "education_stage",
+    "code": "multiensenanza",
+    "label": "Multienseñanza",
+    "position": 0
+  },
+  {
+    "vocabulary": "education_stage",
+    "code": "primaria",
+    "label": "Primaria",
+    "position": 1
+  },
+  {
+    "vocabulary": "education_stage",
+    "code": "eso",
+    "label": "ESO",
+    "position": 2
+  },
+  {
+    "vocabulary": "education_stage",
+    "code": "formacion_profesional",
+    "label": "Formación profesional",
+    "position": 3
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "multiestudio",
+    "label": "Multiestudio",
+    "position": 0
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "infantil",
+    "label": "Infantil",
+    "position": 1
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "1_primaria",
+    "label": "1º Primaria",
+    "position": 2
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "2_primaria",
+    "label": "2º Primaria",
+    "position": 3
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "3_primaria",
+    "label": "3º Primaria",
+    "position": 4
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "4_primaria",
+    "label": "4º Primaria",
+    "position": 5
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "5_primaria",
+    "label": "5º Primaria",
+    "position": 6
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "6_primaria",
+    "label": "6º Primaria",
+    "position": 7
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "1_eso",
+    "label": "1º ESO",
+    "position": 8
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "2_eso",
+    "label": "2º ESO",
+    "position": 9
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "3_eso",
+    "label": "3º ESO",
+    "position": 10
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "4_eso",
+    "label": "4º ESO",
+    "position": 11
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "concrecion_curricular_adaptada",
+    "label": "Concreción Curricular Adaptada",
+    "position": 12
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "1_bachillerato",
+    "label": "1º Bachillerato",
+    "position": 13
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "2_bachillerato",
+    "label": "2º Bachillerato",
+    "position": 14
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "formacion_profesional_basica",
+    "label": "Formación Profesional Básica",
+    "position": 15
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "1_pmar",
+    "label": "1º PMAR",
+    "position": 16
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "2_pmar",
+    "label": "2º PMAR",
+    "position": 17
+  },
+  {
+    "vocabulary": "study_level",
+    "code": "otros",
+    "label": "Otros",
+    "position": 18
+  },
+  {
+    "vocabulary": "subject",
+    "code": "interdisciplinar",
+    "label": "Interdisciplinar",
+    "position": 0
+  },
+  {
+    "vocabulary": "subject",
+    "code": "acondicionamiento_fisico",
+    "label": "Acondicionamiento Físico",
+    "position": 1
+  },
+  {
+    "vocabulary": "subject",
+    "code": "ambito_cientifico_y_matematico",
+    "label": "Ámbito Científico y Matemático",
+    "position": 2
+  },
+  {
+    "vocabulary": "subject",
+    "code": "ambito_de_autonomia_personal",
+    "label": "Ámbito de Autonomía Personal",
+    "position": 3
+  },
+  {
+    "vocabulary": "subject",
+    "code": "ambito_de_autonomia_social",
+    "label": "Ámbito de Autonomía Social",
+    "position": 4
+  },
+  {
+    "vocabulary": "subject",
+    "code": "ambito_de_comunicacion_y_representacion",
+    "label": "Ámbito de Comunicación y Representación",
+    "position": 5
+  },
+  {
+    "vocabulary": "subject",
+    "code": "ambito_de_lenguas_extranjeras",
+    "label": "Ámbito de Lenguas Extranjeras",
+    "position": 6
+  },
+  {
+    "vocabulary": "subject",
+    "code": "ambito_laboral",
+    "label": "Ámbito Laboral",
+    "position": 7
+  },
+  {
+    "vocabulary": "subject",
+    "code": "ambito_linguistico_y_social",
+    "label": "Ámbito Lingüístico y Social",
+    "position": 8
+  },
+  {
+    "vocabulary": "subject",
+    "code": "analisis_musical",
+    "label": "Análisis musical",
+    "position": 9
+  },
+  {
+    "vocabulary": "subject",
+    "code": "anatomia_aplicadas",
+    "label": "Anatomía Aplicadas",
+    "position": 10
+  },
+  {
+    "vocabulary": "subject",
+    "code": "antropologia_y_sociologiabioestadistica",
+    "label": "Antropología y SociologíaBioestadística",
+    "position": 11
+  },
+  {
+    "vocabulary": "subject",
+    "code": "artes_aplicadas_a_la_escultura",
+    "label": "Artes aplicadas a la escultura",
+    "position": 12
+  },
+  {
+    "vocabulary": "subject",
+    "code": "artes_escenicas_y_danza",
+    "label": "Artes Escénicas y Danza",
+    "position": 13
+  },
+  {
+    "vocabulary": "subject",
+    "code": "artes_escenicas",
+    "label": "Artes Escénicas",
+    "position": 14
+  },
+  {
+    "vocabulary": "subject",
+    "code": "biologia_humana",
+    "label": "Biología Humana",
+    "position": 15
+  },
+  {
+    "vocabulary": "subject",
+    "code": "biologia_y_geologia",
+    "label": "Biología y Geología",
+    "position": 16
+  },
+  {
+    "vocabulary": "subject",
+    "code": "ceramica",
+    "label": "Cerámica",
+    "position": 17
+  },
+  {
+    "vocabulary": "subject",
+    "code": "ciencias_aplicadas_a_la_actividad_profesional",
+    "label": "Ciencias Aplicadas a la Actividad Profesional",
+    "position": 18
+  },
+  {
+    "vocabulary": "subject",
+    "code": "ciencias_aplicadas",
+    "label": "Ciencias Aplicadas",
+    "position": 19
+  },
+  {
+    "vocabulary": "subject",
+    "code": "ciencias_de_la_naturaleza",
+    "label": "Ciencias de la Naturaleza",
+    "position": 20
+  },
+  {
+    "vocabulary": "subject",
+    "code": "ciencias_de_la_tierra_y_del_medio_ambiente",
+    "label": "Ciencias de la Tierra y del Medio Ambiente",
+    "position": 21
+  },
+  {
+    "vocabulary": "subject",
+    "code": "ciencias_sociales",
+    "label": "Ciencias Sociales",
+    "position": 22
+  },
+  {
+    "vocabulary": "subject",
+    "code": "comunicacion_y_sociedad",
+    "label": "Comunicación y Sociedad",
+    "position": 23
+  },
+  {
+    "vocabulary": "subject",
+    "code": "cultura_audiovisual",
+    "label": "Cultura Audiovisual",
+    "position": 24
+  },
+  {
+    "vocabulary": "subject",
+    "code": "cultura_cientifica",
+    "label": "Cultura Científica",
+    "position": 25
+  },
+  {
+    "vocabulary": "subject",
+    "code": "cultura_clasica",
+    "label": "Cultura Clásica",
+    "position": 26
+  },
+  {
+    "vocabulary": "subject",
+    "code": "dibujo_artistico_o_tecnico",
+    "label": "Dibujo Artístico o Técnico",
+    "position": 27
+  },
+  {
+    "vocabulary": "subject",
+    "code": "diseno",
+    "label": "Diseño",
+    "position": 28
+  },
+  {
+    "vocabulary": "subject",
+    "code": "economia_y_economia_de_la_empresa",
+    "label": "Economía y Economía de la empresa",
+    "position": 29
+  },
+  {
+    "vocabulary": "subject",
+    "code": "economia",
+    "label": "Economía",
+    "position": 30
+  },
+  {
+    "vocabulary": "subject",
+    "code": "educacion_artistica",
+    "label": "Educación Artística",
+    "position": 31
+  },
+  {
+    "vocabulary": "subject",
+    "code": "educacion_emocional_y_para_la_creatividad",
+    "label": "Educación Emocional y para la Creatividad",
+    "position": 32
+  },
+  {
+    "vocabulary": "subject",
+    "code": "educacion_fisica",
+    "label": "Educación Física",
+    "position": 33
+  },
+  {
+    "vocabulary": "subject",
+    "code": "educacion_para_la_ciudadania_y_los_derechos_humanos",
+    "label": "Educación para la ciudadanía y los derechos humanos",
+    "position": 34
+  },
+  {
+    "vocabulary": "subject",
+    "code": "educacion_plastica_visual_y_audiovisual",
+    "label": "Educación Plástica, Visual y Audiovisual",
+    "position": 35
+  },
+  {
+    "vocabulary": "subject",
+    "code": "electrotecnia",
+    "label": "Electrotecnia",
+    "position": 36
+  },
+  {
+    "vocabulary": "subject",
+    "code": "estrategia_para_la_autonomia_y_la_cooperacion",
+    "label": "Estrategia para la Autonomía y la Cooperación",
+    "position": 37
+  },
+  {
+    "vocabulary": "subject",
+    "code": "filosofia",
+    "label": "Filosofía",
+    "position": 38
+  },
+  {
+    "vocabulary": "subject",
+    "code": "fisica_y_quimica",
+    "label": "Física y Química",
+    "position": 39
+  },
+  {
+    "vocabulary": "subject",
+    "code": "fisica",
+    "label": "Física",
+    "position": 40
+  },
+  {
+    "vocabulary": "subject",
+    "code": "fotografia",
+    "label": "Fotografía",
+    "position": 41
+  },
+  {
+    "vocabulary": "subject",
+    "code": "fundamentos_de_administracion_y_gestion",
+    "label": "Fundamentos de Administración y Gestión",
+    "position": 42
+  },
+  {
+    "vocabulary": "subject",
+    "code": "fundamentos_del_arte",
+    "label": "Fundamentos del Arte",
+    "position": 43
+  },
+  {
+    "vocabulary": "subject",
+    "code": "geografia_e_historia",
+    "label": "Geografía e Historia",
+    "position": 44
+  },
+  {
+    "vocabulary": "subject",
+    "code": "geografia",
+    "label": "Geografía",
+    "position": 45
+  },
+  {
+    "vocabulary": "subject",
+    "code": "geologia",
+    "label": "Geología",
+    "position": 46
+  },
+  {
+    "vocabulary": "subject",
+    "code": "griego",
+    "label": "Griego",
+    "position": 47
+  },
+  {
+    "vocabulary": "subject",
+    "code": "historia_de_espana",
+    "label": "Historia de España",
+    "position": 48
+  },
+  {
+    "vocabulary": "subject",
+    "code": "historia_de_la_filosofia",
+    "label": "Historia de la Filosofía",
+    "position": 49
+  },
+  {
+    "vocabulary": "subject",
+    "code": "historia_de_la_musica_y_la_danza",
+    "label": "Historia de la Música y la Danza",
+    "position": 50
+  },
+  {
+    "vocabulary": "subject",
+    "code": "historia_del_arte",
+    "label": "Historia del Arte",
+    "position": 51
+  },
+  {
+    "vocabulary": "subject",
+    "code": "historia_del_mundo_contemporaneo",
+    "label": "Historia del Mundo Contemporáneo",
+    "position": 52
+  },
+  {
+    "vocabulary": "subject",
+    "code": "historia_y_geografia_de_canarias",
+    "label": "Historia y Geografía de Canarias",
+    "position": 53
+  },
+  {
+    "vocabulary": "subject",
+    "code": "imagen_y_sonido",
+    "label": "Imagen y sonido",
+    "position": 54
+  },
+  {
+    "vocabulary": "subject",
+    "code": "iniciacion_a_la_actividad_emprendedora_y_empresarial",
+    "label": "Iniciación a la actividad emprendedora y empresarial",
+    "position": 55
+  },
+  {
+    "vocabulary": "subject",
+    "code": "iniciacion_a_la_astronomia",
+    "label": "Iniciación a la Astronomía",
+    "position": 56
+  },
+  {
+    "vocabulary": "subject",
+    "code": "la_mitologia_y_las_artes",
+    "label": "La mitología y las artes",
+    "position": 57
+  },
+  {
+    "vocabulary": "subject",
+    "code": "latin",
+    "label": "Latín",
+    "position": 58
+  },
+  {
+    "vocabulary": "subject",
+    "code": "lengua_castellana_y_literatura",
+    "label": "Lengua Castellana y Literatura",
+    "position": 59
+  },
+  {
+    "vocabulary": "subject",
+    "code": "lenguaje_y_practica_musical",
+    "label": "Lenguaje y práctica musical",
+    "position": 60
+  },
+  {
+    "vocabulary": "subject",
+    "code": "literatura_canaria",
+    "label": "Literatura canaria",
+    "position": 61
+  },
+  {
+    "vocabulary": "subject",
+    "code": "literatura_universal",
+    "label": "Literatura universal",
+    "position": 62
+  },
+  {
+    "vocabulary": "subject",
+    "code": "matematicas_academicas",
+    "label": "Matemáticas Académicas",
+    "position": 63
+  },
+  {
+    "vocabulary": "subject",
+    "code": "matematicas_aplicadas_a_las_ciencias_sociales",
+    "label": "Matemáticas aplicadas a las Ciencias Sociales",
+    "position": 64
+  },
+  {
+    "vocabulary": "subject",
+    "code": "matematicas_aplicadas",
+    "label": "Matemáticas Aplicadas",
+    "position": 65
+  },
+  {
+    "vocabulary": "subject",
+    "code": "matematicas",
+    "label": "Matemáticas",
+    "position": 66
+  },
+  {
+    "vocabulary": "subject",
+    "code": "musica",
+    "label": "Música",
+    "position": 67
+  },
+  {
+    "vocabulary": "subject",
+    "code": "practicas_comunicativas_y_creativas",
+    "label": "Prácticas Comunicativas y Creativas",
+    "position": 68
+  },
+  {
+    "vocabulary": "subject",
+    "code": "primera_lengua_extranjera_ingles",
+    "label": "Primera Lengua Extranjera: Inglés",
+    "position": 69
+  },
+  {
+    "vocabulary": "subject",
+    "code": "psicologia",
+    "label": "Psicología",
+    "position": 70
+  },
+  {
+    "vocabulary": "subject",
+    "code": "quimica",
+    "label": "Química",
+    "position": 71
+  },
+  {
+    "vocabulary": "subject",
+    "code": "religion_catolica",
+    "label": "Religión Católica",
+    "position": 72
+  },
+  {
+    "vocabulary": "subject",
+    "code": "religion_evangelica",
+    "label": "Religión Evangélica",
+    "position": 73
+  },
+  {
+    "vocabulary": "subject",
+    "code": "religion_islamica",
+    "label": "Religión Islámica",
+    "position": 74
+  },
+  {
+    "vocabulary": "subject",
+    "code": "religion",
+    "label": "Religión",
+    "position": 75
+  },
+  {
+    "vocabulary": "subject",
+    "code": "segunda_lengua_extranjera_aleman",
+    "label": "Segunda Lengua Extranjera: Alemán",
+    "position": 76
+  },
+  {
+    "vocabulary": "subject",
+    "code": "segunda_lengua_extranjera_frances",
+    "label": "Segunda Lengua Extranjera: Francés",
+    "position": 77
+  },
+  {
+    "vocabulary": "subject",
+    "code": "segunda_lengua_extranjera_italiano",
+    "label": "Segunda Lengua Extranjera: Italiano",
+    "position": 78
+  },
+  {
+    "vocabulary": "subject",
+    "code": "segunda_lengua_extranjera_otras",
+    "label": "Segunda Lengua Extranjera: otras",
+    "position": 79
+  },
+  {
+    "vocabulary": "subject",
+    "code": "sesiones_profundizacion_curricular",
+    "label": "Sesiones profundización curricular",
+    "position": 80
+  },
+  {
+    "vocabulary": "subject",
+    "code": "tecnicas_de_expresion_grafico_plastica",
+    "label": "Técnicas de Expresión Gráfico-Plástica",
+    "position": 81
+  },
+  {
+    "vocabulary": "subject",
+    "code": "tecnicas_de_laboratorio",
+    "label": "Técnicas de Laboratorio",
+    "position": 82
+  },
+  {
+    "vocabulary": "subject",
+    "code": "tecnologia_e",
+    "label": "Tecnología (E)",
+    "position": 83
+  },
+  {
+    "vocabulary": "subject",
+    "code": "tecnologia_industrial",
+    "label": "Tecnología Industrial",
+    "position": 84
+  },
+  {
+    "vocabulary": "subject",
+    "code": "tecnologia",
+    "label": "Tecnología",
+    "position": 85
+  },
+  {
+    "vocabulary": "subject",
+    "code": "tecnologias_de_la_informacion_y_la_comunicacion",
+    "label": "Tecnologías de la información y la comunicación",
+    "position": 86
+  },
+  {
+    "vocabulary": "subject",
+    "code": "tutoria",
+    "label": "Tutoría",
+    "position": 87
+  },
+  {
+    "vocabulary": "subject",
+    "code": "valores_eticos",
+    "label": "Valores Éticos",
+    "position": 88
+  },
+  {
+    "vocabulary": "subject",
+    "code": "valores_sociales_y_civicos",
+    "label": "Valores Sociales y Cívicos",
+    "position": 89
+  },
+  {
+    "vocabulary": "subject",
+    "code": "volumen",
+    "label": "Volumen",
+    "position": 90
+  },
+  {
+    "vocabulary": "subject",
+    "code": "flora_canaria",
+    "label": "Flora canaria",
+    "position": 91
+  },
+  {
+    "vocabulary": "part_of_speech",
+    "code": "adjetivo",
+    "label": "Adjetivo",
+    "position": 0,
+    "abbreviation": "adj."
+  },
+  {
+    "vocabulary": "part_of_speech",
+    "code": "sustantivo",
+    "label": "Sustantivo",
+    "position": 1,
+    "abbreviation": "sust."
+  },
+  {
+    "vocabulary": "part_of_speech",
+    "code": "verbo",
+    "label": "Verbo",
+    "position": 2,
+    "abbreviation": "v."
+  },
+  {
+    "vocabulary": "part_of_speech",
+    "code": "preposicion",
+    "label": "Preposición",
+    "position": 3,
+    "abbreviation": "prep."
+  },
+  {
+    "vocabulary": "part_of_speech",
+    "code": "conjuncion",
+    "label": "Conjunción",
+    "position": 4,
+    "abbreviation": "conj."
+  },
+  {
+    "vocabulary": "part_of_speech",
+    "code": "adverbio",
+    "label": "Adverbio",
+    "position": 5,
+    "abbreviation": "adv."
+  },
+  {
+    "vocabulary": "part_of_speech",
+    "code": "determinante",
+    "label": "Determinante",
+    "position": 6,
+    "abbreviation": "det."
+  },
+  {
+    "vocabulary": "part_of_speech",
+    "code": "interjeccion",
+    "label": "Interjección",
+    "position": 7,
+    "abbreviation": "interj."
+  },
+  {
+    "vocabulary": "part_of_speech",
+    "code": "pronombre",
+    "label": "Pronombre",
+    "position": 8,
+    "abbreviation": "pron."
+  },
+  {
+    "vocabulary": "gender",
+    "code": "femenino",
+    "label": "Femenino",
+    "position": 0,
+    "abbreviation": "f."
+  },
+  {
+    "vocabulary": "gender",
+    "code": "masculino",
+    "label": "Masculino",
+    "position": 1,
+    "abbreviation": "m."
+  },
+  {
+    "vocabulary": "gender",
+    "code": "masculino_y_femenino",
+    "label": "Masculino y femenino",
+    "position": 2,
+    "abbreviation": "m. y f."
+  },
+  {
+    "vocabulary": "gender",
+    "code": "neutro",
+    "label": "Neutro",
+    "position": 3,
+    "abbreviation": "n."
+  },
+  {
+    "vocabulary": "gender",
+    "code": "no_tiene",
+    "label": "No tiene",
+    "position": 4
+  },
+  {
+    "vocabulary": "number",
+    "code": "singular",
+    "label": "Singular",
+    "position": 0,
+    "abbreviation": "sing."
+  },
+  {
+    "vocabulary": "number",
+    "code": "plural",
+    "label": "Plural",
+    "position": 1,
+    "abbreviation": "pl."
+  },
+  {
+    "vocabulary": "topic",
+    "code": "lengua",
+    "label": "Lengua",
+    "position": 0
+  },
+  {
+    "vocabulary": "topic",
+    "code": "arte",
+    "label": "Arte",
+    "position": 1
+  },
+  {
+    "vocabulary": "topic",
+    "code": "historia",
+    "label": "Historia",
+    "position": 2
+  },
+  {
+    "vocabulary": "topic",
+    "code": "educacion_fisica",
+    "label": "Educación física",
+    "position": 3
+  },
+  {
+    "vocabulary": "topic",
+    "code": "cultura",
+    "label": "Cultura",
+    "position": 4
+  },
+  {
+    "vocabulary": "topic",
+    "code": "general",
+    "label": "General",
+    "position": 5
+  },
+  {
+    "vocabulary": "topic",
+    "code": "gastronomia",
+    "label": "Gastronomía",
+    "position": 6
+  },
+  {
+    "vocabulary": "topic",
+    "code": "toponimia",
+    "label": "Toponimia",
+    "position": 7
+  },
+  {
+    "vocabulary": "topic",
+    "code": "fauna_canaria",
+    "label": "Fauna canaria",
+    "position": 8
+  },
+  {
+    "vocabulary": "topic",
+    "code": "astronomia",
+    "label": "Astronomía",
+    "position": 9
+  },
+  {
+    "vocabulary": "topic",
+    "code": "ingles",
+    "label": "Inglés",
+    "position": 10
+  },
+  {
+    "vocabulary": "topic",
+    "code": "frances",
+    "label": "Francés",
+    "position": 11
+  },
+  {
+    "vocabulary": "topic",
+    "code": "aleman",
+    "label": "Alemán",
+    "position": 12
+  },
+  {
+    "vocabulary": "topic",
+    "code": "otros_idiomas",
+    "label": "Otros idiomas",
+    "position": 13
+  },
+  {
+    "vocabulary": "topic",
+    "code": "matematicas",
+    "label": "Matemáticas",
+    "position": 14
+  },
+  {
+    "vocabulary": "topic",
+    "code": "tecnologia_y_electrotecnia",
+    "label": "Tecnología y Electrotecnia",
+    "position": 15
+  },
+  {
+    "vocabulary": "topic",
+    "code": "fisica_y_quimica",
+    "label": "Física y Química",
+    "position": 16
+  },
+  {
+    "vocabulary": "topic",
+    "code": "biologia_y_geologia",
+    "label": "Biología y Geología",
+    "position": 17
+  },
+  {
+    "vocabulary": "topic",
+    "code": "ciencias_naturales",
+    "label": "Ciencias Naturales",
+    "position": 18
+  },
+  {
+    "vocabulary": "topic",
+    "code": "ciencias_sociales",
+    "label": "Ciencias Sociales",
+    "position": 19
+  },
+  {
+    "vocabulary": "topic",
+    "code": "economia",
+    "label": "Economía",
+    "position": 20
+  },
+  {
+    "vocabulary": "topic",
+    "code": "geografia_e_historia",
+    "label": "Geografía e Historia",
+    "position": 21
+  },
+  {
+    "vocabulary": "topic",
+    "code": "valores",
+    "label": "Valores",
+    "position": 22
+  },
+  {
+    "vocabulary": "topic",
+    "code": "psicologia",
+    "label": "Psicología",
+    "position": 23
+  },
+  {
+    "vocabulary": "topic",
+    "code": "filosofia",
+    "label": "Filosofía",
+    "position": 24
+  },
+  {
+    "vocabulary": "topic",
+    "code": "religion",
+    "label": "Religión",
+    "position": 25
+  },
+  {
+    "vocabulary": "topic",
+    "code": "musica_y_danza",
+    "label": "Música y danza",
+    "position": 26
+  },
+  {
+    "vocabulary": "topic",
+    "code": "dialecto_canario",
+    "label": "Dialecto canario",
+    "position": 27
+  },
+  {
+    "vocabulary": "topic",
+    "code": "etnografia_y_artesania_canarias",
+    "label": "Etnografía y artesanía canarias",
+    "position": 28
+  },
+  {
+    "vocabulary": "topic",
+    "code": "paisaje_y_arquitectura_canaria",
+    "label": "Paisaje y arquitectura canaria",
+    "position": 29
+  },
+  {
+    "vocabulary": "topic",
+    "code": "vestuario_y_complementos_canarios",
+    "label": "Vestuario y complementos canarios",
+    "position": 30
+  },
+  {
+    "vocabulary": "topic",
+    "code": "deportes_autoctonos",
+    "label": "Deportes autóctonos",
+    "position": 31
+  },
+  {
+    "vocabulary": "topic",
+    "code": "musica_tradicional_canaria",
+    "label": "Música tradicional canaria",
+    "position": 32
+  },
+  {
+    "vocabulary": "topic",
+    "code": "espacios_naturales_canarios",
+    "label": "Espacios naturales canarios",
+    "position": 33
+  },
+  {
+    "vocabulary": "topic",
+    "code": "sociedad_y_cultura_canaria",
+    "label": "Sociedad y cultura canaria",
+    "position": 34
+  },
+  {
+    "vocabulary": "topic",
+    "code": "patrimonio_canario",
+    "label": "Patrimonio canario",
+    "position": 35
+  },
+  {
+    "vocabulary": "topic",
+    "code": "salud",
+    "label": "Salud",
+    "position": 36
+  },
+  {
+    "vocabulary": "topic",
+    "code": "medio_ambiente_y_sostenibilidad",
+    "label": "Medio Ambiente y Sostenibilidad",
+    "position": 37
+  },
+  {
+    "vocabulary": "topic",
+    "code": "tic",
+    "label": "TIC",
+    "position": 38
+  },
+  {
+    "vocabulary": "topic",
+    "code": "flora_canaria",
+    "label": "Flora canaria",
+    "position": 39
+  },
+  {
+    "vocabulary": "topic",
+    "code": "literatura_canaria",
+    "label": "Literatura canaria",
+    "position": 40
+  },
+  {
+    "vocabulary": "topic",
+    "code": "personaje_ilustre_canario",
+    "label": "Personaje ilustre canario",
+    "position": 41
+  },
+  {
+    "vocabulary": "language",
+    "code": "aleman",
+    "label": "alemán",
+    "position": 0,
+    "featured": true
+  },
+  {
+    "vocabulary": "language",
+    "code": "notacion_cientifica",
+    "label": "notación científica",
+    "position": 1,
+    "featured": true
+  },
+  {
+    "vocabulary": "language",
+    "code": "ingles",
+    "label": "inglés",
+    "position": 2,
+    "featured": true
+  },
+  {
+    "vocabulary": "language",
+    "code": "espanol",
+    "label": "español",
+    "position": 3,
+    "featured": true
+  },
+  {
+    "vocabulary": "language",
+    "code": "frances",
+    "label": "francés",
+    "position": 4,
+    "featured": true
+  },
+  {
+    "vocabulary": "language",
+    "code": "afar",
+    "label": "afar",
+    "position": 5
+  },
+  {
+    "vocabulary": "language",
+    "code": "abjasio",
+    "label": "abjasio (o abjasiano)",
+    "position": 6
+  },
+  {
+    "vocabulary": "language",
+    "code": "avestico",
+    "label": "avéstico",
+    "position": 7
+  },
+  {
+    "vocabulary": "language",
+    "code": "afrikaans",
+    "label": "afrikáans",
+    "position": 8
+  },
+  {
+    "vocabulary": "language",
+    "code": "akano",
+    "label": "akano",
+    "position": 9
+  },
+  {
+    "vocabulary": "language",
+    "code": "amharico",
+    "label": "amhárico",
+    "position": 10
+  },
+  {
+    "vocabulary": "language",
+    "code": "aragones",
+    "label": "aragonés",
+    "position": 11
+  },
+  {
+    "vocabulary": "language",
+    "code": "arabe",
+    "label": "árabe",
+    "position": 12
+  },
+  {
+    "vocabulary": "language",
+    "code": "asames",
+    "label": "asamés",
+    "position": 13
+  },
+  {
+    "vocabulary": "language",
+    "code": "avar",
+    "label": "avar (o ávaro)",
+    "position": 14
+  },
+  {
+    "vocabulary": "language",
+    "code": "aimara",
+    "label": "aimara",
+    "position": 15
+  },
+  {
+    "vocabulary": "language",
+    "code": "azeri",
+    "label": "azerí",
+    "position": 16
+  },
+  {
+    "vocabulary": "language",
+    "code": "baskir",
+    "label": "baskir",
+    "position": 17
+  },
+  {
+    "vocabulary": "language",
+    "code": "bielorruso",
+    "label": "bielorruso",
+    "position": 18
+  },
+  {
+    "vocabulary": "language",
+    "code": "bulgaro",
+    "label": "búlgaro",
+    "position": 19
+  },
+  {
+    "vocabulary": "language",
+    "code": "bhoyapuri",
+    "label": "bhoyapurí",
+    "position": 20
+  },
+  {
+    "vocabulary": "language",
+    "code": "bislama",
+    "label": "bislama",
+    "position": 21
+  },
+  {
+    "vocabulary": "language",
+    "code": "bambara",
+    "label": "bambara",
+    "position": 22
+  },
+  {
+    "vocabulary": "language",
+    "code": "bengali",
+    "label": "bengalí",
+    "position": 23
+  },
+  {
+    "vocabulary": "language",
+    "code": "tibetano",
+    "label": "tibetano",
+    "position": 24
+  },
+  {
+    "vocabulary": "language",
+    "code": "breton",
+    "label": "bretón",
+    "position": 25
+  },
+  {
+    "vocabulary": "language",
+    "code": "bosnio",
+    "label": "bosnio",
+    "position": 26
+  },
+  {
+    "vocabulary": "language",
+    "code": "catalan",
+    "label": "catalán",
+    "position": 27
+  },
+  {
+    "vocabulary": "language",
+    "code": "checheno",
+    "label": "checheno",
+    "position": 28
+  },
+  {
+    "vocabulary": "language",
+    "code": "chamorro",
+    "label": "chamorro",
+    "position": 29
+  },
+  {
+    "vocabulary": "language",
+    "code": "corso",
+    "label": "corso",
+    "position": 30
+  },
+  {
+    "vocabulary": "language",
+    "code": "cree",
+    "label": "cree",
+    "position": 31
+  },
+  {
+    "vocabulary": "language",
+    "code": "checo",
+    "label": "checo",
+    "position": 32
+  },
+  {
+    "vocabulary": "language",
+    "code": "eslavo_eclesiastico_antiguo",
+    "label": "eslavo eclesiástico antiguo",
+    "position": 33
+  },
+  {
+    "vocabulary": "language",
+    "code": "chuvasio",
+    "label": "chuvasio",
+    "position": 34
+  },
+  {
+    "vocabulary": "language",
+    "code": "gales",
+    "label": "galés",
+    "position": 35
+  },
+  {
+    "vocabulary": "language",
+    "code": "danes",
+    "label": "danés",
+    "position": 36
+  },
+  {
+    "vocabulary": "language",
+    "code": "maldivo",
+    "label": "maldivo (o dhivehi)",
+    "position": 37
+  },
+  {
+    "vocabulary": "language",
+    "code": "dzongkha",
+    "label": "dzongkha",
+    "position": 38
+  },
+  {
+    "vocabulary": "language",
+    "code": "ewe",
+    "label": "ewé",
+    "position": 39
+  },
+  {
+    "vocabulary": "language",
+    "code": "griego",
+    "label": "griego (moderno)",
+    "position": 40
+  },
+  {
+    "vocabulary": "language",
+    "code": "esperanto",
+    "label": "esperanto",
+    "position": 41
+  },
+  {
+    "vocabulary": "language",
+    "code": "estonio",
+    "label": "estonio",
+    "position": 42
+  },
+  {
+    "vocabulary": "language",
+    "code": "euskera",
+    "label": "euskera",
+    "position": 43
+  },
+  {
+    "vocabulary": "language",
+    "code": "persa",
+    "label": "persa",
+    "position": 44
+  },
+  {
+    "vocabulary": "language",
+    "code": "fula",
+    "label": "fula",
+    "position": 45
+  },
+  {
+    "vocabulary": "language",
+    "code": "fines",
+    "label": "finés (o finlandés)",
+    "position": 46
+  },
+  {
+    "vocabulary": "language",
+    "code": "fiyiano",
+    "label": "fiyiano (o fiyi)",
+    "position": 47
+  },
+  {
+    "vocabulary": "language",
+    "code": "feroes",
+    "label": "feroés",
+    "position": 48
+  },
+  {
+    "vocabulary": "language",
+    "code": "frison",
+    "label": "frisón (o frisio)",
+    "position": 49
+  },
+  {
+    "vocabulary": "language",
+    "code": "irlandes",
+    "label": "irlandés (o gaélico)",
+    "position": 50
+  },
+  {
+    "vocabulary": "language",
+    "code": "gaelico_escoces",
+    "label": "gaélico escocés",
+    "position": 51
+  },
+  {
+    "vocabulary": "language",
+    "code": "gallego",
+    "label": "gallego",
+    "position": 52
+  },
+  {
+    "vocabulary": "language",
+    "code": "guarani",
+    "label": "guaraní",
+    "position": 53
+  },
+  {
+    "vocabulary": "language",
+    "code": "guyarati",
+    "label": "guyaratí (o gujaratí)",
+    "position": 54
+  },
+  {
+    "vocabulary": "language",
+    "code": "manes",
+    "label": "manés (gaélico manés o de Isla de Man)",
+    "position": 55
+  },
+  {
+    "vocabulary": "language",
+    "code": "hausa",
+    "label": "hausa",
+    "position": 56
+  },
+  {
+    "vocabulary": "language",
+    "code": "hebreo",
+    "label": "hebreo",
+    "position": 57
+  },
+  {
+    "vocabulary": "language",
+    "code": "hindi",
+    "label": "hindi (o hindú)",
+    "position": 58
+  },
+  {
+    "vocabulary": "language",
+    "code": "hiri_motu",
+    "label": "hiri motu",
+    "position": 59
+  },
+  {
+    "vocabulary": "language",
+    "code": "croata",
+    "label": "croata",
+    "position": 60
+  },
+  {
+    "vocabulary": "language",
+    "code": "haitiano",
+    "label": "haitiano",
+    "position": 61
+  },
+  {
+    "vocabulary": "language",
+    "code": "hungaro",
+    "label": "húngaro",
+    "position": 62
+  },
+  {
+    "vocabulary": "language",
+    "code": "armenio",
+    "label": "armenio",
+    "position": 63
+  },
+  {
+    "vocabulary": "language",
+    "code": "herero",
+    "label": "herero",
+    "position": 64
+  },
+  {
+    "vocabulary": "language",
+    "code": "interlingua",
+    "label": "interlingua",
+    "position": 65
+  },
+  {
+    "vocabulary": "language",
+    "code": "indonesio",
+    "label": "indonesio",
+    "position": 66
+  },
+  {
+    "vocabulary": "language",
+    "code": "occidental",
+    "label": "occidental",
+    "position": 67
+  },
+  {
+    "vocabulary": "language",
+    "code": "igbo",
+    "label": "igbo",
+    "position": 68
+  },
+  {
+    "vocabulary": "language",
+    "code": "yi_de_sichuan",
+    "label": "yi de Sichuán",
+    "position": 69
+  },
+  {
+    "vocabulary": "language",
+    "code": "inupiaq",
+    "label": "iñupiaq",
+    "position": 70
+  },
+  {
+    "vocabulary": "language",
+    "code": "ido",
+    "label": "ido",
+    "position": 71
+  },
+  {
+    "vocabulary": "language",
+    "code": "islandes",
+    "label": "islandés",
+    "position": 72
+  },
+  {
+    "vocabulary": "language",
+    "code": "italiano",
+    "label": "italiano",
+    "position": 73
+  },
+  {
+    "vocabulary": "language",
+    "code": "inuktitut",
+    "label": "inuktitut (o inuit)",
+    "position": 74
+  },
+  {
+    "vocabulary": "language",
+    "code": "japones",
+    "label": "japonés",
+    "position": 75
+  },
+  {
+    "vocabulary": "language",
+    "code": "javanes",
+    "label": "javanés",
+    "position": 76
+  },
+  {
+    "vocabulary": "language",
+    "code": "georgiano",
+    "label": "georgiano",
+    "position": 77
+  },
+  {
+    "vocabulary": "language",
+    "code": "kongo",
+    "label": "kongo (o kikongo)",
+    "position": 78
+  },
+  {
+    "vocabulary": "language",
+    "code": "kikuyu",
+    "label": "kikuyu",
+    "position": 79
+  },
+  {
+    "vocabulary": "language",
+    "code": "kuanyama",
+    "label": "kuanyama",
+    "position": 80
+  },
+  {
+    "vocabulary": "language",
+    "code": "kazajo",
+    "label": "kazajo (o kazajio)",
+    "position": 81
+  },
+  {
+    "vocabulary": "language",
+    "code": "groenlandes",
+    "label": "groenlandés (o kalaallisut)",
+    "position": 82
+  },
+  {
+    "vocabulary": "language",
+    "code": "camboyano",
+    "label": "camboyano (o jemer)",
+    "position": 83
+  },
+  {
+    "vocabulary": "language",
+    "code": "canares",
+    "label": "canarés",
+    "position": 84
+  },
+  {
+    "vocabulary": "language",
+    "code": "coreano",
+    "label": "coreano",
+    "position": 85
+  },
+  {
+    "vocabulary": "language",
+    "code": "kanuri",
+    "label": "kanuri",
+    "position": 86
+  },
+  {
+    "vocabulary": "language",
+    "code": "cachemiro",
+    "label": "cachemiro (o cachemir)",
+    "position": 87
+  },
+  {
+    "vocabulary": "language",
+    "code": "kurdo",
+    "label": "kurdo",
+    "position": 88
+  },
+  {
+    "vocabulary": "language",
+    "code": "komi",
+    "label": "komi",
+    "position": 89
+  },
+  {
+    "vocabulary": "language",
+    "code": "cornico",
+    "label": "córnico",
+    "position": 90
+  },
+  {
+    "vocabulary": "language",
+    "code": "kirguis",
+    "label": "kirguís",
+    "position": 91
+  },
+  {
+    "vocabulary": "language",
+    "code": "latin",
+    "label": "latín",
+    "position": 92
+  },
+  {
+    "vocabulary": "language",
+    "code": "luxemburgues",
+    "label": "luxemburgués",
+    "position": 93
+  },
+  {
+    "vocabulary": "language",
+    "code": "luganda",
+    "label": "luganda",
+    "position": 94
+  },
+  {
+    "vocabulary": "language",
+    "code": "limburgues",
+    "label": "limburgués",
+    "position": 95
+  },
+  {
+    "vocabulary": "language",
+    "code": "lingala",
+    "label": "lingala",
+    "position": 96
+  },
+  {
+    "vocabulary": "language",
+    "code": "lao",
+    "label": "lao",
+    "position": 97
+  },
+  {
+    "vocabulary": "language",
+    "code": "lituano",
+    "label": "lituano",
+    "position": 98
+  },
+  {
+    "vocabulary": "language",
+    "code": "luba_katanga",
+    "label": "luba-katanga (o chiluba)",
+    "position": 99
+  },
+  {
+    "vocabulary": "language",
+    "code": "leton",
+    "label": "letón",
+    "position": 100
+  },
+  {
+    "vocabulary": "language",
+    "code": "malgache",
+    "label": "malgache (o malagasy)",
+    "position": 101
+  },
+  {
+    "vocabulary": "language",
+    "code": "marshales",
+    "label": "marshalés",
+    "position": 102
+  },
+  {
+    "vocabulary": "language",
+    "code": "maori",
+    "label": "maorí",
+    "position": 103
+  },
+  {
+    "vocabulary": "language",
+    "code": "macedonio",
+    "label": "macedonio",
+    "position": 104
+  },
+  {
+    "vocabulary": "language",
+    "code": "malayalam",
+    "label": "malayalam",
+    "position": 105
+  },
+  {
+    "vocabulary": "language",
+    "code": "mongol",
+    "label": "mongol",
+    "position": 106
+  },
+  {
+    "vocabulary": "language",
+    "code": "marati",
+    "label": "maratí",
+    "position": 107
+  },
+  {
+    "vocabulary": "language",
+    "code": "malayo",
+    "label": "malayo",
+    "position": 108
+  },
+  {
+    "vocabulary": "language",
+    "code": "maltes",
+    "label": "maltés",
+    "position": 109
+  },
+  {
+    "vocabulary": "language",
+    "code": "birmano",
+    "label": "birmano",
+    "position": 110
+  },
+  {
+    "vocabulary": "language",
+    "code": "nauruano",
+    "label": "nauruano",
+    "position": 111
+  },
+  {
+    "vocabulary": "language",
+    "code": "noruego_bokmal",
+    "label": "noruego bokmål",
+    "position": 112
+  },
+  {
+    "vocabulary": "language",
+    "code": "ndebele_del_norte",
+    "label": "ndebele del norte",
+    "position": 113
+  },
+  {
+    "vocabulary": "language",
+    "code": "nepali",
+    "label": "nepalí",
+    "position": 114
+  },
+  {
+    "vocabulary": "language",
+    "code": "ndonga",
+    "label": "ndonga",
+    "position": 115
+  },
+  {
+    "vocabulary": "language",
+    "code": "neerlandes",
+    "label": "neerlandés (u holandés)",
+    "position": 116
+  },
+  {
+    "vocabulary": "language",
+    "code": "nynorsk",
+    "label": "nynorsk",
+    "position": 117
+  },
+  {
+    "vocabulary": "language",
+    "code": "noruego",
+    "label": "noruego",
+    "position": 118
+  },
+  {
+    "vocabulary": "language",
+    "code": "ndebele_del_sur",
+    "label": "ndebele del sur",
+    "position": 119
+  },
+  {
+    "vocabulary": "language",
+    "code": "navajo",
+    "label": "navajo",
+    "position": 120
+  },
+  {
+    "vocabulary": "language",
+    "code": "chichewa",
+    "label": "chichewa",
+    "position": 121
+  },
+  {
+    "vocabulary": "language",
+    "code": "occitano",
+    "label": "occitano",
+    "position": 122
+  },
+  {
+    "vocabulary": "language",
+    "code": "ojibwa",
+    "label": "ojibwa",
+    "position": 123
+  },
+  {
+    "vocabulary": "language",
+    "code": "oromo",
+    "label": "oromo",
+    "position": 124
+  },
+  {
+    "vocabulary": "language",
+    "code": "oriya",
+    "label": "oriya",
+    "position": 125
+  },
+  {
+    "vocabulary": "language",
+    "code": "osetico",
+    "label": "osético (u osetio, u oseta)",
+    "position": 126
+  },
+  {
+    "vocabulary": "language",
+    "code": "panyabi",
+    "label": "panyabí (o penyabi)",
+    "position": 127
+  },
+  {
+    "vocabulary": "language",
+    "code": "pali",
+    "label": "pali",
+    "position": 128
+  },
+  {
+    "vocabulary": "language",
+    "code": "polaco",
+    "label": "polaco",
+    "position": 129
+  },
+  {
+    "vocabulary": "language",
+    "code": "pastu",
+    "label": "pastú (o pastún, o pashto)",
+    "position": 130
+  },
+  {
+    "vocabulary": "language",
+    "code": "portugues",
+    "label": "portugués",
+    "position": 131
+  },
+  {
+    "vocabulary": "language",
+    "code": "quechua",
+    "label": "quechua",
+    "position": 132
+  },
+  {
+    "vocabulary": "language",
+    "code": "romanche",
+    "label": "romanche",
+    "position": 133
+  },
+  {
+    "vocabulary": "language",
+    "code": "kirundi",
+    "label": "kirundi",
+    "position": 134
+  },
+  {
+    "vocabulary": "language",
+    "code": "rumano",
+    "label": "rumano",
+    "position": 135
+  },
+  {
+    "vocabulary": "language",
+    "code": "ruso",
+    "label": "ruso",
+    "position": 136
+  },
+  {
+    "vocabulary": "language",
+    "code": "ruandes",
+    "label": "ruandés (o kiñaruanda)",
+    "position": 137
+  },
+  {
+    "vocabulary": "language",
+    "code": "sanscrito",
+    "label": "sánscrito",
+    "position": 138
+  },
+  {
+    "vocabulary": "language",
+    "code": "sardo",
+    "label": "sardo",
+    "position": 139
+  },
+  {
+    "vocabulary": "language",
+    "code": "sindhi",
+    "label": "sindhi",
+    "position": 140
+  },
+  {
+    "vocabulary": "language",
+    "code": "sami_septentrional",
+    "label": "sami septentrional",
+    "position": 141
+  },
+  {
+    "vocabulary": "language",
+    "code": "sango",
+    "label": "sango",
+    "position": 142
+  },
+  {
+    "vocabulary": "language",
+    "code": "cingales",
+    "label": "cingalés",
+    "position": 143
+  },
+  {
+    "vocabulary": "language",
+    "code": "eslovaco",
+    "label": "eslovaco",
+    "position": 144
+  },
+  {
+    "vocabulary": "language",
+    "code": "esloveno",
+    "label": "esloveno",
+    "position": 145
+  },
+  {
+    "vocabulary": "language",
+    "code": "samoano",
+    "label": "samoano",
+    "position": 146
+  },
+  {
+    "vocabulary": "language",
+    "code": "shona",
+    "label": "shona",
+    "position": 147
+  },
+  {
+    "vocabulary": "language",
+    "code": "somali",
+    "label": "somalí",
+    "position": 148
+  },
+  {
+    "vocabulary": "language",
+    "code": "albanes",
+    "label": "albanés",
+    "position": 149
+  },
+  {
+    "vocabulary": "language",
+    "code": "serbio",
+    "label": "serbio",
+    "position": 150
+  },
+  {
+    "vocabulary": "language",
+    "code": "suazi",
+    "label": "suazi (o swati, o siSwati)",
+    "position": 151
+  },
+  {
+    "vocabulary": "language",
+    "code": "sesotho",
+    "label": "sesotho",
+    "position": 152
+  },
+  {
+    "vocabulary": "language",
+    "code": "sundanes",
+    "label": "sundanés (o sondanés)",
+    "position": 153
+  },
+  {
+    "vocabulary": "language",
+    "code": "sueco",
+    "label": "sueco",
+    "position": 154
+  },
+  {
+    "vocabulary": "language",
+    "code": "suajili",
+    "label": "suajili",
+    "position": 155
+  },
+  {
+    "vocabulary": "language",
+    "code": "tamil",
+    "label": "tamil",
+    "position": 156
+  },
+  {
+    "vocabulary": "language",
+    "code": "telugu",
+    "label": "télugu",
+    "position": 157
+  },
+  {
+    "vocabulary": "language",
+    "code": "tayiko",
+    "label": "tayiko",
+    "position": 158
+  },
+  {
+    "vocabulary": "language",
+    "code": "tailandes",
+    "label": "tailandés",
+    "position": 159
+  },
+  {
+    "vocabulary": "language",
+    "code": "tigrina",
+    "label": "tigriña",
+    "position": 160
+  },
+  {
+    "vocabulary": "language",
+    "code": "turcomano",
+    "label": "turcomano",
+    "position": 161
+  },
+  {
+    "vocabulary": "language",
+    "code": "tagalo",
+    "label": "tagalo",
+    "position": 162
+  },
+  {
+    "vocabulary": "language",
+    "code": "setsuana",
+    "label": "setsuana",
+    "position": 163
+  },
+  {
+    "vocabulary": "language",
+    "code": "tongano",
+    "label": "tongano",
+    "position": 164
+  },
+  {
+    "vocabulary": "language",
+    "code": "turco",
+    "label": "turco",
+    "position": 165
+  },
+  {
+    "vocabulary": "language",
+    "code": "tsonga",
+    "label": "tsonga",
+    "position": 166
+  },
+  {
+    "vocabulary": "language",
+    "code": "tartaro",
+    "label": "tártaro",
+    "position": 167
+  },
+  {
+    "vocabulary": "language",
+    "code": "twi",
+    "label": "twi",
+    "position": 168
+  },
+  {
+    "vocabulary": "language",
+    "code": "tahitiano",
+    "label": "tahitiano",
+    "position": 169
+  },
+  {
+    "vocabulary": "language",
+    "code": "uigur",
+    "label": "uigur",
+    "position": 170
+  },
+  {
+    "vocabulary": "language",
+    "code": "ucraniano",
+    "label": "ucraniano",
+    "position": 171
+  },
+  {
+    "vocabulary": "language",
+    "code": "urdu",
+    "label": "urdu",
+    "position": 172
+  },
+  {
+    "vocabulary": "language",
+    "code": "uzbeko",
+    "label": "uzbeko",
+    "position": 173
+  },
+  {
+    "vocabulary": "language",
+    "code": "venda",
+    "label": "venda",
+    "position": 174
+  },
+  {
+    "vocabulary": "language",
+    "code": "vietnamita",
+    "label": "vietnamita",
+    "position": 175
+  },
+  {
+    "vocabulary": "language",
+    "code": "volapuk",
+    "label": "volapük",
+    "position": 176
+  },
+  {
+    "vocabulary": "language",
+    "code": "valon",
+    "label": "valón",
+    "position": 177
+  },
+  {
+    "vocabulary": "language",
+    "code": "wolof",
+    "label": "wolof",
+    "position": 178
+  },
+  {
+    "vocabulary": "language",
+    "code": "xhosa",
+    "label": "xhosa",
+    "position": 179
+  },
+  {
+    "vocabulary": "language",
+    "code": "yidish",
+    "label": "yídish (o yidis, o yiddish)",
+    "position": 180
+  },
+  {
+    "vocabulary": "language",
+    "code": "yoruba",
+    "label": "yoruba",
+    "position": 181
+  },
+  {
+    "vocabulary": "language",
+    "code": "chuan",
+    "label": "chuan (o chuang, o zhuang)",
+    "position": 182
+  },
+  {
+    "vocabulary": "language",
+    "code": "chino",
+    "label": "chino",
+    "position": 183
+  },
+  {
+    "vocabulary": "language",
+    "code": "zulu",
+    "label": "zulú",
+    "position": 184
+  }
+]
