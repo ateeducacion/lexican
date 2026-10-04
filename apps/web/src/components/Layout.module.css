@@ -38,11 +38,57 @@
   color: #fff;
   font-weight: 600;
 }
+.infoButtons {
+  display: flex;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+.iconButton {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+.iconButton:hover {
+  background: rgb(255 255 255 / 12%);
+}
+.iconButton svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.about {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-4);
+}
+.about dt {
+  font-weight: 600;
+  color: var(--c-muted);
+}
+.about dd {
+  margin: 0;
+}
+.helpSteps {
+  display: grid;
+  gap: var(--space-2);
+  padding-left: 1.25rem;
+  margin: 0 0 var(--space-4);
+}
 .user {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-left: auto;
 }
 .avatar {
   display: grid;
@@ -82,20 +128,53 @@
   min-height: 60vh;
   outline: none;
 }
-.footer {
+.demo {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-4);
+  z-index: 20;
+  transform: translateX(-50%);
+  width: min(720px, calc(100vw - 2 * var(--space-4)));
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-3) var(--space-5);
-  padding-block: var(--space-4);
-  color: var(--c-muted);
-  font-size: 0.8rem;
-}
-.demo {
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) 3.25rem var(--space-3) var(--space-4);
+  border: 1px solid #e3cf8f;
+  border-radius: var(--radius);
   background: var(--c-warning-bg);
-  border-bottom: 1px solid var(--c-border);
-  padding-block: var(--space-1);
+  box-shadow: 0 10px 30px rgb(15 76 129 / 18%);
   font-size: 0.85rem;
+}
+.demo p {
+  flex: 1 1 18rem;
+  margin: 0;
+}
+.demoClose {
+  position: absolute;
+  top: 50%;
+  right: var(--space-2);
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--c-text);
+  cursor: pointer;
+}
+.demoClose:hover {
+  background: rgb(0 0 0 / 6%);
+}
+.demoClose svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
 }
 .progress {
   position: absolute;
@@ -122,8 +201,14 @@
   .main {
     padding-bottom: 6rem;
   }
-  .footer {
-    padding-bottom: 5.5rem;
+  /* Phones already float the bottom nav, the editor save bar and the add button: the notice sits
+     at the end of the page instead of floating over them. */
+  .demo {
+    position: static;
+    transform: none;
+    width: auto;
+    margin: 0 var(--space-4) calc(68px + var(--space-4) + env(safe-area-inset-bottom));
+    box-shadow: none;
   }
   .bottomNav {
     position: fixed;
@@ -160,5 +245,17 @@
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
+  }
+}
+@media (max-width: 420px) {
+  .bar {
+    gap: var(--space-2);
+  }
+  .avatar {
+    display: none;
+  }
+  .logout {
+    margin-left: 0;
+    padding-inline: 0.7rem;
   }
 }

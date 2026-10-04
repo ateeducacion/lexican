@@ -13,6 +13,10 @@ const commit = (() => {
   }
 })();
 
+// Absolute site URL for link previews (og:image); override per deployment:
+// VITE_SITE_URL=https://example.org/ npm run build
+process.env.VITE_SITE_URL ??= 'https://ateeducacion.github.io/lexican/';
+
 // `demo` mode = static GitHub Pages build with PGlite; any other mode = production SPA against /api.
 export default defineConfig(({ mode }) => ({
   base: mode === 'demo' ? (process.env.DEMO_BASE ?? '/lexican/') : '/',

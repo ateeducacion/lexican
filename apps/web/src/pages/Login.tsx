@@ -30,7 +30,9 @@ export function Component() {
 
   useEffect(() => {
     if (__DEMO__) {
-      void getApi(); // start downloading PGlite while the user reads the page
+      // Start downloading PGlite while the user reads the page; a failure (or a reload aborting it)
+      // surfaces later on login, not as an unhandled rejection here.
+      getApi().catch(() => undefined);
       return;
     }
     fetch('/api/auth/providers')
@@ -137,11 +139,9 @@ export function Component() {
                   type="button"
                   className="btn btn-sm"
                   disabled={login.busy}
-                  onClick={() => {
-                    setEmail(a.email);
-                    setPassword(a.password);
-                    void login.run({ email: a.email, password: a.password });
-                  }}
+                  // Sign in directly, without typing into the password field: a filled password input
+                  // that disappears makes browsers keep offering to save the (fictitious) password.
+                  onClick={() => void login.run({ email: a.email, password: a.password })}
                 >
                   Entrar como {a.label.toLowerCase()}
                 </button>

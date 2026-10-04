@@ -11,7 +11,12 @@ let api: Promise<WebApi> | null = null;
  */
 export function getApi(): Promise<WebApi> {
   api ??= __DEMO__
-    ? import('../demo/client.ts').then((m) => m.createDemoClient())
+    ? import('../demo/client.ts')
+        .then((m) => m.createDemoClient())
+        .catch((e: unknown) => {
+          api = null; // a failed or aborted load is retried on the next call
+          throw e;
+        })
     : Promise.resolve(createHttpClient());
   return api;
 }

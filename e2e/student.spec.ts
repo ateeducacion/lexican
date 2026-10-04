@@ -103,3 +103,38 @@ test.describe('student', () => {
     await expect(page.getByRole('link', { name: 'efímera', exact: true })).toHaveCount(0);
   });
 });
+
+test('demo notice floats at the bottom and can be dismissed for the visit', async ({
+  page,
+  app,
+}) => {
+  test.skip(!app.demo, 'demo build only');
+  await app.goto('/entrar');
+  const notice = page.getByRole('complementary', { name: 'Entorno de demostración' });
+  await expect(notice).toBeVisible();
+  const box = await notice.boundingBox();
+  if (!test.info().project.name.includes('mobile'))
+    expect(box!.y + box!.height).toBeGreaterThan(page.viewportSize()!.height - 120);
+  await notice.getByRole('button', { name: 'Ocultar el aviso de demostración' }).click();
+  await expect(notice).toBeHidden();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Cuentas de demostración' })).toBeVisible();
+  await expect(notice).toBeHidden();
+});
+
+test('the top bar offers help and an about dialog with licence, version and source code', async ({
+  page,
+  app,
+}) => {
+  await app.login('student1');
+  await page.getByRole('button', { name: 'Ayuda' }).click();
+  const help = page.getByRole('dialog', { name: '¿Qué puedo hacer?' });
+  await expect(help.getByText('Enviar al aula')).toBeVisible();
+  await help.getByRole('button', { name: 'Entendido' }).click();
+  await page.getByRole('button', { name: 'Acerca de LexiCán' }).click();
+  const about = page.getByRole('dialog', { name: 'Acerca de LexiCán' });
+  await expect(about.getByRole('link', { name: 'GNU AGPL-3.0 o posterior' })).toBeVisible();
+  await expect(about.getByRole('link', { name: 'github.com/ateeducacion/lexican' })).toBeVisible();
+  await expect(about.getByText(/^2\.\d+\.\d+/)).toBeVisible();
+  await expectAccessible(page);
+});

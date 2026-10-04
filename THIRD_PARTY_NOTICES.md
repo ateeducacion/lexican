@@ -212,3 +212,7 @@ Forman parte del código legacy (rama `upstream`). No los usa el código nuevo n
 | `@fontsource/literata` (Literata, TypeTogether) | OFL-1.1 | Palabras y ejemplos del diccionario |
 
 Se sirven desde el propio despliegue (sin CDN de terceros). La OFL permite incluirlas y redistribuirlas con la aplicación.
+
+## Logotipo del Área de Tecnología Educativa
+
+`apps/web/public/ate-logo.png` (tomado de `ateeducacion/elpx-optimizer`, como en Tonga) © Gobierno de Canarias (Área de Tecnología Educativa); se usa solo en la tarjeta de vista previa de enlaces (`og-image.jpg`, generada con `npm run og-image`).
