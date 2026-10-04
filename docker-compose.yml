@@ -1,0 +1,38 @@
+# Local development. `docker compose up -d db` for Postgres only; `docker compose --profile app up --build` for the full image.
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: lexican
+      POSTGRES_PASSWORD: lexican
+      POSTGRES_DB: lexican
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U lexican -d lexican']
+      interval: 5s
+      retries: 10
+
+  app:
+    profiles: ['app']
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://lexican:lexican@db:5432/lexican
+      PUBLIC_URL: http://localhost:3000
+      MIGRATE_ON_START: 'true'
+    ports:
+      - '3000:3000'
+    volumes:
+      - media:/data/media
+    read_only: true
+    tmpfs:
+      - /tmp
+
+volumes:
+  pgdata:
+  media:

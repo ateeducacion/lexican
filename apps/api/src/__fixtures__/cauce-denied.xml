@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FICTITIOUS data: user not authorized. -->
+<CheckUsuarioAutorizadoResponse>
+  <Usuario/>
+  <Centro/>
+  <MensajeError>Usuario no autorizado</MensajeError>
+</CheckUsuarioAutorizadoResponse>
