@@ -56,6 +56,7 @@ valores ficticios: `apps/api/.env.example`.
 | `MEDIA_DIR` | — (obligatoria; `/data/media` en la imagen) | raíz de medios |
 | `MAX_UPLOAD_MB` | `10` (máx. 100) | tamaño máximo por archivo |
 | `MEDIA_QUOTA_MB_PER_DAY` | `100` | cuota de subida por usuario en 24 h (ventana móvil) |
+| `LOGIN_RATE_LIMIT` | `10` | intentos de acceso con contraseña por minuto e IP (solo proveedor dev/test) |
 | `CAS_BASE_URL` | vacío (CAS desactivado) | base del servidor CAS 3.0 |
 | `CAUCE_URL`, `CAUCE_TOKEN` | vacío | directorio institucional; obligatorios si hay CAS. **Secreto**: el token |
 | `CAS_ALLOWED_SLO_HOSTS` | vacío (cualquiera; **obligatoria en producción con CAS**) | IP permitidas para el SLO, separadas por comas |

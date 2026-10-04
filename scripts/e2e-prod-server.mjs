@@ -55,6 +55,8 @@ const env = {
   WEB_DIST: join(root, 'apps/web/dist'),
   MEDIA_DIR: mediaDir,
   AUTH_DEV_LOGIN: 'true',
+  // Every E2E test logs in; the default (10/min per IP) would throttle the suite.
+  LOGIN_RATE_LIMIT: '1000',
   LOG_LEVEL: process.env.LOG_LEVEL ?? 'warn',
 };
 

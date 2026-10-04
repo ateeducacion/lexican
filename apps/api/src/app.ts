@@ -283,7 +283,7 @@ export async function buildApp(opts: AppOptions) {
 
   app.post(
     operations.login.path,
-    { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } },
+    { config: { rateLimit: { max: config.loginRateLimit, timeWindow: '1 minute' } } },
     async (req, reply) => {
       if (!config.devLogin) return notFound(reply);
       const user = await services.call('login', null, inputOf(req));
