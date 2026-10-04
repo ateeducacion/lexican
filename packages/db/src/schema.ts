@@ -1,7 +1,6 @@
 import { sql } from 'drizzle-orm';
 import {
   boolean,
-  customType,
   index,
   integer,
   jsonb,
@@ -22,7 +21,6 @@ import type { EntrySnapshot } from '@lexican/core';
  * Legacy traceability: `legacy_source` + `legacy_id` per migrated row (unique together), never a primary key.
  */
 
-const bytea = customType<{ data: Uint8Array; driverData: Uint8Array }>({ dataType: () => 'bytea' });
 const ts = (name: string) => timestamp(name, { withTimezone: true });
 const created = () => ts('created_at').notNull().defaultNow();
 const updated = () => ts('updated_at').notNull().defaultNow();
@@ -32,7 +30,11 @@ const legacyUnique = (name: string, t: { legacySource: AnyPgColumn; legacyId: An
 
 export const globalRole = pgEnum('global_role', ['student', 'teacher', 'admin', 'support']);
 export const userStatus = pgEnum('user_status', ['active', 'disabled']);
-export const authProvider = pgEnum('auth_provider', ['cas', 'password']);
+/**
+ * `cas`: institutional CAS + CAUCE. `cas_test`: a test CAS server with fixture profiles (local Docker and the
+ * Pages demo); a separate issuer so the same subject never links to an institutional account.
+ */
+export const authProvider = pgEnum('auth_provider', ['cas', 'password', 'cas_test']);
 export const dictionaryKind = pgEnum('dictionary_kind', ['personal', 'classroom']);
 export const memberRole = pgEnum('member_role', ['teacher', 'student']);
 export const vocabulary = pgEnum('vocabulary', [
@@ -321,12 +323,6 @@ export const mediaAssets = pgTable(
   },
   (t) => [index('media_assets_sha_idx').on(t.sha256), legacyUnique('media_assets_legacy_key', t)],
 );
-
-/** Bytes for the in-browser demo storage adapter only; production stores files on disk. */
-export const mediaBlobs = pgTable('media_blobs', {
-  storageKey: text('storage_key').primaryKey(),
-  data: bytea('data').notNull(),
-});
 
 export const senseMedia = pgTable(
   'sense_media',

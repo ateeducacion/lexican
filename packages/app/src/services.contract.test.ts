@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { seedVocabulary, vocabularyValues } from '@lexican/db';
 import { openPglite, openPostgres, type TestDb } from '@lexican/db/testing';
 import type { EntryInput, OperationName, OperationOutputs } from '@lexican/core';
-import { createPasswordUser, createServices, type Actor, type MediaStorage } from './index.ts';
+import { createPasswordUser, createServices, type Actor, memoryMediaStorage } from './index.ts';
 
 /**
  * Persistence contract (§75): the same application journey against PGlite and real PostgreSQL.
@@ -19,8 +19,7 @@ const PNG = Uint8Array.from(
 describe.each(drivers)('application contract on $name', ({ open }) => {
   let t: TestDb;
   let now = new Date('2025-10-15T10:00:00Z');
-  const blobs = new Map<string, Uint8Array>();
-  const media: MediaStorage = { put: async (k, b) => void blobs.set(k, b), get: async (k) => blobs.get(k) ?? null };
+  const media = memoryMediaStorage();
   let svc: ReturnType<typeof createServices>;
   let teacher: Actor, ana: Actor, ben: Actor, outsider: Actor;
   const vocab: Record<string, string> = {};
@@ -251,7 +250,7 @@ describe.each(drivers)('application contract on $name', ({ open }) => {
     const { created } = await call('submitEntries', ana, { entryIds: [e.id], classroomIds: [classroomId] });
     expect((await svc.media.readMedia(teacher, m.id)).mime).toBe('image/png');
     await call('publishSubmissions', teacher, { submissionIds: [created[0]!.id] });
-    expect((await svc.media.readMedia(ben, m.id)).bytes).toEqual(PNG);
+    expect(new Uint8Array(await (await svc.media.readMedia(ben, m.id)).blob.arrayBuffer())).toEqual(PNG);
   });
 
   it('records an audit trail without content', async () => {

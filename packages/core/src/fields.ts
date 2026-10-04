@@ -46,11 +46,33 @@ export const VOCABULARY_LABELS: Record<Vocabulary, string> = {
 export const MEDIA_KINDS = ['image', 'audio', 'video'] as const;
 export type MediaKind = (typeof MEDIA_KINDS)[number];
 
-/** Allowed upload types by content sniffing (brief §5.17). */
+/**
+ * Allowed upload types by content sniffing (brief §5.17), as stored (canonical, without parameters). Audio covers what
+ * phones record and browsers play: MP3, M4A/AAC (Android and iOS recorders), OGG Vorbis/Opus (voice notes), WAV and
+ * WebM/Opus (MediaRecorder in Chrome).
+ */
 export const MEDIA_MIME: Record<MediaKind, readonly string[]> = {
   image: ['image/png', 'image/jpeg', 'image/webp', 'image/gif'],
-  audio: ['audio/mpeg', 'audio/ogg', 'audio/wav', 'audio/x-wav', 'audio/webm'],
+  audio: ['audio/mpeg', 'audio/mp4', 'audio/ogg', 'audio/wav', 'audio/x-wav', 'audio/webm'],
   video: ['video/mp4', 'video/webm'],
+};
+
+/** File picker filter: the MIME types plus extensions, since phones report some audio types inconsistently. */
+export const MEDIA_ACCEPT: Record<MediaKind, string> = {
+  image: [...MEDIA_MIME.image, '.png', '.jpg', '.jpeg', '.webp', '.gif'].join(','),
+  audio: [
+    ...MEDIA_MIME.audio,
+    'audio/x-m4a',
+    'audio/aac',
+    '.mp3',
+    '.m4a',
+    '.ogg',
+    '.oga',
+    '.opus',
+    '.wav',
+    '.webm',
+  ].join(','),
+  video: [...MEDIA_MIME.video, '.mp4', '.webm'].join(','),
 };
 
 export const mediaKindOf = (mime: string): MediaKind | null =>

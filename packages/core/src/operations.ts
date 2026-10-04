@@ -263,7 +263,12 @@ export interface OperationOutputs {
 export type LexicanApi = {
   [K in OperationName]: (input: OperationInput<K>) => Promise<OperationOutputs[K]>;
 } & {
-  uploadMedia(file: File | Blob, name: string): Promise<import('./types.ts').MediaView>;
+  /** `kind` is the slot being filled: it only decides audio vs video for containers that hold either (WebM, MP4). */
+  uploadMedia(
+    file: File | Blob,
+    name: string,
+    kind?: import('./fields.ts').MediaKind,
+  ): Promise<import('./types.ts').MediaView>;
 };
 
 /** Fill `:params` in a path from the input object; returns the path and the remaining fields. */

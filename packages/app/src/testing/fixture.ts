@@ -1,7 +1,7 @@
 import type { ClassroomInput, EntryInput, GlobalRole, OperationName, OperationOutputs } from '@lexican/core';
 import { seedVocabulary, vocabularyValues } from '@lexican/db';
 import { openPglite } from '@lexican/db/testing';
-import { createPasswordUser, createServices, type Actor, type Deps, type MediaStorage } from '../index.ts';
+import { createPasswordUser, createServices, type Actor, type Deps, memoryMediaStorage } from '../index.ts';
 
 /** 1×1 PNG, the smallest upload the media service accepts. */
 export const PNG = Uint8Array.from(
@@ -19,8 +19,8 @@ export async function appFixture(start: string, extra: Partial<Deps> = {}) {
   const vocab: Record<string, string> = {};
   for (const v of await t.db.select().from(vocabularyValues)) vocab[`${v.vocabulary}:${v.code}`] = v.id;
   const clock = { now: new Date(start) };
-  const blobs = new Map<string, Uint8Array>();
-  const media: MediaStorage = { put: async (k, b) => void blobs.set(k, b), get: async (k) => blobs.get(k) ?? null };
+  const media = memoryMediaStorage();
+  const blobs = media.blobs;
   const deps: Deps = { db: t.db, clock: () => clock.now, media, mediaUrl: (id) => `/media/${id}`, ...extra };
   const svc = createServices(deps);
 

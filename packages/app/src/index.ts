@@ -20,7 +20,9 @@ import { submissionServices } from './submissions.ts';
 import { dictionaryViews, toVocabularyValue } from './views.ts';
 
 export type { Actor, Deps, MediaStorage } from './context.ts';
-export { createPasswordUser, hashPassword, roleFromDirectory, type InstitutionalProfile } from './auth.ts';
+export { memoryMediaStorage } from './context.ts';
+export { createPasswordUser, hashPassword, roleFromDirectory, type CasProvider, type InstitutionalProfile } from './auth.ts';
+export { NOT_AUTHORIZED, testDirectory, type InstitutionalDirectory } from './directory.ts';
 export { generateJoinCode } from './classrooms.ts';
 export { submissionProblem } from './submissions.ts';
 export { seedDemo, demoSeedVersion, DEMO_SEED_VERSION } from './demo-seed.ts';
