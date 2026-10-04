@@ -76,5 +76,7 @@ Android, sin complicar la arquitectura.
   (`bun.lock`, `bun ci`, `bun audit`, `bun pm licenses`; el SBOM SPDX lo genera `scripts/sbom.mjs` porque Bun no tiene
   comando de SBOM). `linker = "hoisted"` mantiene la estructura de `node_modules` que esperan Vite, Vitest y `tsc`.
   Bun no define `INIT_CWD`: los CLI que reciben rutas se lanzan desde la raíz. Node solo ejecuta Vite, Vitest y
-  Playwright.
+  Playwright. Tipos: `@types/bun` 1.4.2 (incluye los de Node y convive con la `lib` DOM) en lugar de `@types/node` y
+  de las declaraciones a mano de `apps/api/src/bun.d.ts`; que el código compartido no use `Bun` lo sigue impidiendo
+  ESLint.
 - Proxy CORS para el CAS público: añadiría un servicio externo sin autorización.
