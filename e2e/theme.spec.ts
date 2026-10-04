@@ -26,14 +26,17 @@ test('a missing code chunk after a deployment reloads once instead of showing an
   page.removeAllListeners('console');
   // Depending on the browser the reload happens while the login page preloads the database chunk or on the
   // first login attempt; either way the user ends up signed in without the generic error.
+  // WebKit may never report network idle while the database chunk loads, so these waits are bounded.
+  const settle = () =>
+    page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => undefined);
   await app.goto('/entrar');
-  await page.waitForLoadState('networkidle');
+  await settle();
   const signedIn = page.getByRole('button', { name: 'Desconectar' });
   for (let attempt = 0; attempt < 3 && !(await signedIn.isVisible()); attempt++) {
     const button = page.getByRole('button', { name: 'Entrar como alumno 1' });
     if (await button.isVisible()) await button.click().catch(() => undefined);
-    await signedIn.waitFor({ timeout: 20_000 }).catch(() => undefined);
-    await page.waitForLoadState('networkidle');
+    await signedIn.waitFor({ timeout: 45_000 }).catch(() => undefined);
+    await settle();
   }
   await expect(signedIn).toBeVisible();
   await expect(page.getByText('Ha ocurrido un error inesperado')).toHaveCount(0);
