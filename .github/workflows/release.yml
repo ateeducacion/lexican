@@ -40,6 +40,9 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.2
 
       - run: npm ci
       - run: npm run audit
@@ -58,7 +61,7 @@ jobs:
           name="lexican-${GITHUB_REF_NAME#v}"
           mkdir -p "release/$name"
           cp -r apps/web/dist "release/$name/web"
-          cp -r apps/api/dist "release/$name/api"
+          cp -r apps/api/dist "release/$name/api"  # self-contained Bun bundle: run with bun --no-env-file api/server.js
           (cd release && zip -qr "../${name}.zip" "$name")
           (cd apps/web/dist-demo && zip -qr "../../../${name}-demo.zip" .)
           echo "NAME=${name}" >> "$GITHUB_ENV"

@@ -1,0 +1,53 @@
+# Institutional production. Every setting comes from the environment file (template: apps/api/.env.example);
+# APP_ENV=production refuses the test CAS, fixture profiles, password login and demo data.
+#   docker compose -f docker-compose.prod.yml --env-file /etc/lexican/production.env up -d
+# Migrations run on start (MIGRATE_ON_START=true below); TLS and the reverse proxy are outside this file.
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-lexican}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+  app:
+    image: ${LEXICAN_IMAGE:-lexican:latest}
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV: production
+      MIGRATE_ON_START: 'true'
+      DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL}
+      PUBLIC_URL: ${PUBLIC_URL:?set PUBLIC_URL}
+      CAS_URL: ${CAS_URL:?set CAS_URL}
+      CAS_LOGIN_PATH: ${CAS_LOGIN_PATH:-/login}
+      CAS_VALIDATE_PATH: ${CAS_VALIDATE_PATH:-/p3/serviceValidate}
+      CAS_LOGOUT_PATH: ${CAS_LOGOUT_PATH:-/logout}
+      CAUCE_URL: ${CAUCE_URL:?set CAUCE_URL}
+      CAUCE_TOKEN: ${CAUCE_TOKEN:?set CAUCE_TOKEN}
+      CAS_ALLOWED_SLO_HOSTS: ${CAS_ALLOWED_SLO_HOSTS:?set CAS_ALLOWED_SLO_HOSTS}
+      TRUST_PROXY: ${TRUST_PROXY:-}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-8}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - '127.0.0.1:3000:3000'
+    volumes:
+      - media:/data/media
+    read_only: true
+    tmpfs:
+      - /tmp
+    stop_grace_period: 15s
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  media:

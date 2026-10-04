@@ -1,20 +1,25 @@
 # Thin wrapper over npm scripts (package.json is the source of truth).
 .DEFAULT_GOAL := help
-.PHONY: up down dev demo build build-demo test integration e2e lint fix check migrate seed clean help
+
+.PHONY: up down app dev demo build build-demo test integration e2e lint fix check migrate seed clean help
 
 ## Start local PostgreSQL (docker compose)
 up:
 	docker compose up -d db
 
+## Local Docker stack (APP_ENV=local): migrate, seed fictitious data, app on http://localhost:3000
+app:
+	docker compose --profile app up --build -d
+
 ## Stop local services
 down:
-	docker compose down
+	docker compose --profile app down
 
 ## Web (Vite) against the local API; run `npm run dev:api` in another terminal
 dev:
 	npm run dev
 
-## Demo mode (PGlite in the browser, no backend)
+## Demo mode (Hono API + PGlite in a Web Worker, no backend)
 demo:
 	npm run dev:demo
 
