@@ -1,31 +1,11 @@
-# Legacy Laravel tree (frozen until the cleanup phase)
-app/
-bootstrap/
-config/
-database/
-documentos/
-hooks/
-public/
-resources/
-routes/
-storage/
-tests/
-archivos/
-*.php
+# Markdown is written by hand (tables, long links); not reformatted.
 *.md
 analysis/
 legacy/
+# Generated or third-party artefacts
 packages/db/migrations/
-package-lock.json
-dist/
-coverage/
-dist-demo/
-composer.json
-webpack.mix.js
 packages/core/src/dmlex-1.0.schema.json
-.yarnrc.yml
-.styleci.yml
-.jsbeautifyrc
-phpdox.xml
-phpunit.xml
+dist/
+dist-demo/
+coverage/
 sbom.spdx.json

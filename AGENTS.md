@@ -18,8 +18,9 @@ Esta versión (2.x) es una reconstrucción completa del Laravel 8 + Voyager orig
   *force-push*, ni borrado. Contiene credenciales filtradas que no se reescriben ([SECURITY.md](docs/SECURITY.md)).
 - `main`: rama mantenida. Solo se cambia por PR, con CI en verde.
 - Ramas de trabajo: `feat/…`, `fix/…`, `docs/…`, `chore/…`. PRs pequeñas, un cambio lógico.
-- El árbol legacy (`app/`, `resources/`, `routes/`, `public/`, `database/`, `config/`…) está congelado: no se edita y se
-  elimina entero en la fase de limpieza. La referencia del legacy es siempre `upstream`.
+- El código Laravel ya no está en `main`: se eliminó (también sus migraciones y el `Dockerfile.apache81`). La única
+  referencia del legacy es la rama `upstream`; el migrador de datos (`tools/legacy-migrator`) trabaja contra una copia
+  de su base, no contra ese código.
 
 ## Tecnologías
 

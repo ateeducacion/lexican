@@ -1,3 +1,0 @@
-<div><a target="_blank" href="{{ asset('/imagenes/' . rawurlencode('que_puedo_hacer_diccionario_Personal.pdf') ) }}">{{__('Aspectos generales')}}</a></div>
-<div><a target="_blank" href="{{ asset('/imagenes/' . rawurlencode('Manual Usuario Lexican.pdf') ) }}">{{__('Manual de uso')}}</a></div>
-{{-- <div><a href="{{ asset('/imagenes/' . rawurlencode('Manual???.pdf') ) }}">{{__('Manual de coordinador(?)')}}</a></div> --}}

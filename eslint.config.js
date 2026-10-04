@@ -13,13 +13,6 @@ export default tseslint.config(
       'playwright-report/**',
       'analysis/**',
       'legacy/**',
-      // Legacy Laravel tree, frozen until the cleanup phase.
-      'app/**',
-      'public/**',
-      'resources/**',
-      'storage/**',
-      'vendor/**',
-      'webpack.mix.js',
     ],
   },
   js.configs.recommended,

@@ -5,6 +5,12 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
 
 ## [Sin publicar]
 
+### Eliminado — árbol Laravel
+
+- Código PHP/Laravel, sus migraciones, vistas, recursos, `public/`, scripts de despliegue, `Dockerfile.apache81`,
+  `documentos/`, `archivos/` y la configuración heredada (`.htaccess`, `.styleci.yml`, `.yarnrc.yml`…). Siguen en la
+  rama `upstream`. Se conservan `analysis/` (especificación de la reconstrucción) y el migrador de datos.
+
 ### Cambiado — Bun como gestor de paquetes
 
 - `bun.lock` sustituye a `package-lock.json`; `bun ci` en CI y Docker, `bun run` para los scripts, `bun audit`,

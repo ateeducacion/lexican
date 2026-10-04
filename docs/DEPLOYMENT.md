@@ -38,7 +38,7 @@ puede tocar los datos de un Docker.
    base); proceso `bun --no-env-file api/server.js` con cierre ordenado en `SIGTERM`/`SIGINT` (deja de aceptar, termina
    las peticiones en curso y cierra el *pool*).
 
-El contexto de build es una lista blanca (`.dockerignore`): no entra el árbol legacy, ni `.env`, ni `node_modules`.
+El contexto de build es una lista blanca (`.dockerignore`): no entran datos locales, informes, `.env` ni `node_modules`.
 Bun no lee ficheros `.env` implícitamente (`bunfig.toml`, `--no-env-file`): la configuración llega solo por entorno.
 
 ### Docker local (pruebas)
