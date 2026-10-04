@@ -20,3 +20,5 @@ package-lock.json
 dist/
 coverage/
 dist-demo/
+composer.json
+webpack.mix.js
