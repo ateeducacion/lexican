@@ -1,6 +1,6 @@
 # Informe de modernización (métricas)
 
-Comparación entre `upstream` (`c80ff652`, código legacy entregado) y la rama modernizada. Las cifras del sistema nuevo
+Comparación entre `upstream` (`c80ff652`, código legacy entregado) y el sistema nuevo. Las cifras del sistema nuevo
 salen de `npm run metrics` (`scripts/metrics.mjs`), que lee git, el sistema de ficheros y los builds. Las del legacy salen
 del mismo script y de `analysis/lexican/BASELINE.md`, donde cada número lleva su comando. No hay cifras escritas a mano.
 
@@ -64,7 +64,6 @@ TinyMCE (los textos pasan a texto plano). Detalle: `docs/LEGACY-DATA-MAPPING.md`
 | Credenciales del legacy expuestas en el histórico público | Alto (operación) | Rotar APP_KEY, tokens CAUCE y contraseñas sembradas (`docs/SECURITY.md`) |
 | CAS y CAUCE reales sin probar | Alto en el corte | Prueba en preproducción con la lista de `docs/AUTHENTICATION.md` |
 | Ensayo de migración con datos reales anonimizados | Alto en el corte | `docs/MIGRATION.md` |
-| Licencia del proyecto sin decidir | Medio | Decisión del titular (`docs/LICENSING.md`) |
 | Invitación de docentes por correo | Bajo | `MailAdapter` (hoy se comparte el código de unión) |
 | Importar entradas de otro aula al crearla | Bajo | Caso de uso nuevo con procedencia |
 | Pautas maestras (`app_settings.master_guidelines`) migradas pero no mostradas | Bajo | Mostrarlas como valor por defecto al crear un aula |
@@ -73,4 +72,4 @@ TinyMCE (los textos pasan a texto plano). Detalle: `docs/LEGACY-DATA-MAPPING.md`
 | Comprobación de dimensiones de imagen (bombas de descompresión) | Bajo | `image-size` en `packages/app/src/media.ts` |
 | Límites de peticiones en memoria (una instancia) | Bajo | Almacén compartido solo si se escala horizontalmente |
 | Imagen Docker de 484 MB (medida antes de sacar PGlite de las dependencias del servidor) | Bajo | Copiar solo las dependencias externas del bundle |
-| Eliminación del código Laravel de `main` (fase 11) | — | Tras el corte en producción |
+| Eliminación del árbol Laravel del repositorio (fase 11; queda en `upstream`) | — | Tras el corte en producción |

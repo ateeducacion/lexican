@@ -19,7 +19,7 @@ where it is explicit; everything else is an **open item the human must fill in**
    `provision.sh`, `Dockerfile.apache81`, `hooks/` (OpenShift-era scripts, NFS copy). Documented in `developers.md`.
 4. **Prior attempts** — **Open item.** None recorded in git (history is a single vendor import, `c80ff65`).
 5. **Off limits** — From `1er-prompt.md` §5: branch `upstream` (`c80ff652b3be44fc5b881060af5abc8c5f8842e8`) is a
-   frozen historical snapshot — no commits, no force-push, no rewrite. Legacy code stays in `main` until Phase 11.
+   frozen historical snapshot — no commits, no force-push, no rewrite. The legacy tree stays frozen in the working tree until Phase 11; `upstream` is the reference.
 
 ## Check 6 — Scope boundary
 
@@ -40,7 +40,7 @@ consumers found. Outbound runtime dependencies: CAS server, CAUCE web service, S
 | 4 | Binary artifacts | ⚠️ | `composer.phar` (2.2 MB) tracked; 7 `.DS_Store` files | Remove in cleanup phase |
 | 5 | Telemetry | ⚠️ | None available | Runtime overlay skipped |
 | 5 | Version control | ⚠️ | Git, but history is a single import commit — no change-frequency signal | — |
-| 7 | Edit protection | ⚠️ | No `Edit` deny rule for `legacy/**`. Note: here `legacy/lexican` *is* the working repo, and the plan (§99 Phase 11) eventually deletes legacy code from `main`, so a deny rule would block the planned cleanup. Convention used instead: no edits to legacy paths until Phase 11; `upstream` is the immutable copy | — |
+| 7 | Edit protection | ⚠️ | No `Edit` deny rule for `legacy/**`. Note: here `legacy/lexican` *is* the working repo, and the plan (§99 Phase 11) eventually deletes the legacy tree from the working tree, so a deny rule would block the planned cleanup. Convention used instead: no edits to legacy paths until Phase 11; `upstream` is the immutable copy | — |
 
 A permission rule covers Claude's file tools and recognized shell writes, not arbitrary scripts; the hard guarantee
 here is the frozen `upstream` branch on GitHub.

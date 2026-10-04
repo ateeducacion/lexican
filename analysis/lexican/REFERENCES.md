@@ -573,7 +573,7 @@ Ficheros de apoyo: `.agents/README.md` (catálogo), `.agents/upstream-skills.txt
 
 - `upstream` = un único commit «Initial commit: original vendor source» con el código del proveedor; `main` desciende de ella. No se modifica, rebasa ni publica. Los informes comparan `origin/upstream` vs `HEAD`. Si el original necesita artefactos no versionados para arrancar, se guardan en un commit aparte en `main` y se cita su SHA (Tonga `8f23fce`).
 - Rulesets de Tonga (no branch protection clásica): **«main: pull requests only»** (deletion, non_fast_forward, pull_request con 1 aprobación, dismiss stale reviews; bypass de admin solo vía PR) y **«upstream: read-only»** (update, deletion, non_fast_forward). Falta en Tonga exigir el status check `CI`; Aritmates lo pide en AGENTS.md. Para LexiCán: añadir `required_status_checks` con `CI` al ruleset de main.
-- LexiCán hoy: ya existe `origin/upstream`; `main` arranca en `c80ff65 Initial commit: original vendor source`. Falta aplicar los dos rulesets.
+- LexiCán hoy: `origin/upstream` (`c80ff65`) es la referencia legacy congelada. Falta aplicar los dos rulesets.
 
 ## 11. Documentación: estructura y tono
 

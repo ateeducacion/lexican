@@ -1,6 +1,6 @@
 # Inventario funcional de LexiCán (legacy Laravel 8)
 
-Documento exigido por §6 y §104 («Inventario funcional») de `1er-prompt.md`. Se ha elaborado leyendo el código. No se ha ejecutado la aplicación. Todas las referencias `fichero:línea` son relativas a la raíz del repositorio (`main`, commit `0a270cd`).
+Documento exigido por §6 y §104 («Inventario funcional») de `1er-prompt.md`. Se ha elaborado leyendo el código. No se ha ejecutado la aplicación. Todas las referencias `fichero:línea` son relativas a la raíz del código legacy (rama `upstream`, commit `c80ff65`).
 
 Complementos:
 
