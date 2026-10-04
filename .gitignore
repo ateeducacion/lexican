@@ -159,3 +159,5 @@ temp/
 
 # End of https://www.gitignore.io/api/git,node,laravel,visualstudiocode
 .DS_Store
+tmp-*/
+tmp-*

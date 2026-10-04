@@ -45,7 +45,7 @@ export function Component() {
     }
     setFieldErrors({});
     await (await getApi()).login(parsed.data);
-    navigate(safeReturn(params.get('volver')), { replace: true });
+    await navigate(safeReturn(params.get('volver')), { replace: true });
   });
 
   const submit = (e: FormEvent) => {

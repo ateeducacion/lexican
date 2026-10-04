@@ -12,6 +12,8 @@ const text = (max: number, label: string) =>
     .max(max, { error: `${label}: máximo ${max} caracteres` });
 const optionalText = (max: number, label: string) => text(max, label).default('');
 const optionalId = id.nullable().default(null);
+/** Boolean that also accepts the query-string forms "true"/"false" (z.coerce.boolean() reads "false" as true). */
+export const queryBool = z.union([z.boolean(), z.stringbool()]);
 
 export const GLOBAL_ROLES = ['student', 'teacher', 'admin', 'support'] as const;
 export type GlobalRole = (typeof GLOBAL_ROLES)[number];
@@ -63,7 +65,7 @@ export const ListEntriesQuery = z.object({
   q: z.string().trim().max(150).optional(),
   initial: z.string().length(1).optional(),
   topicId: id.optional(),
-  includeHidden: z.coerce.boolean().optional(),
+  includeHidden: queryBool.optional(),
   offset: z.coerce.number().int().min(0).default(0),
   limit: z.coerce.number().int().min(1).max(200).default(50),
 });

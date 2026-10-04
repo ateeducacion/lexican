@@ -10,12 +10,12 @@
     "./testing": "./src/testing.ts"
   },
   "dependencies": {
-    "@electric-sql/pglite": "^0.5.8",
+    "@lexican/core": "*",
     "drizzle-orm": "^0.45.3",
-    "pg": "^8.23.1",
-    "@lexican/core": "*"
+    "pg": "^8.23.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@types/pg": "^8.23.1",
     "drizzle-kit": "^0.31.11"
   },

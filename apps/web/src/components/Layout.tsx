@@ -20,7 +20,7 @@ export function Layout() {
 
   async function logout() {
     await (await getApi()).logout({});
-    navigate('/entrar', { replace: true });
+    await navigate('/entrar', { replace: true });
   }
 
   const staff = user && (user.globalRole === 'admin' || user.globalRole === 'support');

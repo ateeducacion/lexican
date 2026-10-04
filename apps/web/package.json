@@ -11,12 +11,13 @@
     "preview:demo": "vite preview --mode demo"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@lexican/app": "*",
+    "@lexican/core": "*",
+    "@lexican/db": "*",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "react-router": "^8.4.0",
-    "@lexican/core": "*",
-    "@lexican/app": "*",
-    "@lexican/db": "*"
+    "react-router": "^8.4.0"
   },
   "devDependencies": {
     "@types/react": "^19.3.0",

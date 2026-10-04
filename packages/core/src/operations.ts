@@ -8,6 +8,7 @@ import {
   ListEntriesQuery,
   LoginInput,
   MEMBER_ROLES,
+  queryBool,
   SUBMISSION_STATUSES,
   VocabularyValueInput,
 } from './contracts.ts';
@@ -64,7 +65,7 @@ export const operations = {
   exportDictionary: op(
     'GET',
     '/api/dictionaries/:dictionaryId/export',
-    z.object({ dictionaryId: id, includeHidden: z.coerce.boolean().default(false) }),
+    z.object({ dictionaryId: id, includeHidden: queryBool.default(false) }),
   ),
 
   getEntry: op('GET', '/api/entries/:entryId', z.object({ entryId: id })),

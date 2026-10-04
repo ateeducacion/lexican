@@ -15,6 +15,9 @@ const routes: RouteObject[] = [
     id: 'root',
     path: '/',
     loader: rootLoader,
+    // The session user lives in the root loader: refresh it whenever we enter or leave the login page.
+    shouldRevalidate: ({ currentUrl, nextUrl, defaultShouldRevalidate }) =>
+      defaultShouldRevalidate || currentUrl.pathname === '/entrar' || nextUrl.pathname === '/entrar',
     Component: Layout,
     errorElement: <RouteError />,
     HydrateFallback: () => null,
