@@ -1,0 +1,14 @@
+{
+  "name": "@lexican/app",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@lexican/core": "*",
+    "@lexican/db": "*",
+    "file-type": "^22.1.1"
+  }
+}

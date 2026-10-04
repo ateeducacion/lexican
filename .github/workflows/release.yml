@@ -1,0 +1,72 @@
+# For tags v*: same quality gate as CI, then a release with the production bundle (web + API) and an SBOM.
+# Pages already deployed this commit from main, so the tag never redeploys the demo.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write # create the GitHub release
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: lexican
+          POSTGRES_PASSWORD: lexican
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U lexican" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://lexican:lexican@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Tag matches package.json
+        run: |
+          version="v$(node -p "require('./package.json').version")"
+          [ "$version" = "$GITHUB_REF_NAME" ] || { echo "::error::Tag $GITHUB_REF_NAME does not match package.json ($version)"; exit 1; }
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run audit
+      - run: npm run licenses
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npm run build:demo
+      - run: npm run check:dist
+      - run: npm run sbom
+
+      - name: Package production bundle (no node_modules)
+        run: |
+          set -euo pipefail
+          name="lexican-${GITHUB_REF_NAME#v}"
+          mkdir -p "release/$name"
+          cp -r apps/web/dist "release/$name/web"
+          cp -r apps/api/dist "release/$name/api"
+          (cd release && zip -qr "../${name}.zip" "$name")
+          (cd apps/web/dist-demo && zip -qr "../../../${name}-demo.zip" .)
+          echo "NAME=${name}" >> "$GITHUB_ENV"
+
+      - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+        with:
+          files: |
+            ${{ env.NAME }}.zip
+            ${{ env.NAME }}-demo.zip
+            sbom.spdx.json
+          generate_release_notes: true

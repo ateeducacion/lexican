@@ -1,0 +1,94 @@
+# LexiCán
+
+Diccionarios personales y de aula para aprender léxico. Cada alumno o alumna construye su propio diccionario con
+palabras, acepciones, ejemplos, imágenes, audio y vídeo; el profesorado reúne lo mejor en un diccionario de aula que
+revisa, comenta y publica.
+
+**Demo:** <https://ateeducacion.github.io/lexican/>
+
+La demo funciona entera en tu navegador (PostgreSQL en WebAssembly) y guarda los datos solo ahí. Usuarios, contraseñas
+y datos son ficticios:
+
+| Cuenta | Correo | Contraseña |
+|---|---|---|
+| Profesora | `profesor@ejemplo.com` | `profesor` |
+| Alumno 1 | `alumno1@ejemplo.com` | `alumno1` |
+| Alumna 2 | `alumno2@ejemplo.com` | `alumno2` |
+| Administración | `admin@ejemplo.com` | `admin` |
+
+Más detalles en [docs/DEMO.md](docs/DEMO.md).
+
+## Qué puedes hacer
+
+**Alumnado**
+
+- Crear entradas con varias acepciones: definición, más datos, ejemplo de uso, categoría gramatical, género, número,
+  forma en otra lengua, temáticas e imagen/audio/vídeo.
+- Buscar por texto, por inicial y por temática; ocultar entradas.
+- Unirse a un aula con un código y enviar una o varias entradas.
+- Ver el estado de cada envío (pendiente, publicado, rechazado con nota) y los comentarios del profesorado.
+- Imprimir o exportar el diccionario (PDF desde el navegador, CSV, JSON y OASIS DMLex JSON).
+
+**Profesorado**
+
+- Crear aulas con curso, nivel, materia, vigencia, plazo de envíos, campos obligatorios, máximo de acepciones y pautas.
+- Gestionar participantes y roles, y regenerar el código de unión.
+- Revisar envíos, publicarlos (uno o varios) o rechazarlos con nota; editar y ocultar lo publicado.
+- Comentar el trabajo de cada alumno.
+
+**Administración**
+
+- Usuarios y roles, vigencia de las aulas, listas controladas (categorías, temáticas, niveles…), estadísticas y
+  registro de auditoría.
+
+## Desarrollo rápido
+
+Requisitos: Node.js 24 o superior y Docker (solo para PostgreSQL).
+
+```bash
+npm ci
+npm run dev:demo                         # demo sin backend: http://localhost:5173/lexican/
+```
+
+Con API y PostgreSQL:
+
+```bash
+docker compose up -d db
+cp apps/api/.env.example apps/api/.env
+set -a; . apps/api/.env; set +a
+npm run db:migrate
+npm run db:seed -- --demo                # vocabularios + cuentas y datos ficticios
+npm run dev:api                          # API en http://localhost:3000
+npm run dev                              # en otra terminal: web en http://localhost:5173
+```
+
+Guía completa: [developers.md](developers.md). Normas para agentes y contribuciones: [AGENTS.md](AGENTS.md).
+
+## Documentación
+
+| Documento | Contenido |
+|---|---|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | arquitectura de producción y demo |
+| [docs/DATA-MODEL.md](docs/DATA-MODEL.md) | modelo de datos |
+| [docs/DEMO.md](docs/DEMO.md) | demo en GitHub Pages |
+| [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md) | CAS, CAUCE y sesiones |
+| [docs/SECURITY.md](docs/SECURITY.md) | seguridad y cómo informar de vulnerabilidades |
+| [docs/PRIVACY.md](docs/PRIVACY.md) | datos personales |
+| [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md) | accesibilidad |
+| [docs/TESTING.md](docs/TESTING.md) | pruebas |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | despliegue en producción |
+| [docs/MIGRATION.md](docs/MIGRATION.md) | migración desde el sistema anterior |
+| [docs/DMLEX-MAPPING.md](docs/DMLEX-MAPPING.md) | exportación DMLex |
+| [docs/MODERNIZATION.md](docs/MODERNIZATION.md) | por qué y cómo se reconstruyó |
+| [docs/adr/](docs/adr/) | decisiones de arquitectura |
+| [CHANGELOG.md](CHANGELOG.md) | cambios por versión |
+
+## Historia
+
+La versión 1.x (Laravel 8 + Voyager) se conserva sin cambios en la rama `upstream`. La 2.0 es una reconstrucción
+completa en TypeScript ([docs/MODERNIZATION.md](docs/MODERNIZATION.md)).
+
+## Licencia
+
+Pendiente de decisión del titular; hasta entonces no se concede licencia sobre el código
+([docs/LICENSING.md](docs/LICENSING.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)).

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FICTITIOUS data: shape of a CAUCE CheckUsuarioAutorizadoResponse. No real person or id. -->
+<CheckUsuarioAutorizadoResponse xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Usuario>
+    <InfoUsuario>
+      <Nombre>Carmen Ficticia</Nombre>
+      <Apellidos>Pérez de Prueba</Apellidos>
+      <NifNie>00000000T</NifNie>
+      <Pasaporte/>
+      <CIAL>Z0000000Z</CIAL>
+    </InfoUsuario>
+  </Usuario>
+  <Centro>
+    <InfoCentro>
+      <Codigo>35999999</Codigo>
+      <Nombre>IES Inventado de Ejemplo</Nombre>
+      <Rol>1</Rol>
+    </InfoCentro>
+    <InfoCentro>
+      <Codigo/>
+      <Nombre/>
+      <Rol>5</Rol>
+    </InfoCentro>
+  </Centro>
+  <MensajeError/>
+</CheckUsuarioAutorizadoResponse>

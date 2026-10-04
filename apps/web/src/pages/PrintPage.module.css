@@ -1,0 +1,66 @@
+.topics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-1) var(--space-3);
+}
+.previewTitle {
+  margin-top: var(--space-6);
+}
+
+.sheet {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: var(--space-5) var(--space-4);
+}
+.cover {
+  text-align: center;
+  padding-bottom: var(--space-5);
+  margin-bottom: var(--space-5);
+  border-bottom: 1px solid var(--c-border);
+}
+.cover h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 4vw + 1rem, 3rem);
+}
+.lead {
+  font-size: 1.1rem;
+}
+.letterHeading {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--c-primary);
+  border-bottom: 2px solid currentColor;
+  margin-top: var(--space-5);
+}
+.entry {
+  padding: var(--space-2) 0 var(--space-3);
+}
+.entry h3 {
+  font-size: 1.4rem;
+}
+
+@media print {
+  @page {
+    margin: 2cm 1.8cm;
+  }
+  .sheet {
+    border: 0;
+    padding: 0;
+  }
+  .cover {
+    border: 0;
+    padding-top: 30vh;
+    break-after: page;
+  }
+  .letterHeading {
+    break-after: avoid;
+    color: #000;
+  }
+  .entry {
+    break-inside: avoid;
+  }
+  .entry img {
+    max-height: 4cm;
+  }
+}

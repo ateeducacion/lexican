@@ -1,10 +1,22 @@
+# --- LexiCán (modern stack) ---
+node_modules/
+dist/
+dist-demo/
+coverage/
+test-results/
+playwright-report/
+blob-report/
+/media-storage/
+.env*.local
+/legacy/
+
+# --- legacy Laravel (removed in the cleanup phase) ---
 /.vscode
 /node_modules
 /public/hot
 /public/storage
 /storage/*.key
 /vendor
-.editorconfig
 .env
 .env.backup
 .phpunit.result.cache
@@ -14,12 +26,9 @@ npm-debug.log
 yarn-error.log
 composer.lock
 startlog.txt
-package-lock.json
 user.xml
 user-centers.xml
 user-error.xml
-docs/*
-build/*
 
 # Created by https://www.gitignore.io/api/git,node,laravel,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=git,node,laravel,visualstudiocode
@@ -131,6 +140,7 @@ typings/
 
 # rollup.js default build output
 dist/
+dist-demo/
 
 # Temporary folders
 tmp/
@@ -149,8 +159,5 @@ temp/
 
 # End of https://www.gitignore.io/api/git,node,laravel,visualstudiocode
 .DS_Store
-
-# Modernization workspace
-/legacy/
-analysis/lexican/packets/
-analysis/lexican/REPORT.html
+tmp-*/
+tmp-*

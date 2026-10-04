@@ -1,0 +1,15 @@
+# Allowlist: only the TypeScript monorepo goes into the build context (never the legacy tree or secrets).
+*
+!package.json
+!package-lock.json
+!tsconfig.json
+!apps/api
+!apps/web
+!packages
+!tools/*/package.json
+**/node_modules
+**/dist
+**/dist-demo
+**/.env
+**/.env.*
+**/*.test.ts

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FICTITIOUS data. Legacy responses may carry HTML named entities such as &aacute;. -->
+<CheckUsuarioAutorizadoResponse>
+  <Usuario>
+    <InfoUsuario>
+      <Nombre>Luc&iacute;a</Nombre>
+      <Apellidos>Alumna Ficticia</Apellidos>
+      <NifNie/>
+      <Pasaporte>XX0000000</Pasaporte>
+      <CIAL>Y1111111Y</CIAL>
+    </InfoUsuario>
+  </Usuario>
+  <Centro>
+    <InfoCentro>
+      <Codigo>38999999</Codigo>
+      <Nombre>CEIP Imaginario</Nombre>
+      <Rol>3</Rol>
+    </InfoCentro>
+  </Centro>
+  <MensajeError/>
+</CheckUsuarioAutorizadoResponse>

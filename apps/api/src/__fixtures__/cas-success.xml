@@ -1,0 +1,8 @@
+<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+  <cas:authenticationSuccess>
+    <cas:user>cficticia</cas:user>
+    <cas:attributes>
+      <cas:mail>cficticia@example.org</cas:mail>
+    </cas:attributes>
+  </cas:authenticationSuccess>
+</cas:serviceResponse>

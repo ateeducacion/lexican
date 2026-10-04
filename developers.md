@@ -1,458 +1,140 @@
-# Lexican 1.2.2
+# Guía de desarrollo
 
-- [Lexican 1.2.2](#lexican-122)
-  - [Requisitos para configuración entorno local](#requisitos-para-configuración-entorno-local)
-  - [Configurar Desarrollo local](#configurar-desarrollo-local)
-  - [Preparar la imagen para entorno de preproducción y producción](#preparar-la-imagen-para-entorno-de-preproducción-y-producción)
-    - [1. Creando la imagen con deploy.sh](#1-creando-la-imagen-con-deploysh)
-    - [2. Hacer login en el repositorio de imágenes](#2-hacer-login-en-el-repositorio-de-imágenes)
-    - [3. Crear tag de la imagen creada](#3-crear-tag-de-la-imagen-creada)
-    - [4. Hacer un push de la imagen al Docker Registry](#4-hacer-un-push-de-la-imagen-al-docker-registry)
-  - [Configurar la imagen en PRE](#configurar-la-imagen-en-pre)
-    - [5. Conectar a maquina master](#5-conectar-a-maquina-master)
-    - [6. en la maquina cambiar al proyecto openshift correspondiente](#6-en-la-maquina-cambiar-al-proyecto-openshift-correspondiente)
-    - [7. Traer la imagen de www.canariaseducacion.org](#7-traer-la-imagen-de-wwwcanariaseducacionorg)
-    - [8.A. hacer deploy con new-app](#8a-hacer-deploy-con-new-app)
-    - [8.B. importarla](#8b-importarla)
-    - [9. Crear secret en openshift](#9-crear-secret-en-openshift)
-    - [10. Volumenes NFS](#10-volumenes-nfs)
-  - [Variables de entorno](#variables-de-entorno)
-  - [Tamaño máximo de subida de archivo](#tamaño-máximo-de-subida-de-archivo)
-  - [Usuarios predefinidos](#usuarios-predefinidos)
-  - [Soluciones a incidencias que han aparecido en la istalación](#soluciones-a-incidencias-que-han-aparecido-en-la-istalación)
-    - [Limpiar todos los caches](#limpiar-todos-los-caches)
-    - [Actualizar Paquetes Composer](#actualizar-paquetes-composer)
-    - [No carga despues de hacer login en adminstracion/voyager](#no-carga-despues-de-hacer-login-en-adminstracionvoyager)
-    - [Permisos](#permisos)
-  - [Pruebas Tests](#pruebas-tests)
-  - [Documentacion](#documentacion)
+Para la versión 2.x (TypeScript). Las instrucciones de la versión Laravel (OpenShift, Composer, NFS) se conservan en la
+rama `upstream` y no aplican aquí. Normas del repositorio: [AGENTS.md](AGENTS.md).
 
-## Requisitos para configuración entorno local
+## Requisitos
 
-Instalar docker si no lo tenemos tal como se ve en http://get.docker.com, 
-agregar tu usuario al grupo docker
+- Node.js 24 o superior (`engines` en `package.json`) y npm.
+- Docker, solo para PostgreSQL local (y MariaDB si se prueba la migración).
+- Navegadores de Playwright para los E2E: `npx playwright install chromium firefox webkit`.
 
-> sudo usermod -aG docker $USER
-
-Es necesario tener instalado npm, puedes instalarlo con nvm https://github.com/nvm-sh/nvm#install--update-script
-
-
-Permisos de los archivos, asegurate de poder escribir en /scr/storage
-
-
-## Configurar Desarrollo local
-
-Para facilitar la configuracion se usa el script **./deploy.sh**
-
-La primera vez que ejectuamos el script tenemos que configurar la base de datos como se indica a continuacion, con rebuilddb indicamos que se cree la bbdd y luego entramos en el contenedor y ejecutamos el script provision.sh 
-
-```shell
-$ ./deploy.sh local rebuild 
-$ docker exec -ti lexican_web_local /bin/bash
-```
-
-Entra en la base de datos y crea la base de datos 'lexican' o el nombre que le hayas puesto en 'deploy.sh' para que pueda crear los datos en esta.
-
-luego dentro del contenedor ejecutamos el script provision.sh
-
-```shell
-cd /var/www/html/medusa/apps/lexican
- bash ./provision.sh 
-```
-
-Con estas variables, que están al principio del archivo deploy.sh, podemos cambiar el nombre de lo contenedores, usuarios y claves
+## Puesta en marcha
 
 ```bash
-CONTAINERDB="basedatos"
-DBROOTPASS="rootpass"
-DB_NAME="lexican"
-DB_USER="root"
-DB_PASS=$DBROOTPASS
+npm ci
+cp apps/api/.env.example apps/api/.env        # valores ficticios para desarrollo
+make up                                       # = docker compose up -d db (PostgreSQL 18 en :5432)
+set -a; . apps/api/.env; set +a               # la API y sus CLI leen variables de entorno, no el fichero
+npm run db:migrate
+npm run db:seed -- --demo                     # vocabularios + cuentas y datos ficticios
+npm run dev:api                               # Fastify en :3000 (tsx watch)
+npm run dev                                   # otra terminal: Vite en :5173, /api y /media van a :3000
 ```
 
-Si ya tenemos un contenedor de MariaDB podemos reutilizarlo rellenando estas variables con los 
-datos correspondientes, CONTAINERDB sería el nombre del contenedor.
+Entra en <http://localhost:5173> con las cuentas de la demo (`AUTH_DEV_LOGIN=true` en el `.env` de ejemplo).
 
+Sin backend: `npm run dev:demo` (<http://localhost:5173/lexican/>), PGlite en el navegador.
 
-Con ejecutar:
+Imagen completa (PostgreSQL + API + SPA): `docker compose --profile app up --build` → <http://localhost:3000>. Aplica
+migraciones al arrancar, pero no siembra datos ni habilita el acceso con contraseña.
 
-```shell
-$ ./deploy.sh local rebuild
+## Estructura
+
+| Workspace | Paquete | Contenido |
+|---|---|---|
+| `packages/core` | `@lexican/core` | tipos, esquemas Zod (`contracts.ts`), tabla de operaciones (`operations.ts`), reglas de curso y vigencia (`school-year.ts`), texto (`text.ts`), exportación (`export.ts`), errores de dominio, cuentas demo |
+| `packages/db` | `@lexican/db` | esquema Drizzle (`schema.ts`), migraciones (`migrations/`), `migrateBundled`, semilla de vocabularios, helpers de test (`testing.ts`) |
+| `packages/app` | `@lexican/app` | servicios de aplicación y autorización (`access.ts`), semilla demo |
+| `apps/api` | `@lexican/api` | servidor Fastify (`app.ts`), configuración, CAS, CAUCE, almacenamiento de medios, CLI de migración y semilla |
+| `apps/web` | `@lexican/web` | React: rutas (`router.tsx`), páginas, componentes, cliente HTTP (`api/http.ts`) y cliente demo (`demo/`) |
+| `tools/legacy-migrator` | `@lexican/legacy-migrator` | migración MariaDB → PostgreSQL |
+| `e2e/` | — | pruebas Playwright |
+| `scripts/` | — | `check-dist.mjs`, `licenses.mjs`, `metrics.mjs`, `e2e-prod-server.mjs` |
+
+Los paquetes se importan como TypeScript fuente (sin compilar entre ellos); la API se empaqueta con esbuild.
+
+## Scripts
+
+| Script | Qué hace |
+|---|---|
+| `npm run dev` / `dev:demo` / `dev:api` | Vite (producción), Vite (demo), API con recarga |
+| `npm run build` | web (`apps/web/dist`) + API (`apps/api/dist`) |
+| `npm run build:demo` / `preview:demo` | demo estática (`apps/web/dist-demo`) / servirla en local |
+| `npm run check` | `lint` + `format:check` + `typecheck` + `test` |
+| `npm run lint` / `format` / `format:check` / `typecheck` | ESLint, Prettier, `tsc` |
+| `npm test` / `test:watch` / `test:coverage` | Vitest |
+| `npm run test:contracts` / `test:integration` / `test:migration` | Vitest de `packages/app`, `apps/api`, `tools` |
+| `npm run e2e` / `e2e:demo` | Playwright: todo / solo proyectos `demo-*` |
+| `npm run db:generate` | genera una migración SQL a partir de `schema.ts` |
+| `npm run db:migrate` / `db:seed` | aplica migraciones / siembra vocabularios (`-- --demo` añade datos ficticios) |
+| `npm run migrate:legacy -- …` | migrador legacy ([docs/MIGRATION.md](docs/MIGRATION.md)) |
+| `npm run check:dist` | revisa los bundles (secretos, hosts, base `/lexican/`, PGlite fuera de producción) |
+| `npm run audit` / `licenses` / `sbom` | avisos de seguridad / licencias de producción / SBOM SPDX |
+| `npm run metrics` | métricas `upstream` vs árbol actual para el informe de modernización |
+
+`make help` muestra los atajos del `Makefile` (envoltorio fino sobre estos scripts).
+
+## Añadir una operación de principio a fin
+
+Ejemplo: «archivar un aula».
+
+1. **Contrato** — `packages/core/src/operations.ts`: añadir `archiveClassroom: op('POST',
+   '/api/classrooms/:classroomId/archive', z.object({ classroomId: id }))` y su tipo de salida en `OperationOutputs`.
+   Si la entrada es compleja, el esquema va en `contracts.ts`.
+2. **Servicio** — en el módulo de `packages/app/src/` que corresponda (`classrooms.ts`): función
+   `archiveClassroom(actor, input)` que empiece por la autorización (`classroomAccess` + `assertEditable`), use Drizzle y
+   registre `audit(...)` si cambia datos. Errores con `DomainError` (`validation`, `forbidden`, `not_found`,
+   `conflict`…). `createServices` comprueba al arrancar que toda operación tiene manejador.
+3. **Prueba de contrato** — `packages/app/src/services.contract.test.ts`: el caso feliz y los permisos (alumno → 403,
+   ajeno → 404). Se ejecuta en PGlite y, con `TEST_DATABASE_URL`, en PostgreSQL.
+4. **API** — nada que hacer: `apps/api/src/app.ts` registra una ruta por operación. Solo si la operación es especial
+   (subida, cookies, redirecciones) se escribe a mano, con su prueba en `app.test.ts`.
+5. **UI** — en la página, `(await getApi()).archiveClassroom({ classroomId })` (`apps/web/src/api/index.ts`); funciona
+   igual con el cliente HTTP y con el de la demo. Mensajes en español; errores con el componente `ErrorMessage`.
+6. **E2E** si es un flujo visible; `expectAccessible(page)` si es una pantalla nueva.
+
+## Añadir o cambiar una tabla
+
+1. Editar `packages/db/src/schema.ts`.
+2. `npm run db:generate` → nuevo `packages/db/migrations/NNNN_*.sql` + `meta/`.
+3. Leer el SQL generado (nombres, índices, `NOT NULL` con datos existentes, valores por defecto). Si hace falta
+   migrar datos, añadirlo en el mismo SQL.
+4. `npm test` (las migraciones se aplican en PGlite) y con `TEST_DATABASE_URL` (PostgreSQL).
+5. Si la tabla contiene datos personales, actualizar [docs/PRIVACY.md](docs/PRIVACY.md); si recibe datos del legacy,
+   añadir `legacy_source`/`legacy_id` y actualizar el migrador y [docs/LEGACY-DATA-MAPPING.md](docs/LEGACY-DATA-MAPPING.md).
+6. Si el cambio invalida datos ya guardados en la demo, subir `DATA_DIR` en `apps/web/src/demo/db.ts`.
+
+Nunca `drizzle-kit push` ni editar una migración que ya esté en `main`. Detalle en
+[docs/DATA-MODEL.md](docs/DATA-MODEL.md).
+
+## Pruebas por nivel
+
+```bash
+npm test                                   # todo Vitest en PGlite
+npm run test:contracts                     # solo packages/app
+npm run test:integration                   # solo la API
+TEST_DATABASE_URL=postgres://lexican:lexican@localhost:5432/postgres npm test   # también PostgreSQL
+npm run e2e:demo                           # demo, 3 navegadores + móvil
+E2E_DATABASE_URL=postgres://lexican:lexican@localhost:5432/postgres npm run e2e  # + producción
+npx vitest run packages/core/src/school-year.test.ts     # un fichero
+npx playwright test e2e/journey.spec.ts --project=demo-chromium --headed
 ```
 
-Nos creará la imagen según los parámetros que tenemos en las variables del script 
-podemos modificar los puertos, el nombre del contenedor y demás a través de estas.
-
-Al terminar de ejecutarse el script veremos un mensaje similar a este, con el link que nos lleva a la web local:
-
-```shell
-Acede a http://localhost:8083/medusa/apps/lexican para probar la web
- Para acceder a la shell del contenedor:
-docker exec -ti lexican_web_local /bin/bash
-```
-
-## Preparar la imagen para entorno de preproducción y producción
-
-
-### 1. Creando la imagen con deploy.sh
-
-Creamos la imagen de la versión que está ahora mismo activa en el git, o cambiamos a la etiqueta que se va a subir con:
-
-```shell
-$ git checkout v1.0.0 
-```
-
-Creamos la imagen con el comando:
-
-```shell
-$ ./deploy.sh pre rebuild 
-```
-
-Con *docker images* podemos ver que efectivamente se ha creado
-
-```shell
-$ docker images lexican-apache
-```
-
-<!-- Podemos probarla en local con la url que nos aparece y modificando el archivo *hosts* de nuestro pc -->
-
-### 2. Hacer login en el repositorio de imágenes
-
-```shell
-$ docker login www.canariaseducacion.org
-```
-    usuario: u_gitsmart
-    contraseña: <consultar>
-
-
-### 3. Crear tag de la imagen creada
-
-```shell
-$ docker tag lexican-apache:latest www.canariaseducacion.org/lexican/lexican:x.x.x-rcxx
-```
-donde se sustituiran las x por la version correspondiente por ejemplo lexican:1.0.4-rc1
-
-### 4. Hacer un push de la imagen al Docker Registry
-
-```shell
-$ docker push www.canariaseducacion.org/lexican/lexican:x.x.x-rcxx
-```
-
-## Configurar la imagen en PRE
-
-### 5. Conectar a maquina master
-
-> ssh root@IP.NODO.MASTER.OpenShift
- 
-### 6. en la maquina cambiar al proyecto openshift correspondiente
-
-> oc project intercambiador
-
-### 7. Traer la imagen de www.canariaseducacion.org
-
-Esto solo lo tendrás que hacen una vez si no existe la imagen de antes
- las siguientes has el paso **[8.B.](#8.b.-importarla)** directamente
-
-> docker pull www.canariaseducacion.org/lexican/lexican:1.0.0-rc1
-
-### 8.A. hacer deploy con new-app
-
-> oc new-app --docker-image=www.canariaseducacion.org/lexican/lexican:1.0.0-rc1
-### 8.B. importarla
-
-> oc import-image lexican:1.0.0-rc1 --from=www.canariaseducacion.org/lexican/lexican:1.0.0-rc1
-
-
-### 9. Crear secret en openshift
-
-voy a la parte de [secrets de proyecto lexican](https://master-openshiftpre.medusa.gobiernodecanarias.net:8443/console/project/lexican/create-secret)
-<!-- https://master-openshiftpre.medusa.gobiernodecanarias.net:8443/console/project/lexican/create-secret -->
-
-En **Resources/secrets** pulsamos en el boton *create secrect*
-En el formulario ponemos 
-*  **secrect type** : *image secrect*
-* el nombre que queramos en **secrect name**
-* **Autentication type** : *configuration file*
-* copiamos los datos que estan en nuestro ~/.docker en cuadro de texto, solo la parte que pone auths
-  
-Debe quedar algo asi: 
-```json
-{
-    "www.canariaseducacion.org": {
-        "auth": "<cadena auth>"
-    }
-},
-```
- * y pulsamos en **Crear** 
-
-  Luego en Aplication/Deployments/ picamos en nuestra imagen (lexcan) y arriba a la derecha pulsamos
-  **Actions / edit** en la seccion **Images** escogemos nuestro namespace, imagen y tag
-
-  puslamos en el link que aparece como:
-
-"To set secrets for pulling your images from private image registries, **view advanced image options.**"
-
-  y en el listado del select que nos aparece pulsamos el nuestro que acabamos de crear.
-
-### 10. Volumenes NFS
-
-Solo es necesario la primera vez, para configurarlo se crean los archivos:
-
-intercambiador-nfs-lexican-logs-pv.yaml 
-```yaml
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  labels:
-    app: lexican
-  name: lexican-nfs-lexican-logs-pv
-spec:
-  accessModes:
-  - ReadWriteMany
-  capacity:
-    storage: 5Gi
-  claimRef:
-    apiVersion: v1
-    kind: PersistentVolumeClaim
-    name: lexican-nfs-lexican-logs-pv
-    namespace: lexican
-  nfs:
-    path: /var/nfs/lexican-log
-    server: omds0005.medusa.gobiernodecanarias.net
-  persistentVolumeReclaimPolicy: Recycle
-
-```
-intercambiador-nfs-lexican-archivos-pv.yaml 
-```yaml
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  labels:
-    app: lexican
-  name: lexican-nfs-lexican-archivos-pv
-spec:
-  accessModes:
-  - ReadWriteMany
-  capacity:
-    storage: 50Gi
-  claimRef:
-    apiVersion: v1
-    kind: PersistentVolumeClaim
-    name: lexican-nfs-lexican-archivos-pv
-    namespace: lexican
-  nfs:
-    path: /var/nfs/lexican-archivos
-    server: omds0005.medusa.gobiernodecanarias.net
-  persistentVolumeReclaimPolicy: Recycle
-```
-
-<!-- cp itcbeva-nfs-itcb-logs-pv.yaml lexican-nfs-lexican-archivos-pv.yaml -->
-<!-- vi lexican-nfs-lexican-archivos-pv.yaml  -->
-y se pasan a openshift con:
-
-> oc create -f lexican-nfs-lexican-archivos-pv.yaml 
-
-luego crear storage en [openshift origin](https://master-openshiftpre.medusa.gobiernodecanarias.net:8443/console/project/lexican/browse/storage) 
-
-![Storage](./documentos/img/storage.png "crear storage")
-
-Los datos que necesitamos se corresponderian con los de los ficheros yaml de cada storage
-
-* **Name:** seria el nombre que hemos puesto en cada volumen en spec/ClainRef/name
-
-* **Size:** el mismo que definimos en spec/capacity/storage
-
-* **Access Mode:** Shared Access seria el equivalente a ReadWriteMany en spec/AccessModes
-
-
-
-Agregar al deployment de [lexican](https://master-openshiftpre.medusa.gobiernodecanarias.net:8443/console/project/lexican/attach-pvc?kind=DeploymentConfig&name=lexican)  en Deployments > lexican > Add Storage 
-
-Con estos datos 
-
-| nombre |  mount path                                           |
-|--------|-------------------------------------------------------|
-| medios |  /var/www/html/medusa/apps/lexican/storage/app/public |
-| logs   |  /var/www/html/medusa/apps/lexican/storage/logs       |
-
-subpath y volumen name se puede dejar vacío 
-
-## Variables de entorno
-
-Relacion de variables y su descripción:
-
-| Nombre            | Descripción                                                                                           | Valores, ejemplos                                  |
-| ----------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| APP_VERSION       | Para visualizar la version en OpenShift                                                               | 1.0.4                                              |
-| APP_ENV           | Entorno de aplicacion                                                                                 | local, develop, preproduction o production         |
-| APP_DEBUG         | Activa modo debug                                                                                     | true / false                                       |
-| APP_URL           | URL pagina                                                                                            | https://www3.gobiernodecanarias.org/medusa/lexican |
-| ASSET_URL         | Se usa es para generar urls con comando artisan  (ver descripcion en app.php)                         |                                                    |
-| UPLOAD_MAXSIZE    | Tamaño máximo de archivos subidos por formularios                                                     | Numero de megas,  75                               |
-| INICIO_CURSO      | Fecha en la que empieza el curso escolar, solo se tiene en cuenta mes y dia poner siempre el año 2000 | 30/8/200                                           |
-| VIGENCIA_MAX      | Numero maximo de cursos que puede estar vigente un diccionario de aula                                | 10                                                 |
-|                   |                                                                                                       |                                                    |
-| CAS_HOSTNAME      | host del cas                                                                                          | url                                                |
-| CAS_VALIDATION    |                                                                                                       | url                                                |
-| CAS_VERSION       | version del cas                                                                                       | 3.0                                                |
-| CAS_LOGOUT_URL    | url logout cas                                                                                        |                                                    |
-| CAUCE_WEBSERVICE  | url webservice cauce                                                                                  |                                                    |
-| CAUCE_BEARER      | token bearer del cauce                                                                                |                                                    |
-|                   |                                                                                                       |                                                    |
-| DB_HOST           | host base de datos                                                                                    |                                                    |
-| DB_DATABASE       | nombre base de datos                                                                                  |                                                    |
-| DB_USERNAME       | usuario                                                                                               |                                                    |
-| DB_PASSWORD       | clave                                                                                                 |                                                    |
-|                   |                                                                                                       |                                                    |
-| MAIL_DRIVER       | modo envio de correo                                                                                  | smtp                                               |
-| MAIL_HOST         | host servicio envio correo                                                                            |                                                    |
-| MAIL_PORT         | puerto                                                                                                |                                                    |
-| MAIL_USERNAME     | usuario correo                                                                                        | dic.canarismos@gmail.com                           |
-| MAIL_PASSWORD     | clave correo                                                                                          |                                                    |
-| MAIL_ENCRYPTION   |                                                                                                       | tls                                                |
-| MAIL_FROM_ADDRESS | direccion remitente de los correos enviados                                                           | noreply@diccionarioCanarismos.es                   |
-| MAIL_FROM_NAME    | nombre remitente                                                                                      | Diccionario                                        |
-|                   |                                                                                                       |                                                    |
-
-
-
-## Tamaño máximo de subida de archivo
-
-En la variable UPLOAD_MAXSIZE se define el tamaño máximo de los archivos, esta variable se usa 
-tanto en openshift para definir el máximo como en deploy.sh, la diferencia es que al crear la imagen 
-se guarda en el php.ini y no se puede modificar hasta rehacer la imagen.
-
-Por otro lado en laravel en src/config/ctes.php, linea 312, los valores en 'dropify' se usan para definir el máximo que permite dropify para cada tipo de archivo, cambiando este sin problema cada vez que se cambia la variable de entorno en openshift.
-
-Por lo tanto el máximo en php.ini se queda siempre como se hizo al crear la imagen y el que se encuentra en las constantes de Laravel se puede cambiar, pero nuca a más de lo que está establecido en php.ini
-
-Por ejemplo, si tenemos en la imagen como máximo 100MB y queremos ponerlo a 105MB daría error al intentar subir un archivo, pero si por el contrario es bajarlo a 50MB no habría problema alguno, ni sería necesario crear una nueva imagen.
-
-## Usuarios predefinidos
-
-puedes verlos en el archivo [UserRorelsTablesSeeder](src/database/seeders/UsersRolesTablesSeeder.php) y entrar desde 
-http://localhost:8083/medusa/apps/lexican/admin/login
-
-<!-- # Acceder a los datos
-
-Se puede instalar un programa como dbeared-ce o mysql workbench para ver los datos y conectarnos con los datos que estan en deploy.sh
-como si fuera una bbdd local , 
-
-## Fallo: no estan los datos predefinidos en la bbdd
-
-Puede que haya fallado algo en la ejecucion del archivo provision.sh, puedes volver a lanzarlo o revisar DatabaseSeeder.php y lanzar los seeders por separado
-
-### Esta parte no me funicono y pero inira en lugar del docker pull de arriba en el paso 8 
-
-## 8 importarla
-
-> oc import-image lexican:1.0.0-rc1 --from=www.canariaseducacion.org/lexican/lexican:1.0.0-rc1
-
-* Importarla a openshift
-  
-> oc import-image lexican:1.0.0-rc1 --from=www.canariaseducacion.org/lexican/lexican:1.0.0-rc1
-
-Si aparce este error:
-
-> error: no image stream named "lexican" exists, pass --confirm to create and import
-
-lo vuelvo ejecutar con --confirm  -->
-
-## Soluciones a incidencias que han aparecido en la istalación
-
-### Limpiar todos los caches
-
-Prueba esto antes de cambiar nada, a veces es el unico problema:
-
-> artisan optimize:clear
-
-### Actualizar Paquetes Composer
-
-Recomiendo hacerlo de esta manera ya que a veces no muestra errores si no estamso dentro del contenedor 
-
-* Entrar en el contenedor  y ejecutar composer update y install
-
->  docker exec -ti lexican_web_local bash
-> /var/www/html/medusa/apps/lexican#  composer update
-> /var/www/html/medusa/apps/lexican#  composer install
-
-### No carga despues de hacer login en adminstracion/voyager 
-
-y nos aparece este mensaje de error:
-
-```php
-Error " Attempt to read property "name" on null (View: /vendor/tcg/voyager/resources/views/dimmers.blade.php) "
-```
-
-Para solucionarlo hay que reinstalar voyager.
-
-En provision.sh hace todos los pasos para configurar nuestro entorno pero si obetemos fallos en archivo vendor es problable que necesitemso reinstalar o acutualizar el paquete que da problemas
-
-Primero actualizar como dice arriba los paquetes de composer
-
-Luego podremos ejecutar:
-
-```terminal
- /var/www/html/medusa/apps/lexican# composer update
- /var/www/html/medusa/apps/lexican# composer dump-autoload -o
- /var/www/html/medusa/apps/lexican# php artisan voyager:install --with-dummy
- /var/www/html/medusa/apps/lexican# php artisan db:seed --class=DatabaseSeeder
-```
-
-en maquina dev:
-
-```
-php81 composer.phar update
-php81 composer.phar dump-autoload -o
-php81 artisan voyager:install --with-dummy
-php81 artisan db:seed --class=DatabaseSeeder
-```
-
-El ultimo comando puede no ser necesario y  nos puede dar error si ya tenemos entos datos en la bbdd pero no borrara nuestors datos
-
-Despues de esto ya deberiamos poder acceder
-<!-- lo vuelvo ejecutar con --confirm -->
-
-### Permisos
-
-Si da error de falta de permisos en storage/framework o logs es recomendable poner los permisos asi:
-
-    $ sudo chown www-data.$USER -R storage/*
-
-dentro del contenedor, recuerda que al crear el contenedor para pre y pro los permisos se cambian en el Dockerfile, 
-asi que estos se quedan bien aunque le hubieses puesto 777 a todos los archivos en algun momento
-
-
-## Pruebas Tests
-
-Las pruebas en /src/tests/ las podemos ejecutar dentro del contenedor o el pod de esta manera
-
-```shell
-/var/www/html/medusa/apps/lexican# ./vendor/bin/phpunit 
-```
-
-O esta que muestra mas mensajes:
-```shell
-/var/www/html/medusa/apps/lexican# php artisan test
-```
-
-
-## Documentacion
-
-Se estaba usando phpdox ( en composer "theseer/phpdox": "0.12.0" ), pero no se 
-actualiza desde 2019, se puede usar phpDocumentor https://www.phpdoc.org/
-
-con docker se puede instalar asi:
-
-desde el directorio src 
-```shell
-$ docker run --rm -v ${PWD}:/data phpdoc/phpdoc:3
-
-$ alias phpdoc="docker run --rm -v $(pwd):/data phpdoc/phpdoc:3"
-```
-
-ahora podemos usar el comando phpdoc
-
-phpdoc -d . -t docs
-
-
+Migración con MariaDB y cobertura: [docs/TESTING.md](docs/TESTING.md).
+
+## Depurar la base de la demo en el navegador
+
+- La base está en IndexedDB: DevTools → *Application* → *IndexedDB* → `/pglite/lexican-demo-v1`. El usuario activo está
+  en *Local storage* → `lexican-demo-session`.
+- Empezar de cero: botón «Restablecer datos de demostración», o borrar esa base y recargar.
+- Para consultar con SQL, reproducir el estado en Node: `openPglite()` (`packages/db/src/testing.ts`) + `seedDemo()`
+  (`packages/app`) en un test temporal da la misma base que la demo recién sembrada.
+- Los errores de los servicios llegan a la UI como `ApiError` con el mismo `code` que la API (`validation`,
+  `forbidden`, `not_found`, `conflict`…).
+
+## Convenciones
+
+- TypeScript estricto (`noUncheckedIndexedAccess`), módulos ES, imports con extensión `.ts`.
+- Validación siempre con los esquemas Zod de `packages/core`; nada de validar a mano en la UI o en la API.
+- Fechas en UTC en la base; el curso escolar se calcula con `SCHOOL_YEAR_START` y un reloj inyectado.
+- Interfaz en español; código, comentarios, commits y PR en inglés.
+- Sin `console.log` (ESLint permite `warn` y `error`).
+- Commits Conventional Commits en inglés, sin atribución a herramientas de IA.
+
+## Publicar una versión
+
+1. Mover las entradas de `[Sin publicar]` de `CHANGELOG.md` a la nueva versión con fecha.
+2. `npm version X.Y.Z --no-git-tag-version` y PR `chore: release X.Y.Z`.
+3. Tras fusionar: `git tag vX.Y.Z && git push origin vX.Y.Z`. `release.yml` comprueba que la etiqueta coincide con
+   `package.json`, repite el gate y publica los artefactos ([docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)).
