@@ -44,7 +44,6 @@ export function Layout() {
       <a className="skip-link" href="#contenido">
         Saltar al contenido
       </a>
-      {__DEMO__ && <DemoBanner />}
       <header role="banner" className={styles.header}>
         <div className={`container ${styles.bar}`}>
           <NavLink
@@ -104,6 +103,7 @@ export function Layout() {
           ))}
         </nav>
       )}
+      {__DEMO__ && <DemoNotice />}
     </NotifyProvider>
   );
 }
@@ -138,19 +138,50 @@ const initials = (name: string) =>
     .map((w) => w[0]!.toLocaleUpperCase('es'))
     .join('');
 
-function DemoBanner() {
+const NOTICE_KEY = 'lexican-demo-notice-hidden';
+const noticeHidden = () => {
+  try {
+    return sessionStorage.getItem(NOTICE_KEY) === '1';
+  } catch {
+    return false;
+  }
+};
+
+/** Floating demo notice; hidden with ✕ for this visit only, so the reset stays reachable next time. */
+function DemoNotice() {
   const [confirm, setConfirm] = useState(false);
+  const [hidden, setHidden] = useState(noticeHidden);
+  const hide = () => {
+    setHidden(true);
+    try {
+      sessionStorage.setItem(NOTICE_KEY, '1');
+    } catch {
+      /* storage unavailable: hidden until reload */
+    }
+  };
   return (
-    <div className={`no-print ${styles.demo}`}>
-      <div className="container spread">
-        <p className="small" style={{ margin: 0 }}>
-          <strong>Entorno de demostración.</strong> Los usuarios, contraseñas y datos son ficticios
-          y se guardan únicamente en este navegador.
-        </p>
-        <button type="button" className="btn btn-sm" onClick={() => setConfirm(true)}>
-          Restablecer datos de demostración
-        </button>
-      </div>
+    <>
+      {!hidden && (
+        <aside className={`no-print ${styles.demo}`} aria-label="Entorno de demostración">
+          <p>
+            <strong>Entorno de demostración.</strong> Los usuarios, contraseñas y datos son
+            ficticios y se guardan únicamente en este navegador.
+          </p>
+          <button type="button" className="btn btn-sm" onClick={() => setConfirm(true)}>
+            Restablecer datos de demostración
+          </button>
+          <button
+            type="button"
+            className={styles.demoClose}
+            onClick={hide}
+            aria-label="Ocultar el aviso de demostración"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </aside>
+      )}
       <Dialog
         open={confirm}
         onClose={() => setConfirm(false)}
@@ -173,6 +204,6 @@ function DemoBanner() {
           </button>
         </div>
       </Dialog>
-    </div>
+    </>
   );
 }

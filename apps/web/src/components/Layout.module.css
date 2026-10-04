@@ -92,10 +92,52 @@
   font-size: 0.8rem;
 }
 .demo {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-4);
+  z-index: 20;
+  transform: translateX(-50%);
+  width: min(720px, calc(100vw - 2 * var(--space-4)));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) 3.25rem var(--space-3) var(--space-4);
+  border: 1px solid #e3cf8f;
+  border-radius: var(--radius);
   background: var(--c-warning-bg);
-  border-bottom: 1px solid var(--c-border);
-  padding-block: var(--space-1);
+  box-shadow: 0 10px 30px rgb(15 76 129 / 18%);
   font-size: 0.85rem;
+}
+.demo p {
+  flex: 1 1 18rem;
+  margin: 0;
+}
+.demoClose {
+  position: absolute;
+  top: 50%;
+  right: var(--space-2);
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--c-text);
+  cursor: pointer;
+}
+.demoClose:hover {
+  background: rgb(0 0 0 / 6%);
+}
+.demoClose svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
 }
 .progress {
   position: absolute;
@@ -124,6 +166,9 @@
   }
   .footer {
     padding-bottom: 5.5rem;
+  }
+  .demo {
+    bottom: calc(68px + var(--space-3) + env(safe-area-inset-bottom));
   }
   .bottomNav {
     position: fixed;
