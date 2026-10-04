@@ -18,10 +18,16 @@ const DEFAULT_MAX_BYTES = 10 * 1024 * 1024;
 /** Sniffed types stored under their canonical name. */
 const ALIASES: Record<string, string> = { 'audio/x-m4a': 'audio/mp4' };
 /** Containers that may hold only audio; the sniffer cannot tell, so the slot being filled decides. */
-const AUDIO_CONTAINERS: Record<string, string> = { 'video/webm': 'audio/webm', 'video/mp4': 'audio/mp4' };
+const AUDIO_CONTAINERS: Record<string, string> = {
+  'video/webm': 'audio/webm',
+  'video/mp4': 'audio/mp4',
+};
 
 /** Canonical stored type and kind of uploaded bytes, decided by content (never by name or client Content-Type). */
-export function classifyMedia(sniffed: string, slot?: MediaKind): { mime: string; kind: MediaKind } | null {
+export function classifyMedia(
+  sniffed: string,
+  slot?: MediaKind,
+): { mime: string; kind: MediaKind } | null {
   let mime = sniffed.split(';')[0]!.trim().toLowerCase();
   mime = ALIASES[mime] ?? mime;
   if (slot === 'audio' && AUDIO_CONTAINERS[mime]) mime = AUDIO_CONTAINERS[mime]!;
@@ -46,11 +52,18 @@ export function mediaServices(deps: Deps) {
   const maxPerDay = deps.maxUploadBytesPerDay ?? DEFAULT_MAX_BYTES_PER_DAY;
 
   return {
-    async uploadMedia(actor: Actor | null, file: { bytes: Uint8Array; name: string; kind?: MediaKind }): Promise<MediaView> {
+    async uploadMedia(
+      actor: Actor | null,
+      file: { bytes: Uint8Array; name: string; kind?: MediaKind },
+    ): Promise<MediaView> {
       const a = requireUser(actor);
-      if (file.bytes.byteLength === 0) throw new DomainError('validation', 'El archivo está vacío.');
+      if (file.bytes.byteLength === 0)
+        throw new DomainError('validation', 'El archivo está vacío.');
       if (file.bytes.byteLength > maxBytes)
-        throw new DomainError('validation', `El archivo supera el máximo de ${Math.round(maxBytes / 1024 / 1024)} MB.`);
+        throw new DomainError(
+          'validation',
+          `El archivo supera el máximo de ${Math.round(maxBytes / 1024 / 1024)} MB.`,
+        );
       const type = await fileTypeFromBuffer(file.bytes);
       const media = type ? classifyMedia(type.mime, file.kind) : null;
       if (!type || !media)
@@ -63,7 +76,12 @@ export function mediaServices(deps: Deps) {
       const [usage] = await db
         .select({ used: sql<number>`coalesce(sum(${mediaAssets.byteSize}), 0)::float8` })
         .from(mediaAssets)
-        .where(and(eq(mediaAssets.createdBy, a.userId), gte(mediaAssets.createdAt, new Date(deps.clock().getTime() - DAY_MS))));
+        .where(
+          and(
+            eq(mediaAssets.createdBy, a.userId),
+            gte(mediaAssets.createdAt, new Date(deps.clock().getTime() - DAY_MS)),
+          ),
+        );
       if (Number(usage?.used ?? 0) + file.bytes.byteLength > maxPerDay)
         throw new DomainError(
           'validation',
@@ -79,7 +97,15 @@ export function mediaServices(deps: Deps) {
       try {
         [row] = await db
           .insert(mediaAssets)
-          .values({ kind, mime, byteSize: file.bytes.byteLength, sha256, storageKey, originalName, createdBy: a.userId })
+          .values({
+            kind,
+            mime,
+            byteSize: file.bytes.byteLength,
+            sha256,
+            storageKey,
+            originalName,
+            createdBy: a.userId,
+          })
           .returning();
       } catch (e) {
         await deps.media.delete(storageKey).catch(() => undefined);
@@ -92,7 +118,10 @@ export function mediaServices(deps: Deps) {
      * A media asset if the actor uploaded it or can read an entry using it (RULE-236 fixed). Authorization runs on
      * metadata first; only then is the storage opened, and the returned Blob is read lazily (ranges, streaming).
      */
-    async readMedia(actor: Actor | null, mediaId: string): Promise<{ blob: Blob; mime: string; name: string; size: number }> {
+    async readMedia(
+      actor: Actor | null,
+      mediaId: string,
+    ): Promise<{ blob: Blob; mime: string; name: string; size: number }> {
       const a = requireUser(actor);
       const [asset] = await db.select().from(mediaAssets).where(eq(mediaAssets.id, mediaId));
       if (!asset) throw notFound('El archivo');
@@ -131,7 +160,9 @@ export function mediaServices(deps: Deps) {
      * ponytail: single-instance assumption; with several API replicas, add an age threshold to the storage keys.
      */
     async sweepOrphans(): Promise<number> {
-      const known = new Set((await db.select({ k: mediaAssets.storageKey }).from(mediaAssets)).map((r) => r.k));
+      const known = new Set(
+        (await db.select({ k: mediaAssets.storageKey }).from(mediaAssets)).map((r) => r.k),
+      );
       const orphans = (await deps.media.keys()).filter((k) => !known.has(k));
       for (const k of orphans) await deps.media.delete(k);
       return orphans.length;
@@ -139,7 +170,11 @@ export function mediaServices(deps: Deps) {
   };
 }
 
-async function usedInReviewableSubmission(deps: Deps, actor: Actor, mediaId: string): Promise<boolean> {
+async function usedInReviewableSubmission(
+  deps: Deps,
+  actor: Actor,
+  mediaId: string,
+): Promise<boolean> {
   const rows = await deps.db
     .select({ id: submissions.id })
     .from(submissions)
@@ -154,7 +189,9 @@ async function usedInReviewableSubmission(deps: Deps, actor: Actor, mediaId: str
       ),
     )
     // Structural match on the snapshot's media ids, never a text search (SEC-001).
-    .where(sql`${entryRevisions.snapshot}->'senses' @> ${JSON.stringify([{ media: [{ id: mediaId }] }])}::jsonb`)
+    .where(
+      sql`${entryRevisions.snapshot}->'senses' @> ${JSON.stringify([{ media: [{ id: mediaId }] }])}::jsonb`,
+    )
     .limit(1);
   return rows.length > 0;
 }

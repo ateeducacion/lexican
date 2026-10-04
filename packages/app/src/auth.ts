@@ -9,7 +9,13 @@ const b64 = (u: Uint8Array) => btoa(String.fromCharCode(...u));
 const unb64 = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
 
 async function pbkdf2(password: string, salt: Uint8Array, iterations: number): Promise<Uint8Array> {
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits'],
+  );
   const bits = await crypto.subtle.deriveBits(
     { name: 'PBKDF2', hash: 'SHA-256', salt: salt as BufferSource, iterations },
     key,
@@ -50,7 +56,14 @@ export const roleFromDirectory = (p: InstitutionalProfile): GlobalRole =>
 
 export async function createPasswordUser(
   db: Db,
-  u: { email: string; password: string; firstName: string; lastName: string; globalRole: GlobalRole; avatar?: string },
+  u: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    globalRole: GlobalRole;
+    avatar?: string;
+  },
 ): Promise<string> {
   const [row] = await db
     .insert(users)
@@ -63,9 +76,12 @@ export async function createPasswordUser(
       avatar: u.avatar ?? 'default',
     })
     .returning({ id: users.id });
-  await db
-    .insert(authIdentities)
-    .values({ userId: row!.id, provider: 'password', subject: u.email.toLowerCase(), secretHash: await hashPassword(u.password) });
+  await db.insert(authIdentities).values({
+    userId: row!.id,
+    provider: 'password',
+    subject: u.email.toLowerCase(),
+    secretHash: await hashPassword(u.password),
+  });
   return row!.id;
 }
 
@@ -86,7 +102,10 @@ export function authServices(deps: Deps) {
     },
 
     /** Password login: demo accounts and the dev/test provider only (production uses CAS). */
-    async login(_actor: Actor | null, { email, password }: ParsedInput<'login'>): Promise<UserView> {
+    async login(
+      _actor: Actor | null,
+      { email, password }: ParsedInput<'login'>,
+    ): Promise<UserView> {
       const [row] = await db
         .select({ u: users, hash: authIdentities.secretHash, identityId: authIdentities.id })
         .from(authIdentities)
@@ -95,8 +114,18 @@ export function authServices(deps: Deps) {
       const ok = row?.hash ? await verifyPassword(password, row.hash) : false;
       if (!row || !ok || row.u.status !== 'active')
         throw new DomainError('unauthenticated', 'Correo o contraseña incorrectos.');
-      await db.update(authIdentities).set({ lastLoginAt: deps.clock() }).where(eq(authIdentities.id, row.identityId));
-      await audit(db, { userId: row.u.id, globalRole: row.u.globalRole }, 'auth.login', 'user', row.u.id, { provider: 'password' });
+      await db
+        .update(authIdentities)
+        .set({ lastLoginAt: deps.clock() })
+        .where(eq(authIdentities.id, row.identityId));
+      await audit(
+        db,
+        { userId: row.u.id, globalRole: row.u.globalRole },
+        'auth.login',
+        'user',
+        row.u.id,
+        { provider: 'password' },
+      );
       return toUserView(row.u);
     },
 
@@ -110,17 +139,23 @@ export function authServices(deps: Deps) {
      * identities of the test CAS (`cas_test`) and the institutional one (`cas`) never link, even with equal subjects.
      * Disabled accounts are refused.
      */
-    async signInInstitutional(profile: InstitutionalProfile, provider: CasProvider = 'cas'): Promise<UserView> {
+    async signInInstitutional(
+      profile: InstitutionalProfile,
+      provider: CasProvider = 'cas',
+    ): Promise<UserView> {
       const userId = await db.transaction(async (tx) => {
         const displayName = `${profile.firstName} ${profile.lastName}`.trim() || profile.subject;
         const [identity] = await tx
           .select()
           .from(authIdentities)
-          .where(and(eq(authIdentities.provider, provider), eq(authIdentities.subject, profile.subject)));
+          .where(
+            and(eq(authIdentities.provider, provider), eq(authIdentities.subject, profile.subject)),
+          );
         let id = identity?.userId;
         if (id) {
           const [u] = await tx.select({ status: users.status }).from(users).where(eq(users.id, id));
-          if (u?.status !== 'active') throw new DomainError('forbidden', 'Tu cuenta está desactivada en LexiCán.');
+          if (u?.status !== 'active')
+            throw new DomainError('forbidden', 'Tu cuenta está desactivada en LexiCán.');
         }
         const directoryRole = roleFromDirectory(profile);
         if (id) {
@@ -135,14 +170,32 @@ export function authServices(deps: Deps) {
               updatedAt: new Date(),
             })
             .where(eq(users.id, id));
-          await tx.update(authIdentities).set({ lastLoginAt: deps.clock() }).where(eq(authIdentities.id, identity!.id));
+          await tx
+            .update(authIdentities)
+            .set({ lastLoginAt: deps.clock() })
+            .where(eq(authIdentities.id, identity!.id));
         } else {
-          const values = { firstName: profile.firstName, lastName: profile.lastName, displayName, globalRole: directoryRole };
+          const values = {
+            firstName: profile.firstName,
+            lastName: profile.lastName,
+            displayName,
+            globalRole: directoryRole,
+          };
           // An email already used by another account must not block institutional sign-in (SEC-005): store none.
-          let [u] = await tx.insert(users).values({ ...values, email: profile.email }).onConflictDoNothing().returning({ id: users.id });
-          if (!u) [u] = await tx.insert(users).values({ ...values, email: null }).returning({ id: users.id });
+          let [u] = await tx
+            .insert(users)
+            .values({ ...values, email: profile.email })
+            .onConflictDoNothing()
+            .returning({ id: users.id });
+          if (!u)
+            [u] = await tx
+              .insert(users)
+              .values({ ...values, email: null })
+              .returning({ id: users.id });
           id = u!.id;
-          await tx.insert(authIdentities).values({ userId: id, provider, subject: profile.subject, lastLoginAt: deps.clock() });
+          await tx
+            .insert(authIdentities)
+            .values({ userId: id, provider, subject: profile.subject, lastLoginAt: deps.clock() });
         }
         await tx.delete(userSchools).where(eq(userSchools.userId, id));
         for (const s of profile.schools) {
@@ -151,17 +204,25 @@ export function authServices(deps: Deps) {
             .values({ code: s.code, name: s.name })
             .onConflictDoUpdate({ target: schools.code, set: { name: s.name } })
             .returning({ id: schools.id });
-          await tx.insert(userSchools).values({ userId: id, schoolId: school!.id, roleCode: s.role }).onConflictDoNothing();
+          await tx
+            .insert(userSchools)
+            .values({ userId: id, schoolId: school!.id, roleCode: s.role })
+            .onConflictDoNothing();
         }
         return id;
       });
       const view = await userView(userId);
-      await audit(db, { userId, globalRole: view.globalRole }, 'auth.login', 'user', userId, { provider });
+      await audit(db, { userId, globalRole: view.globalRole }, 'auth.login', 'user', userId, {
+        provider,
+      });
       return view;
     },
 
     async actorFor(userId: string): Promise<Actor | null> {
-      const [u] = await db.select({ id: users.id, role: users.globalRole, status: users.status }).from(users).where(eq(users.id, userId));
+      const [u] = await db
+        .select({ id: users.id, role: users.globalRole, status: users.status })
+        .from(users)
+        .where(eq(users.id, userId));
       return u && u.status === 'active' ? { userId: u.id, globalRole: u.role } : null;
     },
 

@@ -1,14 +1,34 @@
-import { appSettings, authIdentities, schools, seedVocabulary, userSchools, vocabularyValues, type Db } from '@lexican/db';
-import { DEMO_ACCOUNTS, DEMO_SCHOOL, type EntryInput, type OperationName, type OperationOutputs } from '@lexican/core';
+import {
+  appSettings,
+  authIdentities,
+  schools,
+  seedVocabulary,
+  userSchools,
+  vocabularyValues,
+  type Db,
+} from '@lexican/db';
+import {
+  DEMO_ACCOUNTS,
+  DEMO_SCHOOL,
+  type EntryInput,
+  type OperationName,
+  type OperationOutputs,
+} from '@lexican/core';
 import { and, eq } from 'drizzle-orm';
 import { createPasswordUser } from './auth.ts';
 import type { Actor, Deps } from './context.ts';
 import { createServices } from './index.ts';
 
-
 export const DEMO_SEED_VERSION = 1;
 
-type Sense = Partial<EntryInput['senses'][number]> & { definition: string; pos?: string; gender?: string; number?: string; topics?: string[]; lang?: string };
+type Sense = Partial<EntryInput['senses'][number]> & {
+  definition: string;
+  pos?: string;
+  gender?: string;
+  number?: string;
+  topics?: string[];
+  lang?: string;
+};
 
 /**
  * Coherent fictitious dataset: one teacher, two students, a fictitious school, a current classroom with an open
@@ -20,12 +40,16 @@ export async function seedDemo(
   images: { name: string; bytes: Uint8Array }[] = [],
 ): Promise<void> {
   const { db } = deps;
-  const [done] = await db.select().from(appSettings).where(eq(appSettings.key, 'demo_seed_version'));
+  const [done] = await db
+    .select()
+    .from(appSettings)
+    .where(eq(appSettings.key, 'demo_seed_version'));
   if (done) return linkTestCasIdentities(db);
   await seedVocabulary(db);
   const svc = createServices(deps);
   const v: Record<string, string> = {};
-  for (const row of await db.select().from(vocabularyValues)) v[`${row.vocabulary}:${row.code}`] = row.id;
+  for (const row of await db.select().from(vocabularyValues))
+    v[`${row.vocabulary}:${row.code}`] = row.id;
 
   const actors: Record<string, Actor> = {};
   for (const a of DEMO_ACCOUNTS) {
@@ -36,11 +60,19 @@ export async function seedDemo(
   const s1 = actors['alumno1@ejemplo.com']!;
   const s2 = actors['alumno2@ejemplo.com']!;
 
-  const [school] = await db.insert(schools).values({ ...DEMO_SCHOOL }).returning();
-  await db.insert(userSchools).values([teacher, s1, s2].map((a) => ({ userId: a.userId, schoolId: school!.id })));
+  const [school] = await db
+    .insert(schools)
+    .values({ ...DEMO_SCHOOL })
+    .returning();
+  await db
+    .insert(userSchools)
+    .values([teacher, s1, s2].map((a) => ({ userId: a.userId, schoolId: school!.id })));
 
-  const call = <K extends OperationName>(name: K, actor: Actor, input: unknown): Promise<OperationOutputs[K]> =>
-    svc.call(name, actor, input);
+  const call = <K extends OperationName>(
+    name: K,
+    actor: Actor,
+    input: unknown,
+  ): Promise<OperationOutputs[K]> => svc.call(name, actor, input);
 
   const media: Record<string, string> = {};
   for (const img of images) media[img.name] = (await svc.media.uploadMedia(s1, img)).id;
@@ -61,36 +93,118 @@ export async function seedDemo(
 
   const add = async (actor: Actor, headword: string, senses: Sense[], hidden = false) => {
     const dict = await call('myDictionary', actor, {});
-    return call('createEntry', actor, { dictionaryId: dict.id, entry: { headword, hidden, senses: senses.map(sense) } });
+    return call('createEntry', actor, {
+      dictionaryId: dict.id,
+      entry: { headword, hidden, senses: senses.map(sense) },
+    });
   };
 
   // Personal dictionary — Daniel (alumno 1)
   const guagua = await add(s1, 'guagua', [
-    { definition: 'Autobús de transporte público.', pos: 'sustantivo', gender: 'femenino', number: 'singular', topics: ['dialecto_canario'], example: 'Cogí la guagua para ir al instituto.', lang: 'ingles', foreignForm: 'bus', mediaIds: media['guagua.png'] ? [media['guagua.png']] : [] },
-    { definition: 'Bebé, niño o niña de pocos meses.', pos: 'sustantivo', gender: 'femenino', number: 'singular', topics: ['dialecto_canario'], example: 'La guagua de mi prima ya gatea.' },
+    {
+      definition: 'Autobús de transporte público.',
+      pos: 'sustantivo',
+      gender: 'femenino',
+      number: 'singular',
+      topics: ['dialecto_canario'],
+      example: 'Cogí la guagua para ir al instituto.',
+      lang: 'ingles',
+      foreignForm: 'bus',
+      mediaIds: media['guagua.png'] ? [media['guagua.png']] : [],
+    },
+    {
+      definition: 'Bebé, niño o niña de pocos meses.',
+      pos: 'sustantivo',
+      gender: 'femenino',
+      number: 'singular',
+      topics: ['dialecto_canario'],
+      example: 'La guagua de mi prima ya gatea.',
+    },
   ]);
   const gofio = await add(s1, 'gofio', [
-    { definition: 'Harina de cereal tostado, típica de Canarias, que se toma con leche, caldo o amasada.', pos: 'sustantivo', gender: 'masculino', number: 'singular', topics: ['gastronomia', 'patrimonio_canario'], example: 'Desayuno gofio con leche.', mediaIds: media['gofio.png'] ? [media['gofio.png']] : [] },
+    {
+      definition:
+        'Harina de cereal tostado, típica de Canarias, que se toma con leche, caldo o amasada.',
+      pos: 'sustantivo',
+      gender: 'masculino',
+      number: 'singular',
+      topics: ['gastronomia', 'patrimonio_canario'],
+      example: 'Desayuno gofio con leche.',
+      mediaIds: media['gofio.png'] ? [media['gofio.png']] : [],
+    },
   ]);
   const baifo = await add(s1, 'baifo', [
-    { definition: 'Cría de la cabra.', pos: 'sustantivo', gender: 'masculino', number: 'singular', topics: ['fauna_canaria', 'dialecto_canario'], example: 'El baifo sigue a su madre por el risco.' },
+    {
+      definition: 'Cría de la cabra.',
+      pos: 'sustantivo',
+      gender: 'masculino',
+      number: 'singular',
+      topics: ['fauna_canaria', 'dialecto_canario'],
+      example: 'El baifo sigue a su madre por el risco.',
+    },
   ]);
   await add(s1, 'millo', [
-    { definition: 'Maíz.', pos: 'sustantivo', gender: 'masculino', number: 'singular', topics: ['gastronomia'], example: 'Compramos piñas de millo en el mercado.' },
+    {
+      definition: 'Maíz.',
+      pos: 'sustantivo',
+      gender: 'masculino',
+      number: 'singular',
+      topics: ['gastronomia'],
+      example: 'Compramos piñas de millo en el mercado.',
+    },
   ]);
-  await add(s1, 'fisco', [{ definition: 'Pizca, cantidad muy pequeña de algo.', pos: 'sustantivo', gender: 'masculino', topics: ['dialecto_canario'] }], true);
+  await add(
+    s1,
+    'fisco',
+    [
+      {
+        definition: 'Pizca, cantidad muy pequeña de algo.',
+        pos: 'sustantivo',
+        gender: 'masculino',
+        topics: ['dialecto_canario'],
+      },
+    ],
+    true,
+  );
 
   // Personal dictionary — Aitana (alumna 2)
   const cholas = await add(s2, 'cholas', [
-    { definition: 'Chanclas, sandalias abiertas de playa.', pos: 'sustantivo', gender: 'femenino', number: 'plural', topics: ['vestuario_y_complementos_canarios'], example: 'No vengas en cholas a clase de educación física.' },
+    {
+      definition: 'Chanclas, sandalias abiertas de playa.',
+      pos: 'sustantivo',
+      gender: 'femenino',
+      number: 'plural',
+      topics: ['vestuario_y_complementos_canarios'],
+      example: 'No vengas en cholas a clase de educación física.',
+    },
   ]);
   const machango = await add(s2, 'machango', [
-    { definition: 'Muñeco o figura hecha de trapo.', pos: 'sustantivo', gender: 'masculino', number: 'singular', topics: ['etnografia_y_artesania_canarias'] },
-    { definition: 'Persona poco seria, que hace el payaso.', pos: 'sustantivo', gender: 'masculino', number: 'singular', example: 'Deja de hacer el machango.' },
+    {
+      definition: 'Muñeco o figura hecha de trapo.',
+      pos: 'sustantivo',
+      gender: 'masculino',
+      number: 'singular',
+      topics: ['etnografia_y_artesania_canarias'],
+    },
+    {
+      definition: 'Persona poco seria, que hace el payaso.',
+      pos: 'sustantivo',
+      gender: 'masculino',
+      number: 'singular',
+      example: 'Deja de hacer el machango.',
+    },
   ]);
-  const mojo = await add(s2, 'mojo', [{ definition: 'Salsa.', pos: 'sustantivo', gender: 'masculino' }]);
+  const mojo = await add(s2, 'mojo', [
+    { definition: 'Salsa.', pos: 'sustantivo', gender: 'masculino' },
+  ]);
   await add(s2, 'tenique', [
-    { definition: 'Piedra que se usa para formar el fogón de leña.', pos: 'sustantivo', gender: 'masculino', number: 'singular', topics: ['etnografia_y_artesania_canarias'] },
+    {
+      definition: 'Piedra que se usa para formar el fogón de leña.',
+      pos: 'sustantivo',
+      gender: 'masculino',
+      number: 'singular',
+      topics: ['etnografia_y_artesania_canarias'],
+    },
   ]);
 
   // Classroom dictionary with an open submission window
@@ -124,9 +238,14 @@ export async function seedDemo(
   await call('joinClassroom', s2, { code });
 
   const submit = async (actor: Actor, entryId: string) =>
-    (await call('submitEntries', actor, { entryIds: [entryId], classroomIds: [classroom.id] })).created[0]!.id;
+    (await call('submitEntries', actor, { entryIds: [entryId], classroomIds: [classroom.id] }))
+      .created[0]!.id;
 
-  const published = [await submit(s1, guagua.id), await submit(s1, gofio.id), await submit(s2, cholas.id)];
+  const published = [
+    await submit(s1, guagua.id),
+    await submit(s1, gofio.id),
+    await submit(s2, cholas.id),
+  ];
   await call('publishSubmissions', teacher, { submissionIds: published });
   const pendingBaifo = await submit(s1, baifo.id);
   await submit(s2, machango.id);
@@ -169,7 +288,11 @@ async function linkTestCasIdentities(db: Db): Promise<void> {
       .select({ userId: authIdentities.userId })
       .from(authIdentities)
       .where(and(eq(authIdentities.provider, 'password'), eq(authIdentities.subject, a.email)));
-    if (p) await db.insert(authIdentities).values({ userId: p.userId, provider: 'cas_test', subject: a.casSubject }).onConflictDoNothing();
+    if (p)
+      await db
+        .insert(authIdentities)
+        .values({ userId: p.userId, provider: 'cas_test', subject: a.casSubject })
+        .onConflictDoNothing();
   }
 }
 

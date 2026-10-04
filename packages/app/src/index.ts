@@ -21,14 +21,23 @@ import { dictionaryViews, toVocabularyValue } from './views.ts';
 
 export type { Actor, Deps, MediaStorage } from './context.ts';
 export { memoryMediaStorage } from './context.ts';
-export { createPasswordUser, hashPassword, roleFromDirectory, type CasProvider, type InstitutionalProfile } from './auth.ts';
+export {
+  createPasswordUser,
+  hashPassword,
+  roleFromDirectory,
+  type CasProvider,
+  type InstitutionalProfile,
+} from './auth.ts';
 export { NOT_AUTHORIZED, testDirectory, type InstitutionalDirectory } from './directory.ts';
 export { generateJoinCode } from './classrooms.ts';
 export { submissionProblem } from './submissions.ts';
 export { seedDemo, demoSeedVersion, DEMO_SEED_VERSION } from './demo-seed.ts';
 
 export type OperationHandlers = {
-  [K in OperationName]: (actor: Actor | null, input: ParsedInput<K>) => Promise<OperationOutputs[K]>;
+  [K in OperationName]: (
+    actor: Actor | null,
+    input: ParsedInput<K>,
+  ) => Promise<OperationOutputs[K]>;
 };
 
 /**
@@ -48,19 +57,33 @@ export function createServices(deps: Deps) {
           .select({ dict: dictionaries, settings: classroomSettings })
           .from(dictionaries)
           .leftJoin(classroomSettings, eq(classroomSettings.dictionaryId, dictionaries.id))
-          .where(and(eq(dictionaries.ownerId, a.userId), eq(dictionaries.kind, 'personal'), isNull(dictionaries.deletedAt)));
+          .where(
+            and(
+              eq(dictionaries.ownerId, a.userId),
+              eq(dictionaries.kind, 'personal'),
+              isNull(dictionaries.deletedAt),
+            ),
+          );
       let rows = await find();
       if (rows.length === 0) {
         await db
           .insert(dictionaries)
-          .values({ kind: 'personal', title: 'Mi diccionario personal', ownerId: a.userId, avatar: 'default' })
+          .values({
+            kind: 'personal',
+            title: 'Mi diccionario personal',
+            ownerId: a.userId,
+            avatar: 'default',
+          })
           .onConflictDoNothing();
         rows = await find();
       }
       return (await dictionaryViews(deps, a, rows))[0]!;
     },
 
-    async updateMyDictionary(actor: Actor | null, input: ParsedInput<'updateMyDictionary'>): Promise<DictionaryView> {
+    async updateMyDictionary(
+      actor: Actor | null,
+      input: ParsedInput<'updateMyDictionary'>,
+    ): Promise<DictionaryView> {
       const a = requireUser(actor);
       const mine = await personal.myDictionary(a);
       await db
@@ -74,7 +97,11 @@ export function createServices(deps: Deps) {
       const rows = await db
         .select()
         .from(vocabularyValues)
-        .orderBy(asc(vocabularyValues.vocabulary), asc(vocabularyValues.position), asc(vocabularyValues.label));
+        .orderBy(
+          asc(vocabularyValues.vocabulary),
+          asc(vocabularyValues.position),
+          asc(vocabularyValues.label),
+        );
       return rows.map(toVocabularyValue);
     },
   };
@@ -87,7 +114,9 @@ export function createServices(deps: Deps) {
     ...classrooms,
     ...entryServices(deps),
     exportDictionary: async (actor, input) => {
-      const dictionary = await classrooms.getDictionary(actor, { dictionaryId: input.dictionaryId });
+      const dictionary = await classrooms.getDictionary(actor, {
+        dictionaryId: input.dictionaryId,
+      });
       return { dictionary, entries: await entryServices(deps).exportDictionary(actor, input) };
     },
     ...submissionServices(deps),
@@ -96,13 +125,18 @@ export function createServices(deps: Deps) {
   } as OperationHandlers;
 
   for (const name of Object.keys(operations) as OperationName[]) {
-    if (typeof handlers[name] !== 'function') throw new Error(`Missing handler for operation ${name}`);
+    if (typeof handlers[name] !== 'function')
+      throw new Error(`Missing handler for operation ${name}`);
   }
 
   return {
     handlers,
     /** Validate raw input with the shared schema, then run the use case. */
-    async call<K extends OperationName>(name: K, actor: Actor | null, raw: unknown): Promise<OperationOutputs[K]> {
+    async call<K extends OperationName>(
+      name: K,
+      actor: Actor | null,
+      raw: unknown,
+    ): Promise<OperationOutputs[K]> {
       const parsed = operations[name].input.safeParse(raw ?? {});
       if (!parsed.success) {
         const details: Record<string, string[]> = {};
@@ -110,7 +144,11 @@ export function createServices(deps: Deps) {
           const key = issue.path.join('.') || '_';
           (details[key] ??= []).push(issue.message);
         }
-        throw new DomainError('validation', parsed.error.issues[0]?.message ?? 'Datos no válidos.', details);
+        throw new DomainError(
+          'validation',
+          parsed.error.issues[0]?.message ?? 'Datos no válidos.',
+          details,
+        );
       }
       return handlers[name](actor, parsed.data as ParsedInput<K>);
     },

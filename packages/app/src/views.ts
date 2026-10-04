@@ -78,9 +78,18 @@ export async function dictionaryViews(
     .from(users)
     .where(inArray(users.id, [...new Set(rows.map((r) => r.dict.ownerId))]));
   const roles = await db
-    .select({ id: dictionaryMemberships.dictionaryId, role: dictionaryMemberships.role, active: dictionaryMemberships.active })
+    .select({
+      id: dictionaryMemberships.dictionaryId,
+      role: dictionaryMemberships.role,
+      active: dictionaryMemberships.active,
+    })
     .from(dictionaryMemberships)
-    .where(and(inArray(dictionaryMemberships.dictionaryId, ids), eq(dictionaryMemberships.userId, actor.userId)));
+    .where(
+      and(
+        inArray(dictionaryMemberships.dictionaryId, ids),
+        eq(dictionaryMemberships.userId, actor.userId),
+      ),
+    );
   const roleOf = new Map(roles.filter((r) => r.active).map((r) => [r.id, r.role as MemberRole]));
 
   const counts = await db
@@ -110,7 +119,10 @@ export async function dictionaryViews(
       title: dict.title,
       description: dict.description,
       avatar: dict.avatar,
-      owner: { id: dict.ownerId, displayName: owners.find((o) => o.id === dict.ownerId)?.displayName ?? '' },
+      owner: {
+        id: dict.ownerId,
+        displayName: owners.find((o) => o.id === dict.ownerId)?.displayName ?? '',
+      },
       myRole,
       entryCount: (editor ? c?.all : c?.visible) ?? 0,
       pendingCount: myRole === 'teacher' ? (pendingOf.get(dict.id) ?? 0) : 0,
@@ -224,7 +236,9 @@ export const snapshotOf = (e: EntryView): EntrySnapshot => ({
     .map(({ id: _id, hidden: _hidden, ...rest }, i) => ({ ...rest, position: i + 1 })),
 });
 
-export const toVocabularyValue = (v: typeof import('@lexican/db').vocabularyValues.$inferSelect): import('@lexican/core').VocabularyValue => ({
+export const toVocabularyValue = (
+  v: typeof import('@lexican/db').vocabularyValues.$inferSelect,
+): import('@lexican/core').VocabularyValue => ({
   id: v.id,
   vocabulary: v.vocabulary,
   code: v.code,

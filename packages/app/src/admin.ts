@@ -19,7 +19,14 @@ import {
   vocabularyValues,
 } from '@lexican/db';
 import { and, asc, desc, eq, ilike, isNull, or, sql } from 'drizzle-orm';
-import { audit, isUniqueViolation, notFound, requireRole, type Actor, type Deps } from './context.ts';
+import {
+  audit,
+  isUniqueViolation,
+  notFound,
+  requireRole,
+  type Actor,
+  type Deps,
+} from './context.ts';
 import { toUserView, toVocabularyValue } from './views.ts';
 
 /** Own admin screens replacing Voyager (§37): only what the inventory showed in use. */
@@ -65,10 +72,18 @@ export function adminServices(deps: Deps) {
       return rows.map(toUserView);
     },
 
-    async adminSetUserRole(actor: Actor | null, { userId, globalRole }: ParsedInput<'adminSetUserRole'>) {
+    async adminSetUserRole(
+      actor: Actor | null,
+      { userId, globalRole }: ParsedInput<'adminSetUserRole'>,
+    ) {
       const a = requireRole(actor, 'admin');
-      if (userId === a.userId) throw new DomainError('validation', 'No puedes cambiar tu propio rol.');
-      const [u] = await db.update(users).set({ globalRole, updatedAt: new Date() }).where(eq(users.id, userId)).returning();
+      if (userId === a.userId)
+        throw new DomainError('validation', 'No puedes cambiar tu propio rol.');
+      const [u] = await db
+        .update(users)
+        .set({ globalRole, updatedAt: new Date() })
+        .where(eq(users.id, userId))
+        .returning();
       if (!u) throw notFound('La persona usuaria');
       await audit(db, a, 'user.role', 'user', userId, { globalRole });
       return toUserView(u);
@@ -76,7 +91,9 @@ export function adminServices(deps: Deps) {
 
     async adminListClassrooms(actor: Actor | null, { filter }: ParsedInput<'adminListClassrooms'>) {
       requireRole(actor, 'admin', 'support');
-      const all = await classrooms(filter === 'timeless' ? and(eq(classroomSettings.timeless, true)) : undefined);
+      const all = await classrooms(
+        filter === 'timeless' ? and(eq(classroomSettings.timeless, true)) : undefined,
+      );
       if (filter === 'current') return all.filter((c) => c.current);
       if (filter === 'expired') return all.filter((c) => !c.current);
       return all;
@@ -84,16 +101,26 @@ export function adminServices(deps: Deps) {
 
     async adminUpdateValidity(actor: Actor | null, input: ParsedInput<'adminUpdateValidity'>) {
       const a = requireRole(actor, 'admin', 'support');
-      const [s] = await db.select().from(classroomSettings).where(eq(classroomSettings.dictionaryId, input.classroomId));
+      const [s] = await db
+        .select()
+        .from(classroomSettings)
+        .where(eq(classroomSettings.dictionaryId, input.classroomId));
       if (!s) throw notFound('El diccionario de aula');
       const patch: Partial<typeof classroomSettings.$inferInsert> = {};
       if (input.timeless !== undefined) patch.timeless = input.timeless;
       if (input.reactivate) {
         const v = validityToReactivate(s.schoolYear, deps.clock(), deps.schoolYear);
-        if (v === null) throw new DomainError('validation', 'No se puede reactivar: superaría la vigencia máxima de 10 cursos.');
+        if (v === null)
+          throw new DomainError(
+            'validation',
+            'No se puede reactivar: superaría la vigencia máxima de 10 cursos.',
+          );
         patch.validityYears = Math.max(v, s.validityYears);
       }
-      await db.update(classroomSettings).set(patch).where(eq(classroomSettings.dictionaryId, input.classroomId));
+      await db
+        .update(classroomSettings)
+        .set(patch)
+        .where(eq(classroomSettings.dictionaryId, input.classroomId));
       await audit(db, a, 'classroom.validity', 'dictionary', input.classroomId, {
         timeless: input.timeless ?? null,
         reactivate: input.reactivate ?? null,
@@ -127,7 +154,10 @@ export function adminServices(deps: Deps) {
         totals: {
           users: await count(db.select({ n }).from(users)),
           personalDictionaries: await count(
-            db.select({ n }).from(dictionaries).where(and(eq(dictionaries.kind, 'personal'), isNull(dictionaries.deletedAt))),
+            db
+              .select({ n })
+              .from(dictionaries)
+              .where(and(eq(dictionaries.kind, 'personal'), isNull(dictionaries.deletedAt))),
           ),
           personalEntries: await count(
             db
@@ -160,18 +190,28 @@ export function adminServices(deps: Deps) {
       }));
     },
 
-    async adminSaveVocabularyValue(actor: Actor | null, input: ParsedInput<'adminSaveVocabularyValue'>): Promise<VocabularyValue> {
+    async adminSaveVocabularyValue(
+      actor: Actor | null,
+      input: ParsedInput<'adminSaveVocabularyValue'>,
+    ): Promise<VocabularyValue> {
       const a = requireRole(actor, 'admin');
       const { id, ...values } = input;
       try {
         const [row] = id
-          ? await db.update(vocabularyValues).set(values).where(eq(vocabularyValues.id, id)).returning()
+          ? await db
+              .update(vocabularyValues)
+              .set(values)
+              .where(eq(vocabularyValues.id, id))
+              .returning()
           : await db.insert(vocabularyValues).values(values).returning();
         if (!row) throw notFound('El valor');
-        await audit(db, a, 'vocabulary.save', 'vocabulary_value', row.id, { vocabulary: row.vocabulary });
+        await audit(db, a, 'vocabulary.save', 'vocabulary_value', row.id, {
+          vocabulary: row.vocabulary,
+        });
         return toVocabularyValue(row);
       } catch (e) {
-        if (isUniqueViolation(e)) throw new DomainError('conflict', 'Ya existe un valor con ese código en la lista.');
+        if (isUniqueViolation(e))
+          throw new DomainError('conflict', 'Ya existe un valor con ese código en la lista.');
         throw e;
       }
     },
