@@ -1,6 +1,6 @@
 # ADR 0002 — Stack: TypeScript, React + Vite, Fastify, PostgreSQL, npm workspaces
 
-- Estado: aceptada (revalida §105 de `1er-prompt.md`)
+- Estado: aceptada; sustituida en parte por [ADR 0009](0009-hono-bun-worker.md) (Fastify, tsx y esbuild sustituidos por Hono y Bun) (revalida §105 de `1er-prompt.md`)
 - Fecha: 2026-10-04
 
 ## Decisión

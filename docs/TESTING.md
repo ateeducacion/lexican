@@ -6,9 +6,12 @@
 |---|---|---|---|
 | Unitarias de dominio | Vitest | `packages/core/src/*.test.ts` (curso escolar y vigencia, texto, contratos Zod, exportación DMLex validada con Ajv) | `npm test` |
 | Contrato de persistencia y aplicación | Vitest + PGlite + PostgreSQL | `packages/app/src/services.contract.test.ts`, `demo-seed.test.ts`, `packages/db/src/migrate.test.ts` | `npm run test:contracts` |
-| Integración de la API | Vitest + `app.inject` de Fastify | `apps/api/src/app.test.ts` (sesiones, `Origin`, 401/403/404/409, validación, subidas, CAS/SLO, SPA), `adapters.test.ts` (XML CAS/CAUCE, almacenamiento de medios, configuración) | `npm run test:integration` |
+| API compartida | Vitest | `packages/http/src/cas.test.ts` (URLs, XML, DTD, éxito inequívoco, redirecciones, *timeout*, tamaño), `range.test.ts` (200/206/416) | `npm test` |
+| Integración del servidor (Hono + PostgreSQL) | Vitest + `app.fetch` (helper `inject`) | `apps/api/src/app.test.ts` (sesiones, `Origin`, 401/403/404/409, validación, subidas en *streaming* sin `Content-Length`, rangos y `HEAD`, CAS/SLO, tickets repetidos, SPA), `app.variants.test.ts` (HTTPS, perfiles CAS, emisores), `adapters.test.ts` (CAUCE, volumen de medios, `APP_ENV`/`CAS_*`), `server.test.ts` (arranca **Bun** de verdad) | `npm run test:integration` |
+| Transporte del Worker (Hono + PGlite) | Vitest | `apps/web/src/demo/transport.test.ts`: el bucle real del Worker y la API Hono sobre PGlite con un `Worker` simulado; JSON, errores, sesión, multipart y binarios, concurrencia, *timeout* sin reintento, cancelación, caída, errores de arranque; y que React no llama a los servicios | `npm test` |
+| Medios | Vitest | `packages/app/src/media.test.ts`: tipos por contenido con audios sintéticos (`fixtures/media/`) | `npm test` |
 | Migración legacy | Vitest + MariaDB + PostgreSQL | `tools/legacy-migrator/src/transform.test.ts` (transformaciones puras), `migrate.test.ts` (fixture MariaDB → migrador → PostgreSQL) | `npm run test:migration` |
-| E2E demo | Playwright | `e2e/student.spec.ts`, `e2e/journey.spec.ts` sobre el build de Pages en `/lexican/` | `npm run e2e:demo` |
+| E2E demo | Playwright | `e2e/*.spec.ts` sobre el build de Pages en `/lexican/`, servido por un servidor estático estricto; `media.spec.ts` (audio: subir, reproducir, pausar, desplazarse, recargar, volver a entrar), `cas.spec.ts` (`@fakecas`), `demo-engine.spec.ts` (segunda pestaña) | `npm run e2e:demo` |
 | E2E producción | Playwright | `e2e/smoke-prod.spec.ts` (y los demás) contra web + API + PostgreSQL | `E2E_DATABASE_URL=… npm run e2e` |
 
 `npm test` ejecuta **todas** las pruebas Vitest (`{apps,packages,tools}/*/src/**/*.test.ts`); los otros comandos son
@@ -37,10 +40,17 @@ identificador nacional. Sin esas variables se omite. Ver [MIGRATION.md](MIGRATIO
 
 - Proyectos: `demo-chromium`, `demo-firefox`, `demo-webkit`, `demo-mobile` (Pixel 7, solo pruebas marcadas
   `@mobile`) y, si existe `E2E_DATABASE_URL`, `prod-chromium`.
-- Demo: Playwright lanza `npm run build:demo && npm run preview:demo -- --port 4173` y abre
-  `http://localhost:4173/lexican/`.
+- Demo: Playwright compila la demo con `VITE_CAS_URL=http://localhost:4318` y la sirve con
+  `scripts/static-pages-server.mjs` (como GitHub Pages: sin *fallback* ni reescrituras) en
+  `http://localhost:4317/lexican/`. Con `E2E_DEMO_PREBUILT=1` prueba el artefacto ya compilado tal cual (Pages).
+- CAS falso: `scripts/fake-cas-server.mjs` en `http://localhost:4318`, **otro origen**, para que el navegador aplique
+  CORS de verdad (la intercepción `route.fulfill` de Playwright no lo aplica a las peticiones del Worker). Emite y
+  valida tickets de un solo uso ligados al servicio exacto. Es solo de pruebas; el botón de la aplicación usa el CAS
+  público. Las pruebas contra el CAS público son manuales ([AUTHENTICATION.md](AUTHENTICATION.md)).
+- `demo-mobile` emula un Pixel 7: **no** demuestra el funcionamiento en un Android real (recorrido manual en
+  [DEMO.md](DEMO.md)).
 - Producción: `scripts/e2e-prod-server.mjs` crea una base temporal en `E2E_DATABASE_URL`, compila web y API si faltan,
-  migra, siembra los datos demo con `AUTH_DEV_LOGIN` y sirve todo en `http://localhost:3100/`. Al terminar borra la base
+  migra, siembra los datos demo con `AUTH_DEV_LOGIN` y sirve todo **con Bun** en `http://localhost:3100/`. Al terminar borra la base
   y el directorio de medios.
 - Cada prueba falla ante un error de página, un `console.error` o una petición fuera del origen
   (`e2e/fixtures.ts`). axe se ejecuta en las pantallas indicadas en [ACCESSIBILITY.md](ACCESSIBILITY.md).
@@ -90,6 +100,7 @@ La cifra **no mide**:
 - el comportamiento contra el CAS y CAUCE reales (solo XML grabado ficticio);
 - la migración si no se ejecuta con MariaDB (`migrate.test.ts` se omite);
 - la concurrencia real (PGlite tiene una sola conexión);
+- un Android real (solo emulación de Pixel en Playwright);
 - que algo sea accesible o se vea bien: eso es axe más revisión manual.
 
 ## En CI
@@ -99,9 +110,12 @@ La cifra **no mide**:
 | Job | Servicios | Pasos |
 |---|---|---|
 | `quality` | PostgreSQL 18 + MariaDB 11 | `npm ci` → `audit` → `licenses` → `lint` → `format:check` → `typecheck` → `test:coverage` (con `TEST_DATABASE_URL` y `TEST_MARIADB_URL`; umbral 90 %) → subida a Codecov → `build` → `build:demo` → `check:dist` → instalación de navegadores → `npm run e2e` (con `E2E_DATABASE_URL`: demo en 3 navegadores + móvil y producción) → informe de Playwright como artefacto si falla |
+| `webkit` | — | E2E de la demo en WebKit (un *worker*) |
+| `docker` | — | construye la imagen, comprueba que sin configuración no arranca y levanta el Compose local (salud, proveedores, SPA) |
 | `migration` | PostgreSQL 18 + MariaDB 11 | `npm ci` → `npm run test:migration` |
 
-Pages ([DEMO.md](DEMO.md)) y las *releases* ([DEPLOYMENT.md](DEPLOYMENT.md)) dependen de este gate.
+Las *releases* ([DEPLOYMENT.md](DEPLOYMENT.md)) dependen de este gate. Pages tiene su vía rápida (`pages.yml`: tipos,
+build, `check:dist` y E2E esenciales del mismo artefacto que publica; [DEMO.md](DEMO.md)).
 
 ## Qué prueba exige cada cambio
 
@@ -109,7 +123,7 @@ Pages ([DEMO.md](DEMO.md)) y las *releases* ([DEPLOYMENT.md](DEPLOYMENT.md)) dep
 |---|---|
 | Regla de dominio (`packages/core`) | unitaria con reloj inyectado |
 | Operación o servicio nuevo (`packages/app`) | caso en `services.contract.test.ts` (permisos incluidos) |
-| Ruta HTTP, sesión, cabeceras, subidas | `apps/api/src/app.test.ts` |
+| Ruta HTTP, sesión, cabeceras, subidas | `apps/api/src/app.test.ts` (y `transport.test.ts` si afecta al transporte de la demo) |
 | Esquema / migración | contrato en PGlite y PostgreSQL; `migrate.test.ts` del paquete `db` |
 | Transformación del migrador | `transform.test.ts` y, si cambia el recorrido, `migrate.test.ts` |
 | Pantalla o flujo | E2E con `expectAccessible` cuando sea una pantalla nueva |

@@ -1,6 +1,6 @@
 # ADR 0005 — CAS 3.0 propio, directorio CAUCE como adapter y sesiones en PostgreSQL
 
-- Estado: aceptada
+- Estado: aceptada; sustituida en parte por [ADR 0009](0009-hono-bun-worker.md) (`CAS_BASE_URL` → `CAS_URL` + rutas; `NODE_ENV` → `APP_ENV`; emisor `cas_test` para el CAS de pruebas)
 - Fecha: 2026-10-04
 
 ## Contexto

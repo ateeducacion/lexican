@@ -1,6 +1,6 @@
 # ADR 0007 — Medios en sistema de ficheros y exportación sin servicio PDF
 
-- Estado: aceptada
+- Estado: aceptada; sustituida en parte por [ADR 0009](0009-hono-bun-worker.md) (`MediaStorage` devuelve Blobs perezosos, `/media` admite rangos y la demo guarda Blobs en IndexedDB)
 - Fecha: 2026-10-04
 
 ## Decisión

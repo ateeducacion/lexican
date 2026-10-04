@@ -25,10 +25,11 @@ Esta versión (2.x) es una reconstrucción completa del Laravel 8 + Voyager orig
 
 | Pieza | Versión | Nota |
 |---|---|---|
-| Node.js | `>=24` (CI en 24) | |
+| Bun | `1.4.2` | runtime del servidor (imagen `oven/bun:1.4.2-alpine`); nunca APIs de Bun en paquetes compartidos |
+| Node.js / npm | `>=24` (CI en 24) | herramientas: instalación (`package-lock.json`), Vite, Vitest, Playwright, auditoría |
 | TypeScript | `~6.0` | `typescript-eslint` 8.x exige `<6.1`; TypeScript 7 no se adopta hasta que lo soporte. Dependabot lo ignora |
 | React / Vite / react-router | 19.3 / 8.3 / 8.4 | router en modo datos; sin TanStack Query ni Redux |
-| Fastify | `^5.12.5` | mínimo por avisos de seguridad |
+| Hono | `^4.13.13` | la API, la misma en el servidor y en el Worker de la demo ([ADR 0009](docs/adr/0009-hono-bun-worker.md)) |
 | Drizzle ORM / drizzle-kit | `^0.45.3` / `^0.31.11` | v1 cambia las migraciones: *majors* a mano |
 | PostgreSQL / PGlite | 18 / 0.5.8 | |
 | Zod | 4 | un esquema para formularios, API, seeds e importación |
@@ -44,28 +45,33 @@ sin un ADR que demuestre que simplifica el producto.
 ```text
 packages/core   dominio puro: tipos, Zod, reglas (curso, vigencia, plazos), exportación, tabla de operaciones
 packages/db     esquema Drizzle, migraciones SQL, semillas de vocabularios, helpers de test
-packages/app    servicios de aplicación + autorización (Node y navegador)
-apps/web        React + Vite (HttpClient en producción, cliente PGlite en la demo)
-apps/api        Fastify: sesiones, CAS/CAUCE, subidas, rutas generadas desde la tabla de operaciones
+packages/app    servicios de aplicación + autorización (servidor y navegador)
+packages/http   API Hono `createApi(deps)`: rutas desde la tabla de operaciones, sesiones, CAS, medios (solo APIs web)
+apps/web        React + Vite; un cliente común: HTTP en producción, Web Worker (Hono + PGlite) en la demo
+apps/api        servidor Bun: config, cookies, cabeceras, IP de confianza, CAUCE, volumen de medios, SPA
 tools/legacy-migrator  MariaDB → PostgreSQL (solo para migrar)
 ```
 
 - `packages/core/src/operations.ts` declara cada operación una vez (verbo, ruta, entrada Zod). De ahí salen las rutas
-  Fastify, el cliente HTTP y el cliente de la demo. Una funcionalidad = entrada en la tabla + servicio en
+  Hono, y el mismo cliente sirve a producción y a la demo. Una funcionalidad = entrada en la tabla + servicio en
   `packages/app` + prueba de contrato + UI.
 - Las rutas no deciden permisos: solo *sesión → validación → servicio → respuesta*.
-- `packages/core` no importa React, Fastify ni Drizzle.
+- `packages/core` no importa React, Hono ni Drizzle. `packages/http` no importa `node:*`, `pg`, Bun ni configuración
+  institucional (ESLint lo impide).
+- React no llama a los servicios: todo pasa por la API (también en la demo; lo comprueba `transport.test.ts`).
 - Sin interfaces de repositorio: los servicios usan Drizzle directamente ([ADR 0003](docs/adr/0003-drizzle-pglite.md)).
 
 Detalle: [ARCHITECTURE.md](docs/ARCHITECTURE.md), [DATA-MODEL.md](docs/DATA-MODEL.md).
 
 ## Demo y producción
 
-- **Producción**: un proceso Node (API + SPA) + PostgreSQL + volumen de medios. Login CAS + CAUCE.
-- **Demo** (GitHub Pages, `/lexican/`): el mismo frontend con `vite build --mode demo`; ejecuta `packages/app` sobre
-  PGlite en IndexedDB. Cuentas ficticias. Enrutado por *hash*.
+- **Producción** (`APP_ENV=production`, valor por defecto): un proceso Bun (API + SPA) + PostgreSQL + volumen de
+  medios. Login CAS + CAUCE. Rechaza CAS de pruebas, perfiles ficticios, contraseñas y semillas demo.
+- **Docker local** (`APP_ENV=local`, `docker-compose.yml`): CAS público de pruebas + perfiles ficticios + datos demo.
+- **Demo** (GitHub Pages, `/lexican/`): el mismo frontend con `vite build --mode demo`; un Web Worker ejecuta la
+  misma API Hono sobre PGlite (IndexedDB) y los medios son Blobs en IndexedDB. Cuentas ficticias. Enrutado por *hash*.
 - El modo se decide en el build (`import.meta.env.MODE`), **nunca** por el nombre del host.
-- El build de producción no puede contener PGlite, WASM ni contraseñas demo (`npm run check:dist`).
+- El build de producción no puede contener PGlite, WASM, el Worker ni contraseñas demo (`npm run check:dist`).
 - La demo no es una frontera de seguridad y no debe aparentarlo ([DEMO.md](docs/DEMO.md)).
 
 ## Base de datos y migraciones
@@ -76,7 +82,7 @@ Detalle: [ARCHITECTURE.md](docs/ARCHITECTURE.md), [DATA-MODEL.md](docs/DATA-MODE
   → **revisar el SQL** → commit del SQL y del *snapshot*. **Nunca `drizzle-kit push`.** Nunca editar una migración ya
   publicada en `main`.
 - La demo aplica las mismas migraciones en el navegador (`migrateBundled`). Si un cambio rompe los datos guardados en
-  la demo, subir `DATA_DIR` en `apps/web/src/demo/db.ts`.
+  la demo, subir `DATA_DIR` en `apps/web/src/demo/protocol.ts` (o migrarlos en el Worker, como `media_blobs`).
 - Tablas que reciben datos del legacy: columnas `legacy_source` + `legacy_id` con índice único; no se exponen en la
   API.
 - Borrado lógico con `deleted_at`; estados como `enum`, no códigos mágicos.
@@ -86,9 +92,10 @@ Detalle: [ARCHITECTURE.md](docs/ARCHITECTURE.md), [DATA-MODEL.md](docs/DATA-MODE
 - Producción: CAS 3.0 propio + adaptador CAUCE (`InstitutionalDirectory`). TLS verificado, XML sin DTD, URL de
   servicio fija ([AUTHENTICATION.md](docs/AUTHENTICATION.md)).
 - Sesiones en PostgreSQL (hash del identificador), cookie `__Host-sid` `HttpOnly; Secure; SameSite=Lax`. Nada en
-  `localStorage` salvo el marcador de usuario de la demo.
+  `localStorage` salvo el identificador de sesión de la demo (no es credencial: la demo no es frontera de seguridad).
 - Mutaciones solo con `POST`/`PUT`/`PATCH`/`DELETE`; `Origin` comprobado.
-- `AUTH_DEV_LOGIN` (contraseña) solo en desarrollo y tests; prohibido con `NODE_ENV=production`.
+- `AUTH_DEV_LOGIN` (contraseña) solo con `APP_ENV=local|test`; prohibido en producción. `NODE_ENV` no decide nada.
+- CAS: `CAS_URL` + `CAS_LOGIN_PATH`/`CAS_VALIDATE_PATH`/`CAS_LOGOUT_PATH`; emisores separados (`cas`, `cas_test`).
 - Toda comprobación de permisos vive en `packages/app` (`access.ts`, `requireUser`, `requireRole`). Cada operación
   nueva tiene prueba de permisos.
 - Contenido de usuario en texto plano; nada de `dangerouslySetInnerHTML`.
@@ -155,7 +162,8 @@ set -a; . apps/api/.env; set +a  # las CLI y la API leen el entorno, no el fiche
 npm run db:migrate && npm run db:seed -- --demo
 npm run dev:api                  # API en :3000
 npm run dev                      # web en :5173 contra la API
-npm run dev:demo                 # demo PGlite, sin backend
+npm run dev:demo                 # demo (Worker + PGlite), sin backend
+docker compose --profile app up --build   # imagen Bun local: CAS de pruebas + datos ficticios en :3000
 npm run check                    # lint + format:check + typecheck + test
 npm run e2e:demo                 # E2E de la demo
 npm run build && npm run build:demo && npm run check:dist
@@ -167,7 +175,8 @@ npm run audit && npm run licenses
 
 ## CI y despliegue
 
-- `ci.yml` en cada PR y *push* a `main`; `pages.yml` despliega la demo solo tras CI correcto en `main`; `release.yml`
+- `ci.yml` (validación completa) en cada PR y *push* a `main`; `pages.yml` comprueba y despliega la demo en cada
+  *push* a `main` (vía rápida: typecheck, build, `check:dist`, E2E esenciales del mismo artefacto); `release.yml`
   con etiquetas `v*`.
 - Actions fijadas por SHA con comentario de versión, `permissions: contents: read` por defecto, escritura solo en el
   job que la necesita, `persist-credentials: false`. Nada de `continue-on-error` en checks.

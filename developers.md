@@ -5,7 +5,8 @@ rama `upstream` y no aplican aquí. Normas del repositorio: [AGENTS.md](AGENTS.m
 
 ## Requisitos
 
-- Node.js 24 o superior (`engines` en `package.json`) y npm.
+- Bun 1.4.2 (runtime de la API y de sus CLI: <https://bun.com/docs/installation>).
+- Node.js 24 o superior (`engines` en `package.json`) y npm: instalación, Vite, Vitest y Playwright.
 - Docker, solo para PostgreSQL local (y MariaDB si se prueba la migración).
 - Navegadores de Playwright para los E2E: `npx playwright install chromium firefox webkit`.
 
@@ -15,19 +16,20 @@ rama `upstream` y no aplican aquí. Normas del repositorio: [AGENTS.md](AGENTS.m
 npm ci
 cp apps/api/.env.example apps/api/.env        # valores ficticios para desarrollo
 make up                                       # = docker compose up -d db (PostgreSQL 18 en :5432)
-set -a; . apps/api/.env; set +a               # la API y sus CLI leen variables de entorno, no el fichero
 npm run db:migrate
 npm run db:seed -- --demo                     # vocabularios + cuentas y datos ficticios
-npm run dev:api                               # Fastify en :3000 (tsx watch)
+npm run dev:api                               # API (Bun --watch) en :3000; db:* y dev:api leen apps/api/.env
 npm run dev                                   # otra terminal: Vite en :5173, /api y /media van a :3000
 ```
 
-Entra en <http://localhost:5173> con las cuentas de la demo (`AUTH_DEV_LOGIN=true` en el `.env` de ejemplo).
+Entra en <http://localhost:5173> con las cuentas de la demo (`AUTH_DEV_LOGIN=true`) o con «Entrar con CAS de pruebas»
+(`alice`/`pwd`, `bob`/`pwd` en el CAS público; el `.env` de ejemplo usa `APP_ENV=local`).
 
-Sin backend: `npm run dev:demo` (<http://localhost:5173/lexican/>), PGlite en el navegador.
+Sin backend: `npm run dev:demo` (<http://localhost:5173/lexican/>): la API Hono y PGlite en un Web Worker.
 
-Imagen completa (PostgreSQL + API + SPA): `docker compose --profile app up --build` → <http://localhost:3000>. Aplica
-migraciones al arrancar, pero no siembra datos ni habilita el acceso con contraseña.
+Imagen completa (PostgreSQL + API Bun + SPA): `docker compose --profile app up --build` → <http://localhost:3000>, con
+`APP_ENV=local`: migra, siembra los datos ficticios y activa el CAS de pruebas y el acceso con contraseña. Producción
+usa `docker-compose.prod.yml` ([DEPLOYMENT.md](docs/DEPLOYMENT.md)).
 
 ## Estructura
 
@@ -36,13 +38,14 @@ migraciones al arrancar, pero no siembra datos ni habilita el acceso con contras
 | `packages/core` | `@lexican/core` | tipos, esquemas Zod (`contracts.ts`), tabla de operaciones (`operations.ts`), reglas de curso y vigencia (`school-year.ts`), texto (`text.ts`), exportación (`export.ts`), errores de dominio, cuentas demo |
 | `packages/db` | `@lexican/db` | esquema Drizzle (`schema.ts`), migraciones (`migrations/`), `migrateBundled`, semilla de vocabularios, helpers de test (`testing.ts`) |
 | `packages/app` | `@lexican/app` | servicios de aplicación y autorización (`access.ts`), semilla demo |
-| `apps/api` | `@lexican/api` | servidor Fastify (`app.ts`), configuración, CAS, CAUCE, almacenamiento de medios, CLI de migración y semilla |
-| `apps/web` | `@lexican/web` | React: rutas (`router.tsx`), páginas, componentes, cliente HTTP (`api/http.ts`) y cliente demo (`demo/`) |
+| `packages/http` | `@lexican/http` | API Hono compartida (`createApi`), cliente CAS, rangos HTTP |
+| `apps/api` | `@lexican/api` | servidor Bun (`server.ts`, `app.ts`): configuración, cookies, cabeceras, IP de confianza, CAUCE, volumen de medios, SPA, CLI de migración y semilla |
+| `apps/web` | `@lexican/web` | React: rutas (`router.tsx`), páginas, componentes, cliente común (`api/client.ts`) y motor de la demo en un Web Worker (`demo/`) |
 | `tools/legacy-migrator` | `@lexican/legacy-migrator` | migración MariaDB → PostgreSQL |
 | `e2e/` | — | pruebas Playwright |
 | `scripts/` | — | `check-dist.mjs`, `licenses.mjs`, `metrics.mjs`, `e2e-prod-server.mjs` |
 
-Los paquetes se importan como TypeScript fuente (sin compilar entre ellos); la API se empaqueta con esbuild.
+Los paquetes se importan como TypeScript fuente (sin compilar entre ellos); la API se empaqueta con `bun build` en un bundle autosuficiente.
 
 ## Scripts
 
@@ -50,7 +53,7 @@ Los paquetes se importan como TypeScript fuente (sin compilar entre ellos); la A
 |---|---|
 | `npm run dev` / `dev:demo` / `dev:api` | Vite (producción), Vite (demo), API con recarga |
 | `npm run build` | web (`apps/web/dist`) + API (`apps/api/dist`) |
-| `npm run build:demo` / `preview:demo` | demo estática (`apps/web/dist-demo`) / servirla en local |
+| `npm run build:demo` / `preview:demo` | demo estática (`apps/web/dist-demo`) / servirla como Pages en http://localhost:4317/lexican/ (sin *fallback*) |
 | `npm run check` | `lint` + `format:check` + `typecheck` + `test` |
 | `npm run lint` / `format` / `format:check` / `typecheck` | ESLint, Prettier, `tsc` |
 | `npm test` / `test:watch` / `test:coverage` | Vitest |

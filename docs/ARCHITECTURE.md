@@ -1,77 +1,90 @@
 # Arquitectura
 
-LexiCán tiene dos modos de ejecución que comparten casi todo el código: **producción** (web + API Fastify +
-PostgreSQL) y **demo** estática en GitHub Pages (web + PGlite en el navegador). Decisiones: `docs/adr/`.
+LexiCán tiene dos despliegues que ejecutan **la misma aplicación Hono, los mismos servicios y las mismas reglas**:
+**Docker** (Bun + PostgreSQL + volumen de medios) y la **demo** estática de GitHub Pages (un Web Worker con PGlite).
+Decisiones: `docs/adr/`, en especial [ADR 0009](adr/0009-hono-bun-worker.md).
 
-## Producción
+## Docker
 
 ```mermaid
 flowchart TB
-  B[Navegador] -->|HTTPS| W[React + Vite<br/>apps/web · HttpClient]
-  W -->|JSON /api · cookie __Host-sid| A[Fastify<br/>apps/api]
-  A --> S[Servicios de aplicación<br/>packages/app]
+  B[Navegador] -->|HTTPS| W[React + Vite<br/>apps/web · cliente común]
+  W -->|transporte HTTP · cookie __Host-sid| X[Bun · apps/api<br/>cabeceras, IP de confianza, cookies, SPA]
+  X --> H[API Hono<br/>packages/http · createApi]
+  H --> S[Servicios de aplicación<br/>packages/app]
   S --> C[Dominio y contratos<br/>packages/core]
-  S --> D[Drizzle + esquema<br/>packages/db]
+  S --> D[Drizzle node-postgres]
   D --> P[(PostgreSQL 18)]
-  A --> M[(MediaStorage<br/>sistema de ficheros)]
-  A --> CAS[CAS 3.0]
-  A --> CAUCE[Directorio CAUCE]
+  H --> M[(Volumen de medios<br/>Blob perezoso, rangos HTTP)]
+  H --> CAS[CAS 3.0]
+  X --> CAUCE[Directorio CAUCE]
 ```
 
-Despliegue conceptual: **un proceso Node.js** (sirve también el SPA compilado) + **PostgreSQL** + **un volumen para
-medios**. Sin Redis, colas ni servicios adicionales (`docs/DEPLOYMENT.md`).
+Despliegue: **un proceso Bun** (API + SPA compilado) + **PostgreSQL** + **un volumen para medios**. Sin Redis, colas
+ni servicios adicionales (`docs/DEPLOYMENT.md`).
 
 ## Demo (GitHub Pages)
 
 ```mermaid
 flowchart TB
-  B[Navegador] --> W[React + Vite<br/>apps/web · cliente demo]
-  W --> S[Servicios de aplicación<br/>packages/app]
-  S --> C[packages/core]
+  B[Navegador] --> W[React + Vite<br/>apps/web · el mismo cliente]
+  W -->|transporte por mensajes<br/>Request → postMessage → Response| K[Web Worker<br/>apps/web/src/demo/worker.ts]
+  K --> H[La misma API Hono<br/>packages/http]
+  H --> S[packages/app]
   S --> D[Drizzle PGlite]
   D --> I[(PostgreSQL WASM<br/>IndexedDB lexican-demo-v2)]
+  H --> M[(Blobs en IndexedDB<br/>lexican-demo-media)]
 ```
 
-No hay API: el navegador ejecuta los **mismos** servicios con la **misma** autorización sobre la **misma** migración.
+React nunca llama a los servicios: cada operación atraviesa la ruta Hono, la validación, la serialización JSON y el
+tratamiento de errores, igual que en Docker. PGlite y la API trabajan fuera del hilo de la interfaz.
 
-## Cómo se comparte el código
+## Qué cambia entre ambos (solo adaptadores y configuración)
 
-| Pieza | Producción | Demo |
+| Pieza | Docker | Pages |
 |---|---|---|
-| Tipos, validación Zod, reglas de curso/vigencia/plazos, exportaciones | `packages/core` | `packages/core` |
-| Casos de uso y autorización | `packages/app` en Fastify | `packages/app` en el navegador |
+| API, rutas, validación, errores, límites | `packages/http` | `packages/http` (idéntico) |
+| Casos de uso y autorización | `packages/app` | `packages/app` (idéntico) |
 | Esquema y migraciones | `packages/db` en node-postgres | `packages/db` en PGlite |
-| Contrato de la API | `operations` (core) → rutas Fastify | `operations` → llamadas en proceso |
-| Sesión | cookie + tabla `sessions` | usuario ficticio elegido en el navegador |
-| Medios | sistema de ficheros | tabla `media_blobs` |
-| Autenticación | CAS + CAUCE (proveedor de contraseña solo en dev/test) | cuentas ficticias |
+| Transporte del cliente | `fetch` HTTP | mensajes al Worker (`demo/transport.ts`) |
+| Sesión (filas `sessions`) | cookie `__Host-sid` `HttpOnly` | identificador opaco en `localStorage`, en el sobre del mensaje |
+| Estado de acceso CAS | cookie `__Host-cas_state` | `sessionStorage` |
+| CSRF (`Origin`) | comprobado | no aplica: solo esta página habla con su Worker |
+| Medios | volumen (`openAsBlob`), `/media/:id` con rangos | Blobs en IndexedDB → URL `blob:` |
+| Perfiles CAS | CAUCE (producción) o fichas de prueba (`APP_ENV=local`) | fichas de prueba |
+| SLO por *back-channel* | sí | imposible en un sitio estático |
+| IP de cliente | socket + `X-Forwarded-For` solo por proxies de confianza | constante `local` |
 
 ### La tabla de operaciones
 
 `packages/core/src/operations.ts` declara cada operación una sola vez: verbo HTTP, ruta REST y esquema Zod de entrada.
-De ella salen:
-
-- las rutas de Fastify (`apps/api`), que solo hacen *sesión → validación → servicio → respuesta*;
-- el `HttpClient` del navegador (`apps/web/src/api/http.ts`);
-- el cliente de la demo (`apps/web/src/demo/client.ts`), que llama a los servicios directamente.
+De ella salen las rutas Hono (`packages/http`), que solo hacen *identidad → validación → servicio → respuesta*, y el
+cliente único del navegador (`apps/web/src/api/client.ts`), que funciona sobre cualquier transporte.
 
 Añadir una funcionalidad = una entrada en la tabla + un caso de uso en `packages/app` + su prueba de contrato.
+
+### Excepciones al «todo es una petición»
+
+- Las navegaciones de acceso (ir al CAS y volver) no son peticiones de datos: en Docker son enlaces reales; en Pages
+  el Worker responde `302` y la página navega solo hacia el CAS configurado (`demo/transport.ts`).
+- Los medios: en Docker `<audio>`/`<img>` cargan `/media/:id` directamente (rangos, *streaming*); en Pages se piden
+  por el transporte y se muestran como URL `blob:`, que se revocan al cambiar de identidad o restablecer la demo.
 
 ## Capas
 
 ```text
 apps/web ──► packages/core (siempre)
-         └─► packages/app + packages/db + PGlite (solo build demo, import dinámico)
-apps/api ──► packages/app ──► packages/db ──► PostgreSQL
-                         └─► packages/core
-packages/core: sin dependencias de React, Fastify ni Drizzle
+         └─► Worker: packages/http + packages/app + packages/db + PGlite (solo build demo, carga diferida)
+apps/api ──► packages/http ──► packages/app ──► packages/db ──► PostgreSQL
+                                           └─► packages/core
+packages/core, packages/app, packages/http: solo APIs web (sin node:*, pg ni Bun; ESLint lo comprueba)
 ```
 
 ## Rutas de la interfaz
 
 | Ruta | Quién | Qué |
 |---|---|---|
-| `/entrar` | todos | acceso (CAS en producción; cuentas ficticias en la demo) |
+| `/entrar` | todos | acceso (CAS institucional en producción; CAS de pruebas y cuentas ficticias en local y en la demo) |
 | `/mi-diccionario` | todos | espacio de trabajo en tres columnas: lista con buscador, abecedario, temáticas y estado de cada entrada; ficha de lectura; panel lateral con estado en las aulas, comentarios y exportación. En móvil, lista y ficha por separado con navegación inferior |
 | `/mi-diccionario/entradas/:id` | propietario | la misma vista con la entrada abierta |
 | `/mi-diccionario/nueva`, `/mi-diccionario/entradas/:id/editar` | propietario | editor estructurado: esquema de la entrada, tarjetas de acepción, vista previa y comprobación de las pautas del aula antes de enviar |

@@ -1,6 +1,6 @@
 # ADR 0004 — Demo en GitHub Pages con PGlite persistido en IndexedDB
 
-- Estado: aceptada
+- Estado: aceptada; sustituida en parte por [ADR 0009](0009-hono-bun-worker.md) (la demo ejecuta ahora la API Hono en un Web Worker; los medios salen de `media_blobs` a IndexedDB)
 - Fecha: 2026-10-04
 
 ## Decisión

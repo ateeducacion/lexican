@@ -5,6 +5,19 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
 
 ## [Sin publicar]
 
+### Cambiado — una API para Docker y Pages ([ADR 0009](docs/adr/0009-hono-bun-worker.md))
+
+- La API pasa de Fastify a **Hono** (`packages/http`) y el servidor se ejecuta con **Bun 1.4.2**; imagen Alpine sin
+  `node_modules`, y `docker-compose.prod.yml` aparte del Compose local.
+- La demo de Pages ejecuta la misma API en un **Web Worker** (PGlite fuera del hilo de la interfaz) con el mismo
+  cliente que producción; una sola pestaña a la vez; estado de arranque y errores visibles.
+- Medios fuera de SQL: volumen en Docker (con rangos HTTP para desplazarse por audio y vídeo) y Blobs en IndexedDB en
+  la demo. **Migración 0001**: añade el emisor `cas_test` y elimina `media_blobs` (la demo copia antes sus bytes).
+- Audio de móviles: se admiten M4A/AAC, OGG Opus y WebM solo audio (antes se rechazaban).
+- Configuración: `APP_ENV` (`production` por defecto) y `CAS_URL` + `CAS_LOGIN_PATH`/`CAS_VALIDATE_PATH`/
+  `CAS_LOGOUT_PATH` (se rechaza `CAS_BASE_URL`). Botón «Entrar con CAS de pruebas» (CAS público) en local y en la demo.
+- La pantalla de acceso muestra los errores de CAS; las cuentas institucionales deshabilitadas no pueden entrar.
+
 ### 2.0.0 — reconstrucción completa
 
 #### Añadido
