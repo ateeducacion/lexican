@@ -40,6 +40,7 @@ jobs:
           bun-version: 1.4.2
 
       - run: bun ci
+      - run: bun run check:lockfile
       - run: bun run typecheck
       - run: bun run build:demo
       - run: bun run check:dist

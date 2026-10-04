@@ -54,6 +54,7 @@ jobs:
           bun-version: 1.4.2
 
       - run: bun ci
+      - run: bun run check:lockfile
       - run: bun run audit
       - run: bun run licenses
       - run: bun run lint # Biome: lint, formatting and import order

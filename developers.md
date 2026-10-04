@@ -31,6 +31,12 @@ Imagen completa (PostgreSQL + API Bun + SPA): `docker compose --profile app up -
 `APP_ENV=local`: migra, siembra los datos ficticios y activa el CAS de pruebas y el acceso con contraseña. Producción
 usa `docker-compose.prod.yml` ([DEPLOYMENT.md](docs/DEPLOYMENT.md)).
 
+## Dependencias
+
+`bun add`, `bun remove` y `bun update` mantienen `bun.lock` en `lockfileVersion` 1, el formato que entiende Dependabot.
+No lo borres: si hay que regenerarlo, `rm bun.lock && bunx bun@1.3.14 install` (Bun 1.4 escribiría la v2). La CI lo
+comprueba con `bun run check:lockfile`.
+
 ## Estructura
 
 | Workspace | Paquete | Contenido |

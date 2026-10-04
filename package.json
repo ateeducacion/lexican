@@ -40,6 +40,7 @@
     "db:seed": "bun run --filter @lexican/api db:seed",
     "migrate:legacy": "bun --no-env-file tools/legacy-migrator/src/cli.ts",
     "check:dist": "bun scripts/check-dist.mjs",
+    "check:lockfile": "bun scripts/check-lockfile.mjs",
     "check": "bun run lint && bun run typecheck && bun run test",
     "audit": "bun audit --audit-level=high",
     "licenses": "bun scripts/licenses.mjs",
