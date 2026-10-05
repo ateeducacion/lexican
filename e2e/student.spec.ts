@@ -65,7 +65,6 @@ test.describe('student', () => {
     const panel = await logout.boundingBox();
     expect(panel!.x).toBeGreaterThanOrEqual(0);
     expect(panel!.x + panel!.width).toBeLessThanOrEqual(320);
-    await account.click();
     await app.logout();
   });
 

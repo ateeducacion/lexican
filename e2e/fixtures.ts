@@ -63,8 +63,9 @@ export const test = base.extend<{ guard: void; app: App; allowedOrigins: string[
         });
       },
       logout: async () => {
-        await page.getByLabel(/^Menú de usuario:/).click();
-        await page.getByRole('button', { name: 'Desconectar' }).click();
+        const logout = page.getByRole('button', { name: 'Desconectar' });
+        if (!(await logout.isVisible())) await page.getByLabel(/^Menú de usuario:/).click();
+        await logout.click();
         await expect(page.getByRole('heading', { name: 'Acceso' })).toBeVisible();
       },
     };
