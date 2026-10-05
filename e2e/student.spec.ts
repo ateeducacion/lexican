@@ -50,6 +50,7 @@ test.describe('student', () => {
     await expect(page.getByRole('heading', { name: 'Ajustes de mi diccionario' })).toBeVisible();
     await expect(logout).toBeHidden();
     await page.getByRole('link', { name: '← Mi diccionario' }).click();
+    await expect(page.getByRole('heading', { name: /^Mi diccionario/ })).toBeVisible();
     await expectAccessible(page);
     for (const width of [768, 1024, 320]) {
       await page.setViewportSize({ width, height: 720 });
