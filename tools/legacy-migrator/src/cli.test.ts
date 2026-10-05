@@ -2,7 +2,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { type Db, migrateBundled, schema } from '@lexican/db';
+import { type Db, migrateBundled } from '@lexican/db';
 import { loadMigrations } from '@lexican/db/testing';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import mysql from 'mysql2/promise';
@@ -91,8 +91,8 @@ describe.skipIf(!MARIADB || !PG)('legacy migrator CLI against the fixture', () =
     url.pathname = `/${name}`;
     if (migrated) {
       const pool = new pg.Pool({ connectionString: url.toString() });
-      const { journal, sqlByTag } = loadMigrations();
-      await migrateBundled(drizzle({ client: pool, schema }) as unknown as Db, journal, sqlByTag);
+      const db: Db = drizzle({ client: pool });
+      await migrateBundled(db, loadMigrations());
       await pool.end();
     }
     return url.toString();

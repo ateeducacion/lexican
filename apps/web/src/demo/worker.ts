@@ -1,10 +1,9 @@
 /// <reference lib="webworker" />
 import { PGlite } from '@electric-sql/pglite';
 import { demoSeedVersion, seedDemo } from '@lexican/app';
-import { type Db, type Journal, migrateBundled, schema } from '@lexican/db';
+import { type Db, migrateBundled } from '@lexican/db';
 import { createApi, safeError } from '@lexican/http';
 import { drizzle } from 'drizzle-orm/pglite';
-import journal from '../../../../packages/db/migrations/meta/_journal.json';
 import { deleteDatabase, openBlobStore } from './blob-store.ts';
 import {
   DATA_DIR,
@@ -22,19 +21,13 @@ import { demoCarrier as carrier, createMessageHandler, type Fetcher } from './wo
  */
 declare const self: DedicatedWorkerGlobalScope;
 
-const sqlFiles = import.meta.glob<string>('../../../../packages/db/migrations/*.sql', {
+const sqlFiles = import.meta.glob<string>('../../../../packages/db/migrations/*/migration.sql', {
   query: '?raw',
   import: 'default',
   eager: true,
 });
-const sqlByTag = Object.fromEntries(
-  Object.entries(sqlFiles).map(([path, sql]) => [
-    path
-      .split('/')
-      .pop()!
-      .replace(/\.sql$/, ''),
-    sql,
-  ]),
+const sqlByName = Object.fromEntries(
+  Object.entries(sqlFiles).map(([path, sql]) => [path.split('/').at(-2)!, sql]),
 );
 
 const post = (m: FromWorker, transfer: Transferable[] = []) => self.postMessage(m, transfer);
@@ -83,9 +76,9 @@ async function start() {
   } catch (e) {
     throw new InitError('storage', String((e as Error)?.message ?? e));
   }
-  const db = drizzle({ client: pg, schema }) as unknown as Db;
+  const db: Db = drizzle({ client: pg });
   await moveLegacyBlobs(pg, media);
-  await migrateBundled(db, journal as Journal, sqlByTag);
+  await migrateBundled(db, sqlByName);
   const deps = { db, media, clock: () => new Date(), mediaUrl: (id: string) => `/media/${id}` };
   // Versioned and idempotent: seeded once per browser (passwords hashed once), never on later visits.
   if ((await demoSeedVersion(db)) === null) await seedDemo(deps, await demoImages());

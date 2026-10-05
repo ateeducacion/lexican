@@ -32,7 +32,7 @@ Esta versión (2.x) es una reconstrucción completa del Laravel 8 + Voyager orig
 | Biome | `2.5.15` (exacta) | lint, formato y orden de importaciones (`bun run lint`, `bun run fix`, `make lint`, `make fix`); sustituye a ESLint y Prettier |
 | React / Vite / react-router | 19.3 / 8.3 / 8.4 | router en modo datos; sin TanStack Query ni Redux |
 | Hono | `^4.13.13` | la API, la misma en el servidor y en el Worker de la demo ([ADR 0009](docs/adr/0009-hono-bun-worker.md)) |
-| Drizzle ORM / drizzle-kit | `^0.45.3` / `^0.31.11` | v1 cambia las migraciones: *majors* a mano |
+| Drizzle ORM / drizzle-kit | `1.0.0-rc.4` / `1.0.0-rc.4` (exactas) | actualizar juntas y revisar las RC; migraciones v3 |
 | PostgreSQL / PGlite | 18 / 0.5.8 | |
 | Zod | 4 | un esquema para formularios, API, seeds e importación |
 | Vitest / Playwright | 5 / 1.63 + axe | |
@@ -81,8 +81,8 @@ Detalle: [ARCHITECTURE.md](docs/ARCHITECTURE.md), [DATA-MODEL.md](docs/DATA-MODE
 - **PostgreSQL es la única base de producción.** PGlite solo en la demo y en los tests.
 - Un único esquema: `packages/db/src/schema.ts`. Sin extensiones de PostgreSQL.
 - Cambiar el esquema: editar `schema.ts` → `bun run db:generate` (drizzle-kit genera SQL en `packages/db/migrations/`)
-  → **revisar el SQL** → commit del SQL y del *snapshot*. **Nunca `drizzle-kit push`.** Nunca editar una migración ya
-  publicada en `main`.
+  → **revisar el SQL** → commit de la carpeta `YYYYMMDDHHmmss_nombre` con `migration.sql` y `snapshot.json`.
+  **Nunca `drizzle-kit push`.** Nunca editar una migración ya publicada en `main`.
 - La demo aplica las mismas migraciones en el navegador (`migrateBundled`). Si un cambio rompe los datos guardados en
   la demo, subir `DATA_DIR` en `apps/web/src/demo/protocol.ts` (o migrarlos en el Worker, como `media_blobs`).
 - Tablas que reciben datos del legacy: columnas `legacy_source` + `legacy_id` con índice único; no se exponen en la

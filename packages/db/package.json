@@ -7,18 +7,17 @@
   "exports": {
     ".": "./src/index.ts",
     "./schema": "./src/schema.ts",
-    "./migrations/meta/_journal.json": "./migrations/meta/_journal.json",
     "./testing": "./src/testing.ts"
   },
   "dependencies": {
     "@lexican/core": "*",
-    "drizzle-orm": "^0.45.3",
+    "drizzle-orm": "1.0.0-rc.4",
     "pg": "^8.23.1"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
     "@types/pg": "^8.23.1",
-    "drizzle-kit": "^0.31.11"
+    "drizzle-kit": "1.0.0-rc.4"
   },
   "scripts": {
     "generate": "drizzle-kit generate"

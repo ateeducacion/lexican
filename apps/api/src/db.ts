@@ -1,14 +1,14 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { type Db, schema } from '@lexican/db';
+import type { Db } from '@lexican/db';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import pg from 'pg';
 
 export function openDb(databaseUrl: string): { db: Db; pool: pg.Pool } {
   const pool = new pg.Pool({ connectionString: databaseUrl, max: 10 });
-  return { db: drizzle({ client: pool, schema }) as unknown as Db, pool };
+  return { db: drizzle({ client: pool }), pool };
 }
 
 /** drizzle-kit migrations: copied next to the bundle by the `build` script, or read from the workspace in dev. */
@@ -20,7 +20,12 @@ function migrationsFolder(): string {
     join(here, '../migrations'), // dist/cli/*.js
     join(here, '../../../packages/db/migrations'), // apps/api/src (bun, tests)
   ];
-  const dir = candidates.find((d): d is string => !!d && existsSync(join(d, 'meta/_journal.json')));
+  const dir = candidates.find(
+    (d): d is string =>
+      !!d &&
+      existsSync(d) &&
+      readdirSync(d).some((name) => existsSync(join(d, name, 'migration.sql'))),
+  );
   if (!dir) throw new Error('Migrations folder not found (set MIGRATIONS_DIR).');
   return dir;
 }

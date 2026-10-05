@@ -16,7 +16,7 @@
     "@lexican/core": "*",
     "@lexican/db": "*",
     "@lexican/http": "*",
-    "drizzle-orm": "^0.45.3",
+    "drizzle-orm": "1.0.0-rc.4",
     "hono": "^4.13.13",
     "pg": "^8.23.1",
     "proxy-addr": "^2.0.7",

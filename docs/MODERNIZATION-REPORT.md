@@ -19,7 +19,7 @@ Medido el 2026-10-04, commit `a9352f6`.
 
 | Métrica | Legacy (`upstream`) | Modernizado |
 |---|---:|---:|
-| Tecnologías principales | PHP 8 / Laravel 8.83 / Voyager 1.5 / phpCAS 1.5 / Blade / jQuery 2.1.3 / Bootstrap 4 / TinyMCE 5 / dompdf / MariaDB | TypeScript 6.0 / React 19 / Vite 8 / Fastify 5 / Drizzle 0.45 / PostgreSQL 18 / PGlite 0.5 |
+| Tecnologías principales | PHP 8 / Laravel 8.83 / Voyager 1.5 / phpCAS 1.5 / Blade / jQuery 2.1.3 / Bootstrap 4 / TinyMCE 5 / dompdf / MariaDB | TypeScript 6.0 / React 19 / Vite 8 / Hono 4 / Bun 1.4 / Drizzle 1.0.0-rc.4 / PostgreSQL 18 / PGlite 0.5 |
 | ¿Se instala con las herramientas actuales? | No (repositorio `larapack.io` 404; Composer bloquea phpCAS y dompdf por avisos) | Sí (`npm ci`) |
 | Ficheros de código escritos a mano | 389 (PHP, Blade, JS, Vue, Sass) | 96 (TS/TSX/CSS) + 11 de tests unitarios/integración + 3 especificaciones E2E |
 | Líneas de código | 36 525 (scc, BASELINE) | 14 389 de código fuente (sin tests) |
