@@ -34,7 +34,7 @@ rangos para reproducirse en el navegador.
    `openAsBlob` y rangos HTTP (`206`/`416`, `HEAD`). Pages: Blobs en la base IndexedDB `lexican-demo-media` (con
    `ArrayBuffer` como alternativa donde WebKit no admite Blobs, p. ej. navegación privada). Primero se escriben los
    bytes y luego la fila; si la fila falla se borran; los huérfanos de una caída se eliminan al arrancar. La migración
-   0001 elimina `media_blobs` y el Worker copia antes sus bytes al almacén de Blobs: los datos de la demo se conservan.
+   `media_out_of_sql` elimina `media_blobs` y el Worker copia antes sus bytes al almacén de Blobs: los datos de la demo se conservan.
 7. **Entornos**: `APP_ENV=production|local|test` (por defecto `production`). Producción exige CAS institucional +
    CAUCE y rechaza CAS de pruebas, perfiles ficticios, acceso por contraseña y semillas demo. `local` usa por defecto
    el CAS público de pruebas con perfiles ficticios. `NODE_ENV` ya no decide nada.

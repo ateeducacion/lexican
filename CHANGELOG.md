@@ -35,7 +35,7 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
 - La demo de Pages ejecuta la misma API en un **Web Worker** (PGlite fuera del hilo de la interfaz) con el mismo
   cliente que producción; una sola pestaña a la vez; estado de arranque y errores visibles.
 - Medios fuera de SQL: volumen en Docker (con rangos HTTP para desplazarse por audio y vídeo) y Blobs en IndexedDB en
-  la demo. **Migración 0001**: añade el emisor `cas_test` y elimina `media_blobs` (la demo copia antes sus bytes).
+  la demo. **Migración `media_out_of_sql`**: añade el emisor `cas_test` y elimina `media_blobs` (la demo copia antes sus bytes).
 - Audio de móviles: se admiten M4A/AAC, OGG Opus y WebM solo audio (antes se rechazaban).
 - Configuración: `APP_ENV` (`production` por defecto) y `CAS_URL` + `CAS_LOGIN_PATH`/`CAS_VALIDATE_PATH`/
   `CAS_LOGOUT_PATH` (se rechaza `CAS_BASE_URL`). CAS público de pruebas solo en Docker local; Pages usa cuentas ficticias.
