@@ -6,9 +6,17 @@
 # Build: Bun installs the workspaces and runs Vite; `bun build` produces the self-contained API bundle.
 FROM oven/bun:1.4.2-alpine@sha256:d888c0ae6c86d7866ff10c5aafdd9077b36aee6455b33dd270fb93c0dd5cef6f AS build
 WORKDIR /app
+COPY package.json bun.lock bunfig.toml ./
+COPY apps/api/package.json apps/api/package.json
+COPY apps/web/package.json apps/web/package.json
+COPY packages/app/package.json packages/app/package.json
+COPY packages/core/package.json packages/core/package.json
+COPY packages/db/package.json packages/db/package.json
+COPY packages/http/package.json packages/http/package.json
+COPY tools/legacy-migrator/package.json tools/legacy-migrator/package.json
+RUN bun ci --ignore-scripts
 COPY . .
-RUN bun ci --ignore-scripts \
- && bun run --filter @lexican/web build \
+RUN bun run --filter @lexican/web build \
  && bun run --filter @lexican/api build
 
 # Runtime: Bun only. The API bundle includes its dependencies, so there is no node_modules in the image.

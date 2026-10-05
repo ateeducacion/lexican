@@ -40,11 +40,15 @@ puede tocar los datos de un Docker.
 
 El contexto de build es una lista blanca (`.dockerignore`): no entran datos locales, informes, `.env` ni `node_modules`.
 Bun no lee ficheros `.env` implícitamente (`bunfig.toml`, `--no-env-file`): la configuración llega solo por entorno.
+Los manifiestos y `bun.lock` se copian antes del código: cambiar una fuente conserva la capa de `bun ci`.
 
 La imagen se publica en `ghcr.io/ateeducacion/lexican` (Linux amd64): `main` se actualiza tras cada CI correcto de
 esa rama; cada etiqueta `v*` que coincida con `package.json` publica su versión y actualiza `latest` tras completar
 la *release*. El paquete es privado mientras la política de la organización impida hacerlo público; requiere
 autenticarse con `docker login ghcr.io` y un token con permiso `read:packages`. Para producción, fijar una versión o un *digest* en lugar de una etiqueta móvil.
+CI y las etiquetas usan el mismo workflow Docker: construye una imagen, prueba el arranque sin configuración y el
+perfil local con `--no-build`, y guarda esa imagen como artefacto durante un día. Tras pasar los checks, el job de
+publicación la carga, comprueba que conserva el identificador de contenido probado y la etiqueta sin reconstruirla.
 
 ### Docker local (pruebas)
 
@@ -167,7 +171,7 @@ coherencia. Las copias contienen datos personales de menores: cifradas y con acc
 | `lexican-X.Y.Z-demo.zip` | build estático de la demo |
 | `sbom.spdx.json` | SBOM SPDX de dependencias de producción |
 
-Después de publicar la *release*, se construye el `Dockerfile` de la etiqueta y se publica la misma imagen OCI como
+La *release* requiere que pase la prueba Docker de la etiqueta. Después se publica esa misma imagen probada como
 `ghcr.io/ateeducacion/lexican:vX.Y.Z` y `ghcr.io/ateeducacion/lexican:latest`. El token efímero de Actions solo tiene
 permiso de escritura de paquetes en el job de publicación; no hace falta configurar otro secreto.
 
