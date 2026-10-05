@@ -34,7 +34,7 @@ test('a missing code chunk after a deployment reloads once instead of showing an
     page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => undefined);
   await app.goto('/entrar');
   await settle();
-  const signedIn = page.getByRole('button', { name: 'Desconectar' });
+  const signedIn = page.getByLabel(/^Menú de usuario:/);
   for (let attempt = 0; attempt < 3 && !(await signedIn.isVisible()); attempt++) {
     const button = page.getByRole('button', { name: 'Entrar como alumno 1' });
     if (await button.isVisible()) await button.click().catch(() => undefined);

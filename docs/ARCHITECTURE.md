@@ -98,3 +98,6 @@ packages/core, packages/app, packages/http: solo APIs web (sin node:*, pg ni Bun
 
 Tipografías Lexend (interfaz) y Literata (palabras y ejemplos), autoalojadas con el build: ninguna petición a CDNs
 externos ([THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md)).
+
+El nombre (o las iniciales en pantallas pequeñas) abre el menú de usuario con «Desconectar». Los ajustes del
+diccionario personal se abren con la rueda junto a «Mi diccionario».

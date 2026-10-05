@@ -58,12 +58,14 @@ export const test = base.extend<{ guard: void; app: App; allowedOrigins: string[
         await page.getByLabel('Correo electrónico').fill(a.email);
         await page.getByLabel('Contraseña').fill(a.password);
         await page.getByRole('button', { name: 'Entrar', exact: true }).click();
-        await expect(page.getByRole('button', { name: 'Desconectar' })).toBeVisible({
+        await expect(page.getByLabel(/^Menú de usuario:/)).toBeVisible({
           timeout: 90_000,
         });
       },
       logout: async () => {
-        await page.getByRole('button', { name: 'Desconectar' }).click();
+        const logout = page.getByRole('button', { name: 'Desconectar' });
+        if (!(await logout.isVisible())) await page.getByLabel(/^Menú de usuario:/).click();
+        await logout.click();
         await expect(page.getByRole('heading', { name: 'Acceso' })).toBeVisible();
       },
     };
