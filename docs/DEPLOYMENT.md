@@ -41,6 +41,10 @@ puede tocar los datos de un Docker.
 El contexto de build es una lista blanca (`.dockerignore`): no entran datos locales, informes, `.env` ni `node_modules`.
 Bun no lee ficheros `.env` implícitamente (`bunfig.toml`, `--no-env-file`): la configuración llega solo por entorno.
 
+La imagen se publica en `ghcr.io/ateeducacion/lexican` (Linux amd64): `main` se actualiza tras cada CI correcto de
+esa rama; cada etiqueta `v*` que coincida con `package.json` publica su versión y actualiza `latest` tras completar
+la *release*. Para producción, fijar una versión o un *digest* en lugar de una etiqueta móvil.
+
 ### Docker local (pruebas)
 
 ```bash
@@ -55,8 +59,8 @@ docker compose --profile app down            # parar (añadir -v para borrar bas
 ### Producción institucional
 
 ```bash
-docker build -t lexican:X.Y.Z .
-LEXICAN_IMAGE=lexican:X.Y.Z docker compose -f docker-compose.prod.yml --env-file /ruta/segura/production.env up -d
+docker pull ghcr.io/ateeducacion/lexican:vX.Y.Z
+LEXICAN_IMAGE=ghcr.io/ateeducacion/lexican:vX.Y.Z docker compose -f docker-compose.prod.yml --env-file /ruta/segura/production.env up -d
 ```
 
 `docker-compose.prod.yml` exige cada variable institucional (`${VAR:?}`) y no hereda nada del perfil local. Sin
@@ -64,7 +68,7 @@ Compose:
 
 ```bash
 docker run -d --name lexican --env-file /ruta/segura/lexican.env \
-  -v lexican-media:/data/media --read-only --tmpfs /tmp -p 3000:3000 lexican:X.Y.Z
+  -v lexican-media:/data/media --read-only --tmpfs /tmp -p 3000:3000 ghcr.io/ateeducacion/lexican:vX.Y.Z
 ```
 
 ## Variables de entorno
@@ -162,7 +166,9 @@ coherencia. Las copias contienen datos personales de menores: cifradas y con acc
 | `lexican-X.Y.Z-demo.zip` | build estático de la demo |
 | `sbom.spdx.json` | SBOM SPDX de dependencias de producción |
 
-No se publica todavía una imagen OCI en un registro: se construye desde el `Dockerfile` de la etiqueta.
+Después de publicar la *release*, se construye el `Dockerfile` de la etiqueta y se publica la misma imagen OCI como
+`ghcr.io/ateeducacion/lexican:vX.Y.Z` y `ghcr.io/ateeducacion/lexican:latest`. El token efímero de Actions solo tiene
+permiso de escritura de paquetes en el job de publicación; no hace falta configurar otro secreto.
 
 ## Vuelta atrás
 
