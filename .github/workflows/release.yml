@@ -1,4 +1,4 @@
-# For tags v*: same quality gate as CI, then a release with the production bundle (web + API) and an SBOM.
+# For tags v*: validate tests, builds and Docker, then release the production bundle (web + API) and an SBOM.
 # Pages already deployed this commit from main, so the tag never redeploys the demo.
 name: Release
 

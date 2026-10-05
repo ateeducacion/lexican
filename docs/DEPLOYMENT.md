@@ -161,7 +161,7 @@ coherencia. Las copias contienen datos personales de menores: cifradas y con acc
 
 ## Artefactos de *release*
 
-`.github/workflows/release.yml`, con una etiqueta `vX.Y.Z` que coincida con `package.json`: repite el gate de CI
+`.github/workflows/release.yml`, con una etiqueta `vX.Y.Z` que coincida con `package.json`: ejecuta su gate
 (audit, licencias, lint, typecheck, tests con PostgreSQL, builds, `check:dist`), genera el SBOM y publica una
 *release* de GitHub con:
 

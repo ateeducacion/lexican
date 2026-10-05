@@ -1,14 +1,14 @@
 # Autenticación
 
-Decisiones: [ADR 0005](adr/0005-autenticacion.md) y [ADR 0009](adr/0009-hono-bun-worker.md). La lógica de sesión y
-el cliente CAS son los mismos en Docker y en Pages (`packages/http`); cambia solo cómo viaja la sesión.
+Decisiones: [ADR 0005](adr/0005-autenticacion.md) y [ADR 0009](adr/0009-hono-bun-worker.md). Docker y Pages comparten
+la lógica de sesión de `packages/http`; cambia cómo viaja la sesión. El cliente CAS se usa solo en el servidor.
 
 | Entorno | Proveedores | Perfiles |
 |---|---|---|
 | Producción (`APP_ENV=production`) | CAS institucional | CAUCE (`apps/api/src/cauce.ts`), emisor `cas` |
 | Docker local (`APP_ENV=local`) | CAS público de pruebas + contraseña de cuentas sembradas | fichas ficticias (`packages/app/src/directory.ts`), emisor `cas_test` |
 | Tests (`APP_ENV=test`) | lo que configure cada prueba; CAS falso | — |
-| Demo (Pages) | CAS público de pruebas (validación limitada por CORS, ver abajo) + cuentas ficticias | fichas ficticias, emisor `cas_test` |
+| Demo (Pages) | Solo cuentas ficticias; CAS desactivado | cuentas sembradas en la base del navegador |
 
 `GET /api/auth/providers` devuelve `{ cas: 'institutional' | 'test' | null, password }` y la pantalla de acceso
 muestra solo lo habilitado: «Entrar con tu usuario educativo» o **«Entrar con CAS de pruebas»**.

@@ -113,7 +113,9 @@ La cifra **no mide**:
 | `migration` | PostgreSQL 18 + MariaDB 11 | `bun ci` → `bun run test:migration` |
 | `publish-image` | — | solo en `main`, tras `quality`, `docker` y `migration`: carga el artefacto probado, verifica su ID y publica `ghcr.io/ateeducacion/lexican:main` sin reconstruir |
 
-Las *releases* ([DEPLOYMENT.md](DEPLOYMENT.md)) dependen de este gate. Pages tiene su vía rápida (`pages.yml`: tipos,
+Las *releases* ([DEPLOYMENT.md](DEPLOYMENT.md)) ejecutan su gate de audit, licencias, lint, tipos, tests con PostgreSQL,
+builds y `check:dist`, además de la prueba Docker compartida. No repiten los E2E ni el contrato MariaDB del CI.
+Pages tiene su vía rápida (`pages.yml`: tipos,
 build, `check:dist` y E2E esenciales del mismo artefacto que publica; [DEMO.md](DEMO.md)).
 
 ## Qué prueba exige cada cambio
