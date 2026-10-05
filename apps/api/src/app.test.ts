@@ -694,7 +694,16 @@ describe('logging', () => {
       new Error('Failed query: insert into users values ($1)\nparams: secreto@ejemplo.com'),
       { name: 'DrizzleQueryError', cause: pgError },
     );
-    for (const e of [drizzle, pgError]) {
+    const bunError = Object.assign(new Error(pgError.message), {
+      ...pgError,
+      code: 'ERR_POSTGRES_SERVER_ERROR',
+      errno: '23505',
+    });
+    const bunDrizzle = Object.assign(new Error(drizzle.message), {
+      name: 'DrizzleQueryError',
+      cause: bunError,
+    });
+    for (const e of [drizzle, pgError, bunError, bunDrizzle]) {
       const out = safeError(e);
       expect(JSON.stringify(out)).not.toMatch(/secreto|insert|duplicate/);
       expect(out.code).toBe('23505');

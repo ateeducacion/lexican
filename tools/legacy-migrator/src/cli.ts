@@ -1,9 +1,9 @@
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import type { Db } from '@lexican/db';
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { type Db, jsonbTextCodec } from '@lexican/db';
+import { SQL } from 'bun';
+import { bunSqlPgCodecs, drizzle } from 'drizzle-orm/bun-sql/postgres';
 import mysql from 'mysql2/promise';
-import pg from 'pg';
 import { loadLegacy } from './legacy.ts';
 import { migrateLegacy } from './migrate.ts';
 import { writeReport } from './report.ts';
@@ -42,10 +42,10 @@ async function main(): Promise<number> {
     charset: 'utf8mb4',
     dateStrings: false,
   });
-  const pool = new pg.Pool({ connectionString: a.target, max: 2 });
+  const client = new SQL({ url: a.target, max: 2 });
   try {
-    const db: Db = drizzle({ client: pool });
-    const { rows } = await pool.query<{ t: string | null }>(
+    const db: Db = drizzle({ client, codecs: { ...bunSqlPgCodecs, jsonb: jsonbTextCodec } });
+    const rows = await client.unsafe<{ t: string | null }[]>(
       `select to_regclass('public.users')::text as t`,
     );
     if (!rows[0]?.t) {
@@ -85,7 +85,7 @@ async function main(): Promise<number> {
     return report.failure ? 1 : 0;
   } finally {
     await legacyConn.end();
-    await pool.end();
+    await client.close();
   }
 }
 

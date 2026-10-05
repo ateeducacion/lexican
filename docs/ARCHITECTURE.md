@@ -13,7 +13,7 @@ flowchart TB
   X --> H[API Hono<br/>packages/http · createApi]
   H --> S[Servicios de aplicación<br/>packages/app]
   S --> C[Dominio y contratos<br/>packages/core]
-  S --> D[Drizzle node-postgres]
+  S --> D[Drizzle Bun.SQL]
   D --> P[(PostgreSQL 18)]
   H --> M[(Volumen de medios<br/>Blob perezoso, rangos HTTP)]
   H --> CAS[CAS 3.0]
@@ -45,7 +45,7 @@ tratamiento de errores, igual que en Docker. PGlite y la API trabajan fuera del 
 |---|---|---|
 | API, rutas, validación, errores, límites | `packages/http` | `packages/http` (idéntico) |
 | Casos de uso y autorización | `packages/app` | `packages/app` (idéntico) |
-| Esquema y migraciones | `packages/db` en node-postgres | `packages/db` en PGlite |
+| Esquema y migraciones | `packages/db` en Bun.SQL | `packages/db` en PGlite |
 | Transporte del cliente | `fetch` HTTP | mensajes al Worker (`demo/transport.ts`) |
 | Sesión (filas `sessions`) | cookie `__Host-sid` `HttpOnly` | identificador opaco en `localStorage`, en el sobre del mensaje |
 | Estado de acceso CAS | cookie `__Host-cas_state` | no aplica (CAS desactivado) |

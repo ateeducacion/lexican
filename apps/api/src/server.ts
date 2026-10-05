@@ -5,8 +5,8 @@ import { openDb, runMigrations } from './db.ts';
 
 /** Production entry point, run by Bun: `bun apps/api/dist/server.js` (image) or `bun apps/api/src/server.ts`. */
 const config = loadConfig();
-const { db, pool } = openDb(config.databaseUrl);
-if (config.migrateOnStart) await runMigrations(pool);
+const { db, client } = openDb(config.databaseUrl);
+if (config.migrateOnStart) await runMigrations(client);
 await mkdir(config.mediaDir, { recursive: true, mode: 0o750 });
 
 const { app, services, log } = buildApp({ config, db });
@@ -34,7 +34,7 @@ for (const signal of ['SIGTERM', 'SIGINT'] as const) {
     const timer = setTimeout(() => process.exit(1), 10_000);
     try {
       await server.stop(); // stop accepting, let in-flight requests finish
-      await pool.end();
+      await client.close();
     } finally {
       clearTimeout(timer);
       process.exit(0);

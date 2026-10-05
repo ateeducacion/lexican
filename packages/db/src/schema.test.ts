@@ -1,6 +1,7 @@
 import { is, sql } from 'drizzle-orm';
 import { getTableConfig, PgTable } from 'drizzle-orm/pg-core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { queryRows } from './db.ts';
 import * as schema from './schema.ts';
 import { openPglite, type TestDb } from './testing.ts';
 
@@ -25,14 +26,17 @@ describe('schema integrity', () => {
   afterAll(() => t.close());
 
   it('the migrations create exactly the foreign keys declared in schema.ts', async () => {
-    const { rows } = (await t.db.execute(sql`
+    const rows = await queryRows<{ t: string; c: string; ft: string; fc: string; del: string }>(
+      t.db,
+      sql`
       select c.conrelid::regclass::text as t, a.attname as c, c.confrelid::regclass::text as ft, af.attname as fc,
              case c.confdeltype when 'c' then 'cascade' when 'n' then 'set null' when 'r' then 'restrict' else 'no action' end as del
       from pg_constraint c
       join pg_attribute a on a.attrelid = c.conrelid and a.attnum = c.conkey[1]
       join pg_attribute af on af.attrelid = c.confrelid and af.attnum = c.confkey[1]
       where c.contype = 'f'
-    `)) as unknown as { rows: { t: string; c: string; ft: string; fc: string; del: string }[] };
+    `,
+    );
     expect(rows.map((r) => `${r.t}.${r.c} → ${r.ft}.${r.fc} (${r.del})`).sort()).toEqual(declared);
     expect(declared).toHaveLength(39);
   });

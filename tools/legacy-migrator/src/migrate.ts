@@ -25,6 +25,7 @@ import {
   entryRevisions,
   entrySenses,
   mediaAssets,
+  queryRows,
   schools,
   seedVocabulary,
   senseMedia,
@@ -152,8 +153,8 @@ const headwordColumns = (h: string) => ({
 });
 
 async function scalar(db: Db, q: SQL): Promise<number> {
-  const r = (await db.execute(q)) as unknown as { rows: { n: number | string | null }[] };
-  return Number(r.rows[0]?.n ?? 0);
+  const [row] = await queryRows<{ n: number | string | null }>(db, q);
+  return Number(row?.n ?? 0);
 }
 
 /** Runs the whole migration in one PostgreSQL transaction (rolled back on dry-run). Never throws: failures go to the report. */

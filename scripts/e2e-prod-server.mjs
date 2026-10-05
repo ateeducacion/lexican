@@ -4,7 +4,7 @@ import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import pg from 'pg';
+import { SQL } from 'bun';
 
 const base = process.env.E2E_DATABASE_URL;
 if (!base) throw new Error('E2E_DATABASE_URL is required');
@@ -22,16 +22,15 @@ if (!existsSync(join(root, 'apps/api/dist/server.js')))
   run('bun', ['run', '--filter', '@lexican/api', 'build']);
 
 const name = `lexican_e2e_${Date.now().toString(36)}`;
-const admin = new pg.Client({ connectionString: base });
-await admin.connect();
+const admin = new SQL({ url: base, max: 1 });
 // Playwright stops web servers with SIGKILL unless `gracefulShutdown` is configured, which skips cleanup.
 // Port 3100 is fixed, so only one run can be live: sweep databases left by earlier runs.
-const stale = await admin.query(
+const stale = await admin.unsafe(
   `select datname from pg_database where datname like 'lexican\\_e2e\\_%'`,
 );
-for (const { datname } of stale.rows)
-  await admin.query(`drop database if exists "${datname}" with (force)`);
-await admin.query(`create database ${name}`);
+for (const { datname } of stale)
+  await admin.unsafe(`drop database if exists "${datname}" with (force)`);
+await admin.unsafe(`create database ${name}`);
 const url = new URL(base);
 url.pathname = `/${name}`;
 const mediaDir = mkdtempSync(join(tmpdir(), 'lexican-e2e-media-'));
@@ -41,8 +40,8 @@ async function cleanup() {
   if (cleaned) return;
   cleaned = true;
   rmSync(mediaDir, { recursive: true, force: true });
-  await admin.query(`drop database if exists ${name} with (force)`).catch((e) => console.error(e));
-  await admin.end().catch(() => {});
+  await admin.unsafe(`drop database if exists ${name} with (force)`).catch((e) => console.error(e));
+  await admin.close().catch(() => {});
 }
 
 const env = {

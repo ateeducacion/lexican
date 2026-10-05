@@ -175,7 +175,7 @@ corte y la vuelta atrás es apuntar de nuevo a él.
 | Prompt | Hecho | Motivo |
 |---|---|---|
 | Paquetes `domain`, `application`, `contracts`, `db`, `auth`, `testing` (§9) | `core`, `db` y `app` | fronteras reales: lo que comparten navegador y servidor sin base de datos, el esquema, y los casos de uso; `auth` es parte de `app`/`api`, `testing` son helpers en `packages/db/src/testing.ts` ([ADR 0002](adr/0002-stack.md)) |
-| Repositorios con interfaces y *adapters* (§18) | servicios sobre Drizzle directamente | un único tipo `Db` sirve para node-postgres y PGlite; las pruebas de contrato recorren la aplicación entera en ambos ([ADR 0003](adr/0003-drizzle-pglite.md)) |
+| Repositorios con interfaces y *adapters* (§18) | servicios sobre Drizzle directamente | un único tipo `Db` sirve para Bun.SQL y PGlite; las pruebas de contrato recorren la aplicación entera en ambos ([ADR 0003](adr/0003-drizzle-pglite.md)) |
 | `migrations/`, `scripts/migration`, `fixtures/demo`, `integration/` (§9) | migraciones en `packages/db/migrations`, migrador en `tools/legacy-migrator`, semilla demo en código, integración junto a la API | menos carpetas; la semilla usa los servicios y cumple las reglas |
 | — | react-router 8.4 (línea 8 GA), no la 7 | versión actual verificada; modo datos con *loaders* en lugar de TanStack Query |
 | Rutas limpias en Pages | *hash routing* en la demo, rutas normales en producción | Pages no tiene reescrituras; evita `404.html` (§60 lo permite) |

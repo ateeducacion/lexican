@@ -25,7 +25,7 @@ Android, sin complicar la arquitectura.
 2. **Servidor**: Bun 1.4.2 ejecuta `apps/api` (`Bun.serve` → `app.fetch`). Fuera del paquete compartido quedan
    cookies `HttpOnly`, cabeceras de seguridad, IP tras proxy de confianza (`proxy-addr`), SPA estática, CAUCE y el
    sistema de archivos. El backend se empaqueta con `bun build` en un bundle autosuficiente (sin `node_modules` en la
-   imagen). `node-postgres` y PGlite comparten Drizzle v1 ([ADR 0003](0003-drizzle-pglite.md)); se conserva ese
+   imagen). `Bun.SQL` y PGlite comparten Drizzle v1 ([ADR 0003](0003-drizzle-pglite.md)); se conserva ese
    driver común sin introducir Bun.SQL.
 3. **Pages**: un **Web Worker dedicado** ejecuta la misma app Hono sobre PGlite (`idb://lexican-demo-v2`). React usa
    el mismo cliente (`apps/web/src/api/client.ts`) con un transporte por mensajes genérico: método, URL, cabeceras y

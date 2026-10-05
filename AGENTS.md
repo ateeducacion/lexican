@@ -31,7 +31,7 @@ Esta versión (2.x) es una reconstrucción completa del Laravel 8 + Voyager orig
 | Biome | `2.5.15` (exacta) | lint, formato y orden de importaciones (`bun run lint`, `bun run fix`, `make lint`, `make fix`); sustituye a ESLint y Prettier |
 | React / Vite / react-router | 19.3 / 8.3 / 8.4 | router en modo datos; sin TanStack Query ni Redux |
 | Hono | `^4.13.13` | la API, la misma en el servidor y en el Worker de la demo ([ADR 0009](docs/adr/0009-hono-bun-worker.md)) |
-| Drizzle ORM / drizzle-kit | `1.0.0-rc.4` / `1.0.0-rc.4` (exactas) | actualizar juntas y revisar las RC; migraciones v3 |
+| Drizzle ORM / drizzle-kit | `1.0.0-rc.5-5935859` / `1.0.0-rc.5-5935859` (exactas) | actualizar juntas y revisar las RC; migraciones v3 |
 | PostgreSQL / PGlite | 18 / 0.5.8 | |
 | Zod | 4 | un esquema para formularios, API, seeds e importación |
 | Vitest / Playwright | 5 / 1.63 + axe | |

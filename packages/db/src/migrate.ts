@@ -10,7 +10,7 @@ async function sha256(text: string): Promise<string> {
 
 /**
  * Apply drizzle-kit migrations from already-loaded SQL (browser bundle or tests). Writes the same
- * `drizzle.__drizzle_migrations` rows and hashes as `drizzle-orm/node-postgres/migrator`, so a database
+ * `drizzle.__drizzle_migrations` rows and hashes as `drizzle-orm/bun-sql/migrator`, so a database
  * migrated here and one migrated by the production CLI are interchangeable.
  */
 export async function migrateBundled(db: Db, sqlByName: Record<string, string>): Promise<void> {

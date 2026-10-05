@@ -39,7 +39,7 @@ describe.skipIf(!server)('database CLIs on PostgreSQL', () => {
   let mediaDir: string;
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
   const count = async (table: string) =>
-    Number((await db.query(`select count(*)::int as n from ${table}`)).rows[0].n);
+    Number((await db.query(`select count(*)::int as n from ${table}`)).rows[0]!.n);
 
   beforeAll(async () => {
     db = await emptyDatabase(server!);

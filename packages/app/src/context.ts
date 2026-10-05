@@ -78,6 +78,6 @@ export async function audit(
 
 /** Postgres unique-violation detection on both drivers. */
 export function isUniqueViolation(e: unknown): boolean {
-  const err = e as { code?: string; cause?: { code?: string } };
-  return err?.code === '23505' || err?.cause?.code === '23505';
+  const err = e as { code?: string; errno?: string; cause?: { code?: string; errno?: string } };
+  return [err, err?.cause].some((error) => error?.code === '23505' || error?.errno === '23505');
 }

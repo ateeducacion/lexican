@@ -14,7 +14,7 @@ const demo = process.argv.includes('--demo');
 if (demo && (process.env.APP_ENV ?? 'production') === 'production')
   throw new Error('--demo is not allowed with APP_ENV=production.');
 const config = loadConfig();
-const { db, pool } = openDb(config.databaseUrl);
+const { db, client } = openDb(config.databaseUrl);
 try {
   await seedVocabulary(db);
   if (demo) {
@@ -38,5 +38,5 @@ try {
   }
   console.warn(demo ? 'Vocabularies and demo data seeded.' : 'Vocabularies seeded.');
 } finally {
-  await pool.end();
+  await client.close();
 }
