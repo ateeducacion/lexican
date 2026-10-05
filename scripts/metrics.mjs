@@ -143,7 +143,7 @@ const modern = {
   tables: countMatches(schema, /pgTable\(/g),
   enums: countMatches(schema, /pgEnum\(/g),
   workflows: walk('.github/workflows', (p) => p.endsWith('.yml')).length,
-  nodeEngine: rootPkg.engines?.node,
+  bunEngine: rootPkg.engines?.bun,
   webProductionBundle: bundle('apps/web/dist'),
   webDemoBundle: bundle('apps/web/dist-demo'),
 };

@@ -11,7 +11,7 @@ const OUT = 'apps/web/public/og-image.jpg';
 const dataUri = (file, mime) => `data:${mime};base64,${readFileSync(file).toString('base64')}`;
 const server = spawn(
   'bunx',
-  ['vite', 'preview', '--mode', 'demo', '--port', String(PORT), '--strictPort'],
+  ['--bun', 'vite', 'preview', '--mode', 'demo', '--port', String(PORT), '--strictPort'],
   {
     cwd: 'apps/web',
     stdio: 'ignore',

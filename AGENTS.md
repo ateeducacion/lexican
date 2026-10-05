@@ -26,8 +26,7 @@ Esta versión (2.x) es una reconstrucción completa del Laravel 8 + Voyager orig
 
 | Pieza | Versión | Nota |
 |---|---|---|
-| Bun | `1.4.2` | gestor de paquetes (`bun.lock` en **`lockfileVersion` 1** para Dependabot: no borrarlo; si hay que regenerarlo, `rm bun.lock && bunx bun@1.3.14 install`; `bun run check:lockfile`), `bun ci`, `linker = "hoisted"` y runtime del servidor (imagen `oven/bun:1.4.2-alpine`); nunca APIs de Bun en paquetes compartidos |
-| Node.js | `>=24` (CI en 24) | solo ejecuta herramientas: Vite, Vitest y Playwright (que no se pasan a Bun) |
+| Bun | `1.4.2` | gestor de paquetes (`bun.lock` en **`lockfileVersion` 1** para Dependabot: no borrarlo; si hay que regenerarlo, `rm bun.lock && bunx bun@1.3.14 install`; `bun run check:lockfile`), `bun ci`, `linker = "hoisted"` y runtime de herramientas y servidor (imagen `oven/bun:1.4.2-alpine`); nunca APIs de Bun en paquetes compartidos |
 | TypeScript | `~6.0` | solo `tsc --noEmit`; TypeScript 7 se adopta en una PR aparte |
 | Biome | `2.5.15` (exacta) | lint, formato y orden de importaciones (`bun run lint`, `bun run fix`, `make lint`, `make fix`); sustituye a ESLint y Prettier |
 | React / Vite / react-router | 19.3 / 8.3 / 8.4 | router en modo datos; sin TanStack Query ni Redux |
