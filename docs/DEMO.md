@@ -18,9 +18,7 @@ producción; solo cambia el transporte (mensajes en vez de HTTP). Decisiones: [A
 ## Cuentas
 
 Aparecen debajo del formulario de acceso, cada una con un botón «Entrar como…» (acceso rápido). Fuente:
-`packages/core/src/demo.ts`. Además, «Entrar con CAS de pruebas» lleva al CAS público de pruebas (`alice` → profesora,
-`bob` → alumno 1); con ese servidor la validación desde el navegador está bloqueada por CORS y la demo lo indica
-([AUTHENTICATION.md](AUTHENTICATION.md#github-pages)).
+`packages/core/src/demo.ts`. La demo estática solo permite estas cuentas ficticias; no ofrece acceso CAS.
 
 | Cuenta | Correo | Contraseña | Rol |
 |---|---|---|---|
@@ -59,12 +57,12 @@ La semilla se ejecuta una sola vez y marca `app_settings.demo_seed_version`.
   tamaño, hash y clave. Al actualizar desde la versión anterior, el Worker copia los bytes de `media_blobs` a ese
   almacén antes de que la migración 0001 elimine la tabla: no se pierden datos.
 - Sesión: clave `lexican-demo-sid` de `localStorage` (identificador opaco de una fila `sessions` de la base del
-  navegador). Acceso CAS pendiente: `sessionStorage` (`lexican-demo-cas-state`).
-- Al recargar o volver del CAS se conservan datos y sesión. Nada depende de `beforeunload`.
+  navegador).
+- Al recargar se conservan datos y sesión. Nada depende de `beforeunload`.
 - Semilla versionada (`app_settings.demo_seed_version`): se siembra y se calculan las contraseñas una sola vez.
 - **Restablecer datos de demostración** (en el aviso de demostración, con confirmación) detiene las peticiones nuevas,
   espera a las que están en curso, cierra PGlite y borra **solo** `/pglite/lexican-demo-v2`, `lexican-demo-media`, la
-  sesión, el acceso CAS pendiente y las URL `blob:`; después recarga y siembra de nuevo.
+  sesión y las URL `blob:`; después recarga y siembra de nuevo.
 
 ## Arranque, estado y errores
 
@@ -85,8 +83,7 @@ La semilla se ejecuta una sola vez y marca `app_settings.demo_seed_version`.
 - En WebKit con navegación privada, IndexedDB no admite Blobs: los medios se guardan como `ArrayBuffer`.
 - La primera carga descarga el WASM de PGlite (≈5 MB comprimidos) después de pintar la pantalla de acceso; PGlite y la
   API trabajan en el Worker, no en el hilo de la interfaz.
-- Sin CAUCE, correo ni servidor. La única comunicación externa deliberada es el CAS público de pruebas, y solo si se
-  pulsa «Entrar con CAS de pruebas». Los E2E fallan si la página pide algo más fuera de su origen.
+- Sin CAUCE, correo ni servidor. La demo no hace peticiones fuera de su origen; los E2E lo comprueban.
 - No sustituye a las pruebas de Docker: ver la tabla «Qué valida Pages y qué solo valida Docker» en
   [AUTHENTICATION.md](AUTHENTICATION.md).
 - Los datos no se comparten entre navegadores ni dispositivos.
@@ -122,6 +119,4 @@ La emulación de Pixel de Playwright no prueba un Android real. Recorrido en Chr
 4. Cerrar la pestaña, volver a abrir la demo: la palabra y el audio siguen ahí y se reproducen.
 5. Salir y entrar como alumna 2: el audio del alumno 1 no aparece en su diccionario.
 6. Abrir la demo en una segunda pestaña: debe aparecer el aviso «La demo ya está abierta en otra pestaña».
-7. «Entrar con CAS de pruebas» → `bob` / `pwd` en casserverpac4j.dev: al volver debe verse el aviso de CORS (limitación
-   del servidor), sin sesión.
-8. «Restablecer datos de demostración»: vuelve a los datos de ejemplo.
+7. «Restablecer datos de demostración»: vuelve a los datos de ejemplo.

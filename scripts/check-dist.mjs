@@ -1,7 +1,6 @@
 // Guards the published bundles (§87, §59). Every text file is scanned: JS chunks, the demo Web Worker chunk, CSS,
 // HTML and sourcemaps (whose embedded sources would leak anything the code contains).
-// - demo (apps/web/dist-demo): static, no secrets, no internal hosts; the public test CAS host is the one external
-//   address allowed, and only here;
+// - demo (apps/web/dist-demo): static, no secrets, no internal hosts; no external authentication;
 // - production web (apps/web/dist): no PGlite, WASM, worker, demo API or demo passwords (it may name the test CAS:
 //   the same SPA serves the local Docker profile; the server decides, and refuses it in production);
 // - API bundle (apps/api/dist): no secrets, no test CAS host baked in except as the APP_ENV=local default.

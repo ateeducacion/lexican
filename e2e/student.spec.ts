@@ -2,7 +2,7 @@ import { expect, expectAccessible, test } from './fixtures.ts';
 import { createEntry, findAndOpen, sendToClassroom } from './student-steps.ts';
 
 test.describe('student', () => {
-  test('login page explains the demo, is accessible and logs in with one click', async ({
+  test('login page offers only demo accounts, is accessible and logs in with one click @mobile', async ({
     page,
     app,
   }) => {
@@ -10,6 +10,9 @@ test.describe('student', () => {
     await app.goto('/entrar');
     await expect(page.getByRole('heading', { name: 'Cuentas de demostración' })).toBeVisible();
     await expect(page.getByText(/se guardan únicamente en este navegador/).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: /CAS/ })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: /CAS|usuario educativo/ })).toHaveCount(0);
+    await expect(page.getByText('www.casserverpac4j.dev')).toHaveCount(0);
     await expectAccessible(page);
     await page.getByRole('button', { name: 'Entrar como alumno 1' }).click();
     await expect(page.getByRole('button', { name: 'Desconectar' })).toBeVisible({

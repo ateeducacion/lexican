@@ -1,6 +1,6 @@
 // Serves apps/web/dist-demo like GitHub Pages does for a project site: files under /lexican/, `index.html` for a
 // directory, a plain 404 otherwise. No SPA fallback and no rewrites (unlike `vite preview`), so the E2E prove that
-// the demo, its worker, WASM assets and the CAS callback URL work from static hosting.
+// the demo, its worker and WASM assets work from static hosting.
 // Usage: bun scripts/static-pages-server.mjs [port]
 import { createReadStream, statSync } from 'node:fs';
 import { createServer } from 'node:http';

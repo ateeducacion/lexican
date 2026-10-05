@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 import { PGlite } from '@electric-sql/pglite';
-import { demoSeedVersion, seedDemo, testDirectory } from '@lexican/app';
+import { demoSeedVersion, seedDemo } from '@lexican/app';
 import { type Db, type Journal, migrateBundled, schema } from '@lexican/db';
 import { createApi, safeError } from '@lexican/http';
 import { drizzle } from 'drizzle-orm/pglite';
@@ -90,12 +90,11 @@ async function start() {
   // Versioned and idempotent: seeded once per browser (passwords hashed once), never on later visits.
   if ((await demoSeedVersion(db)) === null) await seedDemo(deps, await demoImages());
   else await seedDemo(deps);
-  const base = `${self.location.origin}${import.meta.env.BASE_URL}`;
   const api = createApi({
     db,
     media,
     carrier,
-    directory: testDirectory(),
+    directory: null,
     clientIp: () => 'local',
     log: {
       info: () => undefined,
@@ -111,17 +110,7 @@ async function start() {
       loginRateLimit: 1000,
       maxUploadBytes: 10 * 1024 * 1024,
       mediaQuotaBytesPerDay: 100 * 1024 * 1024,
-      cas: {
-        url: import.meta.env.VITE_CAS_URL || 'https://www.casserverpac4j.dev',
-        loginPath: '/login',
-        validatePath: '/p3/serviceValidate',
-        logoutPath: '/logout',
-        // A real file served by Pages under the base path (no server rewrite needed); see transport.ts.
-        serviceUrl: `${base}?cas=callback`,
-        afterLogoutUrl: base,
-        provider: 'cas_test',
-        sloHosts: null, // a static site cannot receive back-channel logout
-      },
+      cas: null,
     },
   });
   await api.services.media.sweepOrphans();

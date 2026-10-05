@@ -48,20 +48,13 @@ export default defineConfig({
   webServer: [
     {
       // A strict static server like GitHub Pages (no SPA fallback): see scripts/static-pages-server.mjs.
-      // The E2E demo build points its test-CAS button at a local fake CAS (real cross-origin CORS); the published
-      // build uses the public test CAS. Nothing else differs.
       // E2E_DEMO_PREBUILT: test the already-built artifact as is (Pages workflow).
       command: process.env.E2E_DEMO_PREBUILT
         ? 'bun scripts/static-pages-server.mjs 4317'
-        : 'VITE_CAS_URL=http://localhost:4318 bun run build:demo && bun scripts/static-pages-server.mjs 4317',
+        : 'bun run build:demo && bun scripts/static-pages-server.mjs 4317',
       url: 'http://localhost:4317/lexican/',
       reuseExistingServer: !CI,
       timeout: 180_000,
-    },
-    {
-      command: 'bun scripts/fake-cas-server.mjs 4318',
-      url: 'http://localhost:4318/health',
-      reuseExistingServer: !CI,
     },
     ...(prod
       ? [

@@ -14,13 +14,11 @@ export async function loader() {
   return null;
 }
 
-/** Messages for `?error=` after a CAS login attempt (set by the API, server or demo worker). */
+/** Messages for `?error=` after a CAS login attempt (set by the server). */
 const CAS_ERRORS: Record<string, string> = {
   cas: 'No se ha podido completar el acceso con CAS. Vuelve a intentarlo desde el principio.',
   forbidden: 'Tu usuario no está autorizado en LexiCán o la cuenta está desactivada.',
-  unavailable: __DEMO__
-    ? 'No se ha podido validar el ticket con el CAS de pruebas desde el navegador. Puede ser un fallo de red o que ese servidor no permita leer su respuesta desde otro sitio web (CORS): así ocurría cuando se comprobó. Usa las personas ficticias de abajo o el despliegue con Docker.'
-    : 'El servicio de acceso no responde. Inténtalo de nuevo más tarde.',
+  unavailable: 'El servicio de acceso no responde. Inténtalo de nuevo más tarde.',
 };
 
 type Providers = { cas: 'institutional' | 'test' | null; password: boolean };
@@ -35,10 +33,10 @@ export function Component() {
   const [password, setPassword] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [providers, setProviders] = useState<Providers>({
-    cas: __DEMO__ ? 'test' : 'institutional',
+    cas: __DEMO__ ? null : 'institutional',
     password: __DEMO__,
   });
-  const casError = CAS_ERRORS[params.get('error') ?? ''];
+  const casError = !__DEMO__ && CAS_ERRORS[params.get('error') ?? ''];
 
   useEffect(() => {
     if (__DEMO__) {
@@ -99,7 +97,7 @@ export function Component() {
             </a>
           </p>
         )}
-        {providers.cas === 'test' && <TestCas />}
+        {!__DEMO__ && providers.cas === 'test' && <TestCas />}
         {providers.password && (
           <form onSubmit={submit} noValidate>
             <Field label="Correo electrónico" error={fieldErrors.email}>
@@ -172,38 +170,15 @@ export function Component() {
   );
 }
 
-/**
- * Public test CAS (casserverpac4j.dev): real CAS protocol with fictitious accounts. Server: a link to the API.
- * Demo: the worker prepares the login state and the page navigates to the CAS server in the same tab.
- */
+/** Public test CAS for the local server; never shown in the static demo. */
 function TestCas() {
-  const start = useAction(async () => {
-    const api = await getApi();
-    await api.startCasLogin?.();
-  });
-  const logout = useAction(async () => {
-    const api = await getApi();
-    await api.casLogout?.();
-  });
   return (
     <div className={styles.testCas}>
       <p>
-        {__DEMO__ ? (
-          <button
-            type="button"
-            className="btn btn-primary"
-            disabled={start.busy}
-            onClick={() => void start.run()}
-          >
-            Entrar con CAS de pruebas
-          </button>
-        ) : (
-          <a className="btn btn-primary" href="/api/auth/cas/login">
-            Entrar con CAS de pruebas
-          </a>
-        )}
+        <a className="btn btn-primary" href="/api/auth/cas/login">
+          Entrar con CAS de pruebas
+        </a>
       </p>
-      <ErrorMessage error={start.error} />
       <p className="small">
         Servidor CAS público de pruebas <strong>www.casserverpac4j.dev</strong>, ajeno a la
         Consejería. Usa sus cuentas de ejemplo <code>alice</code> / <code>pwd</code> (profesora) o{' '}
@@ -211,18 +186,7 @@ function TestCas() {
         <strong>No escribas nunca tu usuario ni tu contraseña educativos en ese servidor.</strong>
       </p>
       <p className="small">
-        {__DEMO__ ? (
-          <button
-            type="button"
-            className="btn btn-sm"
-            disabled={logout.busy}
-            onClick={() => void logout.run()}
-          >
-            Cerrar también la sesión del CAS de pruebas
-          </button>
-        ) : (
-          <a href="/api/auth/cas/logout">Cerrar también la sesión del CAS de pruebas</a>
-        )}
+        <a href="/api/auth/cas/logout">Cerrar también la sesión del CAS de pruebas</a>
       </p>
     </div>
   );

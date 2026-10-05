@@ -1,7 +1,6 @@
 import type { UserView, VocabularyValue } from '@lexican/core';
 import { redirect, useRouteLoaderData } from 'react-router';
 import { getApi } from './api/index.ts';
-import { takeCasCallback } from './demo/cas-callback.ts';
 import { readDemoSession } from './demo/session.ts';
 
 export interface RootData {
@@ -14,12 +13,6 @@ let vocabCache: VocabularyValue[] | null = null;
 /** Root loader: who is signed in, plus the controlled vocabularies (cached for the session). */
 export async function rootLoader(): Promise<RootData> {
   if (__DEMO__) {
-    // Back from the test CAS: the worker validates the ticket once and says where to go.
-    const callback = takeCasCallback();
-    if (callback) {
-      const to = await (await getApi()).completeCasLogin!(callback);
-      if (to !== '/') throw redirect(to);
-    }
     // Demo without a session: render immediately; PGlite starts loading from the login page.
     if (!readDemoSession()) return { user: null, vocab: [] };
   }

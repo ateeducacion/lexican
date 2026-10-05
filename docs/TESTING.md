@@ -11,7 +11,7 @@
 | Transporte del Worker (Hono + PGlite) | Vitest | `apps/web/src/demo/transport.test.ts`: el bucle real del Worker y la API Hono sobre PGlite con un `Worker` simulado; JSON, errores, sesión, multipart y binarios, concurrencia, *timeout* sin reintento, cancelación, caída, errores de arranque; y que React no llama a los servicios | `bun run test` |
 | Medios | Vitest | `packages/app/src/media.test.ts`: tipos por contenido con audios sintéticos (`fixtures/media/`) | `bun run test` |
 | Migración legacy | Vitest + MariaDB + PostgreSQL | `tools/legacy-migrator/src/transform.test.ts` (transformaciones puras), `migrate.test.ts` (fixture MariaDB → migrador → PostgreSQL) | `bun run test:migration` |
-| E2E demo | Playwright | `e2e/*.spec.ts` sobre el build de Pages en `/lexican/`, servido por un servidor estático estricto; `media.spec.ts` (audio: subir, reproducir, pausar, desplazarse, recargar, volver a entrar), `cas.spec.ts` (`@fakecas`), `demo-engine.spec.ts` (segunda pestaña) | `bun run e2e:demo` |
+| E2E demo | Playwright | `e2e/*.spec.ts` sobre el build de Pages en `/lexican/`, servido por un servidor estático estricto; `media.spec.ts` (audio: subir, reproducir, pausar, desplazarse, recargar, volver a entrar), `student.spec.ts` (acceso sin CAS), `demo-engine.spec.ts` (segunda pestaña) | `bun run e2e:demo` |
 | E2E producción | Playwright | `e2e/smoke-prod.spec.ts` (y los demás) contra web + API + PostgreSQL | `E2E_DATABASE_URL=… bun run e2e` |
 
 `bun run test` ejecuta **todas** las pruebas Vitest (`{apps,packages,tools}/*/src/**/*.test.ts`); los otros comandos son
@@ -40,13 +40,9 @@ identificador nacional. Sin esas variables se omite. Ver [MIGRATION.md](MIGRATIO
 
 - Proyectos: `demo-chromium`, `demo-firefox`, `demo-webkit`, `demo-mobile` (Pixel 7, solo pruebas marcadas
   `@mobile`) y, si existe `E2E_DATABASE_URL`, `prod-chromium`.
-- Demo: Playwright compila la demo con `VITE_CAS_URL=http://localhost:4318` y la sirve con
+- Demo: Playwright compila la demo y la sirve con
   `scripts/static-pages-server.mjs` (como GitHub Pages: sin *fallback* ni reescrituras) en
   `http://localhost:4317/lexican/`. Con `E2E_DEMO_PREBUILT=1` prueba el artefacto ya compilado tal cual (Pages).
-- CAS falso: `scripts/fake-cas-server.mjs` en `http://localhost:4318`, **otro origen**, para que el navegador aplique
-  CORS de verdad (la intercepción `route.fulfill` de Playwright no lo aplica a las peticiones del Worker). Emite y
-  valida tickets de un solo uso ligados al servicio exacto. Es solo de pruebas; el botón de la aplicación usa el CAS
-  público. Las pruebas contra el CAS público son manuales ([AUTHENTICATION.md](AUTHENTICATION.md)).
 - `demo-mobile` emula un Pixel 7: **no** demuestra el funcionamiento en un Android real (recorrido manual en
   [DEMO.md](DEMO.md)).
 - Producción: `scripts/e2e-prod-server.mjs` crea una base temporal en `E2E_DATABASE_URL`, compila web y API si faltan,

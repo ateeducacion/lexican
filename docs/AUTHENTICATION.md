@@ -135,23 +135,9 @@ ticket desde el servidor: funciona de extremo a extremo (comprobado el 2026-10-0
 
 ### GitHub Pages
 
-Sin servidor propio:
-
-1. «Entrar con CAS de pruebas» pide al Worker `GET /api/auth/cas/login`. El Worker genera el `state` (5 min) y responde
-   `302`; la página guarda el `state` en `sessionStorage` (sobrevive a la navegación, muere con la pestaña) y navega
-   en la misma pestaña al CAS (solo a ese origen).
-2. Servicio: `https://ateeducacion.github.io/lexican/?cas=callback&state=S`, la propia raíz de la demo (un fichero que
-   Pages sirve siempre, también al recargar; sin reescrituras ni `#`).
-3. Al volver, `main.tsx` saca `ticket` y `state` de la barra de direcciones **antes de pintar nada** y los conserva solo
-   en memoria. El Worker comprueba el `state` (un solo uso), valida el ticket con el mismo cliente CAS, resuelve la
-   ficha y abre la sesión; la página navega a `/` o a `/entrar?error=…`.
-4. **Limitación comprobada (2026-10-04)**: `serviceValidate` del CAS público no envía `Access-Control-Allow-Origin`;
-   Chrome bloquea la lectura desde `https://ateeducacion.github.io`. Por tanto, **con ese servidor la validación desde
-   Pages no es posible** y la demo muestra un aviso (sin conceder acceso). No se usan proxies CORS, `no-cors` ni
-   simulaciones. El flujo completo está probado con un CAS falso que sí permite CORS (`e2e/cas.spec.ts`,
-   `scripts/fake-cas-server.mjs`). Si el servidor añade CORS, funcionará sin cambios.
-5. Pages no puede recibir SLO por *back-channel*. «Cerrar también la sesión del CAS de pruebas» cierra la sesión local
-   y navega al `logout` del CAS.
+La demo estática no ofrece acceso CAS: solo usa las cuentas ficticias de demostración. El CAS público de pruebas
+se mantiene en Docker local, donde la API valida los tickets desde el servidor. Pages no puede recibir SLO por
+*back-channel*.
 
 ## Demo: cuentas ficticias
 
@@ -166,7 +152,7 @@ puede fijar cookies). Solo decide qué usuario ficticio actúa; **no es una fron
 | Rutas, validación, errores y serialización de la API | Cookies `HttpOnly`/`Secure`/`__Host-` reales y CSRF por `Origin` |
 | Autorización de cada operación (mismos servicios) | TLS, proxy inverso y `TRUST_PROXY` |
 | Filas de sesión, caducidad y rotación | Sesiones compartidas entre dispositivos; aislamiento real entre usuarios |
-| Flujo CAS del lado del cliente (con un CAS que permita CORS) | Validación contra el CAS público e institucional; CAUCE |
+| Acceso con cuentas ficticias | Validación CAS contra el servidor público e institucional; CAUCE |
 | Subida, tipos y cuotas de medios | SLO por *back-channel*; *streaming* y rangos desde el volumen |
 | Migraciones sobre PostgreSQL (WASM) | Concurrencia de PostgreSQL con varios usuarios |
 
