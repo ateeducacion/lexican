@@ -4,15 +4,13 @@
  * copy of the bytes, in current engines; never base64 or number arrays).
  */
 
-/** Demo session context. A Worker cannot set cookies, so the opaque session id and the CAS login state travel here. */
+/** Demo session context. A Worker cannot set cookies, so the opaque session id travels here. */
 export interface DemoContext {
   session: string | null;
-  casState: { value: string; exp: number } | null;
 }
 /** Changes to apply after a response; `undefined` means unchanged. */
 export interface DemoContextUpdate {
   session?: string | null;
-  casState?: { value: string; exp: number } | null;
 }
 
 export type ToWorker =

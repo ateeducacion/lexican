@@ -1,7 +1,7 @@
 import { createApiClient, type Transport } from '../api/client.ts';
 import { ApiError, type WebApi } from '../api/types.ts';
 import type { DemoContextUpdate, FromWorker, InitErrorCode, ToWorker } from './protocol.ts';
-import { readCasState, readDemoSession, writeCasState, writeDemoSession } from './session.ts';
+import { readDemoSession, writeDemoSession } from './session.ts';
 import { setDemoStatus } from './status.ts';
 
 /** Bodies that must be null in a Response. */
@@ -167,7 +167,7 @@ export function createWorkerTransport(worker: Worker, opts: WorkerTransportOptio
         url: url.pathname + url.search,
         headers: [...req.headers],
         body: body && body.size > 0 ? body : null,
-        ctx: { session: readDemoSession(), casState: readCasState() },
+        ctx: { session: readDemoSession() },
       },
       upload ? uploadTimeoutMs : timeoutMs,
       req.signal,
@@ -176,7 +176,6 @@ export function createWorkerTransport(worker: Worker, opts: WorkerTransportOptio
       throw new ApiError('internal', 'Ha ocurrido un error inesperado en la demo.');
     if (m.type !== 'response') throw new ApiError('internal', 'Respuesta inesperada de la demo.');
     if (m.update.session !== undefined) writeDemoSession(m.update.session);
-    if (m.update.casState !== undefined) writeCasState(m.update.casState);
     opts.onUpdate?.(m.update);
     return new Response(NULL_BODY.has(m.status) ? null : m.body, {
       status: m.status,
@@ -196,25 +195,8 @@ export function createWorkerTransport(worker: Worker, opts: WorkerTransportOptio
   };
 }
 
-/** Same-tab navigation to an address the worker answered with, only towards the configured CAS server. */
-function navigateToCas(res: Response, path: string) {
-  const to = res.headers.get('location');
-  const cas = new URL(import.meta.env.VITE_CAS_URL || 'https://www.casserverpac4j.dev');
-  const target = to ? new URL(to) : null;
-  if (
-    res.status !== 302 ||
-    !target ||
-    target.origin !== cas.origin ||
-    !target.pathname.endsWith(path)
-  )
-    throw new ApiError('unavailable', 'El acceso con CAS de pruebas no está disponible.');
-  location.assign(target.href);
-}
-
-/** The demo API: the common client over the worker transport, plus demo-only helpers. */
-export function demoApi(): WebApi & {
-  completeCasLogin(p: { ticket: string | null; state: string | null }): Promise<string>;
-} {
+/** The demo API: the common client over the worker transport, plus reset. */
+export function demoApi(): WebApi {
   const worker = new Worker(new URL('./worker.ts', import.meta.url), {
     type: 'module',
     name: 'lexican-demo',
@@ -240,7 +222,6 @@ export function demoApi(): WebApi & {
       return u;
     },
   });
-  const abs = (p: string) => new URL(p, location.origin).href;
   return {
     ...api,
     async resetDemo() {
@@ -257,25 +238,7 @@ export function demoApi(): WebApi & {
         return;
       }
       writeDemoSession(null);
-      writeCasState(null);
       location.reload();
-    },
-    async startCasLogin() {
-      navigateToCas(await t.fetch(new Request(abs('/api/auth/cas/login'))), '/login');
-    },
-    async casLogout() {
-      const res = await t.fetch(new Request(abs('/api/auth/cas/logout')));
-      revokeAll();
-      navigateToCas(res, '/logout');
-    },
-    async completeCasLogin({ ticket, state }) {
-      const q = new URLSearchParams();
-      if (ticket) q.set('ticket', ticket);
-      if (state) q.set('state', state);
-      const res = await t.fetch(new Request(abs(`/api/auth/cas/callback?${q}`)));
-      const to = res.headers.get('location') ?? '';
-      // Only in-app destinations (no open redirect).
-      return to.startsWith('/') && !to.startsWith('//') ? to : '/entrar?error=cas';
     },
   };
 }

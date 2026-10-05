@@ -73,7 +73,7 @@ jobs:
       - run: bun run check:dist
 
       - run: bunx playwright install --with-deps chromium firefox
-      # Demo against a Pages-like static server and a local fake CAS; production E2E on Bun + PostgreSQL.
+      # Demo against a Pages-like static server; production E2E on Bun + PostgreSQL.
       - run: bun run e2e --project=demo-chromium --project=demo-firefox --project=demo-mobile --project=prod-chromium
         env:
           E2E_DATABASE_URL: postgres://lexican:lexican@localhost:5432/postgres

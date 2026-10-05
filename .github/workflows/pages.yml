@@ -45,9 +45,9 @@ jobs:
       - run: bun run build:demo
       - run: bun run check:dist
 
-      # Essential journeys on the very artifact to deploy (the fake-CAS tests need their own build: ci.yml).
+      # Essential journeys on the very artifact to deploy.
       - run: bunx playwright install --with-deps chromium
-      - run: bun run e2e --project=demo-chromium --grep-invert @fakecas
+      - run: bun run e2e --project=demo-chromium
         env:
           E2E_DEMO_PREBUILT: '1'
 

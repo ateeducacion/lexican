@@ -6,6 +6,9 @@
   el hilo principal, `media_blobs`), [ADR 0005](0005-autenticacion.md) (`CAS_BASE_URL`, `NODE_ENV`) y
   [ADR 0007](0007-medios-y-exportacion.md) (lectura completa de medios).
 
+> Actualización (2026-10-05): se retira el acceso CAS de GitHub Pages y su flujo en el navegador. La demo usa solo
+> cuentas ficticias. Docker local conserva el CAS público de pruebas; el resto de esta decisión sigue vigente.
+
 ## Contexto
 
 La demo de Pages llamaba a los servicios directamente desde React, sin pasar por la API: no comprobaba rutas,

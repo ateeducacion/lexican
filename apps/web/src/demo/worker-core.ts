@@ -11,7 +11,7 @@ export type Fetcher = {
 
 type Bindings = { ctx: DemoContext; update: DemoContextUpdate };
 
-/** The session id and CAS state live in the page (localStorage / sessionStorage) and ride on each message. */
+/** The session id lives in the page (localStorage) and rides on each message. */
 const env = (c: { env: unknown }) => c.env as Bindings;
 export const demoCarrier: SessionCarrier = {
   getSession: (c) => env(c).ctx.session ?? undefined,
@@ -21,16 +21,10 @@ export const demoCarrier: SessionCarrier = {
   clearSession: (c) => {
     env(c).update.session = null;
   },
-  getCasState: (c) => {
-    const s = env(c).ctx.casState;
-    return s && s.exp > Date.now() ? s.value : undefined;
-  },
-  setCasState: (c, value, maxAgeS) => {
-    env(c).update.casState = { value, exp: Date.now() + maxAgeS * 1000 };
-  },
-  clearCasState: (c) => {
-    env(c).update.casState = null;
-  },
+  // CAS is disabled in the static demo.
+  getCasState: () => undefined,
+  setCasState: () => undefined,
+  clearCasState: () => undefined,
 };
 
 /**

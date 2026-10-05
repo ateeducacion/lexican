@@ -48,10 +48,10 @@ tratamiento de errores, igual que en Docker. PGlite y la API trabajan fuera del 
 | Esquema y migraciones | `packages/db` en node-postgres | `packages/db` en PGlite |
 | Transporte del cliente | `fetch` HTTP | mensajes al Worker (`demo/transport.ts`) |
 | Sesión (filas `sessions`) | cookie `__Host-sid` `HttpOnly` | identificador opaco en `localStorage`, en el sobre del mensaje |
-| Estado de acceso CAS | cookie `__Host-cas_state` | `sessionStorage` |
+| Estado de acceso CAS | cookie `__Host-cas_state` | no aplica (CAS desactivado) |
 | CSRF (`Origin`) | comprobado | no aplica: solo esta página habla con su Worker |
 | Medios | volumen (`openAsBlob`), `/media/:id` con rangos | Blobs en IndexedDB → URL `blob:` |
-| Perfiles CAS | CAUCE (producción) o fichas de prueba (`APP_ENV=local`) | fichas de prueba |
+| Perfiles CAS | CAUCE (producción) o fichas de prueba (`APP_ENV=local`) | no aplica (solo cuentas ficticias) |
 | SLO por *back-channel* | sí | imposible en un sitio estático |
 | IP de cliente | socket + `X-Forwarded-For` solo por proxies de confianza | constante `local` |
 
@@ -65,8 +65,8 @@ Añadir una funcionalidad = una entrada en la tabla + un caso de uso en `package
 
 ### Excepciones al «todo es una petición»
 
-- Las navegaciones de acceso (ir al CAS y volver) no son peticiones de datos: en Docker son enlaces reales; en Pages
-  el Worker responde `302` y la página navega solo hacia el CAS configurado (`demo/transport.ts`).
+- Las navegaciones de acceso (ir al CAS y volver) no son peticiones de datos: en Docker son enlaces reales. Pages
+  solo permite el acceso con cuentas ficticias, sin CAS.
 - Los medios: en Docker `<audio>`/`<img>` cargan `/media/:id` directamente (rangos, *streaming*); en Pages se piden
   por el transporte y se muestran como URL `blob:`, que se revocan al cambiar de identidad o restablecer la demo.
 
@@ -84,7 +84,7 @@ packages/core, packages/app, packages/http: solo APIs web (sin node:*, pg ni Bun
 
 | Ruta | Quién | Qué |
 |---|---|---|
-| `/entrar` | todos | acceso (CAS institucional en producción; CAS de pruebas y cuentas ficticias en local y en la demo) |
+| `/entrar` | todos | acceso (CAS institucional en producción; CAS de pruebas y cuentas ficticias en local; solo cuentas ficticias en la demo) |
 | `/mi-diccionario` | todos | espacio de trabajo en tres columnas: lista con buscador, abecedario, temáticas y estado de cada entrada; ficha de lectura; panel lateral con estado en las aulas, comentarios y exportación. En móvil, lista y ficha por separado con navegación inferior |
 | `/mi-diccionario/entradas/:id` | propietario | la misma vista con la entrada abierta |
 | `/mi-diccionario/nueva`, `/mi-diccionario/entradas/:id/editar` | propietario | editor estructurado: esquema de la entrada, tarjetas de acepción, vista previa y comprobación de las pautas del aula antes de enviar |

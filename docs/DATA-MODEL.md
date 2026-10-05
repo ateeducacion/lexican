@@ -30,7 +30,7 @@ erDiagram
 | Tabla | Propósito | Notas |
 |---|---|---|
 | `users` | persona usuaria | `display_name`, nombre, apellidos, avatar, `global_role` (`student`, `teacher`, `admin`, `support`), `status`. **Sin** NIF/NIE/pasaporte/CIAL |
-| `auth_identities` | identidad de acceso | `provider` `cas` (sujeto del CAS institucional), `cas_test` (sujeto del CAS de pruebas; solo local/demo) o `password` (solo demo/dev, PBKDF2). Único por `(provider, subject)`: emisores distintos nunca comparten cuenta |
+| `auth_identities` | identidad de acceso | `provider` `cas` (sujeto del CAS institucional), `cas_test` (sujeto del CAS de pruebas; solo local) o `password` (solo demo/dev, PBKDF2). Único por `(provider, subject)`: emisores distintos nunca comparten cuenta |
 | `sessions` | sesiones de la API | *hash* del identificador, caducidad, ticket CAS para SLO |
 | `schools`, `user_schools` | centros (CAUCE) | solo estadísticas |
 | `vocabulary_values` | listas controladas | `vocabulary` ∈ categoría gramatical, género, número, lenguas, temáticas, niveles, materias, enseñanzas, tipos de diccionario; `code` estable |

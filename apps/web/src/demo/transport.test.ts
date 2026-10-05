@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { memoryMediaStorage, seedDemo, testDirectory } from '@lexican/app';
+import { memoryMediaStorage, seedDemo } from '@lexican/app';
 import { openPglite, type TestDb } from '@lexican/db/testing';
 import { createApi } from '@lexican/http';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -59,7 +59,7 @@ beforeAll(async () => {
     db: t.db,
     media,
     carrier: demoCarrier,
-    directory: testDirectory(),
+    directory: null,
     clientIp: () => 'local',
     log: { info: () => undefined, warn: () => undefined, error: () => undefined },
     config: {
@@ -78,7 +78,6 @@ afterAll(() => t?.close());
 beforeEach(() => {
   vi.stubGlobal('location', { origin: ORIGIN, assign: vi.fn(), reload: vi.fn() });
   vi.stubGlobal('localStorage', storage());
-  vi.stubGlobal('sessionStorage', storage());
 });
 afterEach(() => vi.unstubAllGlobals());
 
@@ -129,6 +128,17 @@ describe('worker transport', () => {
     await api.logout({});
     expect(localStorage.getItem('lexican-demo-sid')).toBeNull();
     expect(await api.me({})).toEqual({ user: null });
+  });
+
+  it('disables CAS providers and login routes in the demo', async () => {
+    const { tr } = clientFor(realWorker());
+    const providers = await tr.fetch(new Request(`${ORIGIN}/api/auth/providers`));
+    expect(await providers.json()).toEqual({ cas: null, password: true });
+    for (const path of ['login', 'callback']) {
+      const res = await tr.fetch(new Request(`${ORIGIN}/api/auth/cas/${path}`));
+      expect(res.status).toBe(404);
+      expect(res.headers.has('location')).toBe(false);
+    }
   });
 
   it('uploads multipart binaries (name, type, boundary) and returns media as Blobs, not copies in JSON', async () => {

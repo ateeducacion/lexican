@@ -18,7 +18,6 @@
     "dev": "bun run --filter @lexican/web dev",
     "dev:demo": "bun run --filter @lexican/web dev:demo",
     "dev:api": "bun run --filter @lexican/api dev",
-    "fake-cas": "bun scripts/fake-cas-server.mjs 4318",
     "build": "bun run --filter @lexican/web build && bun run --filter @lexican/api build",
     "build:demo": "bun run --filter @lexican/web build:demo",
     "preview:demo": "bun scripts/static-pages-server.mjs 4317",
