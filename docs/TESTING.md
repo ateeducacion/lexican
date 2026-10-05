@@ -5,7 +5,8 @@
 | Nivel | Herramienta | Dónde | Comando |
 |---|---|---|---|
 | Unitarias de dominio | Vitest | `packages/core/src/*.test.ts` (curso escolar y vigencia, texto, contratos Zod, exportación DMLex validada con Ajv) | `bun run test` |
-| Contrato de persistencia y aplicación | Vitest + PGlite + PostgreSQL | `packages/app/src/services.contract.test.ts`, `demo-seed.test.ts`, `packages/db/src/migrate.test.ts` | `bun run test:contracts` |
+| Contrato de aplicación | Vitest + PGlite + PostgreSQL (Bun.SQL) | `packages/app/src/services.contract.test.ts`, `demo-seed.test.ts` | `bun run test:contracts` |
+| Contrato de drivers y migraciones | Vitest + PGlite + PostgreSQL (Bun.SQL) | `packages/db/src/drivers.contract.test.ts`, `migrate.test.ts` | `bun run test` |
 | API compartida | Vitest | `packages/http/src/cas.test.ts` (URLs, XML, DTD, éxito inequívoco, redirecciones, *timeout*, tamaño), `range.test.ts` (200/206/416) | `bun run test` |
 | Integración del servidor (Hono + PostgreSQL) | Vitest + `app.fetch` (helper `inject`) | `apps/api/src/app.test.ts` (sesiones, `Origin`, 401/403/404/409, validación, subidas en *streaming* sin `Content-Length`, rangos y `HEAD`, CAS/SLO, tickets repetidos, SPA), `app.variants.test.ts` (HTTPS, perfiles CAS, emisores), `adapters.test.ts` (CAUCE, volumen de medios, `APP_ENV`/`CAS_*`), `server.test.ts` (arranca **Bun** de verdad) | `bun run test:integration` |
 | Transporte del Worker (Hono + PGlite) | Vitest | `apps/web/src/demo/transport.test.ts`: el bucle real del Worker y la API Hono sobre PGlite con un `Worker` simulado; JSON, errores, sesión, multipart y binarios, concurrencia, *timeout* sin reintento, cancelación, caída, errores de arranque; y que React no llama a los servicios | `bun run test` |
@@ -26,7 +27,8 @@ conflictos) contra:
 - **PostgreSQL real** si existe `TEST_DATABASE_URL` (cada ejecución crea y borra su propia base dentro de ese
   servidor, `packages/db/src/testing.ts`).
 
-Así se comprueba que el único esquema y las mismas migraciones se comportan igual en la demo y en producción
+Los contratos de drivers también comprueban JSONB, arrays, UUID, enum, fechas, índices parciales, rollback y 100
+transacciones concurrentes en PostgreSQL. Así se comprueba que el único esquema y las mismas migraciones se comportan igual en la demo y en producción
 ([ADR 0003](adr/0003-drizzle-pglite.md)). Los tests de la API también usan PostgreSQL si `TEST_DATABASE_URL` está
 definido y PGlite si no.
 
@@ -57,7 +59,7 @@ identificador nacional. Sin esas variables se omite. Ver [MIGRATION.md](MIGRATIO
 
 ```bash
 bun ci
-bunx playwright install chromium firefox webkit   # una vez
+bunx --bun playwright install chromium firefox webkit   # una vez
 
 bun run test                     # todo Vitest (PGlite)
 bun run e2e:demo             # E2E de la demo en los tres navegadores + móvil
@@ -79,8 +81,8 @@ TEST_MARIADB_URL=mysql://root:root@127.0.0.1:53306/legacy \
 TEST_DATABASE_URL=postgres://lexican:lexican@localhost:5432/postgres bun run test:migration
 ```
 
-Depurar un E2E: `bunx playwright test e2e/student.spec.ts --project=demo-chromium --headed`; las trazas de fallos
-quedan en `test-results/` (`trace: 'retain-on-failure'`) y se abren con `bunx playwright show-trace`.
+Depurar un E2E: `bunx --bun playwright test e2e/student.spec.ts --project=demo-chromium --headed`; las trazas de fallos
+quedan en `test-results/` (`trace: 'retain-on-failure'`) y se abren con `bunx --bun playwright show-trace`.
 
 ## Cobertura
 
@@ -95,7 +97,7 @@ La cifra **no mide**:
 - `apps/web` (React): lo cubren los E2E, que no cuentan en la cobertura;
 - el comportamiento contra el CAS y CAUCE reales (solo XML grabado ficticio);
 - la migración si no se ejecuta con MariaDB (`migrate.test.ts` se omite);
-- la concurrencia real (PGlite tiene una sola conexión);
+- la concurrencia en producción más allá del contrato de 100 transacciones sobre PostgreSQL (PGlite tiene una sola conexión);
 - un Android real (solo emulación de Pixel en Playwright);
 - que algo sea accesible o se vea bien: eso es axe más revisión manual.
 
@@ -105,10 +107,11 @@ La cifra **no mide**:
 
 | Job | Servicios | Pasos |
 |---|---|---|
-| `quality` | PostgreSQL 18 + MariaDB 11 | `bun ci` → `audit` → `licenses` → `lint` (Biome) → `typecheck` → `test:coverage` (con `TEST_DATABASE_URL` y `TEST_MARIADB_URL`; umbral 90 %) → subida a Codecov → `build` → `build:demo` → `check:dist` → instalación de navegadores → `bun run e2e` (con `E2E_DATABASE_URL`: demo en 3 navegadores + móvil y producción) → informe de Playwright como artefacto si falla |
+| `quality` | PostgreSQL 18 + MariaDB 11 | `bun ci` → `check:lockfile` → `audit` → `licenses` → `lint` (Biome) → `typecheck` → `test:coverage` (con `TEST_DATABASE_URL` y `TEST_MARIADB_URL`; umbral 90 %) → subida a Codecov → `build` → `build:demo` → `check:dist` → instalación de navegadores → `bun run e2e` (demo Chromium, Firefox y móvil; producción Chromium) → informe de Playwright como artefacto si falla |
 | `webkit` | — | E2E de la demo en WebKit (un *worker*). **Desactivado temporalmente** (`if: false`): tarda más de 17 min y se va a revisar en una PR propia; en local, `bun run e2e:webkit` |
-| `docker` | — | construye la imagen, comprueba que sin configuración no arranca y levanta el Compose local (salud, proveedores, SPA) |
+| `docker` | Compose: PostgreSQL 18 | workflow compartido `docker.yml`: construye una imagen, comprueba que sin configuración no arranca, levanta el perfil local con `--no-build` (salud, proveedores, SPA e ID de imagen) y guarda la imagen probada como artefacto de un día |
 | `migration` | PostgreSQL 18 + MariaDB 11 | `bun ci` → `bun run test:migration` |
+| `publish-image` | — | solo en `main`, tras `quality`, `docker` y `migration`: carga el artefacto probado, verifica su ID y publica `ghcr.io/ateeducacion/lexican:main` sin reconstruir |
 
 Las *releases* ([DEPLOYMENT.md](DEPLOYMENT.md)) dependen de este gate. Pages tiene su vía rápida (`pages.yml`: tipos,
 build, `check:dist` y E2E esenciales del mismo artefacto que publica; [DEMO.md](DEMO.md)).

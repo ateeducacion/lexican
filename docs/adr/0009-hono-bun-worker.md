@@ -1,20 +1,15 @@
 # ADR 0009 — Una API Hono para Docker y para Pages; Bun en el servidor; demo en un Web Worker
 
 - Estado: aceptada
-- Fecha: 2026-10-04
-- Sustituye en parte a: [ADR 0002](0002-stack.md) (Fastify, tsx/esbuild), [ADR 0004](0004-demo-pglite.md) (PGlite en
-  el hilo principal, `media_blobs`), [ADR 0005](0005-autenticacion.md) (`CAS_BASE_URL`, `NODE_ENV`) y
-  [ADR 0007](0007-medios-y-exportacion.md) (lectura completa de medios).
-
-> Actualización (2026-10-05): se retira el acceso CAS de GitHub Pages y su flujo en el navegador. La demo usa solo
-> cuentas ficticias. Docker local conserva el CAS público de pruebas; el resto de esta decisión sigue vigente.
+- Fecha: 2026-10-05
+- Complementa [ADR 0002](0002-stack.md) (stack), [ADR 0004](0004-demo-pglite.md) (demo),
+  [ADR 0005](0005-autenticacion.md) (autenticación) y [ADR 0007](0007-medios-y-exportacion.md) (medios).
 
 ## Contexto
 
-La demo de Pages llamaba a los servicios directamente desde React, sin pasar por la API: no comprobaba rutas,
-serialización JSON, errores HTTP, límites ni sesiones, y PGlite bloqueaba el hilo de la interfaz. Los medios se
-guardaban como `bytea` en PGlite. Queremos que Pages ejecute el mismo código de API que Docker y que responda bien en
-Android, sin complicar la arquitectura.
+Pages y Docker deben ejecutar las mismas rutas, serialización, errores, límites, sesiones y servicios. La base de
+la demo y su API deben trabajar fuera del hilo de React. Los medios necesitan almacenamiento separado de SQL y
+rangos para reproducirse en el navegador.
 
 ## Decisión
 
@@ -25,8 +20,8 @@ Android, sin complicar la arquitectura.
 2. **Servidor**: Bun 1.4.2 ejecuta `apps/api` (`Bun.serve` → `app.fetch`). Fuera del paquete compartido quedan
    cookies `HttpOnly`, cabeceras de seguridad, IP tras proxy de confianza (`proxy-addr`), SPA estática, CAUCE y el
    sistema de archivos. El backend se empaqueta con `bun build` en un bundle autosuficiente (sin `node_modules` en la
-   imagen). `Bun.SQL` y PGlite comparten Drizzle v1 ([ADR 0003](0003-drizzle-pglite.md)); se conserva ese
-   driver común sin introducir Bun.SQL.
+   imagen). Drizzle v1 usa `Bun.SQL` para PostgreSQL y PGlite en el navegador, con el mismo esquema y migraciones
+   ([ADR 0003](0003-drizzle-pglite.md)).
 3. **Pages**: un **Web Worker dedicado** ejecuta la misma app Hono sobre PGlite (`idb://lexican-demo-v2`). React usa
    el mismo cliente (`apps/web/src/api/client.ts`) con un transporte por mensajes genérico: método, URL, cabeceras y
    cuerpo `Blob` (nunca base64), con timeout, cancelación, detección de caída y sin reintentos automáticos.

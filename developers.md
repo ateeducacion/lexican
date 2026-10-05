@@ -7,7 +7,7 @@ rama `upstream` y no aplican aquí. Normas del repositorio: [AGENTS.md](AGENTS.m
 
 - Bun 1.4.2: gestor de paquetes (`bun.lock`) y runtime de la API, sus CLI y las herramientas (<https://bun.com/docs/installation>).
 - Docker, solo para PostgreSQL local (y MariaDB si se prueba la migración).
-- Navegadores de Playwright para los E2E: `bunx playwright install chromium firefox webkit`.
+- Navegadores de Playwright para los E2E: `bunx --bun playwright install chromium firefox webkit`.
 
 ## Puesta en marcha
 
@@ -86,8 +86,9 @@ Ejemplo: «archivar un aula».
    `conflict`…). `createServices` comprueba al arrancar que toda operación tiene manejador.
 3. **Prueba de contrato** — `packages/app/src/services.contract.test.ts`: el caso feliz y los permisos (alumno → 403,
    ajeno → 404). Se ejecuta en PGlite y, con `TEST_DATABASE_URL`, en PostgreSQL.
-4. **API** — nada que hacer: `apps/api/src/app.ts` registra una ruta por operación. Solo si la operación es especial
-   (subida, cookies, redirecciones) se escribe a mano, con su prueba en `app.test.ts`.
+4. **API** — `packages/http` registra una ruta por operación desde la tabla común. Las rutas especiales (subida,
+   sesión, redirecciones) se escriben en esa API compartida; cookies y adaptación del servidor quedan en `apps/api`.
+   Pruebas en `app.test.ts` y en el transporte del Worker cuando corresponda.
 5. **UI** — en la página, `(await getApi()).archiveClassroom({ classroomId })` (`apps/web/src/api/index.ts`); funciona
    igual con el cliente HTTP y con el de la demo. Mensajes en español; errores con el componente `ErrorMessage`.
 6. **E2E** si es un flujo visible; `expectAccessible(page)` si es una pantalla nueva.
@@ -95,13 +96,13 @@ Ejemplo: «archivar un aula».
 ## Añadir o cambiar una tabla
 
 1. Editar `packages/db/src/schema.ts`.
-2. `bun run db:generate` → nuevo `packages/db/migrations/NNNN_*.sql` + `meta/`.
+2. `bun run db:generate` → carpeta `packages/db/migrations/YYYYMMDDHHmmss_nombre/` con `migration.sql` y `snapshot.json`.
 3. Leer el SQL generado (nombres, índices, `NOT NULL` con datos existentes, valores por defecto). Si hace falta
    migrar datos, añadirlo en el mismo SQL.
 4. `bun run test` (las migraciones se aplican en PGlite) y con `TEST_DATABASE_URL` (PostgreSQL).
 5. Si la tabla contiene datos personales, actualizar [docs/PRIVACY.md](docs/PRIVACY.md); si recibe datos del legacy,
    añadir `legacy_source`/`legacy_id` y actualizar el migrador y [docs/LEGACY-DATA-MAPPING.md](docs/LEGACY-DATA-MAPPING.md).
-6. Si el cambio invalida datos ya guardados en la demo, subir `DATA_DIR` en `apps/web/src/demo/db.ts`.
+6. Si el cambio invalida datos ya guardados en la demo, subir `DATA_DIR` en `apps/web/src/demo/protocol.ts`.
 
 Nunca `drizzle-kit push` ni editar una migración que ya esté en `main`. Detalle en
 [docs/DATA-MODEL.md](docs/DATA-MODEL.md).
@@ -115,8 +116,8 @@ bun run test:integration                   # solo la API
 TEST_DATABASE_URL=postgres://lexican:lexican@localhost:5432/postgres bun run test   # también PostgreSQL
 bun run e2e:demo                           # demo, 3 navegadores + móvil
 E2E_DATABASE_URL=postgres://lexican:lexican@localhost:5432/postgres bun run e2e  # + producción
-bunx vitest run packages/core/src/school-year.test.ts     # un fichero
-bunx playwright test e2e/journey.spec.ts --project=demo-chromium --headed
+bunx --bun vitest run packages/core/src/school-year.test.ts     # un fichero
+bunx --bun playwright test e2e/journey.spec.ts --project=demo-chromium --headed
 ```
 
 Migración con MariaDB y cobertura: [docs/TESTING.md](docs/TESTING.md).
@@ -124,8 +125,9 @@ Migración con MariaDB y cobertura: [docs/TESTING.md](docs/TESTING.md).
 ## Depurar la base de la demo en el navegador
 
 - La base está en IndexedDB: DevTools → *Application* → *IndexedDB* → `/pglite/lexican-demo-v2`. El usuario activo está
-  en *Local storage* → `lexican-demo-session`.
-- Empezar de cero: botón «Restablecer datos de demostración», o borrar esa base y recargar.
+  en *Local storage* → `lexican-demo-sid`; los medios están en IndexedDB `lexican-demo-media`.
+- Empezar de cero: botón «Restablecer datos de demostración», que coordina el cierre del Worker y borra también medios
+  y sesión.
 - Para consultar con SQL, reproducir el estado con Bun: `openPglite()` (`packages/db/src/testing.ts`) + `seedDemo()`
   (`packages/app`) en un test temporal da la misma base que la demo recién sembrada.
 - Los errores de los servicios llegan a la UI como `ApiError` con el mismo `code` que la API (`validation`,

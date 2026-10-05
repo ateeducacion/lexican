@@ -104,7 +104,7 @@ La semilla se ejecuta una sola vez y marca `app_settings.demo_seed_version`.
 bun ci
 bun run dev:demo          # Vite en modo demo (http://localhost:5173/lexican/)
 # o, igual que en Pages (servidor estático estricto, sin *fallback*):
-bun run build:demo && node scripts/static-pages-server.mjs 4317   # http://localhost:4317/lexican/
+bun run build:demo && bun run preview:demo   # http://localhost:4317/lexican/
 ```
 
 Los E2E de la demo usan ese servidor estático en el puerto 4317 ([TESTING.md](TESTING.md)).

@@ -1,7 +1,7 @@
 # ADR 0005 — CAS 3.0 propio, directorio CAUCE como adapter y sesiones en PostgreSQL
 
-- Estado: aceptada; sustituida en parte por [ADR 0009](0009-hono-bun-worker.md) (`CAS_BASE_URL` → `CAS_URL` + rutas; `NODE_ENV` → `APP_ENV`; emisor `cas_test` para el CAS de pruebas)
-- Fecha: 2026-10-04
+- Estado: aceptada
+- Fecha: 2026-10-05
 
 ## Contexto
 
@@ -13,8 +13,10 @@ usuarios CAS (`analysis/lexican/FUNCTIONAL_INVENTORY.md` §11).
 ## Decisión
 
 - **CAS**: implementación directa del protocolo CAS 3.0 (`/login`, `/p3/serviceValidate`, `/logout` y SLO por
-  *back-channel*) con `fetch` y `fast-xml-parser` 5.11, rechazando cualquier `<!DOCTYPE`/`<!ENTITY>`. Todas las
-  librerías CAS de npm están sin mantenimiento desde 2022 o antes (`analysis/lexican/TECH_RESEARCH.md` §4).
+  *back-channel*) con `fetch` y `fast-xml-parser`, rechazando cualquier `<!DOCTYPE`/`<!ENTITY>`.
+  La investigación inicial de clientes CAS está en `analysis/lexican/TECH_RESEARCH.md` §4.
+  `packages/http/src/cas.ts` configura el emisor con `CAS_URL` y `CAS_LOGIN_PATH`/`CAS_VALIDATE_PATH`/`CAS_LOGOUT_PATH`;
+  el servidor valida los tickets. `CAS_BASE_URL` se rechaza.
 - **CAUCE**: interfaz `InstitutionalDirectory` (`apps/api/src/cauce.ts`) con TLS verificado y *timeout*; la demo y los
   tests usan datos ficticios. No se guardan NIF/NIE, pasaporte ni CIAL; el sujeto CAS es el identificador.
 - **Rol global** recalculado en cada acceso (CAUCE 1, 4 y 5 → profesorado; resto → alumnado). Administración y oficina
@@ -23,8 +25,10 @@ usuarios CAS (`analysis/lexican/FUNCTIONAL_INVENTORY.md` §11).
   `__Host-sid` `HttpOnly; Secure; SameSite=Lax`; caducidad explícita; el ticket CAS se guarda para el SLO.
 - **CSRF**: lista de orígenes permitidos (`Origin`) en métodos no seguros + `SameSite=Lax` + la API solo acepta JSON y
   *multipart*. Sin Redis.
-- **Proveedor de contraseña** solo para la demo y para desarrollo/test (`AUTH_DEV_LOGIN`), prohibido con
-  `NODE_ENV=production`.
+- **Entornos**: `APP_ENV=production|local|test`, con producción por defecto; `NODE_ENV` no decide la autenticación.
+  Producción exige CAS institucional y CAUCE, y rechaza CAS de pruebas, perfiles ficticios, `AUTH_DEV_LOGIN` y semillas
+  demo. Docker local permite el CAS público con perfiles ficticios y contraseña; Pages solo usa cuentas ficticias.
+- **Identidades**: emisores `cas` y `cas_test` separados; el mismo sujeto no enlaza cuentas entre ambos.
 
 ## Consecuencias
 

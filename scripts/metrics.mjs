@@ -2,7 +2,7 @@
 // Every number comes from git, the file system or a build; nothing is typed by hand (§98).
 // Usage: bun run build && bun run build:demo && bun scripts/metrics.mjs > metrics.json
 import { execFileSync, execSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, lstatSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { packages } from './deps.mjs';
@@ -31,7 +31,9 @@ function walk(dir, filter = () => true) {
   return readdirSync(dir).flatMap((f) => {
     const p = join(dir, f);
     if (f === 'node_modules' || f === '.git') return [];
-    return statSync(p).isDirectory() ? walk(p, filter) : filter(p) ? [p] : [];
+    const stat = lstatSync(p);
+    if (stat.isSymbolicLink()) return [];
+    return stat.isDirectory() ? walk(p, filter) : filter(p) ? [p] : [];
   });
 }
 const lines = (files) => files.reduce((n, f) => n + readFileSync(f, 'utf8').split('\n').length, 0);

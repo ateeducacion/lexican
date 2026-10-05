@@ -45,7 +45,8 @@ Más detalles en [docs/DEMO.md](docs/DEMO.md).
 
 ## Desarrollo rápido
 
-Requisitos: Node.js 24 o superior, Bun 1.4.2 (API) y Docker.
+Requisitos: Bun 1.4.2 para instalar, desarrollar, probar y ejecutar la API; Docker para PostgreSQL o el perfil local
+completo. La demo no necesita backend ni Docker.
 
 ```bash
 bun ci

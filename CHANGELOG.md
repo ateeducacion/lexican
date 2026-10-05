@@ -16,11 +16,17 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
   `documentos/`, `archivos/` y la configuración heredada (`.htaccess`, `.styleci.yml`, `.yarnrc.yml`…). Siguen en la
   rama `upstream`. Se conservan `analysis/` (especificación de la reconstrucción) y el migrador de datos.
 
-### Cambiado — Bun como gestor de paquetes
+### Cambiado — Bun como gestor de paquetes, herramientas y servidor
 
 - `bun.lock` sustituye a `package-lock.json`; `bun ci` en CI y Docker, `bun run` para los scripts, `bun audit`,
-  licencias con `bun pm licenses` y SBOM SPDX con `scripts/sbom.mjs`. Dependabot usa el ecosistema `bun`. Node 24
-  sigue ejecutando Vite, Vitest y Playwright.
+  licencias con `bun pm licenses` y SBOM SPDX con `scripts/sbom.mjs`. Dependabot usa el ecosistema `bun`.
+- Vite, Vitest, Playwright y TypeScript se ejecutan con `bunx --bun`; se elimina Node de los requisitos, CI y Docker.
+- Drizzle ORM y Kit se fijan juntos en `1.0.0-rc.5-5935859`, con migraciones v3 y SQL común a PostgreSQL y PGlite.
+  `Bun.SQL` sustituye a `pg` y `@types/pg` en servidor, CLI, pruebas y migrador; contratos para JSONB y tipos,
+  rollback y 100 transacciones concurrentes.
+- Docker conserva la capa de instalación ante cambios de fuentes. CI y releases prueban una imagen y publican ese
+  mismo artefacto en GHCR: `main` tras los checks, versión y `latest` tras una etiqueta `v*` válida.
+- Dependabot agrupa Drizzle ORM y Kit; el tooling E2E valida los nombres de sus bases antes de eliminarlas.
 
 ### Cambiado — una API para Docker y Pages ([ADR 0009](docs/adr/0009-hono-bun-worker.md))
 
@@ -32,8 +38,9 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
   la demo. **Migración 0001**: añade el emisor `cas_test` y elimina `media_blobs` (la demo copia antes sus bytes).
 - Audio de móviles: se admiten M4A/AAC, OGG Opus y WebM solo audio (antes se rechazaban).
 - Configuración: `APP_ENV` (`production` por defecto) y `CAS_URL` + `CAS_LOGIN_PATH`/`CAS_VALIDATE_PATH`/
-  `CAS_LOGOUT_PATH` (se rechaza `CAS_BASE_URL`). Botón «Entrar con CAS de pruebas» (CAS público) en local y en la demo.
+  `CAS_LOGOUT_PATH` (se rechaza `CAS_BASE_URL`). CAS público de pruebas solo en Docker local; Pages usa cuentas ficticias.
 - La pantalla de acceso muestra los errores de CAS; las cuentas institucionales deshabilitadas no pueden entrar.
+- Menú de cuenta con desconexión al pulsar el nombre y ajustes del diccionario personal mediante un engranaje.
 
 ### 2.0.0 — reconstrucción completa
 
@@ -59,12 +66,12 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
 - Detección de ediciones concurrentes (aviso de conflicto en lugar de sobrescribir).
 - Herramienta de migración de los datos y medios del sistema anterior a PostgreSQL, con simulación e informe.
 - Imagen Docker de producción y `docker compose` para desarrollo.
-- CI con pruebas unitarias, de contrato (PGlite y PostgreSQL), de API, de migración y E2E en Chromium, Firefox, WebKit
-  y móvil con comprobaciones de accesibilidad.
+- CI con pruebas unitarias, de contrato (PGlite y PostgreSQL), de API, de migración y E2E en Chromium, Firefox y móvil
+  con comprobaciones de accesibilidad. WebKit queda disponible en local, desactivado temporalmente en CI.
 
 #### Cambiado
 
-- Stack: TypeScript, React + Vite, Fastify, PostgreSQL y Drizzle en lugar de PHP/Laravel 8, Voyager, Blade, jQuery,
+- Stack: TypeScript, React + Vite, Hono, Bun, PostgreSQL y Drizzle en lugar de PHP/Laravel 8, Voyager, Blade, jQuery,
   Bootstrap 4 y MariaDB.
 - Acceso institucional con un cliente CAS 3.0 propio con validación TLS; el rol de profesorado o alumnado se
   recalcula en cada acceso a partir de CAUCE.

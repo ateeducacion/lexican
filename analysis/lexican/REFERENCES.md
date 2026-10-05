@@ -1,5 +1,8 @@
 # Referencias de mantenimiento: Aritmates y Tonga
 
+> Investigación inicial del 2026-10-04; incluye propuestas y ejemplos que se sustituyeron antes de la primera versión.
+> Para desarrollar o desplegar LexiCán, consultar [developers.md](../../developers.md) y los [ADRs vigentes](../../docs/adr/).
+
 Notas de método (no de arquitectura) tomadas de `ateeducacion/aritmates` y `ateeducacion/tonga` (lectura 2026-10-04, solo lectura). **Tonga es la referencia más madura** (actions fijadas por SHA, TypeScript+Vite, REUSE/SPDX, licencias, SBOM, ADR, fixture E2E que falla ante errores de consola, rulesets). Aritmates aporta el golden master, el gate de cobertura en dos niveles, `codecov.yml`, el informe con gráficas y el workflow de actualización de skills. Los bloques verbatim son de **Tonga** salvo que se indique.
 
 ## 1. Resumen comparado

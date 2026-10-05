@@ -1,5 +1,5 @@
 # LOCAL testing only (APP_ENV=local): public test CAS + fictitious profiles and demo data, plain http on localhost.
-#   docker compose up -d db                 PostgreSQL only (for `npm run dev:api`)
+#   docker compose up -d db                 PostgreSQL only (for `bun run dev:api`)
 #   docker compose --profile app up --build  full image: migrations + demo seed, then the app on http://localhost:3000
 # Production uses docker-compose.prod.yml with its own environment file; nothing here applies to it.
 services:

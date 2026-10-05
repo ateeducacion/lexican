@@ -19,9 +19,9 @@ el destino (sin filas que los referencien) y se reutilizan en la siguiente ejecu
 
 ## Requisitos
 
-- Node 24 y `bun ci` en la raíz del repositorio.
+- Bun 1.4.2 y `bun ci` en la raíz del repositorio; el destino PostgreSQL usa `Bun.SQL`.
 - Acceso de **solo lectura** a la base legacy (`SELECT` sobre el esquema y `information_schema`).
-- PostgreSQL 16+ con el esquema de LexiCán aplicado (`bun run db:migrate`). El migrador no crea el esquema.
+- PostgreSQL 18 (versión probada) con el esquema de LexiCán aplicado (`bun run db:migrate`). El migrador no crea el esquema.
 - Lectura del directorio `storage/app/public` legacy (volumen NFS) y escritura en el directorio de medios nuevo
   (el `MEDIA_DIR` de la API).
 - Las fechas legacy están en UTC (`config/app.php`): no hace falta fijar zona horaria.
@@ -129,7 +129,7 @@ re-ejecución idempotente y `--fail-on-orphans`. Se ejecuta solo si existen ambo
 docker run -d --name lexican-mariadb -e MARIADB_ROOT_PASSWORD=root -e MARIADB_DATABASE=legacy -p 53306:3306 mariadb:11
 TEST_MARIADB_URL=mysql://root:root@127.0.0.1:53306/legacy \
 TEST_DATABASE_URL=postgres://lexican:lexican@localhost:55432/postgres \
-  bunx vitest run tools/legacy-migrator
+  bunx --bun vitest run tools/legacy-migrator
 ```
 
 El test crea una base MariaDB y otra PostgreSQL temporales y las borra al terminar. Las funciones puras
