@@ -51,7 +51,12 @@ test.describe('student', () => {
     await expect(logout).toBeHidden();
     await page.getByRole('link', { name: '← Mi diccionario' }).click();
     await expectAccessible(page);
-    await page.setViewportSize({ width: 320, height: 720 });
+    for (const width of [768, 1024, 320]) {
+      await page.setViewportSize({ width, height: 720 });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+        true,
+      );
+    }
     await account.click();
     await expect(logout).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(

@@ -238,7 +238,7 @@
 .bottomNav {
   display: none;
 }
-@media (max-width: 760px) {
+@media (max-width: 1100px) {
   .nav {
     display: none;
   }
@@ -297,6 +297,11 @@
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
+  }
+}
+@media (min-width: 761px) and (max-width: 1100px) {
+  .bar {
+    min-height: 64px;
   }
 }
 @media (max-width: 420px) {
