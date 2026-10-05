@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import { type Db, schema } from '@lexican/db';
+import type { Db } from '@lexican/db';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import mysql from 'mysql2/promise';
 import pg from 'pg';
@@ -44,7 +44,7 @@ async function main(): Promise<number> {
   });
   const pool = new pg.Pool({ connectionString: a.target, max: 2 });
   try {
-    const db = drizzle({ client: pool, schema }) as unknown as Db;
+    const db: Db = drizzle({ client: pool });
     const { rows } = await pool.query<{ t: string | null }>(
       `select to_regclass('public.users')::text as t`,
     );

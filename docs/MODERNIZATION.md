@@ -52,7 +52,7 @@ Las dudosas se resolvieron con los valores por defecto de
 | CAS | `apereo/phpcas` 1.5.0 | CVE-2022-39369 | cliente CAS 3.0 propio + `fast-xml-parser` 5.11 |
 | PDF | `barryvdh/laravel-dompdf` 2.0.0 | avisos de dompdf; `enable_php` activo | impresión del navegador |
 | Frontend | Blade + jQuery 2.1.3 + Bootstrap 4.6.2 + TinyMCE 5 + Laravel Mix 6 | 25 avisos npm (1 crítico) + 4 CVE de jQuery vendorizado | React 19.3 + Vite 8.3 + react-router 8.4 |
-| Base de datos | MariaDB/MySQL, 45 tablas + Voyager + 13 vistas SQL | — | PostgreSQL 18 + Drizzle 0.45.3; PGlite 0.5.8 en la demo |
+| Base de datos | MariaDB/MySQL, 45 tablas + Voyager + 13 vistas SQL | — | PostgreSQL 18 + Drizzle 1.0.0-rc.4; PGlite 0.5.8 en la demo |
 | Validación | reglas Laravel dispersas | — | Zod 4.6 compartido |
 | Tests | PHPUnit, 8 métodos, no ejecutables | — | Vitest 5.0, Playwright 1.63 + axe 4.13 |
 | Build / CI | sin *lockfiles* ni CI; `composer.phar` versionado | Composer no resuelve (repositorio `larapack.io` con 404) | npm workspaces + `package-lock.json`; GitHub Actions |
@@ -147,8 +147,8 @@ Diagrama, tabla de entidades, estados y trazabilidad legacy: [DATA-MODEL.md](DAT
 
 El build `demo` del mismo frontend carga PGlite con `import()` dinámico tras pintar el acceso, aplica las migraciones
 SQL de `packages/db/migrations` con `migrateBundled` (mismas filas en `drizzle.__drizzle_migrations` que en
-PostgreSQL), siembra datos ficticios a través de los servicios y guarda todo en IndexedDB `lexican-demo-v2`. Las
-operaciones llaman en proceso a los mismos servicios que usa la API. «Restablecer datos de demostración» borra la base
+PostgreSQL), siembra datos ficticios a través de los servicios y guarda todo en IndexedDB `lexican-demo-v2`. Un Web Worker
+ejecuta la misma API Hono que el servidor sobre PGlite. React usa un único cliente API, con transporte HTTP en producción y por mensajes en la demo. «Restablecer datos de demostración» borra la base
 y vuelve a sembrar. Detalle: [DEMO.md](DEMO.md) y [ADR 0004](adr/0004-demo-pglite.md).
 
 ## Plan de migración

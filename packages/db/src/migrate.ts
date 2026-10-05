@@ -1,10 +1,7 @@
 import type { MigrationMeta } from 'drizzle-orm/migrator';
-import { PgDialect, type PgSession } from 'drizzle-orm/pg-core';
+import { formatToMillis } from 'drizzle-orm/migrator.utils';
+import { migrate } from 'drizzle-orm/pg-core';
 import type { Db } from './db.ts';
-
-export interface Journal {
-  entries: { idx: number; when: number; tag: string; breakpoints: boolean }[];
-}
 
 async function sha256(text: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
@@ -15,25 +12,20 @@ async function sha256(text: string): Promise<string> {
  * Apply drizzle-kit migrations from already-loaded SQL (browser bundle or tests). Writes the same
  * `drizzle.__drizzle_migrations` rows and hashes as `drizzle-orm/node-postgres/migrator`, so a database
  * migrated here and one migrated by the production CLI are interchangeable.
- * ponytail: relies on drizzle 0.45 journal layout; rewrite when moving to drizzle v1 (docs/adr/0003).
  */
-export async function migrateBundled(
-  db: Db,
-  journal: Journal,
-  sqlByTag: Record<string, string>,
-): Promise<void> {
+export async function migrateBundled(db: Db, sqlByName: Record<string, string>): Promise<void> {
   const migrations: MigrationMeta[] = [];
-  for (const e of journal.entries) {
-    const query = sqlByTag[e.tag];
-    if (query === undefined) throw new Error(`Missing migration SQL for ${e.tag}`);
+  for (const [name, query] of Object.entries(sqlByName).sort(([a], [b]) => a.localeCompare(b))) {
+    const folderMillis = formatToMillis(name.slice(0, 14));
+    if (!/^\d{14}_/.test(name) || !Number.isFinite(folderMillis))
+      throw new Error(`Invalid migration folder name: ${name}`);
     migrations.push({
+      name,
       sql: query.split('--> statement-breakpoint'),
-      bps: e.breakpoints,
-      folderMillis: e.when,
+      bps: true,
+      folderMillis,
       hash: await sha256(query),
     });
   }
-  await new PgDialect().migrate(migrations, db._.session as unknown as PgSession, {
-    migrationsFolder: '',
-  });
+  await migrate(migrations, db, { migrationsFolder: '' });
 }

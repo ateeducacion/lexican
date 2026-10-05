@@ -1,17 +1,13 @@
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { loadMigrations } from '@lexican/db/testing';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { emptyDatabase } from '../testing/pg.ts';
 
 /** The `db:migrate` and `db:seed` scripts run as modules: each import executes the CLI once. */
 const server = process.env.TEST_DATABASE_URL;
-const journal = JSON.parse(
-  readFileSync(
-    new URL('../../../../packages/db/migrations/meta/_journal.json', import.meta.url),
-    'utf8',
-  ),
-) as { entries: unknown[] };
+const migrationCount = Object.keys(loadMigrations()).length;
 
 const run = async (
   script: 'migrate' | 'seed',
@@ -56,15 +52,15 @@ describe.skipIf(!server)('database CLIs on PostgreSQL', () => {
   });
   afterEach(() => vi.unstubAllEnvs());
 
-  it('migrate applies every journal entry once, idempotently', async () => {
+  it('migrate applies every migration folder once, idempotently', async () => {
     await run('migrate', { DATABASE_URL: db.url, MIGRATIONS_DIR: join(mediaDir, 'missing') });
     expect(warn).toHaveBeenLastCalledWith('Migrations applied.');
-    expect(await count('drizzle.__drizzle_migrations')).toBe(journal.entries.length);
+    expect(await count('drizzle.__drizzle_migrations')).toBe(migrationCount);
     await run('migrate', {
       DATABASE_URL: db.url,
       MIGRATIONS_DIR: new URL('../../../../packages/db/migrations', import.meta.url).pathname,
     });
-    expect(await count('drizzle.__drizzle_migrations')).toBe(journal.entries.length);
+    expect(await count('drizzle.__drizzle_migrations')).toBe(migrationCount);
   });
 
   const env = () => ({
