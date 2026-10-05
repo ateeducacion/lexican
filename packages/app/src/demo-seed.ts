@@ -34,11 +34,17 @@ type Sense = Partial<EntryInput['senses'][number]> & {
  * Coherent fictitious dataset: one teacher, two students, a fictitious school, a current classroom with an open
  * submission window, personal dictionaries, published / pending / rejected submissions, a teacher comment, a hidden
  * entry and two small CC0 illustrations. Built through the application services so it obeys every rule.
+ * One transaction: an interrupted first start (a mobile tab killed in the background) leaves nothing behind, so the
+ * next start seeds again instead of failing forever on the accounts it already created.
  */
 export async function seedDemo(
   deps: Deps,
   images: { name: string; bytes: Uint8Array }[] = [],
 ): Promise<void> {
+  await deps.db.transaction((db) => seed({ ...deps, db }, images));
+}
+
+async function seed(deps: Deps, images: { name: string; bytes: Uint8Array }[]): Promise<void> {
   const { db } = deps;
   const [done] = await db
     .select()
