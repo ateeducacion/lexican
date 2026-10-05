@@ -1,5 +1,8 @@
 # LexiCán: technology research (input for ADRs)
 
+> Investigación inicial del 2026-10-04; incluye propuestas y ejemplos que se sustituyeron antes de la primera versión.
+> Para desarrollar o desplegar LexiCán, consultar [developers.md](../../developers.md) y los [ADRs vigentes](../../docs/adr/).
+
 Date: 2026-10-04. Scope: 1er-prompt.md §3, §8, §14–15, §38–42, §44–47, §105–106.
 
 Method: versions, dates and licenses come from `npm view <pkg> version time license` (run 2026-10-04). Advisories come from the GitHub Advisory DB (`gh api /advisories?ecosystem=npm&affects=<pkg>`). Docs come from Context7 and the official sites. Every snippet marked **[verified]** was compiled and run in a scratch project with `tsc --strict`, Vitest 5.0.3, Vite 8.3.2, Playwright 1.63/Chromium and `postgres:18-alpine` via Testcontainers. Nothing was installed in the repo.

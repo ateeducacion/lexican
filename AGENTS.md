@@ -17,7 +17,7 @@ Esta versión (2.x) es una reconstrucción completa del Laravel 8 + Voyager orig
 - `upstream`: copia histórica del código del proveedor (`c80ff65`). **Intocable**: ni commits, ni *rebase*, ni
   *force-push*, ni borrado. Contiene credenciales filtradas que no se reescriben ([SECURITY.md](docs/SECURITY.md)).
 - `main`: rama mantenida. Solo se cambia por PR, con CI en verde.
-- Ramas de trabajo: `feat/…`, `fix/…`, `docs/…`, `chore/…`. PRs pequeñas, un cambio lógico.
+- Ramas de trabajo: `feature/…` o `hotfix/…`, con nombres en inglés. PRs pequeñas, un cambio lógico.
 - El código Laravel ya no está en `main`: se eliminó (también sus migraciones y el `Dockerfile.apache81`). La única
   referencia del legacy es la rama `upstream`; el migrador de datos (`tools/legacy-migrator`) trabaja contra una copia
   de su base, no contra ese código.
@@ -159,7 +159,7 @@ teclado a cualquier arrastre. Cero errores de axe no basta: checklist manual en
 bun ci
 docker compose up -d db          # PostgreSQL local
 cp apps/api/.env.example apps/api/.env
-set -a; . apps/api/.env; set +a  # las CLI y la API leen el entorno, no el fichero
+set -a; . apps/api/.env; set +a  # exportar también para drizzle-kit; las CLI de apps/api usan --env-file explícito
 bun run db:migrate && bun run db:seed --demo
 bun run dev:api                  # API en :3000
 bun run dev                      # web en :5173 contra la API
@@ -180,6 +180,8 @@ bun run audit && bun run licenses
 - `ci.yml` (validación completa) en cada PR y *push* a `main`; `pages.yml` comprueba y despliega la demo en cada
   *push* a `main` (vía rápida: typecheck, build, `check:dist`, E2E esenciales del mismo artefacto); `release.yml`
   con etiquetas `v*`.
+- `docker.yml` comparte la construcción y prueba de una imagen entre CI y releases. GHCR carga el artefacto probado
+  y comprueba su ID antes de publicar, sin reconstruir; los artefactos de imagen se conservan un día.
 - Actions fijadas por SHA con comentario de versión, `permissions: contents: read` por defecto, escritura solo en el
   job que la necesita, `persist-credentials: false`. Nada de `continue-on-error` en checks.
 - Despliegue de producción: [DEPLOYMENT.md](docs/DEPLOYMENT.md).

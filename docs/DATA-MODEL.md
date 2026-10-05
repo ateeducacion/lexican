@@ -40,7 +40,7 @@ erDiagram
 | `entries` | entrada (palabra) | `headword`, `headword_key` (único por diccionario sin borrar), `initial`, `sort_key`, `hidden`, `version`, `source_submission_id` |
 | `entry_senses` | acepción | posición, definición, «Más datos», ejemplo de uso, categoría, género, número, lengua + forma, `hidden` |
 | `sense_topics` | temáticas de la acepción | |
-| `media_assets`, `sense_media` | imagen/audio/vídeo | uno por tipo y acepción; clave de almacenamiento opaca, SHA-256. Los bytes nunca están en SQL: volumen en Docker, IndexedDB en la demo (`media_blobs` se eliminó en la migración 0001) |
+| `media_assets`, `sense_media` | imagen/audio/vídeo | uno por tipo y acepción; clave de almacenamiento opaca, SHA-256. Los bytes nunca están en SQL: volumen en Docker, IndexedDB en la demo (`media_blobs` se eliminó en la migración `media_out_of_sql`) |
 | `entry_revisions` | instantánea inmutable | motivo `submit`, `publish`, `teacher_edit` |
 | `submissions` | envío al aula | `pending`, `published`, `rejected` (con nota), `withdrawn`; un pendiente por entrada y aula |
 | `comments` | comentario del profesorado | a un alumno, opcionalmente sobre un envío; texto plano |

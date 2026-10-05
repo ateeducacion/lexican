@@ -55,7 +55,7 @@ La semilla se ejecuta una sola vez y marca `app_settings.demo_seed_version`.
   (`DATA_DIR` en `apps/web/src/demo/protocol.ts`) cuando el esquema o la semilla cambian de forma incompatible.
 - Medios: Blobs en la base IndexedDB `lexican-demo-media`, **fuera de PGlite**; la base SQL guarda metadatos, permisos,
   tamaño, hash y clave. Al actualizar desde la versión anterior, el Worker copia los bytes de `media_blobs` a ese
-  almacén antes de que la migración 0001 elimine la tabla: no se pierden datos.
+  almacén antes de que la migración `media_out_of_sql` elimine la tabla: no se pierden datos.
 - Sesión: clave `lexican-demo-sid` de `localStorage` (identificador opaco de una fila `sessions` de la base del
   navegador).
 - Al recargar se conservan datos y sesión. Nada depende de `beforeunload`.
@@ -104,14 +104,14 @@ La semilla se ejecuta una sola vez y marca `app_settings.demo_seed_version`.
 bun ci
 bun run dev:demo          # Vite en modo demo (http://localhost:5173/lexican/)
 # o, igual que en Pages (servidor estático estricto, sin *fallback*):
-bun run build:demo && node scripts/static-pages-server.mjs 4317   # http://localhost:4317/lexican/
+bun run build:demo && bun run preview:demo   # http://localhost:4317/lexican/
 ```
 
 Los E2E de la demo usan ese servidor estático en el puerto 4317 ([TESTING.md](TESTING.md)).
 
 ## Comprobación manual en Android (pendiente en dispositivo real)
 
-La emulación de Pixel de Playwright no prueba un Android real. Recorrido en Chrome para Android:
+La emulación de Pixel de Playwright no prueba un Android real. Recorrido en una pestaña normal de Chrome para Android:
 
 1. Abrir la demo publicada; esperar a «Preparando la demo…» y entrar como alumno 1.
 2. Crear una palabra; en «Audio» elegir una nota de voz grabada con el teléfono (M4A/AAC, OGG/Opus o WebM) y guardar.
@@ -120,3 +120,14 @@ La emulación de Pixel de Playwright no prueba un Android real. Recorrido en Chr
 5. Salir y entrar como alumna 2: el audio del alumno 1 no aparece en su diccionario.
 6. Abrir la demo en una segunda pestaña: debe aparecer el aviso «La demo ya está abierta en otra pestaña».
 7. «Restablecer datos de demostración»: vuelve a los datos de ejemplo.
+
+### Capturar un fallo de acceso en incógnito
+
+1. Con el teléfono desbloqueado y conectado por ADB, abrir la demo en una sola pestaña del perfil incógnito.
+2. En el Chrome del ordenador, abrir `chrome://inspect/#devices` y pulsar **Inspect** en esa pestaña de LexiCán.
+   Si aparece el aviso de versiones y no se abre, usar **inspect fallback**.
+3. En DevTools, activar **Preserve log** en Console y Network, recargar y pulsar una cuenta demo.
+4. Copiar el error visible en LexiCán y el primer error de Console; si hay recursos fallidos, anotar URL y estado.
+   Capturarlo antes de restablecer datos ayuda a conservar el estado que provoca el fallo.
+
+Referencia: [depuración remota de Chrome en Android](https://developer.chrome.com/docs/devtools/remote-debugging).

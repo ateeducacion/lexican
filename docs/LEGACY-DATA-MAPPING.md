@@ -199,7 +199,7 @@ empezaba por espacio, `active=false` si estaba borrado o con `estado=0`, y se in
 | varios del mismo tipo en una acepción | `sense_media` (único por acepción y tipo) | se conserva el más reciente (`created_at`, `id`) | — | Los demás: `duplicates` (`repairable automatically`) | test 3001 |
 | — | `created_by` | propietario del diccionario | — | Permite al alumno leer su medio | — |
 
-Miniaturas `*_thumb.jpg` no se migran (se regeneran); los ficheros de las carpetas legacy que ninguna fila
+Miniaturas `*_thumb.jpg` no se migran ni se regeneran; los ficheros de las carpetas legacy que ninguna fila
 referencia se listan como «sin referencia» (`needs human review`). Los originales nunca se modifican ni mueven.
 
 ## Diccionarios de aula

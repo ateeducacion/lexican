@@ -2,7 +2,7 @@
 
 Informe inicial exigido por §104 de `1er-prompt.md`, actualizado con lo que se ha construido. Las cifras del legacy
 salen de [`analysis/lexican/BASELINE.md`](../analysis/lexican/BASELINE.md) (cada una con su comando); la comparación
-del legacy (`upstream`) con el sistema nuevo la genera `npm run metrics` para
+del legacy (`upstream`) con el sistema nuevo la genera `bun run metrics` para
 [MODERNIZATION-REPORT.md](MODERNIZATION-REPORT.md).
 
 ## Estado actual
@@ -15,7 +15,7 @@ publicación, comentarios y PDF. Unas 36 500 líneas escritas a mano en 742 fich
 avisos), no tiene CI y tiene 8 métodos de test. Diagnóstico completo:
 [`analysis/lexican/ASSESSMENT.md`](../analysis/lexican/ASSESSMENT.md).
 
-**Reconstrucción (2.x).** Monorepo TypeScript con la demo PGlite, la API Fastify, el migrador y la administración
+**Reconstrucción (2.x).** Monorepo TypeScript con la demo PGlite, la API Hono sobre Bun, el migrador y la administración
 ([ARCHITECTURE.md](ARCHITECTURE.md)).
 
 ## Referencia legacy: `upstream`
@@ -44,18 +44,18 @@ Las dudosas se resolvieron con los valores por defecto de
 
 ## Inventario tecnológico
 
-| Pieza | Legacy | Estado | Nuevo (verificado en npm el 2026-10-04) |
+| Pieza | Legacy | Estado | Nuevo (implementado el 2026-10-05; versiones en ADR 0002) |
 |---|---|---|---|
-| Lenguaje / runtime | PHP `^8.0\|^8.1` | Laravel 8 no admite PHP 8.5 | TypeScript `~6.0` sobre Node.js `>=24` |
-| Framework servidor | Laravel `^8.83` | sin parches de seguridad desde enero de 2023 | Fastify 5.12.5 |
+| Lenguaje / runtime | PHP `^8.0\|^8.1` | Laravel 8 no admite PHP 8.5 | TypeScript `~6.0`; Bun 1.4.2 para herramientas y servidor |
+| Framework servidor | Laravel `^8.83` | sin parches de seguridad desde enero de 2023 | Hono ^4.13.13, compartido con el Worker de Pages |
 | Administración | TCG Voyager `^1.5` | abandonado; CVE-2025-32931 (crítica) sin corrección | pantallas propias ([ADR 0008](adr/0008-administracion.md)) |
 | CAS | `apereo/phpcas` 1.5.0 | CVE-2022-39369 | cliente CAS 3.0 propio + `fast-xml-parser` 5.11 |
 | PDF | `barryvdh/laravel-dompdf` 2.0.0 | avisos de dompdf; `enable_php` activo | impresión del navegador |
 | Frontend | Blade + jQuery 2.1.3 + Bootstrap 4.6.2 + TinyMCE 5 + Laravel Mix 6 | 25 avisos npm (1 crítico) + 4 CVE de jQuery vendorizado | React 19.3 + Vite 8.3 + react-router 8.4 |
-| Base de datos | MariaDB/MySQL, 45 tablas + Voyager + 13 vistas SQL | — | PostgreSQL 18 + Drizzle 1.0.0-rc.4; PGlite 0.5.8 en la demo |
+| Base de datos | MariaDB/MySQL, 45 tablas + Voyager + 13 vistas SQL | — | PostgreSQL 18 + Bun.SQL + Drizzle 1.0.0-rc.5-5935859; PGlite 0.5.8 en la demo |
 | Validación | reglas Laravel dispersas | — | Zod 4.6 compartido |
 | Tests | PHPUnit, 8 métodos, no ejecutables | — | Vitest 5.0, Playwright 1.63 + axe 4.13 |
-| Build / CI | sin *lockfiles* ni CI; `composer.phar` versionado | Composer no resuelve (repositorio `larapack.io` con 404) | npm workspaces + `package-lock.json`; GitHub Actions |
+| Build / CI | sin *lockfiles* ni CI; `composer.phar` versionado | Composer no resuelve (repositorio `larapack.io` con 404) | workspaces de Bun + `bun.lock` v1; GitHub Actions |
 | Despliegue | OpenShift + Apache mod_php + NFS | scripts con hosts internos | imagen Docker multi-stage, volumen de medios |
 
 ## Modelo legacy
@@ -113,7 +113,7 @@ veces del diccionario personal y otras del envío. Mapeo tabla a tabla:
 | Datos personales | NIF/NIE, CIAL, pasaporte; datos reales en *seeders* | no se migran; datos ficticios; [PRIVACY.md](PRIVACY.md) |
 | NFS/medios | ficheros con nombre del cliente en disco público | `MediaStorage` con claves opacas y autorización; el migrador copia y verifica por SHA-256 |
 | Migración MariaDB→PostgreSQL | semántica de estados, envíos duplicados, ids distintos por entorno | migrador idempotente con *dry-run*, informe y huérfanos; ensayo sobre copia autorizada |
-| CI | inexistente | CI con PostgreSQL y MariaDB; Pages y releases dependen de él |
+| CI | inexistente | CI con PostgreSQL y MariaDB; Pages tiene su gate sobre el artefacto y la release sus propias comprobaciones |
 | Tests | 8 métodos no ejecutables | unitarias, contrato en dos drivers, API, migración y E2E ([TESTING.md](TESTING.md)) |
 | Licencias | sin licencia declarada | AGPL-3.0-or-later por decisión del titular; lista de licencias permitidas en CI ([LICENSING.md](LICENSING.md)) |
 | Código de terceros | phpCAS copiado, vendor JS sin gestionar | ningún código copiado; dependencias npm con lista de licencias |
@@ -121,7 +121,7 @@ veces del diccionario personal y otras del envío. Mapeo tabla a tabla:
 | Contenido HTML legacy | HTML de TinyMCE en comentarios (XSS almacenado) | se convierte a texto plano al migrar |
 | Credenciales públicas | `APP_KEY`, tokens CAUCE, contraseñas en el histórico | rotación por operaciones, ya y con independencia de esta obra |
 
-## Arquitectura propuesta
+## Arquitectura actual
 
 Diagramas de producción y demo, reparto del código y tabla de operaciones: [ARCHITECTURE.md](ARCHITECTURE.md).
 
@@ -130,7 +130,7 @@ Diagramas de producción y demo, reparto del código y tabla de operaciones: [AR
 | ADR | Decisión |
 |---|---|
 | [0001](adr/0001-reconstruccion.md) | Reconstruir en lugar de actualizar Laravel |
-| [0002](adr/0002-stack.md) | TypeScript, React + Vite, Fastify, PostgreSQL, npm workspaces; Zod, Vitest, Playwright |
+| [0002](adr/0002-stack.md) | TypeScript, React + Vite, Hono, Bun y PostgreSQL; Biome, Zod, Vitest, Playwright |
 | [0003](adr/0003-drizzle-pglite.md) | Un esquema Drizzle para PostgreSQL y PGlite; sin interfaces de repositorio duplicadas |
 | [0004](adr/0004-demo-pglite.md) | Demo en GitHub Pages con PGlite en IndexedDB |
 | [0005](adr/0005-autenticacion.md) | CAS 3.0 propio, adaptador CAUCE, sesiones en PostgreSQL |
@@ -157,32 +157,32 @@ Mapeo, orden, medios, verificación, *dry-run*, ensayo, corte y vuelta atrás: [
 [LEGACY-DATA-MAPPING.md](LEGACY-DATA-MAPPING.md). Sin escritura doble: el legacy queda en solo lectura durante el
 corte y la vuelta atrás es apuntar de nuevo a él.
 
-## Plan PR por PR
+## Fases de la reconstrucción
 
 | # | PR | Contenido |
 |---|---|---|
 | 1 | Fase 0 — auditoría | `analysis/lexican/` (evaluación, mapa, reglas, inventarios, *brief*) |
-| 2 | Herramientas + núcleo + esquema | npm workspaces, TypeScript, ESLint, Prettier, Vitest; ADR; `packages/core`, `packages/db` (esquema y primera migración), `packages/app` con pruebas de contrato |
-| 3 | Web + demo + Pages | React, cliente HTTP y cliente PGlite, E2E de la demo, workflow de Pages, `check:dist` |
-| 4 | API | Fastify, sesiones, CAS/CAUCE, subidas, Docker, pruebas de integración y E2E de producción |
+| 2 | Herramientas + núcleo + esquema | workspaces de Bun, TypeScript, Biome, Vitest; ADR; `packages/core`, `packages/db` (esquema y primera migración), `packages/app` con pruebas de contrato |
+| 3 | Web + demo + Pages | React, cliente API con transporte HTTP o Worker, E2E de la demo, workflow de Pages, `check:dist` |
+| 4 | API | Hono sobre Bun, sesiones, CAS/CAUCE, subidas, Docker, pruebas de integración y E2E de producción |
 | 5 | Migrador | `tools/legacy-migrator`, *fixtures* ficticios, job de CI con MariaDB, `MIGRATION.md` |
 | 6 | Administración + documentación + endurecimiento | pantallas de administración, documentación humana, revisión de seguridad y accesibilidad, release |
 | 7 | Corte | ensayo con copia autorizada, despliegue, migración real, comprobaciones, legacy en solo lectura |
-| 8 | Limpieza | eliminar del árbol Laravel, Voyager, Composer, Blade, jQuery y activos vendor; `upstream` intacta |
+| 8 | Limpieza (completada) | árbol Laravel, Voyager, Composer, Blade, jQuery y activos vendor eliminados; `upstream` intacta |
 
 ## Desviaciones respecto a `1er-prompt.md`
 
 | Prompt | Hecho | Motivo |
 |---|---|---|
-| Paquetes `domain`, `application`, `contracts`, `db`, `auth`, `testing` (§9) | `core`, `db` y `app` | fronteras reales: lo que comparten navegador y servidor sin base de datos, el esquema, y los casos de uso; `auth` es parte de `app`/`api`, `testing` son helpers en `packages/db/src/testing.ts` ([ADR 0002](adr/0002-stack.md)) |
+| Paquetes `domain`, `application`, `contracts`, `db`, `auth`, `testing` (§9) | `core`, `db`, `app` y `http` | fronteras reales: lo que comparten navegador y servidor sin base de datos, el esquema, y los casos de uso; `auth` es parte de `app`/`http`/`api`, `testing` son helpers en `packages/db/src/testing.ts` ([ADR 0002](adr/0002-stack.md)) |
 | Repositorios con interfaces y *adapters* (§18) | servicios sobre Drizzle directamente | un único tipo `Db` sirve para Bun.SQL y PGlite; las pruebas de contrato recorren la aplicación entera en ambos ([ADR 0003](adr/0003-drizzle-pglite.md)) |
 | `migrations/`, `scripts/migration`, `fixtures/demo`, `integration/` (§9) | migraciones en `packages/db/migrations`, migrador en `tools/legacy-migrator`, semilla demo en código, integración junto a la API | menos carpetas; la semilla usa los servicios y cumple las reglas |
 | — | react-router 8.4 (línea 8 GA), no la 7 | versión actual verificada; modo datos con *loaders* en lugar de TanStack Query |
 | Rutas limpias en Pages | *hash routing* en la demo, rutas normales en producción | Pages no tiene reescrituras; evita `404.html` (§60 lo permite) |
-| Node LTS | `>=24`, CI en 24 | 26 pasa a LTS el 2026-10-28; se adoptará tras verificarlo |
-| TypeScript actual | `~6.0` | `typescript-eslint` aún no admite 6.1+ ni 7 |
+| Node LTS | Bun 1.4.2 | Vite, Vitest, Playwright y TypeScript se ejecutan con `bunx --bun`; Bun también ejecuta API, CLI y scripts ([ADR 0002](adr/0002-stack.md)) |
+| TypeScript actual | `~6.0` | comprobación estática; TypeScript 7 requiere una PR propia. Biome sustituye a ESLint y Prettier |
 | Testcontainers (propuesto en el *brief*) | contenedor de servicio de GitHub Actions y `TEST_DATABASE_URL` | sin dependencia extra; en local, `docker compose` |
 | PDF del servidor | impresión del navegador | elimina dompdf y su superficie de ataque ([ADR 0007](adr/0007-medios-y-exportacion.md)) |
 | Miniaturas de vídeo | no | sin FFmpeg en la imagen |
-| Cobertura con umbrales (§81) | informe sin umbral bloqueante | pendiente de fijar tras estabilizar ([TESTING.md](TESTING.md)) |
+| Cobertura con umbrales (§81) | 90 % bloqueante en líneas, sentencias, funciones y ramas | PostgreSQL y MariaDB en CI para incluir ambos contratos y el migrador ([TESTING.md](TESTING.md)) |
 | Tests visuales (§80) y *skills* de agentes (§97) | no incluidos todavía | pendientes |

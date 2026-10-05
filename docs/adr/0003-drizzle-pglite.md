@@ -12,6 +12,7 @@ Esta implementación aún no tiene su primera etiqueta de versión: se adopta Dr
 
 - Drizzle ORM y drizzle-kit `1.0.0-rc.5-5935859`, fijados exactamente y actualizados juntos. Un único
   `packages/db/src/schema.ts`; `drizzle-kit generate` genera SQL que se revisa (nunca `push`).
+  Dependabot agrupa ambos paquetes en `drizzle` y los excluye de `dev-tooling`.
 - El tipo `Db = PgAsyncDatabase<PgQueryResultHKT>` acepta Bun.SQL y PGlite sin conversiones de tipo.
   Los servicios consultan Drizzle directamente; no hay una interfaz de repositorio con una única implementación.
   Se usa el constructor `drizzle({ client, codecs })`: las consultas SQL tipadas toman las tablas
@@ -19,7 +20,7 @@ Esta implementación aún no tiene su primera etiqueta de versión: se adopta Dr
 - PostgreSQL se conecta con el pool nativo `Bun.SQL` (`max: 10` en la API); se cierra con `client.close()`.
   Se eliminan `pg`, `@types/pg` y el adaptador node-postgres. Los helpers de pruebas y las CLI son entradas
   exclusivas de Bun; el esquema, los servicios y el Worker siguen usando solo APIs compartidas con el navegador.
-- Bun.SQL en RC4 y la revisión RC5 fijada necesita un codec JSONB explícito: `JSON.stringify` y parámetros `::text::jsonb`. El codec predeterminado
+- Bun.SQL con la revisión de Drizzle fijada necesita un codec JSONB explícito: `JSON.stringify` y parámetros `::text::jsonb`. El codec predeterminado
   de Bun.SQL infiere tipos numéricos al insertar primitivos y serializa de nuevo las cadenas JSON; el fallo rompe
   la versión de la semilla demo y la búsqueda de medios en snapshots. La consulta de contención de medios también
   fija ese cast de texto. No se modifica el formato almacenado ni el esquema. [Codecs de Drizzle](https://orm.drizzle.team/docs/pg/codecs).

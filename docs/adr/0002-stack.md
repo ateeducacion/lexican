@@ -40,6 +40,7 @@ Vite, Vitest, Playwright y TypeScript se ejecutan con `bunx --bun`: se conserva 
 runtime de Bun en lugar del *shebang* de Node. Docker y Actions solo necesitan Bun. No se sustituye Vite por el
 bundler de Bun ni Vitest por `bun test`. La suite con cobertura y los E2E de producción y demo comprueban esta
 compatibilidad. [Bun 1.4](https://bun.sh/blog/bun-v1.4) documenta el soporte de Vitest y Playwright.
+Los imports `node:*` de la API y los scripts usan la compatibilidad de Bun; no exigen instalar Node.js.
 
 ## Fronteras y simplificación
 

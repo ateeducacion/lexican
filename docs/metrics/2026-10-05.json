@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-10-05T05:37:32.498Z",
+  "legacy": {
+    "ref": "origin/upstream",
+    "sha": "c80ff652b3be44fc5b881060af5abc8c5f8842e8",
+    "trackedFiles": 742,
+    "trackedBytes": 33467699,
+    "binaryOrMediaBytes": 12540492,
+    "dsStore": 8,
+    "handWrittenSourceFiles": 389,
+    "phpDependencies": 18,
+    "npmDependencies": 21,
+    "routes": 48,
+    "tablesCreated": 45,
+    "controllers": 33,
+    "models": 36,
+    "testMethods": 8,
+    "ci": false
+  },
+  "modern": {
+    "sha": "6343feef96535e3503b92cc0759c32f97756c3c6",
+    "handWrittenSourceFiles": 112,
+    "sourceLines": 20465,
+    "testFiles": 31,
+    "testLines": 6513,
+    "e2eSpecs": 6,
+    "directDependencies": 27,
+    "productionPackagesInstalled": 46,
+    "allPackagesInstalled": 122,
+    "apiOperations": 39,
+    "tables": 19,
+    "enums": 10,
+    "workflows": 4,
+    "bunEngine": ">=1.4.2",
+    "webProductionBundle": {
+      "totalBytes": 1350093,
+      "initialRequests": 6,
+      "initialJsCssBytes": 474022,
+      "initialJsCssGzipBytes": 154285,
+      "wasmBytes": 0
+    },
+    "webDemoBundle": {
+      "totalBytes": 25170872,
+      "initialRequests": 8,
+      "initialJsCssBytes": 477405,
+      "initialJsCssGzipBytes": 155655,
+      "wasmBytes": 16778719
+    }
+  },
+  "audit": {
+    "vulnerabilities": 0
+  }
+}
