@@ -71,7 +71,7 @@ describe.skipIf(!serverUrl)('server entry point (Bun)', () => {
     const s = await start({ MEDIA_DIR: mediaDir, MIGRATE_ON_START: 'true' });
     expect(existsSync(mediaDir)).toBe(true);
     expect(
-      (await db.query('select count(*)::int as n from drizzle.__drizzle_migrations')).rows[0].n,
+      (await db.query('select count(*)::int as n from drizzle.__drizzle_migrations')).rows[0]!.n,
     ).toBeGreaterThan(0);
     const health = await fetch(`${s.url}/api/health`);
     expect(health.status).toBe(200);

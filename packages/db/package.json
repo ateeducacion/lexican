@@ -11,12 +11,10 @@
   },
   "dependencies": {
     "@lexican/core": "*",
-    "drizzle-orm": "1.0.0-rc.5-5935859",
-    "pg": "^8.23.1"
+    "drizzle-orm": "1.0.0-rc.5-5935859"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
-    "@types/pg": "^8.23.1",
     "drizzle-kit": "1.0.0-rc.5-5935859"
   },
   "scripts": {

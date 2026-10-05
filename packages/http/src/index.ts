@@ -145,17 +145,23 @@ export function safeError(err: unknown): {
 } {
   const e = (err instanceof Error ? err : new Error(String(err))) as Error & {
     code?: unknown;
+    errno?: unknown;
     cause?: unknown;
   };
-  const cause = (typeof e.cause === 'object' && e.cause ? e.cause : {}) as { code?: unknown };
+  const cause = (typeof e.cause === 'object' && e.cause ? e.cause : {}) as {
+    code?: unknown;
+    errno?: unknown;
+  };
   const isDb = e.name === 'DrizzleQueryError' || 'severity' in e || 'severity' in cause;
-  if (isDb)
+  if (isDb) {
+    const code = e.errno ?? cause.errno ?? e.code ?? cause.code;
     return {
       type: e.name,
       message: 'database error',
       stack: '',
-      code: typeof e.code === 'string' ? e.code : cause.code,
+      code: typeof code === 'string' ? code : undefined,
     };
+  }
   return { type: e.name, message: e.message, stack: e.stack ?? '', code: e.code };
 }
 

@@ -2,6 +2,7 @@ import { fileURLToPath } from 'node:url';
 import { sql } from 'drizzle-orm';
 import { readMigrationFiles } from 'drizzle-orm/migrator';
 import { describe, expect, it } from 'vitest';
+import { queryRows } from './db.ts';
 import { migrateBundled } from './migrate.ts';
 import { appSettings, vocabularyValues } from './schema.ts';
 import { seedVocabulary } from './seed/vocabulary.ts';
@@ -24,9 +25,10 @@ for (const driver of ['pglite', 'postgres'] as const) {
         await seedVocabulary(t.db);
         const [row] = await t.db.select({ n: sql<number>`count(*)::int` }).from(vocabularyValues);
         expect(row?.n).toBe(360);
-        const { rows: history } = (await t.db.execute(
+        const history = await queryRows<{ name: string; hash: string; created_at: string }>(
+          t.db,
           sql`select name, hash, created_at::text from drizzle.__drizzle_migrations order by name`,
-        )) as unknown as { rows: { name: string; hash: string; created_at: string }[] };
+        );
         expect(history).toEqual(
           migrations.map((m) => ({
             name: m.name,
@@ -60,9 +62,10 @@ for (const driver of ['pglite', 'postgres'] as const) {
           key: 'migration-test',
           value: { retained: true },
         });
-        const { rows: history } = (await t.db.execute(
+        const history = await queryRows<{ name: string; legacy: boolean }>(
+          t.db,
           sql`select name, applied_at is null as legacy from drizzle.__drizzle_migrations order by name`,
-        )) as unknown as { rows: { name: string; legacy: boolean }[] };
+        );
         expect(history).toEqual(migrations.map((m, i) => ({ name: m.name, legacy: i < 2 })));
       } finally {
         await t.close();

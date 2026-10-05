@@ -42,7 +42,7 @@ export type OperationHandlers = {
 
 /**
  * Application services: authorization + use cases over Drizzle. The same object runs inside the Fastify API
- * (node-postgres) and inside the browser demo (PGlite).
+ * (Bun.SQL) and inside the browser demo (PGlite).
  */
 export function createServices(deps: Deps) {
   const { db } = deps;

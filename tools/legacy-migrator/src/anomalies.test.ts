@@ -1,7 +1,7 @@
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { Db } from '@lexican/db';
+import { type Db, queryRows } from '@lexican/db';
 import { openPglite, type TestDb } from '@lexican/db/testing';
 import { sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -503,7 +503,7 @@ function legacy(): LegacyData {
 }
 
 async function rows<T>(db: Db, q: ReturnType<typeof sql>): Promise<T[]> {
-  return ((await db.execute(q)) as unknown as { rows: T[] }).rows;
+  return queryRows<T>(db, q);
 }
 
 describe('legacy migration of rare anomalies (in memory → PGlite)', () => {

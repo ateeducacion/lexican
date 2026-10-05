@@ -3,7 +3,7 @@ import { mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { type Db, seedVocabulary } from '@lexican/db';
+import { type Db, queryRows, seedVocabulary } from '@lexican/db';
 import { openPostgres, type TestDb } from '@lexican/db/testing';
 import { sql } from 'drizzle-orm';
 import mysql from 'mysql2/promise';
@@ -14,7 +14,7 @@ import { type MigrateOptions, migrateLegacy } from './migrate.ts';
 /**
  * legacy fixture (MariaDB) → migrator → PostgreSQL → assertions (§79). Runs only with both servers:
  *   docker run -d --name lexican-mariadb -e MARIADB_ROOT_PASSWORD=root -e MARIADB_DATABASE=legacy -p 53306:3306 mariadb:11
- *   TEST_MARIADB_URL=mysql://root:root@127.0.0.1:53306/legacy TEST_DATABASE_URL=postgres://… npx vitest run tools/legacy-migrator
+ *   TEST_MARIADB_URL=mysql://root:root@127.0.0.1:53306/legacy TEST_DATABASE_URL=postgres://… bunx --bun vitest run tools/legacy-migrator
  */
 const MARIADB = process.env.TEST_MARIADB_URL;
 const PG = process.env.TEST_DATABASE_URL;
@@ -22,7 +22,7 @@ const fixtures = fileURLToPath(new URL('../../../fixtures/legacy/', import.meta.
 const FAKE_PII = /00000000T|11111111H|CIAL000|XX0000001/;
 
 async function rows<T>(db: Db, q: ReturnType<typeof sql>): Promise<T[]> {
-  return ((await db.execute(q)) as unknown as { rows: T[] }).rows;
+  return queryRows<T>(db, q);
 }
 const COUNTED = [
   'users',

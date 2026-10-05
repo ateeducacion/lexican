@@ -2,11 +2,11 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { type Db, migrateBundled } from '@lexican/db';
+import { type Db, jsonbTextCodec, migrateBundled } from '@lexican/db';
 import { loadMigrations } from '@lexican/db/testing';
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { SQL } from 'bun';
+import { bunSqlPgCodecs, drizzle } from 'drizzle-orm/bun-sql/postgres';
 import mysql from 'mysql2/promise';
-import pg from 'pg';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 /** `bun run migrate:legacy` runs cli.ts as a script: each import parses argv, runs, and calls process.exit. */
@@ -78,22 +78,22 @@ describe.skipIf(!MARIADB || !PG)('legacy migrator CLI against the fixture', () =
   const legacyDb = `legacy_c_${crypto.randomUUID().replaceAll('-', '').slice(0, 10)}`;
   const targets: string[] = [];
   let admin: mysql.Connection;
-  let pgAdmin: pg.Client;
+  let pgAdmin: SQL;
   let work: string;
   let source: string;
 
   /** Fresh target database, optionally with the LexiCán schema applied. */
   async function target(migrated: boolean): Promise<string> {
     const name = `lexican_c_${crypto.randomUUID().replaceAll('-', '').slice(0, 12)}`;
-    await pgAdmin.query(`create database ${name}`);
+    await pgAdmin.unsafe(`create database ${name}`);
     targets.push(name);
     const url = new URL(PG!);
     url.pathname = `/${name}`;
     if (migrated) {
-      const pool = new pg.Pool({ connectionString: url.toString() });
-      const db: Db = drizzle({ client: pool });
+      const client = new SQL({ url: url.toString(), max: 1 });
+      const db: Db = drizzle({ client, codecs: { ...bunSqlPgCodecs, jsonb: jsonbTextCodec } });
       await migrateBundled(db, loadMigrations());
-      await pool.end();
+      await client.close();
     }
     return url.toString();
   }
@@ -109,14 +109,13 @@ describe.skipIf(!MARIADB || !PG)('legacy migrator CLI against the fixture', () =
     const u = new URL(MARIADB!);
     u.pathname = `/${legacyDb}`;
     source = u.toString();
-    pgAdmin = new pg.Client({ connectionString: PG });
-    await pgAdmin.connect();
+    pgAdmin = new SQL({ url: PG!, max: 1 });
     work = await mkdtemp(join(tmpdir(), 'lexican-cli-'));
   }, 60_000);
 
   afterAll(async () => {
-    for (const t of targets) await pgAdmin?.query(`drop database if exists ${t} with (force)`);
-    await pgAdmin?.end();
+    for (const t of targets) await pgAdmin?.unsafe(`drop database if exists ${t} with (force)`);
+    await pgAdmin?.close();
     await admin?.query(`drop database if exists ${legacyDb}`);
     await admin?.end();
     if (work) await rm(work, { recursive: true, force: true });

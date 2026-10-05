@@ -190,7 +190,7 @@ async function usedInReviewableSubmission(
     )
     // Structural match on the snapshot's media ids, never a text search (SEC-001).
     .where(
-      sql`${entryRevisions.snapshot}->'senses' @> ${JSON.stringify([{ media: [{ id: mediaId }] }])}::jsonb`,
+      sql`${entryRevisions.snapshot}->'senses' @> ${JSON.stringify([{ media: [{ id: mediaId }] }])}::text::jsonb`,
     )
     .limit(1);
   return rows.length > 0;
