@@ -60,3 +60,25 @@ it('seeds a coherent demo once (idempotent) that exercises every workflow state'
   expect(blobs.size).toBe(2);
   await t.close();
 });
+
+it('leaves nothing behind when seeding is interrupted, so the next start seeds again', async () => {
+  const t = await openPglite();
+  const media = memoryMediaStorage();
+  const deps = { db: t.db, clock: () => new Date(), media, mediaUrl: (id: string) => id };
+  const image = {
+    name: 'guagua.png',
+    bytes: new Uint8Array(
+      readFileSync(new URL('../../../apps/web/public/demo/guagua.png', import.meta.url)),
+    ),
+  };
+  // Fails after the accounts exist, like a mobile tab killed in the background during the first start.
+  const broken = { ...deps, media: { ...media, put: () => Promise.reject(new Error('killed')) } };
+  await expect(seedDemo(broken, [image])).rejects.toThrow();
+  await seedDemo(deps);
+  const user = await createServices(deps).call('login', null, {
+    email: 'profesor@ejemplo.com',
+    password: 'profesor',
+  });
+  expect(user.email).toBe('profesor@ejemplo.com');
+  await t.close();
+});
