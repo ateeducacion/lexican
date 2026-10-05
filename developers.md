@@ -5,8 +5,7 @@ rama `upstream` y no aplican aquí. Normas del repositorio: [AGENTS.md](AGENTS.m
 
 ## Requisitos
 
-- Bun 1.4.2: gestor de paquetes (`bun.lock`) y runtime de la API y sus CLI (<https://bun.com/docs/installation>).
-- Node.js 24 o superior (`engines` en `package.json`): ejecuta Vite, Vitest y Playwright, que no se pasan a Bun.
+- Bun 1.4.2: gestor de paquetes (`bun.lock`) y runtime de la API, sus CLI y las herramientas (<https://bun.com/docs/installation>).
 - Docker, solo para PostgreSQL local (y MariaDB si se prueba la migración).
 - Navegadores de Playwright para los E2E: `bunx playwright install chromium firefox webkit`.
 
@@ -127,7 +126,7 @@ Migración con MariaDB y cobertura: [docs/TESTING.md](docs/TESTING.md).
 - La base está en IndexedDB: DevTools → *Application* → *IndexedDB* → `/pglite/lexican-demo-v2`. El usuario activo está
   en *Local storage* → `lexican-demo-session`.
 - Empezar de cero: botón «Restablecer datos de demostración», o borrar esa base y recargar.
-- Para consultar con SQL, reproducir el estado en Node: `openPglite()` (`packages/db/src/testing.ts`) + `seedDemo()`
+- Para consultar con SQL, reproducir el estado con Bun: `openPglite()` (`packages/db/src/testing.ts`) + `seedDemo()`
   (`packages/app`) en un test temporal da la misma base que la demo recién sembrada.
 - Los errores de los servicios llegan a la UI como `ApiError` con el mismo `code` que la API (`validation`,
   `forbidden`, `not_found`, `conflict`…).

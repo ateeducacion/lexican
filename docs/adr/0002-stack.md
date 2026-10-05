@@ -10,8 +10,7 @@ explican sus límites sin repetir versiones históricas.
 
 | Pieza | Versión | Motivo |
 |---|---|---|
-| Bun | 1.4.2 | gestor de paquetes, runtime de la API y bundle autosuficiente del servidor |
-| Node.js | >=24; CI en 24 | ejecuta Vite, Vitest y Playwright |
+| Bun | 1.4.2 | gestor de paquetes, runtime de herramientas y API; bundle autosuficiente del servidor |
 | TypeScript | ~6.0 | comprobación estática con `tsc --noEmit`; una actualización mayor requiere revisión propia |
 | Biome | 2.5.15 | lint, formato y orden de importaciones |
 | React / Vite | 19.3 / 8.3 | interfaz común a producción y demo; build estático con `base` configurable |
@@ -36,6 +35,11 @@ apps/web        React, cliente HTTP o transporte al Worker de la demo
 apps/api        servidor Bun, cookies, CAUCE, volumen de medios y SPA
 tools/legacy-migrator  MariaDB → PostgreSQL, solo para migrar
 ```
+
+Vite, Vitest, Playwright y TypeScript se ejecutan con `bunx --bun`: se conserva cada herramienta y se fuerza el
+runtime de Bun en lugar del *shebang* de Node. Docker y Actions solo necesitan Bun. No se sustituye Vite por el
+bundler de Bun ni Vitest por `bun test`. La suite con cobertura y los E2E de producción y demo comprueban esta
+compatibilidad. [Bun 1.4](https://bun.sh/blog/bun-v1.4) documenta el soporte de Vitest y Playwright.
 
 ## Fronteras y simplificación
 

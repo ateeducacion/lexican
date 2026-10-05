@@ -5,10 +5,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:demo": "vite --mode demo",
-    "build": "vite build",
-    "build:demo": "vite build --mode demo"
+    "dev": "bunx --bun vite",
+    "dev:demo": "bunx --bun vite --mode demo",
+    "build": "bunx --bun vite build",
+    "build:demo": "bunx --bun vite build --mode demo"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",

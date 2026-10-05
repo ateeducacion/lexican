@@ -31,7 +31,7 @@ puede tocar los datos de un Docker.
 
 `Dockerfile` multi-stage, imágenes fijadas por *digest*:
 
-1. `build` (`node:24-alpine` + binario de Bun 1.4.2): `bun ci`, build de la web (Vite) y de la API (`bun build`: un
+1. `build` (`oven/bun:1.4.2-alpine`): `bun ci`, build de la web (Vite sobre Bun) y de la API (`bun build`: un
    bundle autosuficiente con sus dependencias; las migraciones SQL se copian a `apps/api/dist/migrations`).
 2. `runtime` (`oven/bun:1.4.2-alpine`, amd64 y arm64): solo `api/` (bundle) y `web/` (SPA); **sin `node_modules`**;
    usuario `bun` (no root); `VOLUME /data/media`; `EXPOSE 3000`; `HEALTHCHECK` contra `/api/health` (comprueba la
@@ -43,7 +43,8 @@ Bun no lee ficheros `.env` implícitamente (`bunfig.toml`, `--no-env-file`): la 
 
 La imagen se publica en `ghcr.io/ateeducacion/lexican` (Linux amd64): `main` se actualiza tras cada CI correcto de
 esa rama; cada etiqueta `v*` que coincida con `package.json` publica su versión y actualiza `latest` tras completar
-la *release*. Para producción, fijar una versión o un *digest* en lugar de una etiqueta móvil.
+la *release*. El paquete es privado mientras la política de la organización impida hacerlo público; requiere
+autenticarse con `docker login ghcr.io` y un token con permiso `read:packages`. Para producción, fijar una versión o un *digest* en lugar de una etiqueta móvil.
 
 ### Docker local (pruebas)
 

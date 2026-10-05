@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { type Actor, generateJoinCode } from './index.ts';
 import { type AppFixture, appFixture } from './testing/fixture.ts';
 
@@ -33,7 +33,6 @@ describe('classrooms', () => {
     f.setNow('2025-10-15T10:00:00Z'); // third and last current school year
   }, 60_000);
   afterAll(() => f.close());
-  afterEach(() => vi.restoreAllMocks());
 
   it('a student or support account cannot create classrooms; admins can', async () => {
     await expect(f.call('createClassroom', ana, { title: 'No' })).rejects.toMatchObject({
@@ -60,35 +59,41 @@ describe('classrooms', () => {
 
   it('retries the join code on a collision and gives up after six attempts', async () => {
     // Only the 6-byte join-code draws are forced; anything else (UUIDs, salts) stays random.
-    const real = crypto.getRandomValues.bind(crypto);
+    const original = crypto.getRandomValues;
+    const real = original.bind(crypto);
     const spy = vi
       .spyOn(crypto, 'getRandomValues')
       .mockImplementation(((a: Uint8Array) =>
         a.length === 6
           ? a.fill(0)
           : real(a as Uint8Array<ArrayBuffer>)) as typeof crypto.getRandomValues);
-    const draws = () => spy.mock.calls.filter(([a]) => (a as Uint8Array).length === 6).length;
-    const first = await f.call('createClassroom', owner, { title: 'Código A' });
-    expect(first.classroom!.joinCode).toBe('AAAAAA');
-    spy.mockClear();
-    await expect(f.call('createClassroom', owner, { title: 'Código B' })).rejects.toSatisfy(
-      (e: { code?: string; cause?: { code?: string } }) =>
-        e.code === '23505' || e.cause?.code === '23505',
-    );
-    expect(draws()).toBe(6);
-    // One collision, then a fresh code.
-    spy.mockClear();
-    spy.mockImplementation(((a: Uint8Array) =>
-      a.length === 6
-        ? a.fill(draws() > 1 ? 1 : 0)
-        : real(a as Uint8Array<ArrayBuffer>)) as typeof crypto.getRandomValues);
-    expect(
-      (await f.call('createClassroom', owner, { title: 'Código B' })).classroom!.joinCode,
-    ).toBe('BBBBBB');
-    expect(draws()).toBe(2);
-    expect(
-      (await f.call('myClassrooms', owner, {})).filter((c) => c.title.startsWith('Código')),
-    ).toHaveLength(2);
+    try {
+      const draws = () => spy.mock.calls.filter(([a]) => (a as Uint8Array).length === 6).length;
+      const first = await f.call('createClassroom', owner, { title: 'Código A' });
+      expect(first.classroom!.joinCode).toBe('AAAAAA');
+      spy.mockClear();
+      await expect(f.call('createClassroom', owner, { title: 'Código B' })).rejects.toSatisfy(
+        (e: { code?: string; cause?: { code?: string } }) =>
+          e.code === '23505' || e.cause?.code === '23505',
+      );
+      expect(draws()).toBe(6);
+      // One collision, then a fresh code.
+      spy.mockClear();
+      spy.mockImplementation(((a: Uint8Array) =>
+        a.length === 6
+          ? a.fill(draws() > 1 ? 1 : 0)
+          : real(a as Uint8Array<ArrayBuffer>)) as typeof crypto.getRandomValues);
+      expect(
+        (await f.call('createClassroom', owner, { title: 'Código B' })).classroom!.joinCode,
+      ).toBe('BBBBBB');
+      expect(draws()).toBe(2);
+      expect(
+        (await f.call('myClassrooms', owner, {})).filter((c) => c.title.startsWith('Código')),
+      ).toHaveLength(2);
+    } finally {
+      // Bun exposes this native method as non-configurable; restore it by assignment.
+      crypto.getRandomValues = original;
+    }
   });
 
   it('regenerates the join code for teachers only; the old code stops working', async () => {

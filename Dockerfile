@@ -3,10 +3,8 @@
 # Configuration comes only from the environment (see apps/api/.env.example and docs/DEPLOYMENT.md). Without it the
 # server refuses to start: APP_ENV defaults to production, which requires the institutional CAS + CAUCE.
 
-# Build: Bun installs the workspaces from bun.lock; Vite (on Node) builds the web bundle and `bun build` the
-# self-contained API bundle.
-FROM node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 AS build
-COPY --from=oven/bun:1.4.2-alpine@sha256:d888c0ae6c86d7866ff10c5aafdd9077b36aee6455b33dd270fb93c0dd5cef6f /usr/local/bin/bun /usr/local/bin/bun
+# Build: Bun installs the workspaces and runs Vite; `bun build` produces the self-contained API bundle.
+FROM oven/bun:1.4.2-alpine@sha256:d888c0ae6c86d7866ff10c5aafdd9077b36aee6455b33dd270fb93c0dd5cef6f AS build
 WORKDIR /app
 COPY . .
 RUN bun ci --ignore-scripts \
@@ -15,6 +13,9 @@ RUN bun ci --ignore-scripts \
 
 # Runtime: Bun only. The API bundle includes its dependencies, so there is no node_modules in the image.
 FROM oven/bun:1.4.2-alpine@sha256:d888c0ae6c86d7866ff10c5aafdd9077b36aee6455b33dd270fb93c0dd5cef6f AS runtime
+LABEL org.opencontainers.image.title="LexiCán" \
+    org.opencontainers.image.description="Diccionarios personales y de aula para aprender léxico" \
+    org.opencontainers.image.licenses="AGPL-3.0-or-later"
 ENV APP_ENV=production \
     PORT=3000 \
     MEDIA_DIR=/data/media \
