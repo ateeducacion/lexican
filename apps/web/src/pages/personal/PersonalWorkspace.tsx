@@ -108,6 +108,13 @@ export function Component() {
             ) : (
               <PageTitle title="Mi diccionario">{railTitle}</PageTitle>
             )}
+            <Link
+              to="/mi-diccionario/ajustes"
+              className={styles.settings}
+              aria-label="Ajustes de mi diccionario"
+            >
+              <span aria-hidden="true">⚙</span>
+            </Link>
           </div>
           <Link to="/mi-diccionario/nueva" className={`btn btn-primary ${styles.add}`}>
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -202,9 +209,6 @@ export function Component() {
           <ul className={styles.more}>
             <li>
               <Link to="/mi-diccionario/enviar">Enviar varias palabras al aula</Link>
-            </li>
-            <li>
-              <Link to="/mi-diccionario/ajustes">Gestión del diccionario</Link>
             </li>
           </ul>
         </nav>

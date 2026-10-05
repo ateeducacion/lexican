@@ -80,13 +80,31 @@
   margin: 0 0 var(--space-4);
 }
 .user {
+  position: relative;
+  flex-shrink: 0;
+}
+.userToggle {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  min-height: 44px;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 999px;
+  cursor: pointer;
+  list-style: none;
+}
+.userToggle::-webkit-details-marker {
+  display: none;
+}
+.userToggle:hover,
+.user[open] .userToggle {
+  background: rgb(255 255 255 / 12%);
 }
 .avatar {
   display: grid;
   place-items: center;
+  flex-shrink: 0;
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
@@ -96,22 +114,58 @@
   font-weight: 700;
 }
 .userName {
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 0.9rem;
 }
+.chevron {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+.user[open] .chevron {
+  transform: rotate(180deg);
+}
+.userMenu {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  width: min(18rem, calc(100vw - 2rem));
+  padding: var(--space-3);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  background: var(--c-surface);
+  color: var(--c-text);
+  box-shadow: var(--shadow);
+}
+.userMenu p {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  overflow-wrap: anywhere;
+}
+.userMenu p span {
+  color: var(--c-muted);
+  font-size: 0.85rem;
+}
 .logout {
-  font: inherit;
-  font-size: 0.9rem;
-  color: #fff;
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-2);
+  border: 0;
+  border-radius: var(--radius-sm);
   background: transparent;
-  border: 1px solid rgb(255 255 255 / 40%);
-  border-radius: 999px;
-  min-height: 40px;
-  padding: 0.3rem 0.9rem;
-  margin-left: var(--space-2);
+  color: var(--c-text);
+  font: inherit;
+  text-align: left;
   cursor: pointer;
 }
 .logout:hover {
-  background: rgb(255 255 255 / 12%);
+  background: var(--c-surface-2);
 }
 .band {
   height: 6px;
@@ -185,9 +239,11 @@
   display: none;
 }
 @media (max-width: 760px) {
-  .nav,
-  .userName {
+  .nav {
     display: none;
+  }
+  .userName {
+    max-width: 10ch;
   }
   .bar {
     min-height: 56px;
@@ -246,13 +302,14 @@
 @media (max-width: 420px) {
   .bar {
     gap: var(--space-2);
+    padding-inline: var(--space-4);
   }
-  .avatar {
+  .userName,
+  .chevron {
     display: none;
   }
-  .logout {
-    margin-left: 0;
-    padding-inline: 0.7rem;
+  .userToggle {
+    padding: var(--space-1);
   }
 }
 

@@ -15,10 +15,53 @@ test.describe('student', () => {
     await expect(page.getByText('www.casserverpac4j.dev')).toHaveCount(0);
     await expectAccessible(page);
     await page.getByRole('button', { name: 'Entrar como alumno 1' }).click();
-    await expect(page.getByRole('button', { name: 'Desconectar' })).toBeVisible({
+    await expect(page.getByLabel(/^Menú de usuario:/)).toBeVisible({
       timeout: 90_000,
     });
     await expect(page.getByRole('link', { name: 'Añadir entrada' })).toBeVisible();
+  });
+
+  test('account dropdown supports keyboard, dismissal and logout; dictionary settings stay beside the title @mobile', async ({
+    page,
+    app,
+  }) => {
+    await app.login('student1');
+    const account = page.getByLabel(/^Menú de usuario:/);
+    const logout = page.getByRole('button', { name: 'Desconectar' });
+    await expect(logout).toBeHidden();
+    await account.focus();
+    await account.press('Enter');
+    await expect(logout).toBeVisible();
+    await account.press('Tab');
+    await expect(logout).toBeFocused();
+    await expectAccessible(page);
+    await logout.press('Escape');
+    await expect(logout).toBeHidden();
+    await expect(account).toBeFocused();
+    await account.press('Space');
+    await expect(logout).toBeVisible();
+    await page.getByRole('main').click({ position: { x: 8, y: 8 } });
+    await expect(logout).toBeHidden();
+
+    await account.click();
+    const settings = page.getByRole('link', { name: 'Ajustes de mi diccionario' });
+    await settings.focus();
+    await settings.press('Enter');
+    await expect(page.getByRole('heading', { name: 'Ajustes de mi diccionario' })).toBeVisible();
+    await expect(logout).toBeHidden();
+    await page.getByRole('link', { name: '← Mi diccionario' }).click();
+    await expectAccessible(page);
+    await page.setViewportSize({ width: 320, height: 720 });
+    await account.click();
+    await expect(logout).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+    const panel = await logout.boundingBox();
+    expect(panel!.x).toBeGreaterThanOrEqual(0);
+    expect(panel!.x + panel!.width).toBeLessThanOrEqual(320);
+    await account.click();
+    await app.logout();
   });
 
   test('§77 journey: create, search, send and see the pending status', async ({ page, app }) => {
@@ -43,7 +86,7 @@ test.describe('student', () => {
     await expect(page.getByRole('heading', { name: 'mentidero', level: 1 })).toBeVisible({
       timeout: 90_000,
     });
-    await expect(page.getByRole('button', { name: 'Desconectar' })).toBeVisible();
+    await expect(page.getByLabel(/^Menú de usuario:/)).toBeVisible();
     await app.goto('/mi-diccionario');
     await findAndOpen(page, 'mentidero');
   });

@@ -20,12 +20,32 @@ export function Layout() {
   const navigation = useNavigation();
   const location = useLocation();
   const main = useRef<HTMLElement>(null);
+  const account = useRef<HTMLDetailsElement>(null);
 
   // Move focus to the main region after client-side navigation so screen readers announce the new page.
   // biome-ignore lint/correctness/useExhaustiveDependencies: the path is the trigger, not an input of the effect.
   useEffect(() => {
     main.current?.focus({ preventScroll: true });
+    if (account.current) account.current.open = false;
   }, [location.pathname]);
+
+  useEffect(() => {
+    const dismiss = (event: PointerEvent | KeyboardEvent) => {
+      const menu = account.current;
+      if (!menu?.open) return;
+      if (event instanceof KeyboardEvent) {
+        if (event.key !== 'Escape') return;
+        menu.querySelector('summary')?.focus();
+      } else if (menu.contains(event.target as Node)) return;
+      menu.open = false;
+    };
+    document.addEventListener('pointerdown', dismiss);
+    document.addEventListener('keydown', dismiss);
+    return () => {
+      document.removeEventListener('pointerdown', dismiss);
+      document.removeEventListener('keydown', dismiss);
+    };
+  }, []);
 
   async function logout() {
     await (await getApi()).logout({});
@@ -69,18 +89,29 @@ export function Layout() {
           )}
           <AppInfo role={user?.globalRole ?? null} />
           {user && (
-            <div className={styles.user}>
-              <span className={styles.avatar} aria-hidden="true">
-                {initials(user.displayName)}
-              </span>
-              <span className={styles.userName}>
-                {user.displayName}
-                <span className="visually-hidden"> · {ROLE_LABEL[user.globalRole]}</span>
-              </span>
-              <button type="button" className={styles.logout} onClick={logout}>
-                Desconectar
-              </button>
-            </div>
+            <details ref={account} className={styles.user}>
+              <summary
+                className={styles.userToggle}
+                aria-label={`Menú de usuario: ${user.displayName}`}
+              >
+                <span className={styles.avatar} aria-hidden="true">
+                  {initials(user.displayName)}
+                </span>
+                <span className={styles.userName}>{user.displayName}</span>
+                <svg className={styles.chevron} viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </summary>
+              <div className={styles.userMenu}>
+                <p>
+                  <strong>{user.displayName}</strong>
+                  <span>{ROLE_LABEL[user.globalRole]}</span>
+                </p>
+                <button type="button" className={styles.logout} onClick={logout}>
+                  Desconectar
+                </button>
+              </div>
+            </details>
           )}
         </div>
         <div className={styles.band} />
