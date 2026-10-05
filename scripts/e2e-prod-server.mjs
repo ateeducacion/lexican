@@ -28,8 +28,11 @@ const admin = new SQL({ url: base, max: 1 });
 const stale = await admin.unsafe(
   `select datname from pg_database where datname like 'lexican\\_e2e\\_%'`,
 );
-for (const { datname } of stale)
+for (const { datname } of stale) {
+  if (!/^lexican_e2e_[a-z0-9]+$/.test(datname))
+    throw new Error(`Unexpected E2E database name: ${datname}`);
   await admin.unsafe(`drop database if exists "${datname}" with (force)`);
+}
 await admin.unsafe(`create database ${name}`);
 const url = new URL(base);
 url.pathname = `/${name}`;
