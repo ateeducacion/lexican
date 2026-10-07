@@ -36,6 +36,7 @@ sourcemaps; la carga inicial cuenta el HTML y los JS/CSS declarados en él, no t
 | Tests | 8 métodos PHPUnit que no pueden ejecutarse | 299 tests Vitest; 43 E2E pasan y 9 se omiten por ámbito de proyecto; WebKit desactivado en CI |
 | Cobertura (líneas, `packages/*`, `apps/api`, `tools/*`) | — | 98,26 % (2321/2362); PostgreSQL y MariaDB presentes, umbral bloqueante 90 % |
 | CI | No | 4 workflows (CI, Pages, release y Docker reutilizable), acciones fijadas por SHA, permisos mínimos; publica la imagen probada sin reconstruir |
+| Interoperabilidad lexicográfica | CSV y JSON internos/ad hoc, sin DMLex | Exportación OASIS DMLex 1.0 JSON, validada automáticamente contra el JSON Schema oficial; se mantienen CSV y JSON propio ([DMLEX-MAPPING.md](DMLEX-MAPPING.md)) |
 | Bundle web de producción | Laravel Mix + TinyMCE + jQuery + vendor en `public/` | 1 350 093 bytes totales; 6 peticiones iniciales declaradas, 474 022 bytes JS+CSS (154 285 gzip); sin WASM |
 | Bundle demo (GitHub Pages) | No existe | 25 170 872 bytes totales; 16 778 719 bytes de WASM/datos de PGlite en el Worker; JS+CSS inicial 155 655 bytes gzip |
 | Tiempo de build | No medible (no instala) | `bun run build` 0,42 s; `bun run build:demo` 0,57 s (ejecución local) |

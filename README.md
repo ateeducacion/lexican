@@ -29,7 +29,8 @@ Más detalles en [docs/DEMO.md](docs/DEMO.md).
 - Buscar por texto, por inicial y por temática; ocultar entradas.
 - Unirse a un aula con un código y enviar una o varias entradas.
 - Ver el estado de cada envío (pendiente, publicado, rechazado con nota) y los comentarios del profesorado.
-- Imprimir o exportar el diccionario (PDF desde el navegador, CSV, JSON y OASIS DMLex JSON).
+- Imprimir o exportar el diccionario (PDF desde el navegador, CSV, JSON y **OASIS DMLex 1.0 JSON**, validado
+  contra el esquema oficial para facilitar la interoperabilidad con otras herramientas lexicográficas).
 
 **Profesorado**
 
