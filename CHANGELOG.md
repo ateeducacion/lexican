@@ -61,7 +61,8 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
 - Envíos como revisiones inmutables: lo que revisa el profesorado no cambia aunque el alumno siga editando. Estados
   pendiente, publicado, rechazado (con nota) y retirado; publicación de varios envíos a la vez con aviso de conflictos.
 - Comentarios del profesorado a cada alumno, con visibilidad configurable.
-- Exportación a CSV, JSON y OASIS DMLex 1.0 JSON, y vista de impresión para guardar en PDF.
+- Exportación a CSV, JSON y **OASIS DMLex 1.0 JSON**, nueva respecto al sistema 1.x y validada automáticamente
+  contra el JSON Schema oficial para interoperar con otras herramientas lexicográficas; vista de impresión para guardar en PDF.
 - Administración propia: usuarios y roles, vigencia de aulas, listas controladas, estadísticas y auditoría.
 - Detección de ediciones concurrentes (aviso de conflicto en lugar de sobrescribir).
 - Herramienta de migración de los datos y medios del sistema anterior a PostgreSQL, con simulación e informe.
