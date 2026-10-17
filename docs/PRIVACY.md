@@ -55,6 +55,9 @@ decisión del responsable del tratamiento: **pendiente**.
 - Excepción deliberada: «Entrar con CAS de pruebas» lleva al CAS público de pruebas (casserverpac4j.dev, ajeno a la
   Consejería) y le pide validar el ticket. Solo se usan sus cuentas ficticias; la pantalla advierte de no escribir
   credenciales institucionales.
+- Errores: la demo publicada en Pages (solo ella; el build de producción no) envía a Sentry (región UE) los errores
+  de JavaScript del navegador: mensaje, traza, navegador y URL. Sin datos personales (`sendDefaultPii: false`), sin
+  grabación de sesión ni trazas de rendimiento. Se añade en `.github/workflows/pages.yml`, no en el código.
 - Las ilustraciones de la demo son propias (CC0).
 
 ## Repositorio y pruebas
