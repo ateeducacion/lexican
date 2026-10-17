@@ -83,7 +83,9 @@ La semilla se ejecuta una sola vez y marca `app_settings.demo_seed_version`.
 - En WebKit con navegación privada, IndexedDB no admite Blobs: los medios se guardan como `ArrayBuffer`.
 - La primera carga descarga el WASM de PGlite (≈5 MB comprimidos) después de pintar la pantalla de acceso; PGlite y la
   API trabajan en el Worker, no en el hilo de la interfaz.
-- Sin CAUCE, correo ni servidor. La demo no hace peticiones fuera de su origen; los E2E lo comprueban.
+- Sin CAUCE, correo ni servidor. La demo no hace peticiones fuera de su origen; los E2E lo comprueban. Única
+  excepción: la demo publicada en Pages (no el build de los E2E ni el de producción) envía a Sentry los errores de
+  JavaScript, sin datos personales ([PRIVACY.md](PRIVACY.md#demo-pública)).
 - No sustituye a las pruebas de Docker: ver la tabla «Qué valida Pages y qué solo valida Docker» en
   [AUTHENTICATION.md](AUTHENTICATION.md).
 - Los datos no se comparten entre navegadores ni dispositivos.
