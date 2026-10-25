@@ -8,13 +8,13 @@ revisión manual de abajo.
 
 ## Qué está automatizado
 
-| Comprobación | Dónde |
-|---|---|
+| Comprobación                                                                                                                                                                   | Dónde                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
 | axe (`@axe-core/playwright`) con etiquetas `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`: cero violaciones en acceso, diccionario personal, ficha de entrada y editor | `expectAccessible()` en `e2e/fixtures.ts`, usado en `e2e/student.spec.ts` |
-| Cada E2E falla ante errores de página, `console.error` o peticiones fuera del origen | *fixture* automático `guard` en `e2e/fixtures.ts` |
-| Los E2E localizan elementos por rol y nombre accesible (`getByRole`, `getByLabel`): si se pierde una etiqueta, fallan | `e2e/*.spec.ts` |
-| Móvil (Pixel 7): crear y buscar sin *scroll* horizontal | `e2e/student.spec.ts` (`@mobile`, proyecto `demo-mobile`) |
-| Chromium, Firefox y WebKit | `playwright.config.ts` |
+| Cada E2E falla ante errores de página, `console.error` o peticiones fuera del origen                                                                                           | _fixture_ automático `guard` en `e2e/fixtures.ts`                         |
+| Los E2E localizan elementos por rol y nombre accesible (`getByRole`, `getByLabel`): si se pierde una etiqueta, fallan                                                          | `e2e/*.spec.ts`                                                           |
+| Móvil (Pixel 7): crear y buscar sin _scroll_ horizontal                                                                                                                        | `e2e/student.spec.ts` (`@mobile`, proyecto `demo-mobile`)                 |
+| Chromium, Firefox y WebKit                                                                                                                                                     | `playwright.config.ts`                                                    |
 
 Ejecutar: `bun run e2e:demo` ([TESTING.md](TESTING.md)).
 
@@ -28,7 +28,7 @@ Ejecutar: `bun run e2e:demo` ([TESTING.md](TESTING.md)).
 
 ## Revisión manual (antes de cada versión)
 
-Marcar en la PR de *release* qué se ha revisado y con qué navegador/lector.
+Marcar en la PR de _release_ qué se ha revisado y con qué navegador/lector.
 
 ### Teclado y foco
 
@@ -41,20 +41,19 @@ Marcar en la PR de *release* qué se ha revisado y con qué navegador/lector.
 ### Lector de pantalla (prueba rápida)
 
 Con NVDA + Firefox o VoiceOver + Safari:
-
 - [ ] **Acceso**: se anuncian el título, los campos con su etiqueta, los errores y las cuentas de demostración.
 - [ ] **Editor de entrada**: cada acepción se identifica (número), los campos tienen nombre, añadir/quitar/mover
-      acepciones se anuncia, los errores se leen al enviar.
+  acepciones se anuncia, los errores se leen al enviar.
 - [ ] **Revisión de envíos**: la tabla/lista se recorre con sentido, el estado de cada envío se lee como texto y el
-      resultado de publicar/rechazar se anuncia.
-- [ ] Encabezados en orden (`h1` → `h2` …) y *landmarks* (`header`, `nav`, `main`).
+  resultado de publicar/rechazar se anuncia.
+- [ ] Encabezados en orden (`h1` → `h2` …) y _landmarks_ (`header`, `nav`, `main`).
 
 ### Visual
 
 - [ ] Zoom del navegador al 200 %: sin pérdida de contenido ni funciones.
-- [ ] 400 % (equivale a 320 px de ancho): una sola columna, sin *scroll* horizontal salvo tablas.
+- [ ] 400 % (equivale a 320 px de ancho): una sola columna, sin _scroll_ horizontal salvo tablas.
 - [ ] Contraste de texto ≥ 4,5:1 (≥ 3:1 en texto grande e iconos/bordes de controles), también en estados de foco,
-      error y deshabilitado.
+  error y deshabilitado.
 - [ ] Ningún estado depende solo del color (publicado, pendiente, rechazado, oculto).
 - [ ] Con `prefers-reduced-motion: reduce` no hay animaciones no esenciales.
 - [ ] Anchos de prueba: 360×800, 768×1024, 1366×768, 1920×1080.

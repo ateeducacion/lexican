@@ -5,7 +5,7 @@
 
 ## Decisión
 
-- `vite build --mode demo` genera `apps/web/dist-demo` con `base: '/lexican/'` y enrutado por *hash* (no hace falta
+- `vite build --mode demo` genera `apps/web/dist-demo` con `base: '/lexican/'` y enrutado por _hash_ (no hace falta
   `404.html`). El modo se decide en el build (`import.meta.env.MODE`), nunca por el nombre del host.
 - PGlite en un Web Worker dedicado con `idb://lexican-demo-v2`. Se carga solo en la demo: la
   pantalla de acceso se pinta antes de descargar los ≈5 MB comprimidos de WASM, y el build de producción no contiene
@@ -25,5 +25,5 @@
 
 ## Alternativas descartadas
 
-- *PGliteWorker* multi-pestaña: un Worker propio ejecuta también la API y permite limitar la demo a una pestaña.
+- _PGliteWorker_ multi-pestaña: un Worker propio ejecuta también la API y permite limitar la demo a una pestaña.
 - Llamar directamente a servicios desde React o simular otra API: dejaría sin comprobar el contrato HTTP compartido.

@@ -45,7 +45,7 @@ jobs:
       - run: bunx --bun playwright install --with-deps chromium
       - run: bun run e2e --project=demo-chromium
         env:
-          E2E_DEMO_PREBUILT: '1'
+          E2E_DEMO_PREBUILT: "1"
 
       # Error monitoring for the public demo only (never the production build): injected into the tested artifact,
       # after the E2E (which reject off-origin requests). The DSN is public by design. With the optional

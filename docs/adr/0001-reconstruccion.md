@@ -9,7 +9,7 @@ El código heredado (Laravel 8.83, Voyager 1.5, phpCAS 1.5, Blade, jQuery, Boots
 instala: el repositorio de Composer `larapack.io` devuelve 404 y Composer 2.10 rechaza `phpcas 1.5.0` y `dompdf ^2` por
 avisos de seguridad (`analysis/lexican/ASSESSMENT.md`). La auditoría encontró 16 vulnerabilidades en PHP y 25 en npm,
 dos rutas confirmadas de ejecución remota (`/upload` y el visor de logs de Voyager) y decenas de acciones sin
-autorización. La lógica vive en 6,5 k líneas de *helpers* globales, no en controladores. No hay una costura de API que
+autorización. La lógica vive en 6,5 k líneas de _helpers_ globales, no en controladores. No hay una costura de API que
 permita sustituir el sistema por piezas.
 
 ## Decisión
@@ -20,9 +20,9 @@ la foto histórica.
 
 ## Alternativas
 
-- *Actualizar Laravel a 11/12*: obliga a sustituir Voyager (abandonado, vistas ausentes del repo), phpCAS y dompdf, y a
-  reescribir los *helpers* igualmente; no resuelve la demo estática.
-- *Reescritura por piezas (strangler)*: sin API ni módulos separables, el coste de convivencia supera al de reconstruir.
+- _Actualizar Laravel a 11/12_: obliga a sustituir Voyager (abandonado, vistas ausentes del repo), phpCAS y dompdf, y a
+  reescribir los _helpers_ igualmente; no resuelve la demo estática.
+- _Reescritura por piezas (strangler)_: sin API ni módulos separables, el coste de convivencia supera al de reconstruir.
 
 ## Consecuencias
 

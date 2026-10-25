@@ -8,18 +8,18 @@
 Antes de la primera etiqueta de versión, esta decisión recoge el stack vigente; las decisiones especializadas
 explican sus límites sin repetir versiones históricas.
 
-| Pieza | Versión | Motivo |
-|---|---|---|
-| Bun | 1.4.2 | gestor de paquetes, runtime de herramientas y API; bundle autosuficiente del servidor |
-| TypeScript | ~6.0 | comprobación estática con `tsc --noEmit`; una actualización mayor requiere revisión propia |
-| Biome | 2.5.15 | lint, formato y orden de importaciones |
-| React / Vite | 19.3 / 8.3 | interfaz común a producción y demo; build estático con `base` configurable |
-| react-router | 8.4, modo datos | loaders y revalidación; hash en la demo y rutas normales en producción |
-| Hono | ^4.13.13 | la misma API en Bun y en el Worker; [ADR 0009](0009-hono-bun-worker.md) |
-| Drizzle ORM / drizzle-kit | 1.0.0-rc.5-5935859 / 1.0.0-rc.5-5935859, exactas | esquema y migraciones compartidos; [ADR 0003](0003-drizzle-pglite.md) |
-| PostgreSQL / PGlite | 18 / 0.5.8 | producción / demo y tests |
-| Zod | 4.6 | contratos comunes a formularios, API, semillas e importación |
-| Vitest / Playwright | 5.0 / 1.63 + axe | pruebas unitarias, contratos y E2E |
+| Pieza                     | Versión                                          | Motivo                                                                                     |
+| ------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| Bun                       | 1.4.2                                            | gestor de paquetes, runtime de herramientas y API; bundle autosuficiente del servidor      |
+| TypeScript                | ~6.0                                             | comprobación estática con `tsc --noEmit`; una actualización mayor requiere revisión propia |
+| Biome                     | 2.5.15                                           | lint, formato y orden de importaciones                                                     |
+| React / Vite              | 19.3 / 8.3                                       | interfaz común a producción y demo; build estático con `base` configurable                 |
+| react-router              | 8.4, modo datos                                  | loaders y revalidación; hash en la demo y rutas normales en producción                     |
+| Hono                      | ^4.13.13                                         | la misma API en Bun y en el Worker; [ADR 0009](0009-hono-bun-worker.md)                    |
+| Drizzle ORM / drizzle-kit | 1.0.0-rc.5-5935859 / 1.0.0-rc.5-5935859, exactas | esquema y migraciones compartidos; [ADR 0003](0003-drizzle-pglite.md)                      |
+| PostgreSQL / PGlite       | 18 / 0.5.8                                       | producción / demo y tests                                                                  |
+| Zod                       | 4.6                                              | contratos comunes a formularios, API, semillas e importación                               |
+| Vitest / Playwright       | 5.0 / 1.63 + axe                                 | pruebas unitarias, contratos y E2E                                                         |
 
 Workspaces de Bun, sin herramientas adicionales de monorepo. `bun.lock` permanece en `lockfileVersion` 1 para
 Dependabot; Bun 1.4.2 conserva ese formato. `bun run check:lockfile` lo comprueba. `linker = "hoisted"` mantiene la
@@ -37,7 +37,7 @@ tools/legacy-migrator  MariaDB → PostgreSQL, solo para migrar
 ```
 
 Vite, Vitest, Playwright y TypeScript se ejecutan con `bunx --bun`: se conserva cada herramienta y se fuerza el
-runtime de Bun en lugar del *shebang* de Node. Docker y Actions solo necesitan Bun. No se sustituye Vite por el
+runtime de Bun en lugar del _shebang_ de Node. Docker y Actions solo necesitan Bun. No se sustituye Vite por el
 bundler de Bun ni Vitest por `bun test`. La suite con cobertura y los E2E de producción y demo comprueban esta
 compatibilidad. [Bun 1.4](https://bun.sh/blog/bun-v1.4) documenta el soporte de Vitest y Playwright.
 Los imports `node:*` de la API y los scripts usan la compatibilidad de Bun; no exigen instalar Node.js.
