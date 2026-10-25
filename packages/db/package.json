@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "@lexican/core": "*",
-    "drizzle-orm": "1.0.0-rc.5-5935859"
+    "drizzle-orm": "1.0.0-rc.5"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.10",
-    "drizzle-kit": "1.0.0-rc.5-5935859"
+    "drizzle-kit": "1.0.0-rc.5"
   },
   "scripts": {
     "generate": "bunx --bun drizzle-kit generate"
