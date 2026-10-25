@@ -9,6 +9,6 @@
     "@lexican/core": "*",
     "@lexican/db": "*",
     "drizzle-orm": "1.0.0-rc.5",
-    "mysql2": "^3.24.5"
+    "mysql2": "^3.24.6"
   }
 }
