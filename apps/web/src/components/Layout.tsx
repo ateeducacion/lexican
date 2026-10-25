@@ -94,9 +94,11 @@ export function Layout() {
                 className={styles.userToggle}
                 aria-label={`Menú de usuario: ${user.displayName}`}
               >
-                <span className={styles.avatar} aria-hidden="true">
-                  {initials(user.displayName)}
-                </span>
+                <span
+                  className={styles.avatar}
+                  aria-hidden="true"
+                  data-initials={initials(user.displayName)}
+                />
                 <span className={styles.userName}>{user.displayName}</span>
                 <svg className={styles.chevron} viewBox="0 0 24 24" aria-hidden="true">
                   <path d="m6 9 6 6 6-6" />

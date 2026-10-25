@@ -113,6 +113,9 @@
   font-size: 0.8rem;
   font-weight: 700;
 }
+.avatar::before {
+  content: attr(data-initials);
+}
 .userName {
   max-width: 10rem;
   overflow: hidden;
