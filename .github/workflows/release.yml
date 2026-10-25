@@ -4,7 +4,7 @@ name: Release
 
 on:
   push:
-    tags: ['v*']
+    tags: ["v*"]
 
 permissions:
   contents: read
@@ -25,7 +25,7 @@ jobs:
         env:
           POSTGRES_USER: lexican
           POSTGRES_PASSWORD: lexican
-        ports: ['5432:5432']
+        ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U lexican" --health-interval 5s --health-timeout 5s --health-retries 10
     env:

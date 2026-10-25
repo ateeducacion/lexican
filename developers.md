@@ -38,45 +38,44 @@ comprueba con `bun run check:lockfile`.
 
 ## Estructura
 
-| Workspace | Paquete | Contenido |
-|---|---|---|
-| `packages/core` | `@lexican/core` | tipos, esquemas Zod (`contracts.ts`), tabla de operaciones (`operations.ts`), reglas de curso y vigencia (`school-year.ts`), texto (`text.ts`), exportación (`export.ts`), errores de dominio, cuentas demo |
-| `packages/db` | `@lexican/db` | esquema Drizzle (`schema.ts`), migraciones (`migrations/`), `migrateBundled`, semilla de vocabularios, helpers de test (`testing.ts`) |
-| `packages/app` | `@lexican/app` | servicios de aplicación y autorización (`access.ts`), semilla demo |
-| `packages/http` | `@lexican/http` | API Hono compartida (`createApi`), cliente CAS, rangos HTTP |
-| `apps/api` | `@lexican/api` | servidor Bun (`server.ts`, `app.ts`): configuración, cookies, cabeceras, IP de confianza, CAUCE, volumen de medios, SPA, CLI de migración y semilla |
-| `apps/web` | `@lexican/web` | React: rutas (`router.tsx`), páginas, componentes, cliente común (`api/client.ts`) y motor de la demo en un Web Worker (`demo/`) |
-| `tools/legacy-migrator` | `@lexican/legacy-migrator` | migración MariaDB → PostgreSQL |
-| `e2e/` | — | pruebas Playwright |
-| `scripts/` | — | `check-dist.mjs`, `licenses.mjs`, `metrics.mjs`, `e2e-prod-server.mjs` |
+| Workspace               | Paquete                    | Contenido                                                                                                                                                                                                   |
+| ----------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/core`         | `@lexican/core`            | tipos, esquemas Zod (`contracts.ts`), tabla de operaciones (`operations.ts`), reglas de curso y vigencia (`school-year.ts`), texto (`text.ts`), exportación (`export.ts`), errores de dominio, cuentas demo |
+| `packages/db`           | `@lexican/db`              | esquema Drizzle (`schema.ts`), migraciones (`migrations/`), `migrateBundled`, semilla de vocabularios, helpers de test (`testing.ts`)                                                                       |
+| `packages/app`          | `@lexican/app`             | servicios de aplicación y autorización (`access.ts`), semilla demo                                                                                                                                          |
+| `packages/http`         | `@lexican/http`            | API Hono compartida (`createApi`), cliente CAS, rangos HTTP                                                                                                                                                 |
+| `apps/api`              | `@lexican/api`             | servidor Bun (`server.ts`, `app.ts`): configuración, cookies, cabeceras, IP de confianza, CAUCE, volumen de medios, SPA, CLI de migración y semilla                                                         |
+| `apps/web`              | `@lexican/web`             | React: rutas (`router.tsx`), páginas, componentes, cliente común (`api/client.ts`) y motor de la demo en un Web Worker (`demo/`)                                                                            |
+| `tools/legacy-migrator` | `@lexican/legacy-migrator` | migración MariaDB → PostgreSQL                                                                                                                                                                              |
+| `e2e/`                  | —                          | pruebas Playwright                                                                                                                                                                                          |
+| `scripts/`              | —                          | `check-dist.mjs`, `licenses.mjs`, `metrics.mjs`, `e2e-prod-server.mjs`                                                                                                                                      |
 
 Los paquetes se importan como TypeScript fuente (sin compilar entre ellos); la API se empaqueta con `bun build` en un bundle autosuficiente.
 
 ## Scripts
 
-| Script | Qué hace |
-|---|---|
-| `bun run dev` / `dev:demo` / `dev:api` | Vite (producción), Vite (demo), API con recarga |
-| `bun run build` | web (`apps/web/dist`) + API (`apps/api/dist`) |
-| `bun run build:demo` / `preview:demo` | demo estática (`apps/web/dist-demo`) / servirla como Pages en http://localhost:4317/lexican/ (sin *fallback*) |
-| `bun run check` | `lint` + `typecheck` + `test` |
-| `bun run lint` / `fix` / `format` / `typecheck` | Biome (`biome check .`: lint, formato y orden de importaciones) / lo mismo arreglando (`--write`) / solo formato / `tsc`. Atajos: `make lint`, `make fix` |
-| `bun run test` / `test:watch` / `test:coverage` | Vitest |
-| `bun run test:contracts` / `test:integration` / `test:migration` | Vitest de `packages/app`, `apps/api`, `tools` |
-| `bun run e2e` / `e2e:demo` | Playwright: todo / solo proyectos `demo-*` |
-| `bun run db:generate` | genera una migración SQL a partir de `schema.ts` |
-| `bun run db:migrate` / `db:seed` | aplica migraciones / siembra vocabularios (`-- --demo` añade datos ficticios) |
-| `bun run migrate:legacy …` | migrador legacy ([docs/MIGRATION.md](docs/MIGRATION.md)) |
-| `bun run check:dist` | revisa los bundles (secretos, hosts, base `/lexican/`, PGlite fuera de producción) |
-| `bun run audit` / `licenses` / `sbom` | avisos de seguridad / licencias de producción / SBOM SPDX |
-| `bun run metrics` | métricas `upstream` vs árbol actual para el informe de modernización |
+| Script                                                           | Qué hace                                                                                                                                                  |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun run dev` / `dev:demo` / `dev:api`                           | Vite (producción), Vite (demo), API con recarga                                                                                                           |
+| `bun run build`                                                  | web (`apps/web/dist`) + API (`apps/api/dist`)                                                                                                             |
+| `bun run build:demo` / `preview:demo`                            | demo estática (`apps/web/dist-demo`) / servirla como Pages en http://localhost:4317/lexican/ (sin _fallback_)                                             |
+| `bun run check`                                                  | `lint` + `typecheck` + `test`                                                                                                                             |
+| `bun run lint` / `fix` / `format` / `typecheck`                  | Biome (`biome check .`: lint, formato y orden de importaciones) / lo mismo arreglando (`--write`) / solo formato / `tsc`. Atajos: `make lint`, `make fix` |
+| `bun run test` / `test:watch` / `test:coverage`                  | Vitest                                                                                                                                                    |
+| `bun run test:contracts` / `test:integration` / `test:migration` | Vitest de `packages/app`, `apps/api`, `tools`                                                                                                             |
+| `bun run e2e` / `e2e:demo`                                       | Playwright: todo / solo proyectos `demo-*`                                                                                                                |
+| `bun run db:generate`                                            | genera una migración SQL a partir de `schema.ts`                                                                                                          |
+| `bun run db:migrate` / `db:seed`                                 | aplica migraciones / siembra vocabularios (`-- --demo` añade datos ficticios)                                                                             |
+| `bun run migrate:legacy …`                                       | migrador legacy ([docs/MIGRATION.md](docs/MIGRATION.md))                                                                                                  |
+| `bun run check:dist`                                             | revisa los bundles (secretos, hosts, base `/lexican/`, PGlite fuera de producción)                                                                        |
+| `bun run audit` / `licenses` / `sbom`                            | avisos de seguridad / licencias de producción / SBOM SPDX                                                                                                 |
+| `bun run metrics`                                                | métricas `upstream` vs árbol actual para el informe de modernización                                                                                      |
 
 `make help` muestra los atajos del `Makefile` (envoltorio fino sobre estos scripts).
 
 ## Añadir una operación de principio a fin
 
 Ejemplo: «archivar un aula».
-
 1. **Contrato** — `packages/core/src/operations.ts`: añadir `archiveClassroom: op('POST',
    '/api/classrooms/:classroomId/archive', z.object({ classroomId: id }))` y su tipo de salida en `OperationOutputs`.
    Si la entrada es compleja, el esquema va en `contracts.ts`.
@@ -124,8 +123,8 @@ Migración con MariaDB y cobertura: [docs/TESTING.md](docs/TESTING.md).
 
 ## Depurar la base de la demo en el navegador
 
-- La base está en IndexedDB: DevTools → *Application* → *IndexedDB* → `/pglite/lexican-demo-v2`. El usuario activo está
-  en *Local storage* → `lexican-demo-sid`; los medios están en IndexedDB `lexican-demo-media`.
+- La base está en IndexedDB: DevTools → _Application_ → _IndexedDB_ → `/pglite/lexican-demo-v2`. El usuario activo está
+  en _Local storage_ → `lexican-demo-sid`; los medios están en IndexedDB `lexican-demo-media`.
 - Empezar de cero: botón «Restablecer datos de demostración», que coordina el cierre del Worker y borra también medios
   y sesión.
 - Para consultar con SQL, reproducir el estado con Bun: `openPglite()` (`packages/db/src/testing.ts`) + `seedDemo()`

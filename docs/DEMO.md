@@ -10,9 +10,9 @@ producción; solo cambia el transporte (mensajes en vez de HTTP). Decisiones: [A
 
 ## Cómo probar un cambio
 
-1. *Push* a `main` → `pages.yml` construye la demo, la comprueba (tipos, `check:dist`, E2E esenciales sobre un
+1. _Push_ a `main` → `pages.yml` construye la demo, la comprueba (tipos, `check:dist`, E2E esenciales sobre un
    servidor estático como Pages) y publica ese mismo artefacto. No espera a la validación completa (`ci.yml`).
-2. Abrir <https://ateeducacion.github.io/lexican/>. En «Acerca de LexiCán» se ven la versión y el *commit* publicados.
+2. Abrir <https://ateeducacion.github.io/lexican/>. En «Acerca de LexiCán» se ven la versión y el _commit_ publicados.
 3. Para empezar de cero: «Restablecer datos de demostración».
 
 ## Cuentas
@@ -20,12 +20,12 @@ producción; solo cambia el transporte (mensajes en vez de HTTP). Decisiones: [A
 Aparecen debajo del formulario de acceso, cada una con un botón «Entrar como…» (acceso rápido). Fuente:
 `packages/core/src/demo.ts`. La demo estática solo permite estas cuentas ficticias; no ofrece acceso CAS.
 
-| Cuenta | Correo | Contraseña | Rol |
-|---|---|---|---|
-| Profesora (Yaiza Tutoriales) | `profesor@ejemplo.com` | `profesor` | profesorado |
-| Alumno 1 (Alumno Padrón Armas) | `alumno1@ejemplo.com` | `alumno1` | alumnado |
-| Alumna 2 (Alumna Armas Padrón) | `alumno2@ejemplo.com` | `alumno2` | alumnado |
-| Administración | `admin@ejemplo.com` | `admin` | administración |
+| Cuenta                         | Correo                 | Contraseña | Rol            |
+| ------------------------------ | ---------------------- | ---------- | -------------- |
+| Profesora (Yaiza Tutoriales)   | `profesor@ejemplo.com` | `profesor` | profesorado    |
+| Alumno 1 (Alumno Padrón Armas) | `alumno1@ejemplo.com`  | `alumno1`  | alumnado       |
+| Alumna 2 (Alumna Armas Padrón) | `alumno2@ejemplo.com`  | `alumno2`  | alumnado       |
+| Administración                 | `admin@ejemplo.com`    | `admin`    | administración |
 
 Todos los nombres, correos y el centro son ficticios.
 
@@ -33,17 +33,16 @@ Todos los nombres, correos y el centro son ficticios.
 
 `packages/app/src/demo-seed.ts` crea los datos **a través de los servicios de aplicación**, así que cumplen todas las
 reglas:
-
 - Vocabularios controlados (categoría gramatical, género, número, lenguas, temáticas, niveles, materias…).
 - Un centro ficticio («IES Ficticio Las Palmeras», código `99999999`).
-- Diccionario personal de Alumno 1: *guagua* (dos acepciones, imagen), *gofio* (imagen), *baifo*, *millo* y *fisco*
+- Diccionario personal de Alumno 1: _guagua_ (dos acepciones, imagen), _gofio_ (imagen), _baifo_, _millo_ y _fisco_
   (oculta).
-- Diccionario personal de Alumna 2: *cholas*, *machango*, *mojo*, *tenique*.
+- Diccionario personal de Alumna 2: _cholas_, _machango_, _mojo_, _tenique_.
 - Aula «Canarismos de 2º ESO B» (vigente, plazo de envíos abierto 60 días, máximo 3 acepciones, categoría gramatical
   obligatoria, pautas) con los dos alumnos unidos por código.
 - Aula «Vocabulario de Biología 1º ESO» con envíos cerrados.
-- Envíos: *guagua*, *gofio* y *cholas* publicados; *baifo* y *machango* pendientes; *mojo* rechazado con nota.
-- Dos comentarios de la profesora y una acepción de *guagua* oculta por la profesora en la copia publicada.
+- Envíos: _guagua_, _gofio_ y _cholas_ publicados; _baifo_ y _machango_ pendientes; _mojo_ rechazado con nota.
+- Dos comentarios de la profesora y una acepción de _guagua_ oculta por la profesora en la copia publicada.
 - Dos ilustraciones CC0 (`apps/web/public/demo/`).
 
 La semilla se ejecuta una sola vez y marca `app_settings.demo_seed_version`.
@@ -70,7 +69,7 @@ La semilla se ejecuta una sola vez y marca `app_settings.demo_seed_version`.
   siembra si hace falta, limpia medios huérfanos y avisa de que está listo. Las peticiones esperan como mucho 120 s.
 - Mientras arranca se muestra «Preparando la demo en este navegador…» (`role="status"`). Los errores se muestran con
   `role="alert"`, un botón «Reintentar» y, cuando es seguro, «Restablecer datos de demostración»; nunca una pantalla
-  en blanco. Peticiones: 30 s (subidas 120 s); tras un *timeout* no se reintenta (la operación pudo completarse).
+  en blanco. Peticiones: 30 s (subidas 120 s); tras un _timeout_ no se reintenta (la operación pudo completarse).
 - Si el Worker se detiene, todas las peticiones pendientes fallan con un mensaje y se pide recargar.
 
 ## Límites
@@ -92,13 +91,13 @@ La semilla se ejecuta una sola vez y marca `app_settings.demo_seed_version`.
 
 ## Build y despliegue
 
-| Paso | Comando / fichero |
-|---|---|
-| Build estático | `bun run build:demo` → `vite build --mode demo` → `apps/web/dist-demo/` con `base: '/lexican/'` |
-| Enrutado | *hash* (`createHashRouter`): `…/lexican/#/mi-diccionario`; no hace falta `404.html` |
-| Modo | decidido en el build (`import.meta.env.MODE === 'demo'`, `apps/web/src/env.ts`), nunca por el nombre del host |
-| Comprobación del bundle | `bun run check:dist` (`scripts/check-dist.mjs`): JS, chunk del Worker, CSS, HTML y sourcemaps sin hosts internos, claves ni tokens; `index.html` con `/lexican/`; el Worker y el WASM presentes; el build de producción sin PGlite, WASM, Worker, API demo ni contraseñas |
-| Publicación | `.github/workflows/pages.yml`: en cada *push* a `main` (o manual desde `main`), comprueba que el commit está en `main`, `bun ci`, `typecheck`, `build:demo`, `check:dist`, E2E esenciales (Chromium) sobre ese mismo artefacto, y lo despliega. Ejecuciones en serie: un commit antiguo nunca publica encima de uno nuevo |
+| Paso                    | Comando / fichero                                                                                                                                                                                                                                                                                                         |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Build estático          | `bun run build:demo` → `vite build --mode demo` → `apps/web/dist-demo/` con `base: '/lexican/'`                                                                                                                                                                                                                           |
+| Enrutado                | _hash_ (`createHashRouter`): `…/lexican/#/mi-diccionario`; no hace falta `404.html`                                                                                                                                                                                                                                       |
+| Modo                    | decidido en el build (`import.meta.env.MODE === 'demo'`, `apps/web/src/env.ts`), nunca por el nombre del host                                                                                                                                                                                                             |
+| Comprobación del bundle | `bun run check:dist` (`scripts/check-dist.mjs`): JS, chunk del Worker, CSS, HTML y sourcemaps sin hosts internos, claves ni tokens; `index.html` con `/lexican/`; el Worker y el WASM presentes; el build de producción sin PGlite, WASM, Worker, API demo ni contraseñas                                                 |
+| Publicación             | `.github/workflows/pages.yml`: en cada _push_ a `main` (o manual desde `main`), comprueba que el commit está en `main`, `bun ci`, `typecheck`, `build:demo`, `check:dist`, E2E esenciales (Chromium) sobre ese mismo artefacto, y lo despliega. Ejecuciones en serie: un commit antiguo nunca publica encima de uno nuevo |
 
 ## Ejecutar en local
 
@@ -114,7 +113,6 @@ Los E2E de la demo usan ese servidor estático en el puerto 4317 ([TESTING.md](T
 ## Comprobación manual en Android (pendiente en dispositivo real)
 
 La emulación de Pixel de Playwright no prueba un Android real. Recorrido en una pestaña normal de Chrome para Android:
-
 1. Abrir la demo publicada; esperar a «Preparando la demo…» y entrar como alumno 1.
 2. Crear una palabra; en «Audio» elegir una nota de voz grabada con el teléfono (M4A/AAC, OGG/Opus o WebM) y guardar.
 3. Reproducir, pausar y desplazarse por el audio; girar la pantalla.

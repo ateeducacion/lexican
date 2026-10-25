@@ -61,7 +61,7 @@ las migraciones PostgreSQL/PGlite se definen en [ADR 0003](0003-drizzle-pglite.m
 
 ## Alternativas descartadas
 
-- *PGliteWorker* (líder entre pestañas): deja la API en el hilo principal de cada pestaña; un Worker propio con Web Lock
+- _PGliteWorker_ (líder entre pestañas): deja la API en el hilo principal de cada pestaña; un Worker propio con Web Lock
   es más simple y saca todo el trabajo del hilo de React.
-- *Service Worker* que intercepte `fetch`: ciclo de vida y caché de otro producto; fuera de alcance.
+- _Service Worker_ que intercepte `fetch`: ciclo de vida y caché de otro producto; fuera de alcance.
 - Proxy CORS para el CAS público: añadiría un servicio externo sin autorización.

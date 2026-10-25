@@ -17,11 +17,11 @@ peticiones es por proceso y la limpieza de medios huérfanos al arrancar supone 
 
 ## Perfiles (`APP_ENV`)
 
-| Perfil | Dónde | Qué permite |
-|---|---|---|
-| `production` (por defecto) | Docker institucional | CAS institucional + CAUCE. Rechaza CAS de pruebas, `CAS_PROFILES=test`, `AUTH_DEV_LOGIN`, `db:seed --demo`, `http` en `PUBLIC_URL`/`CAS_URL` y la falta de `CAUCE_*` o `CAS_ALLOWED_SLO_HOSTS` |
-| `local` | `docker-compose.yml`, desarrollo | CAS público de pruebas (`https://www.casserverpac4j.dev`) con fichas ficticias, contraseñas y datos demo |
-| `test` | pruebas automatizadas | nada activado salvo lo que se configure |
+| Perfil                     | Dónde                            | Qué permite                                                                                                                                                                                    |
+| -------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `production` (por defecto) | Docker institucional             | CAS institucional + CAUCE. Rechaza CAS de pruebas, `CAS_PROFILES=test`, `AUTH_DEV_LOGIN`, `db:seed --demo`, `http` en `PUBLIC_URL`/`CAS_URL` y la falta de `CAUCE_*` o `CAS_ALLOWED_SLO_HOSTS` |
+| `local`                    | `docker-compose.yml`, desarrollo | CAS público de pruebas (`https://www.casserverpac4j.dev`) con fichas ficticias, contraseñas y datos demo                                                                                       |
+| `test`                     | pruebas automatizadas            | nada activado salvo lo que se configure                                                                                                                                                        |
 
 La imagen sin configuración no arranca (`APP_ENV=production requires CAS_URL`): nunca activa por accidente el CAS
 público ni cuentas ficticias. El restablecimiento de la demo de Pages solo borra bases de IndexedDB del navegador; no
@@ -29,14 +29,13 @@ puede tocar los datos de un Docker.
 
 ## Imagen Docker
 
-`Dockerfile` multi-stage, imágenes fijadas por *digest*:
-
+`Dockerfile` multi-stage, imágenes fijadas por _digest_:
 1. `build` (`oven/bun:1.4.2-alpine`): `bun ci`, build de la web (Vite sobre Bun) y de la API (`bun build`: un
    bundle autosuficiente con sus dependencias; las migraciones SQL se copian a `apps/api/dist/migrations`).
 2. `runtime` (`oven/bun:1.4.2-alpine`, amd64 y arm64): solo `api/` (bundle) y `web/` (SPA); **sin `node_modules`**;
    usuario `bun` (no root); `VOLUME /data/media`; `EXPOSE 3000`; `HEALTHCHECK` contra `/api/health` (comprueba la
    base); proceso `bun --no-env-file api/server.js` con cierre ordenado en `SIGTERM`/`SIGINT` (deja de aceptar, termina
-   las peticiones en curso y cierra el *pool*).
+   las peticiones en curso y cierra el _pool_).
 
 El contexto de build es una lista blanca (`.dockerignore`): no entran datos locales, informes, `.env` ni `node_modules`.
 Bun no lee ficheros `.env` implícitamente (`bunfig.toml`, `--no-env-file`): la configuración llega solo por entorno.
@@ -44,8 +43,8 @@ Los manifiestos y `bun.lock` se copian antes del código: cambiar una fuente con
 
 La imagen se publica en `ghcr.io/ateeducacion/lexican` (Linux amd64): `main` se actualiza tras cada CI correcto de
 esa rama; cada etiqueta `v*` que coincida con `package.json` publica su versión y actualiza `latest` tras completar
-la *release*. El paquete es privado mientras la política de la organización impida hacerlo público; requiere
-autenticarse con `docker login ghcr.io` y un token con permiso `read:packages`. Para producción, fijar una versión o un *digest* en lugar de una etiqueta móvil.
+la _release_. El paquete es privado mientras la política de la organización impida hacerlo público; requiere
+autenticarse con `docker login ghcr.io` y un token con permiso `read:packages`. Para producción, fijar una versión o un _digest_ en lugar de una etiqueta móvil.
 CI y las etiquetas usan el mismo workflow Docker: construye una imagen, prueba el arranque sin configuración y el
 perfil local con `--no-build`, y guarda esa imagen como artefacto durante un día. Tras pasar los checks, el job de
 publicación la carga, comprueba que conserva el identificador de contenido probado y la etiqueta sin reconstruirla.
@@ -81,32 +80,32 @@ docker run -d --name lexican --env-file /ruta/segura/lexican.env \
 Validadas al arrancar por `apps/api/src/config.ts` (falla con el nombre de la variable, nunca su valor). Ejemplo con
 valores ficticios: `apps/api/.env.example`.
 
-| Variable | Por defecto | Uso |
-|---|---|---|
-| `APP_ENV` | `production` | perfil: `production`, `local` o `test` (ver arriba). `NODE_ENV` no influye |
-| `DATABASE_URL` | — (obligatoria) | conexión PostgreSQL |
-| `PUBLIC_URL` | — (obligatoria; `https` en producción) | origen público. Define la URL de servicio CAS, la comprobación `Origin` y si las cookies son `__Host-` + `Secure` |
-| `PORT` / `HOST` | `3000` / `0.0.0.0` | escucha |
-| `SESSION_TTL_HOURS` | `8` (máx. 720) | caducidad de sesión |
-| `MEDIA_DIR` | — (obligatoria; `/data/media` en la imagen) | raíz de medios |
-| `MAX_UPLOAD_MB` | `10` (máx. 100) | tamaño máximo por archivo (se corta mientras llega el cuerpo) |
-| `MEDIA_QUOTA_MB_PER_DAY` | `100` | cuota de subida por usuario en 24 h (ventana móvil) |
-| `LOGIN_RATE_LIMIT` | `10` | intentos de acceso con contraseña por minuto e IP (solo `local`/`test`) |
-| `CAS_URL` | vacío; `https://www.casserverpac4j.dev` en `local` | servidor CAS 3.0, con su prefijo (`https://host/cas`); sin *query* ni fragmento |
-| `CAS_LOGIN_PATH` | `/login` | ruta de acceso, relativa a `CAS_URL` |
-| `CAS_VALIDATE_PATH` | `/p3/serviceValidate` | ruta de validación de tickets |
-| `CAS_LOGOUT_PATH` | `/logout` | ruta de cierre de sesión SSO |
-| `CAS_PROFILES` | `cauce` en producción, `test` en el resto | quién resuelve el sujeto CAS: CAUCE o las fichas ficticias del CAS de pruebas (emisor `cas_test`) |
-| `CAUCE_URL`, `CAUCE_TOKEN` | vacío | directorio institucional; obligatorios con `CAS_PROFILES=cauce`. **Secreto**: el token |
-| `CAS_ALLOWED_SLO_HOSTS` | vacío (cualquiera; **obligatoria en producción**) | IP permitidas para el SLO, separadas por comas |
-| `AUTH_DEV_LOGIN` | `false` | acceso con contraseña; solo `local`/`test` |
-| `SCHOOL_YEAR_START` | `08-30` | inicio del curso escolar (`MM-DD`) |
-| `WEB_DIST` | vacío (`/app/web` en la imagen) | carpeta de la SPA que sirve la API |
-| `LOG_LEVEL` | `info` | `fatal`…`trace`, `silent` |
-| `TRUST_PROXY` | vacío | número de saltos de proxy de confianza (`1`) o lista de IP/CIDR del proxy. `true` se rechaza |
-| `MIGRATE_ON_START` | `false` | aplica migraciones al arrancar |
-| `MIGRATIONS_DIR` | autodetectado | carpeta de migraciones si no está junto al bundle (`apps/api/src/db.ts`) |
-| `DEMO_ASSETS_DIR` | `/app/web/demo` en la imagen | imágenes de `db:seed --demo` |
+| Variable                   | Por defecto                                        | Uso                                                                                                               |
+| -------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `APP_ENV`                  | `production`                                       | perfil: `production`, `local` o `test` (ver arriba). `NODE_ENV` no influye                                        |
+| `DATABASE_URL`             | — (obligatoria)                                    | conexión PostgreSQL                                                                                               |
+| `PUBLIC_URL`               | — (obligatoria; `https` en producción)             | origen público. Define la URL de servicio CAS, la comprobación `Origin` y si las cookies son `__Host-` + `Secure` |
+| `PORT` / `HOST`            | `3000` / `0.0.0.0`                                 | escucha                                                                                                           |
+| `SESSION_TTL_HOURS`        | `8` (máx. 720)                                     | caducidad de sesión                                                                                               |
+| `MEDIA_DIR`                | — (obligatoria; `/data/media` en la imagen)        | raíz de medios                                                                                                    |
+| `MAX_UPLOAD_MB`            | `10` (máx. 100)                                    | tamaño máximo por archivo (se corta mientras llega el cuerpo)                                                     |
+| `MEDIA_QUOTA_MB_PER_DAY`   | `100`                                              | cuota de subida por usuario en 24 h (ventana móvil)                                                               |
+| `LOGIN_RATE_LIMIT`         | `10`                                               | intentos de acceso con contraseña por minuto e IP (solo `local`/`test`)                                           |
+| `CAS_URL`                  | vacío; `https://www.casserverpac4j.dev` en `local` | servidor CAS 3.0, con su prefijo (`https://host/cas`); sin _query_ ni fragmento                                   |
+| `CAS_LOGIN_PATH`           | `/login`                                           | ruta de acceso, relativa a `CAS_URL`                                                                              |
+| `CAS_VALIDATE_PATH`        | `/p3/serviceValidate`                              | ruta de validación de tickets                                                                                     |
+| `CAS_LOGOUT_PATH`          | `/logout`                                          | ruta de cierre de sesión SSO                                                                                      |
+| `CAS_PROFILES`             | `cauce` en producción, `test` en el resto          | quién resuelve el sujeto CAS: CAUCE o las fichas ficticias del CAS de pruebas (emisor `cas_test`)                 |
+| `CAUCE_URL`, `CAUCE_TOKEN` | vacío                                              | directorio institucional; obligatorios con `CAS_PROFILES=cauce`. **Secreto**: el token                            |
+| `CAS_ALLOWED_SLO_HOSTS`    | vacío (cualquiera; **obligatoria en producción**)  | IP permitidas para el SLO, separadas por comas                                                                    |
+| `AUTH_DEV_LOGIN`           | `false`                                            | acceso con contraseña; solo `local`/`test`                                                                        |
+| `SCHOOL_YEAR_START`        | `08-30`                                            | inicio del curso escolar (`MM-DD`)                                                                                |
+| `WEB_DIST`                 | vacío (`/app/web` en la imagen)                    | carpeta de la SPA que sirve la API                                                                                |
+| `LOG_LEVEL`                | `info`                                             | `fatal`…`trace`, `silent`                                                                                         |
+| `TRUST_PROXY`              | vacío                                              | número de saltos de proxy de confianza (`1`) o lista de IP/CIDR del proxy. `true` se rechaza                      |
+| `MIGRATE_ON_START`         | `false`                                            | aplica migraciones al arrancar                                                                                    |
+| `MIGRATIONS_DIR`           | autodetectado                                      | carpeta de migraciones si no está junto al bundle (`apps/api/src/db.ts`)                                          |
+| `DEMO_ASSETS_DIR`          | `/app/web/demo` en la imagen                       | imágenes de `db:seed --demo`                                                                                      |
 
 `CAS_BASE_URL` (versiones anteriores) se rechaza con un mensaje que indica el cambio a `CAS_URL`.
 
@@ -153,32 +152,32 @@ coherencia. Las copias contienen datos personales de menores: cifradas y con acc
 
 ## Actualizar
 
-1. Leer el `CHANGELOG.md` y las notas de la *release* (migraciones destacadas).
+1. Leer el `CHANGELOG.md` y las notas de la _release_ (migraciones destacadas).
 2. Copia de seguridad (base + medios).
 3. `docker pull`/`docker build` de la nueva versión.
 4. Migrar con la nueva imagen (`bun --no-env-file api/cli/migrate.js`).
 5. Sustituir el contenedor. Comprobar `GET /api/health` y un acceso real.
 
-## Artefactos de *release*
+## Artefactos de _release_
 
 `.github/workflows/release.yml`, con una etiqueta `vX.Y.Z` que coincida con `package.json`: ejecuta su gate
 (audit, licencias, lint, typecheck, tests con PostgreSQL, builds, `check:dist`), genera el SBOM y publica una
-*release* de GitHub con:
+_release_ de GitHub con:
 
-| Fichero | Contenido |
-|---|---|
-| `lexican-X.Y.Z.zip` | `web/` (SPA compilada) y `api/` (bundle Bun autosuficiente con migraciones); sin `node_modules` |
-| `lexican-X.Y.Z-demo.zip` | build estático de la demo |
-| `sbom.spdx.json` | SBOM SPDX de dependencias de producción |
+| Fichero                  | Contenido                                                                                       |
+| ------------------------ | ----------------------------------------------------------------------------------------------- |
+| `lexican-X.Y.Z.zip`      | `web/` (SPA compilada) y `api/` (bundle Bun autosuficiente con migraciones); sin `node_modules` |
+| `lexican-X.Y.Z-demo.zip` | build estático de la demo                                                                       |
+| `sbom.spdx.json`         | SBOM SPDX de dependencias de producción                                                         |
 
-La *release* requiere que pase la prueba Docker de la etiqueta. Después se publica esa misma imagen probada como
+La _release_ requiere que pase la prueba Docker de la etiqueta. Después se publica esa misma imagen probada como
 `ghcr.io/ateeducacion/lexican:vX.Y.Z` y `ghcr.io/ateeducacion/lexican:latest`. El token efímero de Actions solo tiene
 permiso de escritura de paquetes en el job de publicación; no hace falta configurar otro secreto.
 
 ## Vuelta atrás
 
 - **Código**: volver a desplegar la imagen anterior.
-- **Esquema**: las migraciones no tienen *down*. Si una versión cambia el esquema, la vuelta atrás es restaurar la copia
+- **Esquema**: las migraciones no tienen _down_. Si una versión cambia el esquema, la vuelta atrás es restaurar la copia
   previa (base + medios) y desplegar la imagen anterior. Por eso se hace la copia en el paso 2.
 - **Corte desde el legacy**: durante la migración, la vuelta atrás es apuntar de nuevo al legacy (en solo lectura
   durante el corte). Procedimiento en [MIGRATION.md](MIGRATION.md).

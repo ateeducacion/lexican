@@ -18,9 +18,9 @@ updates:
     ignore:
       # Keep TypeScript on the verified 6.0 minor (docs/adr/0002-stack.md).
       - dependency-name: typescript
-        versions: ['>=6.1.0']
+        versions: [">=6.1.0"]
       # Bun types follow the pinned Bun runtime (1.4.2 in the image and CI): upgrade them together.
-      - dependency-name: '@types/bun'
+      - dependency-name: "@types/bun"
       # Review Drizzle upgrades together, including RC changes (docs/adr/0003-drizzle-pglite.md).
       - dependency-name: drizzle-orm
         update-types: [version-update:semver-major]
@@ -33,4 +33,4 @@ updates:
       interval: weekly
     groups:
       actions:
-        patterns: ['*']
+        patterns: ["*"]

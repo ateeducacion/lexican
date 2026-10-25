@@ -14,8 +14,8 @@ Esta versión (2.x) es una reconstrucción completa del Laravel 8 + Voyager orig
 
 ## Ramas
 
-- `upstream`: copia histórica del código del proveedor (`c80ff65`). **Intocable**: ni commits, ni *rebase*, ni
-  *force-push*, ni borrado. Contiene credenciales filtradas que no se reescriben ([SECURITY.md](docs/SECURITY.md)).
+- `upstream`: copia histórica del código del proveedor (`c80ff65`). **Intocable**: ni commits, ni _rebase_, ni
+  _force-push_, ni borrado. Contiene credenciales filtradas que no se reescriben ([SECURITY.md](docs/SECURITY.md)).
 - `main`: rama mantenida. Solo se cambia por PR, con CI en verde.
 - Ramas de trabajo: `feature/…` o `hotfix/…`, con nombres en inglés. PRs pequeñas, un cambio lógico.
 - El código Laravel ya no está en `main`: se eliminó (también sus migraciones y el `Dockerfile.apache81`). La única
@@ -24,17 +24,17 @@ Esta versión (2.x) es una reconstrucción completa del Laravel 8 + Voyager orig
 
 ## Tecnologías
 
-| Pieza | Versión | Nota |
-|---|---|---|
-| Bun | `1.4.2` | gestor de paquetes (`bun.lock` en **`lockfileVersion` 1** para Dependabot: no borrarlo; si hay que regenerarlo, `rm bun.lock && bunx bun@1.3.14 install`; `bun run check:lockfile`), `bun ci`, `linker = "hoisted"` y runtime de herramientas y servidor (imagen `oven/bun:1.4.2-alpine`); nunca APIs de Bun en paquetes compartidos |
-| TypeScript | `~6.0` | solo `tsc --noEmit`; TypeScript 7 se adopta en una PR aparte |
-| Biome | `2.5.15` (exacta) | lint, formato y orden de importaciones (`bun run lint`, `bun run fix`, `make lint`, `make fix`); sustituye a ESLint y Prettier |
-| React / Vite / react-router | 19.3 / 8.3 / 8.4 | router en modo datos; sin TanStack Query ni Redux |
-| Hono | `^4.13.13` | la API, la misma en el servidor y en el Worker de la demo ([ADR 0009](docs/adr/0009-hono-bun-worker.md)) |
-| Drizzle ORM / drizzle-kit | `1.0.0-rc.5-5935859` / `1.0.0-rc.5-5935859` (exactas) | actualizar juntas y revisar las RC; migraciones v3 |
-| PostgreSQL / PGlite | 18 / 0.5.8 | |
-| Zod | 4 | un esquema para formularios, API, seeds e importación |
-| Vitest / Playwright | 5 / 1.63 + axe | |
+| Pieza                       | Versión                                               | Nota                                                                                                                                                                                                                                                                                                                                 |
+| --------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Bun                         | `1.4.2`                                               | gestor de paquetes (`bun.lock` en **`lockfileVersion` 1** para Dependabot: no borrarlo; si hay que regenerarlo, `rm bun.lock && bunx bun@1.3.14 install`; `bun run check:lockfile`), `bun ci`, `linker = "hoisted"` y runtime de herramientas y servidor (imagen `oven/bun:1.4.2-alpine`); nunca APIs de Bun en paquetes compartidos |
+| TypeScript                  | `~6.0`                                                | solo `tsc --noEmit`; TypeScript 7 se adopta en una PR aparte                                                                                                                                                                                                                                                                         |
+| Biome                       | `2.5.15` (exacta)                                     | lint, formato y orden de importaciones (`bun run lint`, `bun run fix`, `make lint`, `make fix`); sustituye a ESLint y Prettier                                                                                                                                                                                                       |
+| React / Vite / react-router | 19.3 / 8.3 / 8.4                                      | router en modo datos; sin TanStack Query ni Redux                                                                                                                                                                                                                                                                                    |
+| Hono                        | `^4.13.13`                                            | la API, la misma en el servidor y en el Worker de la demo ([ADR 0009](docs/adr/0009-hono-bun-worker.md))                                                                                                                                                                                                                             |
+| Drizzle ORM / drizzle-kit   | `1.0.0-rc.5-5935859` / `1.0.0-rc.5-5935859` (exactas) | actualizar juntas y revisar las RC; migraciones v3                                                                                                                                                                                                                                                                                   |
+| PostgreSQL / PGlite         | 18 / 0.5.8                                            |                                                                                                                                                                                                                                                                                                                                      |
+| Zod                         | 4                                                     | un esquema para formularios, API, seeds e importación                                                                                                                                                                                                                                                                                |
+| Vitest / Playwright         | 5 / 1.63 + axe                                        |                                                                                                                                                                                                                                                                                                                                      |
 
 Versiones verificadas y motivos: [ADR 0002](docs/adr/0002-stack.md). Una dependencia nueva tiene que quitar más
 complejidad de la que añade; antes de añadirla se consulta su documentación oficial (y Context7), su licencia, su
@@ -56,7 +56,7 @@ tools/legacy-migrator  MariaDB → PostgreSQL (solo para migrar)
 - `packages/core/src/operations.ts` declara cada operación una vez (verbo, ruta, entrada Zod). De ahí salen las rutas
   Hono, y el mismo cliente sirve a producción y a la demo. Una funcionalidad = entrada en la tabla + servicio en
   `packages/app` + prueba de contrato + UI.
-- Las rutas no deciden permisos: solo *sesión → validación → servicio → respuesta*.
+- Las rutas no deciden permisos: solo _sesión → validación → servicio → respuesta_.
 - `packages/core` no importa React, Hono ni Drizzle. `packages/http` no importa `node:*`, `pg`, Bun ni configuración
   institucional (Biome lo impide: `noRestrictedImports`, `noRestrictedGlobals`).
 - React no llama a los servicios: todo pasa por la API (también en la demo; lo comprueba `transport.test.ts`).
@@ -70,7 +70,7 @@ Detalle: [ARCHITECTURE.md](docs/ARCHITECTURE.md), [DATA-MODEL.md](docs/DATA-MODE
   medios. Login CAS + CAUCE. Rechaza CAS de pruebas, perfiles ficticios, contraseñas y semillas demo.
 - **Docker local** (`APP_ENV=local`, `docker-compose.yml`): CAS público de pruebas + perfiles ficticios + datos demo.
 - **Demo** (GitHub Pages, `/lexican/`): el mismo frontend con `vite build --mode demo`; un Web Worker ejecuta la
-  misma API Hono sobre PGlite (IndexedDB) y los medios son Blobs en IndexedDB. Cuentas ficticias. Enrutado por *hash*.
+  misma API Hono sobre PGlite (IndexedDB) y los medios son Blobs en IndexedDB. Cuentas ficticias. Enrutado por _hash_.
 - El modo se decide en el build (`import.meta.env.MODE`), **nunca** por el nombre del host.
 - El build de producción no puede contener PGlite, WASM, el Worker ni contraseñas demo (`bun run check:dist`).
 - La demo no es una frontera de seguridad y no debe aparentarlo ([DEMO.md](docs/DEMO.md)).
@@ -103,23 +103,23 @@ Detalle: [ARCHITECTURE.md](docs/ARCHITECTURE.md), [DATA-MODEL.md](docs/DATA-MODE
 
 ## Secretos y datos
 
-- Ningún secreto, token, host interno, correo o nombre real en código, tests, *fixtures*, capturas, docs o commits.
+- Ningún secreto, token, host interno, correo o nombre real en código, tests, _fixtures_, capturas, docs o commits.
 - Configuración solo por variables de entorno validadas en `apps/api/src/config.ts`; ejemplo en
   `apps/api/.env.example` con valores ficticios.
-- Nada del legacy (`.env.example`, *seeders*, `readme.md` histórico) se copia: contiene credenciales y hosts.
+- Nada del legacy (`.env.example`, _seeders_, `readme.md` histórico) se copia: contiene credenciales y hosts.
 - Datos de demo y de tests: ficticios (`@ejemplo.com`, «IES Ficticio…»).
 - Logs sin cookies, tickets, tokens ni respuestas de CAUCE.
 
 ## Tests obligatorios
 
-| Cambio | Prueba |
-|---|---|
-| Regla de dominio | unitaria en `packages/core` con reloj inyectado |
-| Operación / servicio | `packages/app/src/services.contract.test.ts` (PGlite y PostgreSQL), incluidos permisos |
-| HTTP, sesión, subidas, cabeceras | `apps/api/src/app.test.ts` |
-| Esquema | contrato en ambos drivers |
-| Migrador | `tools/legacy-migrator/src/*.test.ts` |
-| Pantalla o flujo | E2E Playwright (con `expectAccessible` si es pantalla nueva) |
+| Cambio                           | Prueba                                                                                 |
+| -------------------------------- | -------------------------------------------------------------------------------------- |
+| Regla de dominio                 | unitaria en `packages/core` con reloj inyectado                                        |
+| Operación / servicio             | `packages/app/src/services.contract.test.ts` (PGlite y PostgreSQL), incluidos permisos |
+| HTTP, sesión, subidas, cabeceras | `apps/api/src/app.test.ts`                                                             |
+| Esquema                          | contrato en ambos drivers                                                              |
+| Migrador                         | `tools/legacy-migrator/src/*.test.ts`                                                  |
+| Pantalla o flujo                 | E2E Playwright (con `expectAccessible` si es pantalla nueva)                           |
 
 No se añaden tests vacíos ni `skip` para ideas futuras. Los E2E fallan ante errores de consola y peticiones externas;
 no se silencian. Detalle: [TESTING.md](docs/TESTING.md).
@@ -177,8 +177,8 @@ bun run audit && bun run licenses
 
 ## CI y despliegue
 
-- `ci.yml` (validación completa) en cada PR y *push* a `main`; `pages.yml` comprueba y despliega la demo en cada
-  *push* a `main` (vía rápida: typecheck, build, `check:dist`, E2E esenciales del mismo artefacto); `release.yml`
+- `ci.yml` (validación completa) en cada PR y _push_ a `main`; `pages.yml` comprueba y despliega la demo en cada
+  _push_ a `main` (vía rápida: typecheck, build, `check:dist`, E2E esenciales del mismo artefacto); `release.yml`
   con etiquetas `v*`.
 - `docker.yml` comparte la construcción y prueba de una imagen entre CI y releases. GHCR carga el artefacto probado
   y comprueba su ID antes de publicar, sin reconstruir; los artefactos de imagen se conservan un día.
@@ -190,7 +190,7 @@ bun run audit && bun run licenses
 
 - En **inglés**, Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `build:`, `ci:`, `chore:`,
   `chore(deps):`), un cambio lógico por commit.
-- PR con título y descripción en inglés: *Summary*, *Tests*, capturas si cambia la UI, migraciones de esquema
+- PR con título y descripción en inglés: _Summary_, _Tests_, capturas si cambia la UI, migraciones de esquema
   destacadas, implicaciones de datos, seguridad y licencias, y vuelta atrás cuando aplique.
 - **No se atribuyen commits ni PR a agentes de IA** (sin `Co-Authored-By` ni firmas de herramientas).
 - No trabajar directamente en `main`; no tocar `upstream`.

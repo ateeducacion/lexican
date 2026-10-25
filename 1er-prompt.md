@@ -5,7 +5,6 @@ Quiero que modernices exhaustivamente el repositorio **`ateeducacion/lexican`**,
 Lexicán es un producto distinto: no es una aplicación puramente estática. Tiene autenticación, usuarios, diccionarios personales y de aula, entradas, acepciones, medios, envío/publicación de contenidos, comentarios, permisos y persistencia. La modernización debe simplificar radicalmente la base tecnológica y el modelo, conservar el comportamiento útil y producir una aplicación que podamos mantener durante años.
 
 El resultado debe tener **dos modos de ejecución que compartan el máximo código posible**:
-
 1. **Producción**, con API y **PostgreSQL**.
 2. **Demo completamente funcional en GitHub Pages**, sin backend, usando **PGlite en el navegador** con persistencia en IndexedDB y datos ficticios precargados.
 
@@ -18,7 +17,6 @@ No quiero mantener MySQL/MariaDB y PostgreSQL en paralelo. La base de datos de l
 # 1. Principios generales
 
 Prioriza, en este orden:
-
 1. preservación de la funcionalidad útil;
 2. corrección del modelo de datos;
 3. simplicidad operativa;
@@ -51,7 +49,6 @@ No añadas servicios obligatorios que no sean necesarios.
 # 2. Investigación obligatoria antes de modificar
 
 Antes de hacer cambios significativos estudia completamente:
-
 - rama `main`;
 - rama `upstream`;
 - historial Git relevante;
@@ -88,7 +85,6 @@ Antes de hacer cambios significativos estudia completamente:
 Estudia en paralelo **Aritmates** y **Tonga** como referencia de mantenimiento, no como plantilla de arquitectura.
 
 De Aritmates revisa especialmente:
-
 - `AGENTS.md`;
 - `package.json`;
 - `.github/workflows/`;
@@ -104,7 +100,6 @@ De Aritmates revisa especialmente:
 - política de dependencias y licencias.
 
 De Tonga revisa especialmente:
-
 - `1er-prompt.md`;
 - `AGENTS.md`;
 - arquitectura actual;
@@ -123,7 +118,6 @@ No presupongas que Lexicán debe convertirse en Aritmates o Tonga.
 No tomes decisiones relevantes sobre librerías, frameworks, APIs, seguridad o formatos basándote únicamente en conocimiento interno o memoria.
 
 Cuando evalúes una tecnología:
-
 1. consulta documentación oficial actual;
 2. consulta **Context7** si está disponible;
 3. busca en Internet:
@@ -139,7 +133,6 @@ Cuando evalúes una tecnología:
 5. registra decisiones importantes mediante ADR.
 
 Utiliza Context7 especialmente para:
-
 - Vite;
 - React;
 - Fastify;
@@ -185,7 +178,6 @@ También se observa una rama `upstream` y una `main` prácticamente idénticas: 
 No uses estos datos como verdad eterna.
 
 Antes de implementar:
-
 - vuelve a comprobar versiones;
 - comprueba SHAs actuales;
 - comprueba diferencias `upstream..main`;
@@ -209,7 +201,6 @@ No hagas `force push`.
 Trátala como fotografía histórica del código original entregado/mantenido anteriormente.
 
 Al comienzo:
-
 - registra SHA de `upstream`;
 - registra SHA de `main`;
 - comprueba el merge-base;
@@ -363,7 +354,6 @@ Cuando exista duda, crea primero una prueba de caracterización.
 Antes de sustituir la aplicación legacy crea un baseline medible.
 
 Registra como mínimo:
-
 - número de rutas;
 - número de controladores;
 - número de modelos;
@@ -448,7 +438,6 @@ PostgreSQL WASM persistido en IndexedDB
 ```
 
 El objetivo es compartir:
-
 - tipos;
 - entidades;
 - validación;
@@ -535,7 +524,6 @@ No añadas Redux.
 No añadas un framework visual pesado.
 
 Utiliza:
-
 - HTML semántico;
 - CSS moderno;
 - CSS Modules o una solución equivalente ligera;
@@ -555,7 +543,6 @@ No añadas Tailwind, Material UI, Bootstrap, Ant Design u otro sistema completo 
 Producción usará una API Fastify sobre Node.js.
 
 Objetivos:
-
 - REST JSON sencillo;
 - validación de entrada y salida;
 - cookies de sesión seguras;
@@ -585,7 +572,6 @@ No mantengas compatibilidad permanente con MySQL/MariaDB.
 La aplicación nueva de producción soportará PostgreSQL.
 
 Razones:
-
 - simplifica el soporte;
 - permite compartir un modelo PostgreSQL con PGlite;
 - evita probar dos dialectos durante toda la vida del producto;
@@ -600,7 +586,6 @@ No uses JSONB como sustituto indiscriminado de un modelo relacional.
 # 14. Drizzle ORM
 
 Usa Drizzle como hipótesis principal para:
-
 - esquema TypeScript;
 - queries tipadas;
 - migraciones SQL revisables;
@@ -630,7 +615,6 @@ si la configuración de la organización permite GitHub Pages para este reposito
 El build de demo debe ser completamente estático.
 
 No puede depender de:
-
 - API propia;
 - PostgreSQL remoto;
 - CAS;
@@ -654,7 +638,6 @@ idb://lexican-demo-v1
 ```
 
 La primera ejecución debe:
-
 1. crear la base;
 2. aplicar migraciones;
 3. cargar datos demo;
@@ -737,7 +720,6 @@ No siembres una base vacía.
 La demo debe mostrar el producto.
 
 Crea datos ficticios coherentes:
-
 - un profesor;
 - dos alumnos;
 - un centro ficticio;
@@ -918,7 +900,6 @@ auth_identities
 No migres automáticamente NIF/NIE, pasaporte, CIAL u otros identificadores personales sensibles solo porque existen en la base antigua.
 
 Para cada dato personal legacy pregunta:
-
 - ¿se utiliza funcionalmente?
 - ¿es necesario legalmente?
 - ¿es necesario para CAS/CAUCE?
@@ -936,7 +917,6 @@ Lexicán se usa en contexto educativo.
 Trata privacidad como requisito de arquitectura.
 
 Como mínimo:
-
 - nunca publiques datos reales en fixtures;
 - nunca publiques dumps reales;
 - nunca metas identificadores reales en screenshots;
@@ -993,7 +973,6 @@ No metas 25 columnas nullable de aula dentro de todos los diccionarios si puede 
 Preserva el concepto de espacio personal del alumno.
 
 Debe permitir:
-
 - crear/editar entradas;
 - varias acepciones;
 - reordenar acepciones;
@@ -1132,7 +1111,6 @@ nueva entrada en diccionario de aula
 ```
 
 Esto permite que:
-
 - el alumno siga editando su entrada personal;
 - el profesor edite la copia publicada;
 - quede trazabilidad;
@@ -1151,7 +1129,6 @@ No hace falta event sourcing.
 Una tabla `entry_revisions` con snapshot estructurado y metadatos puede ser suficiente.
 
 Úsala para:
-
 - envíos inmutables;
 - historial de cambios relevante;
 - recuperación razonable;
@@ -1160,7 +1137,6 @@ Una tabla `entry_revisions` con snapshot estructurado y metadatos puede ser sufi
 No guardes un snapshot por cada pulsación de tecla.
 
 Define cuándo se crea una revisión:
-
 - guardado significativo;
 - envío;
 - publicación;
@@ -1217,7 +1193,6 @@ Los campos estructurales importantes deben seguir teniendo columnas/relaciones e
 Investiga **Lexonomy** y su guía actual.
 
 Lexicán no debe convertirse en un clon de Lexonomy, pero hay ideas útiles que debes evaluar:
-
 - estructura explícita de una entrada;
 - campos obligatorios/opcionales;
 - cardinalidades;
@@ -1243,7 +1218,6 @@ Investiga el estándar **OASIS DMLex 1.0** actual.
 No rediseñes toda la aplicación para cumplir DMLex a cualquier coste.
 
 Sí debes evaluar y documentar:
-
 - correspondencia entre `entry`, `sense`, `definition`, `example` y los conceptos de Lexicán;
 - vocabularios controlados;
 - multimedia;
@@ -1259,7 +1233,7 @@ docs/DMLEX-MAPPING.md
 con una tabla:
 
 | Lexicán | DMLex | Correspondencia | Pérdidas/Extensiones |
-|---|---|---|---|
+| ------- | ----- | --------------- | -------------------- |
 
 Si implementar exportación DMLex JSON es razonablemente sencillo tras el nuevo modelo, hazlo.
 
@@ -1284,7 +1258,6 @@ Diseño recomendado:
 ## Acepciones
 
 Cada acepción debe ser una tarjeta/sección reordenable con:
-
 - definición;
 - categoría gramatical;
 - género;
@@ -1296,7 +1269,6 @@ Cada acepción debe ser una tarjeta/sección reordenable con:
 - medios.
 
 Debe existir:
-
 - añadir acepción;
 - duplicar si aporta valor;
 - reordenar;
@@ -1314,7 +1286,6 @@ Solo conserva HTML/rich text si la auditoría demuestra que existe contenido rea
 # 35. UI de alumnado
 
 Una persona alumna debería entender sin manual:
-
 1. entrar;
 2. ver su diccionario;
 3. crear una palabra;
@@ -1332,7 +1303,6 @@ No escondas el flujo principal en menús secundarios.
 # 36. UI de profesorado
 
 Una persona docente debería poder:
-
 1. entrar;
 2. ver sus diccionarios de aula;
 3. crear/configurar un aula;
@@ -1359,7 +1329,6 @@ No introduzcas otro CMS genérico para reemplazarlo.
 Identifica qué funciones administrativas de Voyager se usan realmente.
 
 Reimplementa únicamente las necesarias como pantallas propias de administración:
-
 - usuarios/roles si procede;
 - vocabularios controlados;
 - vigencia;
@@ -1389,7 +1358,6 @@ Debe preservar la capacidad de autenticación institucional.
 No asumas que el paquete CAS actual debe conservarse.
 
 Investiga:
-
 - protocolo CAS usado realmente;
 - CAS 3.0;
 - logout;
@@ -1409,7 +1377,6 @@ No implementes una librería CAS abandonada solo para imitar PHP.
 El legacy usa un servicio CAUCE para validar/obtener información del usuario.
 
 Audita exactamente:
-
 - qué datos consume;
 - cuándo se llama;
 - qué decisiones de autorización dependen de él;
@@ -1436,7 +1403,6 @@ Nunca publiques tokens CAUCE en GitHub Pages, tests o repositorio.
 # 40. Sesiones de producción
 
 Usa cookies:
-
 - `HttpOnly`;
 - `Secure` en HTTPS;
 - `SameSite` adecuado;
@@ -1495,7 +1461,6 @@ El legacy contiene operaciones de borrar/ocultar mediante GET; no reproduzcas es
 Evalúa Zod, TypeBox u otra opción actual y mantenida.
 
 Debe existir una fuente clara de validación para:
-
 - requests API;
 - formularios;
 - seeds;
@@ -1518,7 +1483,6 @@ Unifica comentarios generales y comentarios de entrada si un modelo polimórfico
 No uses polimorfismo oscuro si complica integridad referencial.
 
 Debe quedar claro:
-
 - autor;
 - destinatario/contexto;
 - aula;
@@ -1534,7 +1498,6 @@ No permitas HTML arbitrario en comentarios.
 # 44. Medios
 
 Audita los tipos reales de medios:
-
 - imagen;
 - audio;
 - vídeo;
@@ -1556,7 +1519,6 @@ con estructura controlada y nombres no confiados al cliente.
 Permite diseñar un adapter S3-compatible futuro sin convertirlo en requisito actual.
 
 La demo puede usar:
-
 - assets estáticos sembrados;
 - almacenamiento local del navegador para uploads pequeños si se implementan.
 
@@ -1567,7 +1529,6 @@ No necesita imitar NFS.
 # 45. Seguridad de uploads
 
 Para cualquier upload:
-
 - límite de tamaño;
 - allowlist de MIME/extensiones;
 - detección basada en contenido cuando sea viable;
@@ -1589,7 +1550,6 @@ No uses una carpeta pública escribible sin controles.
 La migración debe incluir los ficheros, no solo filas de base de datos.
 
 Crea un proceso que:
-
 1. lea referencias legacy;
 2. localice el fichero en el almacenamiento antiguo;
 3. calcule checksum;
@@ -1620,14 +1580,12 @@ No falles silenciosamente.
 Audita qué exportaciones se usan realmente.
 
 Como mínimo evalúa conservar:
-
 - PDF de diccionario personal;
 - PDF de diccionario de aula;
 - CSV;
 - JSON estructurado.
 
 Preferencia:
-
 - CSV/JSON generados desde datos estructurados;
 - PDF mediante impresión CSS/browser o una librería cliente si produce resultado fiable;
 - no mantener un servicio PDF de servidor si no hace falta.
@@ -1643,7 +1601,6 @@ No cargues una librería PDF pesada en el bundle inicial si solo se usa al expor
 Añade importación solo si existe un caso real o si facilita la migración/interop.
 
 Si se implementa:
-
 - validación previa;
 - preview;
 - errores por fila/entrada;
@@ -1657,7 +1614,6 @@ No confundas el importador legacy de migración con una función de usuario fina
 # 49. Búsqueda
 
 Conserva como mínimo:
-
 - búsqueda por palabra;
 - inicial;
 - temática;
@@ -1721,7 +1677,6 @@ No construyas un lenguaje de schema completo salvo que los requisitos actuales l
 Sustituye flags opacos `estado = 0/1` por tipos explícitos.
 
 Usa:
-
 - boolean cuando sea boolean;
 - enum cuando existan varios estados reales;
 - `deleted_at` cuando necesites soft delete.
@@ -1764,7 +1719,6 @@ Audita si las invitaciones o avisos por email siguen siendo necesarios.
 Producción debe usar un `MailAdapter` si se conserva.
 
 Demo:
-
 - nunca envía correo;
 - puede mostrar el mensaje que se habría enviado;
 - o simular la invitación mediante UI local.
@@ -1780,7 +1734,6 @@ La lógica de `INICIO_CURSO`, `VIGENCIA_MAX`, diccionarios atemporales y activac
 No la entierres en controladores o consultas.
 
 Crea funciones/casos de uso deterministas para:
-
 - calcular curso vigente;
 - decidir vigencia;
 - activar/desactivar;
@@ -1795,7 +1748,6 @@ No dependas de la fecha del sistema en tests: inyecta reloj.
 # 56. Datos educativos maestros
 
 Audita:
-
 - enseñanzas;
 - niveles;
 - áreas/materias;
@@ -1829,7 +1781,6 @@ Documenta la decisión.
 Investiga el uso real de `mst_pautas` / `dic_aula_pautas`.
 
 Si se usa para instrucciones docentes:
-
 - conviértelo en una funcionalidad clara del aula;
 - soporte texto y fichero solo si ambos se usan;
 - evita campos o pantallas legacy sin uso.
@@ -1843,7 +1794,6 @@ No intentes conservar visualmente Bootstrap 4/Voyager.
 Crea una UI actual, sobria y educativa.
 
 Requisitos:
-
 - responsive;
 - mobile first razonable;
 - buena jerarquía;
@@ -1864,7 +1814,6 @@ No conviertas una herramienta escolar en un dashboard corporativo genérico.
 La pantalla de login de demo debe ser suficiente para entender el producto sin documentación.
 
 Incluye:
-
 - nombre Lexicán;
 - breve descripción;
 - formulario;
@@ -1893,7 +1842,6 @@ Configura Vite correctamente para el subdirectorio `/lexican/`.
 La demo debe soportar refresco/navegación sin 404.
 
 Puedes usar:
-
 - hash routing en demo;
 - browser history en producción;
 
@@ -1910,7 +1858,6 @@ Añade tests E2E sobre la URL con base path de Pages.
 Objetivo: WCAG 2.2 AA en los flujos principales.
 
 Como mínimo:
-
 - navegación completa por teclado;
 - foco visible;
 - labels reales;
@@ -1955,7 +1902,6 @@ No dupliques DOM para desktop y mobile.
 # 63. Seguridad web
 
 Como mínimo:
-
 - CSP razonable;
 - `X-Content-Type-Options`;
 - `Referrer-Policy`;
@@ -1983,7 +1929,6 @@ No uses `dangerouslySetInnerHTML` con contenido de usuario salvo sanitización e
 Implementa errores de dominio y errores HTTP coherentes.
 
 La UI debe distinguir:
-
 - validación;
 - sin permisos;
 - no encontrado;
@@ -2071,7 +2016,7 @@ Incluye tablas añadidas por migraciones posteriores.
 Para cada tabla/campo indica:
 
 | Legacy | Nuevo | Transformación | Nullable | Regla | Verificación |
-|---|---|---|---|---|---|
+| ------ | ----- | -------------- | -------- | ----- | ------------ |
 
 No migres una columna sin saber qué significa.
 
@@ -2108,7 +2053,6 @@ El importador puede usar `mysql2` u otro cliente mantenido **solo como dependenc
 # 68. Orden de migración
 
 El orden conceptual recomendado es:
-
 1. vocabularios maestros;
 2. usuarios/personas;
 3. centros y relaciones;
@@ -2155,7 +2099,6 @@ Es una aplicación suficientemente acotada para evitar una arquitectura permanen
 Una ejecución de prueba debe poder repetirse sin producir duplicados inesperados.
 
 Puedes:
-
 - vaciar un schema destino de ensayo;
 - usar tablas de staging;
 - usar claves de `legacy_id` únicas.
@@ -2172,7 +2115,6 @@ orphaned
 ```
 
 Comprueba:
-
 - FK;
 - unicidad;
 - cardinalidades;
@@ -2208,7 +2150,6 @@ Toda corrección automática debe estar documentada y testeada.
 # 72. Ensayo de migración
 
 Antes del corte final:
-
 1. restaura una copia anonimizada o de entorno autorizado;
 2. ejecuta importación completa;
 3. verifica counts;
@@ -2229,7 +2170,6 @@ No pruebes el migrador por primera vez contra producción.
 La migración debe tener un plan de rollback operativo.
 
 Durante el primer corte:
-
 - conserva base legacy intacta/read-only;
 - conserva medios legacy;
 - no borres nada;
@@ -2247,7 +2187,6 @@ Rollback inicial debe consistir en volver a apuntar al sistema legacy, no en int
 Usa Vitest salvo que la investigación demuestre una alternativa claramente mejor.
 
 Prueba intensamente:
-
 - reglas de curso/vigencia;
 - autorización;
 - validación de entrada;
@@ -2278,7 +2217,6 @@ PGlite
 ```
 
 Casos:
-
 - crear diccionario;
 - crear entrada;
 - añadir varias acepciones;
@@ -2301,7 +2239,6 @@ La demo no debe usar una base “parecida”. Debe usar el mismo modelo conceptu
 Levanta PostgreSQL de test aislado.
 
 Prueba:
-
 - auth middleware;
 - permisos;
 - validación;
@@ -2378,7 +2315,6 @@ Ejecuta los mismos journeys principales que la demo para detectar divergencias.
 Crea fixtures legacy pequeños pero representativos en MySQL/MariaDB.
 
 Incluye:
-
 - usuario/profesor/alumno;
 - centro;
 - diccionario personal;
@@ -2406,7 +2342,6 @@ No bases el test en un dump real con datos personales.
 # 80. Visual tests
 
 Añade screenshots de referencia para:
-
 - login demo;
 - alumno home;
 - editor;
@@ -2428,7 +2363,6 @@ No persigas 100 %.
 Después de separar dominio y aplicación, establece gates razonables.
 
 Objetivo inicial:
-
 - dominio/application: ~90 % líneas/branches cuando sea realista;
 - migración: alta cobertura de transforms;
 - UI: cubierta principalmente por unit/component + E2E.
@@ -2453,7 +2387,6 @@ npm run build:demo
 `build:demo` debe generar una carpeta completamente estática.
 
 `build` de producción debe generar:
-
 - frontend estático;
 - API ejecutable.
 
@@ -2553,7 +2486,6 @@ Documenta también ejecución completamente containerizada si es útil para CI/s
 Crea imagen multi-stage pequeña.
 
 Preferencia:
-
 - Node LTS/current verificado;
 - usuario no root;
 - filesystem de aplicación read-only cuando sea posible;
@@ -2573,7 +2505,6 @@ Alpine puede usarse si las dependencias elegidas funcionan correctamente en musl
 Crea workflow específico de Pages.
 
 Debe:
-
 1. ejecutarse solo tras CI correcto en `main`;
 2. `npm ci`;
 3. `npm run build:demo`;
@@ -2639,12 +2570,10 @@ No uses `write-all`.
 # 90. Dependabot y supply chain
 
 Configura Dependabot para:
-
 - npm;
 - GitHub Actions.
 
 Añade:
-
 - lockfile;
 - instalación reproducible;
 - `npm audit` o alternativa actual;
@@ -2662,7 +2591,6 @@ No introduzcas una plataforma de supply chain mayor que la aplicación.
 Workflow para tags `v*`.
 
 Debe:
-
 1. ejecutar quality gate;
 2. construir frontend/API;
 3. construir demo si procede;
@@ -2680,7 +2608,6 @@ No incluyas `node_modules` en ZIPs de frontend.
 Actualmente no debes asumir una licencia solo porque Aritmates/Tonga tengan una.
 
 Audita:
-
 - derechos del código original;
 - cabeceras;
 - documentación contractual disponible en repo;
@@ -2705,7 +2632,6 @@ Añade REUSE/SPDX solo cuando los titulares y licencias estén correctamente ide
 # 93. No arrastres vendor legacy
 
 No migres:
-
 - Composer;
 - Laravel;
 - Voyager;
@@ -2729,7 +2655,6 @@ Cuando la nueva versión cubra una funcionalidad y sus tests, elimina la impleme
 # 94. Código de terceros
 
 Cada fragmento reutilizado debe registrar:
-
 - proyecto;
 - URL;
 - versión/commit;
@@ -2787,7 +2712,6 @@ No dejes `developers.md` como una colección de instrucciones históricas contra
 Escribe un `AGENTS.md` específico para Lexicán.
 
 Debe fijar:
-
 - `upstream` es histórica;
 - `main` es mantenida;
 - stack objetivo;
@@ -2815,7 +2739,6 @@ Estudia `.agents/skills` / `.claude/skills` de Aritmates/Tonga si existen.
 Reutiliza únicamente skills que tengan sentido y licencia clara.
 
 Candidatos:
-
 - GitHub Actions hardening;
 - Playwright;
 - Playwright trace;
@@ -2841,7 +2764,6 @@ main modernizada
 ```
 
 Mide al menos:
-
 - dependencias;
 - tecnologías;
 - tamaño del frontend;
@@ -3000,7 +2922,6 @@ GitHub Pages debe ser funcional pronto, no solo al final.
 ## Fase 11 — limpieza
 
 Solo después de cobertura funcional suficiente elimina de `main`:
-
 - Laravel;
 - PHP;
 - Composer;
@@ -3045,13 +2966,11 @@ rm -rf app resources database
 PRs pequeños y revisables.
 
 Commits:
-
 - inglés;
 - un cambio lógico;
 - sin atribuir autoría a agentes de IA.
 
 PRs:
-
 - título en inglés;
 - descripción Markdown en inglés;
 - resumen;
@@ -3071,7 +2990,6 @@ No toques `upstream`.
 # 102. Definition of Done
 
 No consideres finalizada la modernización hasta que:
-
 - `upstream` siga intacta;
 - funcionalidades útiles estén inventariadas;
 - modelo legacy esté documentado;
@@ -3131,7 +3049,6 @@ No consideres finalizada la modernización hasta que:
 # 103. Entregables
 
 Al finalizar quiero:
-
 1. aplicación modernizada;
 2. demo GitHub Pages completamente funcional;
 3. backend Fastify;
@@ -3218,7 +3135,6 @@ personal
 ## Riesgos
 
 Como mínimo:
-
 - framework/backend legacy;
 - autenticación CAS;
 - dependencia CAUCE;
@@ -3241,7 +3157,6 @@ Incluye diagrama producción y demo.
 ## ADR tecnológico
 
 Justifica o revalida:
-
 - React/Vite;
 - Fastify;
 - PostgreSQL;
@@ -3264,7 +3179,6 @@ Demuestra cómo funciona sin backend y cómo se resetean seeds.
 ## Plan de migración
 
 Incluye:
-
 - mapping;
 - orden;
 - medios;
@@ -3309,7 +3223,6 @@ No cambies una decisión simplemente por preferencia personal.
 # 106. Decisiones que debes tomar tú tras investigar
 
 Debes investigar y decidir con ADR:
-
 - cliente/integración CAS concreta;
 - si CAS se integra en Node o mediante proxy externo;
 - estrategia exacta de sesión;
@@ -3332,7 +3245,6 @@ No preguntes por cada detalle menor. Investiga, toma una decisión razonable y d
 No modernices Lexicán para que “parezca una aplicación de 2026”.
 
 Modernízalo para que:
-
 - el alumnado entienda qué tiene que hacer;
 - el profesorado revise y publique sin fricción;
 - los datos tengan un modelo coherente;
@@ -3345,7 +3257,6 @@ Modernízalo para que:
 - podamos sustituir el sistema legacy con una ruta de rollback clara.
 
 Cada cambio debe responder al menos a una de estas preguntas:
-
 - ¿reduce complejidad?
 - ¿reduce riesgo?
 - ¿mejora el modelo de datos?

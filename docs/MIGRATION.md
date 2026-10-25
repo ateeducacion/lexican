@@ -38,15 +38,15 @@ bun run migrate:legacy \
   [--dry-run] [--fail-on-orphans]
 ```
 
-| Opción | Efecto |
-|---|---|
-| `--source` | URL MySQL/MariaDB legacy (usuario de solo lectura) |
-| `--target` | URL PostgreSQL destino |
-| `--media-source` | Directorio `storage/app/public` legacy (contiene `dp/medios`) |
-| `--media-target` | Raíz del almacenamiento de medios nuevo |
-| `--dry-run` | Hace todo dentro de la transacción y la revierte; calcula checksums pero **no copia** ficheros. El informe es completo |
-| `--report` | Ruta del informe JSON (por defecto `legacy-migration-report.json`); el CSV se escribe junto a él |
-| `--fail-on-orphans` | Si hay filas huérfanas, revierte y termina con código 1 |
+| Opción              | Efecto                                                                                                                 |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `--source`          | URL MySQL/MariaDB legacy (usuario de solo lectura)                                                                     |
+| `--target`          | URL PostgreSQL destino                                                                                                 |
+| `--media-source`    | Directorio `storage/app/public` legacy (contiene `dp/medios`)                                                          |
+| `--media-target`    | Raíz del almacenamiento de medios nuevo                                                                                |
+| `--dry-run`         | Hace todo dentro de la transacción y la revierte; calcula checksums pero **no copia** ficheros. El informe es completo |
+| `--report`          | Ruta del informe JSON (por defecto `legacy-migration-report.json`); el CSV se escribe junto a él                       |
+| `--fail-on-orphans` | Si hay filas huérfanas, revierte y termina con código 1                                                                |
 
 Las rutas relativas se resuelven desde el directorio donde se lanza el comando (`bun run migrate:legacy` desde la raíz). Códigos de salida: `0` correcto
 (también en dry-run), `1` fallo o huérfanos con `--fail-on-orphans`, `2` argumentos o esquema destino ausente.
@@ -84,9 +84,9 @@ nacionales. Aun así es un documento interno: no lo publiques ni lo subas al rep
 ## Ensayo (§72)
 
 Nunca se prueba por primera vez contra producción.
-
 1. **Copia autorizada.** Restaura un volcado de producción (o anonimizado) en una MariaDB de ensayo y monta una
    copia (o el volumen en solo lectura) de `storage/app/public`:
+
    ```bash
    docker run -d --name lexican-legacy -e MARIADB_ROOT_PASSWORD=… -p 53306:3306 mariadb:11
    docker exec -i lexican-legacy mariadb -uroot -p… -e 'create database lexican'
@@ -98,6 +98,7 @@ Nunca se prueba por primera vez contra producción.
 4. **Importación completa**: el mismo comando sin `--dry-run`.
 5. **Recuentos**: en `tables`, `legacy = mapped + skipped + invalid + orphaned` en las tablas principales y `new`
    coherente con `mapped`. Contraste manual, por ejemplo:
+
    ```sql
    -- legacy
    select count(*) from dp_entradas where deleted_at is null and estado <> '0';
@@ -149,11 +150,11 @@ bun run migrate:legacy --source mysql://root:root@127.0.0.1:53306/legacy \
 
 Portátil de desarrollo (Apple Silicon), MariaDB 11 y PostgreSQL 18 en Docker local:
 
-| Ejecución | `durationMs` (transacción) | Tiempo total del comando |
-|---|---|---|
-| `--dry-run` | 220 ms | 1,6 s |
-| primera migración | 188 ms | 1,4 s |
-| re-ejecución (sin cambios) | 163 ms | 1,4 s |
+| Ejecución                  | `durationMs` (transacción) | Tiempo total del comando |
+| -------------------------- | -------------------------- | ------------------------ |
+| `--dry-run`                | 220 ms                     | 1,6 s                    |
+| primera migración          | 188 ms                     | 1,4 s                    |
+| re-ejecución (sin cambios) | 163 ms                     | 1,4 s                    |
 
 El fixture es diminuto (≈60 filas); el tiempo real crece de forma lineal con las filas (una sentencia por fila) y
 con el volumen de medios (lectura + sha256 + copia). Mide en el ensayo con la copia real y reserva el doble para la
@@ -178,7 +179,6 @@ ventana, el siguiente paso es insertar por lotes.
 ## Vuelta atrás (rollback, §73)
 
 La vuelta atrás consiste en **volver a apuntar al legacy**, nunca en «desmigrar» PostgreSQL hacia MySQL.
-
 - **Antes del cambio de servicio** (paso 7): no hay nada que deshacer; el legacy sigue siendo el sistema. Si la
   migración falla, la transacción ya se revirtió; se corrige y se repite o se pospone el corte.
 - **Después del cambio de servicio**: vuelve a apuntar DNS/proxy al legacy, quita el modo mantenimiento y devuelve
