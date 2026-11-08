@@ -10,6 +10,6 @@
   "dependencies": {
     "@lexican/core": "*",
     "@lexican/db": "*",
-    "file-type": "^22.2.0"
+    "file-type": "^22.3.0"
   }
 }
