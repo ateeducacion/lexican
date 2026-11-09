@@ -30,6 +30,7 @@ puede tocar los datos de un Docker.
 ## Imagen Docker
 
 `Dockerfile` multi-stage, imágenes fijadas por _digest_:
+
 1. `build` (`oven/bun:1.4.2-alpine`): `bun ci`, build de la web (Vite sobre Bun) y de la API (`bun build`: un
    bundle autosuficiente con sus dependencias; las migraciones SQL se copian a `apps/api/dist/migrations`).
 2. `runtime` (`oven/bun:1.4.2-alpine`, amd64 y arm64): solo `api/` (bundle) y `web/` (SPA); **sin `node_modules`**;

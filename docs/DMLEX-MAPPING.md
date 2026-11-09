@@ -1,6 +1,7 @@
 # Correspondencia LexiCán → OASIS DMLex 1.0
 
 LexiCán exporta cualquier diccionario (personal o de aula) en la **serialización JSON de DMLex 1.0** (OASIS Standard, 29 de abril de 2025), módulo _Core_ más las etiquetas del módulo _Controlled Values_. El fichero lo genera el navegador desde la pantalla **Imprimir / exportar** (botón «DMLex JSON») con la función pura `toDmlex` de `packages/core/src/export.ts`.
+
 - Especificación: <https://docs.oasis-open.org/lexidma/dmlex/v1.0/os/dmlex-v1.0-os.html>
 - Esquema usado (variante monolingüe, sin módulo _Crosslingual_): `dmlex_no-crosslingual.schema.json`, copiado en `packages/core/src/dmlex-1.0.schema.json`. La prueba `export.test.ts` valida la salida contra él con Ajv (JSON Schema 2020-12).
 - Unidad de intercambio: un único objeto `lexicographicResource` por fichero.

@@ -41,6 +41,7 @@ Marcar en la PR de _release_ qué se ha revisado y con qué navegador/lector.
 ### Lector de pantalla (prueba rápida)
 
 Con NVDA + Firefox o VoiceOver + Safari:
+
 - [ ] **Acceso**: se anuncian el título, los campos con su etiqueta, los errores y las cuentas de demostración.
 - [ ] **Editor de entrada**: cada acepción se identifica (número), los campos tienen nombre, añadir/quitar/mover
   acepciones se anuncia, los errores se leen al enviar.

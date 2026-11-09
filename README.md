@@ -23,6 +23,7 @@ Más detalles en [docs/DEMO.md](docs/DEMO.md).
 ## Qué puedes hacer
 
 **Alumnado**
+
 - Crear entradas con varias acepciones: definición, más datos, ejemplo de uso, categoría gramatical, género, número,
   forma en otra lengua, temáticas e imagen/audio/vídeo.
 - Buscar por texto, por inicial y por temática; ocultar entradas.
@@ -32,12 +33,14 @@ Más detalles en [docs/DEMO.md](docs/DEMO.md).
   contra el esquema oficial para facilitar la interoperabilidad con otras herramientas lexicográficas).
 
 **Profesorado**
+
 - Crear aulas con curso, nivel, materia, vigencia, plazo de envíos, campos obligatorios, máximo de acepciones y pautas.
 - Gestionar participantes y roles, y regenerar el código de unión.
 - Revisar envíos, publicarlos (uno o varios) o rechazarlos con nota; editar y ocultar lo publicado.
 - Comentar el trabajo de cada alumno.
 
 **Administración**
+
 - Usuarios y roles, vigencia de las aulas, listas controladas (categorías, temáticas, niveles…), estadísticas y
   registro de auditoría.
 

@@ -53,6 +53,7 @@ La reconstrucción no hereda código ni dependencias del legacy. Esta tabla dice
 ## Credenciales expuestas en el histórico
 
 La rama `upstream` (copia histórica pública del código legacy, intocable por §5 de `1er-prompt.md`) contiene:
+
 - la `APP_KEY` de Laravel;
 - dos tokens _bearer_ del servicio CAUCE;
 - contraseñas de cuentas de administración y de usuarios sembrados;
@@ -70,6 +71,7 @@ privado.
 
 No abras una _issue_ pública. Usa **Report a vulnerability** (avisos privados de seguridad) en la pestaña _Security_ de
 <https://github.com/ateeducacion/lexican>, con:
+
 - versión o commit afectado;
 - pasos para reproducirlo;
 - impacto estimado.

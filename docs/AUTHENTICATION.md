@@ -59,6 +59,7 @@ sequenceDiagram
 ## Adaptador CAUCE
 
 `InstitutionalDirectory.lookup(subject)` (`apps/api/src/cauce.ts`):
+
 - `httpDirectory`: `GET ${CAUCE_URL}${encodeURIComponent(sujeto)}` con `Authorization: Bearer`, TLS verificado
   (el legacy lo desactivaba), _timeout_ de 5 s y `redirect: 'error'`. Fallo de red o HTTP → `unavailable`.
 - `parseCauceResponse` lee **solo** nombre, apellidos, correo opcional y centros (código, nombre, rol).
@@ -158,6 +159,7 @@ puede fijar cookies). Solo decide qué usuario ficticio actúa; **no es una fron
 ## Pendiente de verificar en preproducción
 
 CI no puede llegar al CAS ni a CAUCE reales. Antes de producción:
+
 1. Que el CAS del Gobierno de Canarias acepte `/p3/serviceValidate` y la URL de servicio exacta registrada.
 2. Formato real de la respuesta (atributos, espacios de nombres) y del identificador de usuario.
 3. Que el SLO por _back-channel_ llegue (IP de origen para `CAS_ALLOWED_SLO_HOSTS`, alcance de red, formato del
