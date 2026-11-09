@@ -33,6 +33,7 @@ Todos los nombres, correos y el centro son ficticios.
 
 `packages/app/src/demo-seed.ts` crea los datos **a través de los servicios de aplicación**, así que cumplen todas las
 reglas:
+
 - Vocabularios controlados (categoría gramatical, género, número, lenguas, temáticas, niveles, materias…).
 - Un centro ficticio («IES Ficticio Las Palmeras», código `99999999`).
 - Diccionario personal de Alumno 1: _guagua_ (dos acepciones, imagen), _gofio_ (imagen), _baifo_, _millo_ y _fisco_
@@ -113,6 +114,7 @@ Los E2E de la demo usan ese servidor estático en el puerto 4317 ([TESTING.md](T
 ## Comprobación manual en Android (pendiente en dispositivo real)
 
 La emulación de Pixel de Playwright no prueba un Android real. Recorrido en una pestaña normal de Chrome para Android:
+
 1. Abrir la demo publicada; esperar a «Preparando la demo…» y entrar como alumno 1.
 2. Crear una palabra; en «Audio» elegir una nota de voz grabada con el teléfono (M4A/AAC, OGG/Opus o WebM) y guardar.
 3. Reproducir, pausar y desplazarse por el audio; girar la pantalla.

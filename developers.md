@@ -76,6 +76,7 @@ Los paquetes se importan como TypeScript fuente (sin compilar entre ellos); la A
 ## Añadir una operación de principio a fin
 
 Ejemplo: «archivar un aula».
+
 1. **Contrato** — `packages/core/src/operations.ts`: añadir `archiveClassroom: op('POST',
    '/api/classrooms/:classroomId/archive', z.object({ classroomId: id }))` y su tipo de salida en `OperationOutputs`.
    Si la entrada es compleja, el esquema va en `contracts.ts`.

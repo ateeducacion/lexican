@@ -15,6 +15,7 @@ Generado con `bun pm licenses --prod --json` el 2026-10-05: 46 paquetes
 `bun run licenses` vuelve a calcularlo y comprueba la lista de licencias permitidas.
 
 Dónde acaba cada grupo:
+
 - **Bundle web** (`apps/web/dist`): `react`, `react-dom`, `react-router` (y sus dependencias), `zod`.
 - **Bundle de la demo** (`apps/web/dist-demo`): lo anterior más `@electric-sql/pglite` y `drizzle-orm`.
   PGlite declara Apache-2.0 en su `package.json`; su README indica doble licencia Apache-2.0 / PostgreSQL License y

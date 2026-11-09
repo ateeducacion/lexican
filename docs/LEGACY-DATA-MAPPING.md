@@ -36,6 +36,7 @@ convertir), `orphaned`.
 ## Orden de carga
 
 El orden de §68, comprobado contra las FK del destino:
+
 1. vocabularios (seed + `mst_*`), porque las acepciones y las aulas los referencian;
 2. `users`/`personas` (identidad y `auth_identities`);
 3. `centros`, `users_centros`;
@@ -359,6 +360,7 @@ Todas aparecen en `notMigrated` del informe con su recuento (`null` si la tabla 
 ## Verificaciones posteriores a la carga
 
 Dentro de la misma transacción, antes de confirmar (también en `--dry-run`):
+
 - orden de acepciones contiguo 1..n;
 - cada envío `published` tiene entrada de aula con `source_submission_id`;
 - toda entrada de aula migrada tiene procedencia;

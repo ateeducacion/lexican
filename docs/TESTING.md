@@ -22,6 +22,7 @@ subconjuntos por carpeta.
 
 La misma batería recorre la aplicación completa (crear entradas, enviar, publicar, rechazar, comentar, permisos,
 conflictos) contra:
+
 - **PGlite** siempre;
 - **PostgreSQL real** si existe `TEST_DATABASE_URL` (cada ejecución crea y borra su propia base dentro de ese
   servidor, `packages/db/src/testing.ts`).
@@ -92,6 +93,7 @@ Codecov (`codecov.yml`) publica en cada PR la cobertura del proyecto y del parch
 badge del README.
 
 La cifra **no mide**:
+
 - `apps/web` (React): lo cubren los E2E, que no cuentan en la cobertura;
 - el comportamiento contra el CAS y CAUCE reales (solo XML grabado ficticio);
 - la migración si no se ejecuta con MariaDB (`migrate.test.ts` se omite);

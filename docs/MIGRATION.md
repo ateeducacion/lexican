@@ -84,6 +84,7 @@ nacionales. Aun así es un documento interno: no lo publiques ni lo subas al rep
 ## Ensayo (§72)
 
 Nunca se prueba por primera vez contra producción.
+
 1. **Copia autorizada.** Restaura un volcado de producción (o anonimizado) en una MariaDB de ensayo y monta una
    copia (o el volumen en solo lectura) de `storage/app/public`:
 
@@ -179,6 +180,7 @@ ventana, el siguiente paso es insertar por lotes.
 ## Vuelta atrás (rollback, §73)
 
 La vuelta atrás consiste en **volver a apuntar al legacy**, nunca en «desmigrar» PostgreSQL hacia MySQL.
+
 - **Antes del cambio de servicio** (paso 7): no hay nada que deshacer; el legacy sigue siendo el sistema. Si la
   migración falla, la transacción ya se revirtió; se corrige y se repite o se pospone el corte.
 - **Después del cambio de servicio**: vuelve a apuntar DNS/proxy al legacy, quita el modo mantenimiento y devuelve

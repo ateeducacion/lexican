@@ -7,6 +7,7 @@ Estado a 2026-10-04. No es asesoramiento jurídico. Avisos de terceros: [THIRD_P
 El 2026-10-04 la representación del titular de los derechos —Consejería de Educación del Gobierno de Canarias / Área
 de Tecnología Educativa (ATE)— decidió que LexiCán se distribuye bajo la **GNU Affero General Public License v3.0 o
 posterior** (`AGPL-3.0-or-later`):
+
 - **Código nuevo y repositorio**: AGPL-3.0-or-later. Texto completo en [`LICENSE`](../LICENSE); todos los
   `package.json` declaran `"license": "AGPL-3.0-or-later"`.
 - **Código legacy** (rama `upstream`, `c80ff652`): se conserva como instantánea histórica y, por la misma decisión, se
@@ -35,6 +36,7 @@ Ninguno, salvo el esquema DMLex citado arriba. El código nuevo no copia fragmen
 librerías CAS de npm se estudiaron y se reimplementó la idea ([ADR 0005](adr/0005-autenticacion.md)).
 
 Reglas para lo que venga:
+
 - Solo código o contenidos con licencia compatible con AGPL-3.0-or-later. Un repositorio público sin licencia no
   autoriza a copiar.
 - Registrar en `THIRD_PARTY_NOTICES.md` proyecto, URL, versión/commit, titular, licencia y modificaciones.
