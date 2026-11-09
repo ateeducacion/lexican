@@ -26,6 +26,10 @@ updates:
         update-types: [version-update:semver-major]
       - dependency-name: drizzle-kit
         update-types: [version-update:semver-major]
+      # Playwright 1.65's Firefox 159 crashes the demo after login (PGlite start; `Page crashed` in
+      # demo-firefox, reproducible locally). Skip it and take the next release that passes CI.
+      - dependency-name: "@playwright/test"
+        versions: ["1.65.x"]
 
   - package-ecosystem: github-actions
     directory: /
