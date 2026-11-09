@@ -13,7 +13,7 @@
     "@lexican/core": "*",
     "@lexican/db": "*",
     "drizzle-orm": "1.0.0-rc.5",
-    "fast-xml-parser": "^5.11.2",
+    "fast-xml-parser": "^5.12.0",
     "hono": "^4.13.16"
   }
 }
