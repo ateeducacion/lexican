@@ -43,18 +43,15 @@ Marcar en la PR de _release_ qué se ha revisado y con qué navegador/lector.
 Con NVDA + Firefox o VoiceOver + Safari:
 
 - [ ] **Acceso**: se anuncian el título, los campos con su etiqueta, los errores y las cuentas de demostración.
-- [ ] **Editor de entrada**: cada acepción se identifica (número), los campos tienen nombre, añadir/quitar/mover
-  acepciones se anuncia, los errores se leen al enviar.
-- [ ] **Revisión de envíos**: la tabla/lista se recorre con sentido, el estado de cada envío se lee como texto y el
-  resultado de publicar/rechazar se anuncia.
+- [ ] **Editor de entrada**: cada acepción se identifica (número), los campos tienen nombre, añadir/quitar/mover acepciones se anuncia, los errores se leen al enviar.
+- [ ] **Revisión de envíos**: la tabla/lista se recorre con sentido, el estado de cada envío se lee como texto y el resultado de publicar/rechazar se anuncia.
 - [ ] Encabezados en orden (`h1` → `h2` …) y _landmarks_ (`header`, `nav`, `main`).
 
 ### Visual
 
 - [ ] Zoom del navegador al 200 %: sin pérdida de contenido ni funciones.
 - [ ] 400 % (equivale a 320 px de ancho): una sola columna, sin _scroll_ horizontal salvo tablas.
-- [ ] Contraste de texto ≥ 4,5:1 (≥ 3:1 en texto grande e iconos/bordes de controles), también en estados de foco,
-  error y deshabilitado.
+- [ ] Contraste de texto ≥ 4,5:1 (≥ 3:1 en texto grande e iconos/bordes de controles), también en estados de foco, error y deshabilitado.
 - [ ] Ningún estado depende solo del color (publicado, pendiente, rechazado, oculto).
 - [ ] Con `prefers-reduced-motion: reduce` no hay animaciones no esenciales.
 - [ ] Anchos de prueba: 360×800, 768×1024, 1366×768, 1920×1080.
