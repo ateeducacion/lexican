@@ -14,7 +14,7 @@
     "drizzle-orm": "1.0.0-rc.5"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.5.15",
+    "@electric-sql/pglite": "^0.5.16",
     "drizzle-kit": "1.0.0-rc.5"
   },
   "scripts": {
