@@ -17,9 +17,9 @@ estas pruebas.
    `bun:test`; la configuración (exclusión de `e2e/`, _timeout_, cobertura y umbrales) está en `bunfig.toml`. Se
    eliminan `vitest`, `@vitest/coverage-v8` y `vitest.config.ts`. Playwright sigue con los E2E.
 2. La API `vi` que usan las pruebas (`stubGlobal`, `stubEnv`, `resetModules`, `waitFor`) solo está en **Bun canary**;
-   la estable 1.4.5 no la trae. Los jobs de CI que ejecutan `bun test` (`quality`, `migration`) instalan `canary`.
-   Los tipos se fijan a la versión exacta `bun-types@1.4.5-canary.…`. La imagen de producción, Pages y las releases
-   siguen en la versión estable fijada.
+   la estable 1.4.5 no la trae. Los jobs que ejecutan `bun test` (`quality` y `migration` en CI, y el de
+   `release.yml`, que también empaqueta el ZIP de la release) instalan `canary`. Los tipos se fijan a la versión exacta
+   `bun-types@1.4.5-canary.…`. La imagen Docker y Pages siguen en la versión estable fijada.
 3. Bun aplica el umbral de cobertura **a cada fichero**, no al total, y no mide ramas. El umbral bloqueante pasa a ser
    del 90 % de líneas y el 80 % de funciones por fichero (los módulos pequeños tienen pocas funciones). Codecov
    mantiene su objetivo del 90 % sobre el total.
