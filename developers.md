@@ -61,8 +61,8 @@ Los paquetes se importan como TypeScript fuente (sin compilar entre ellos); la A
 | `bun run build:demo` / `preview:demo`                            | demo estática (`apps/web/dist-demo`) / servirla como Pages en http://localhost:4317/lexican/ (sin _fallback_)                                             |
 | `bun run check`                                                  | `lint` + `typecheck` + `test`                                                                                                                             |
 | `bun run lint` / `fix` / `format` / `typecheck`                  | Biome (`biome check .`: lint, formato y orden de importaciones) / lo mismo arreglando (`--write`) / solo formato / `tsc`. Atajos: `make lint`, `make fix` |
-| `bun run test` / `test:watch` / `test:coverage`                  | Vitest                                                                                                                                                    |
-| `bun run test:contracts` / `test:integration` / `test:migration` | Vitest de `packages/app`, `apps/api`, `tools`                                                                                                             |
+| `bun run test` / `test:watch` / `test:coverage`                  | bun test                                                                                                                                                  |
+| `bun run test:contracts` / `test:integration` / `test:migration` | bun test de `packages/app`, `apps/api`, `tools`                                                                                                           |
 | `bun run e2e` / `e2e:demo`                                       | Playwright: todo / solo proyectos `demo-*`                                                                                                                |
 | `bun run db:generate`                                            | genera una migración SQL a partir de `schema.ts`                                                                                                          |
 | `bun run db:migrate` / `db:seed`                                 | aplica migraciones / siembra vocabularios (`-- --demo` añade datos ficticios)                                                                             |
@@ -110,13 +110,13 @@ Nunca `drizzle-kit push` ni editar una migración que ya esté en `main`. Detall
 ## Pruebas por nivel
 
 ```bash
-bun run test                                   # todo Vitest en PGlite
+bun run test                                   # todo bun test en PGlite
 bun run test:contracts                     # solo packages/app
 bun run test:integration                   # solo la API
 TEST_DATABASE_URL=postgres://lexican:lexican@localhost:5432/postgres bun run test   # también PostgreSQL
 bun run e2e:demo                           # demo, 3 navegadores + móvil
 E2E_DATABASE_URL=postgres://lexican:lexican@localhost:5432/postgres bun run e2e  # + producción
-bunx --bun vitest run packages/core/src/school-year.test.ts     # un fichero
+bun test packages/core/src/school-year.test.ts     # un fichero
 bunx --bun playwright test e2e/journey.spec.ts --project=demo-chromium --headed
 ```
 

@@ -25,12 +25,12 @@
     "fix": "biome check --write .",
     "format": "biome format --write .",
     "typecheck": "bunx --bun tsc -p tsconfig.json",
-    "test": "bunx --bun vitest run",
-    "test:watch": "bunx --bun vitest",
-    "test:coverage": "bunx --bun vitest run --coverage",
-    "test:contracts": "bunx --bun vitest run packages/app",
-    "test:integration": "bunx --bun vitest run apps/api",
-    "test:migration": "bunx --bun vitest run tools",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage",
+    "test:contracts": "bun test packages/app",
+    "test:integration": "bun test apps/api",
+    "test:migration": "bun test tools",
     "e2e": "bunx --bun playwright test",
     "e2e:demo": "bunx --bun playwright test --project='demo-*'",
     "e2e:webkit": "bunx --bun playwright test --project=demo-webkit --workers=1",
@@ -51,10 +51,8 @@
     "@axe-core/playwright": "^4.14.0",
     "@biomejs/biome": "2.6.7",
     "@playwright/test": "^1.64.1",
-    "@types/bun": "1.4.2",
-    "@vitest/coverage-v8": "^5.1.0",
+    "bun-types": "1.4.5-canary.20261122T140918",
     "ajv": "^8.20.0",
-    "typescript": "~6.0",
-    "vitest": "^5.1.0"
+    "typescript": "~6.0"
   }
 }

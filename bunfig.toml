@@ -4,5 +4,17 @@ env = false
 
 [install]
 # Same node_modules layout npm produced: tools that resolve from the repository root (tsc types such as vite/client,
-# Vitest, Playwright) keep working across workspaces.
+# Playwright) keep working across workspaces.
 linker = "hoisted"
+
+[test]
+# Unit, contract and integration suites; e2e/ belongs to Playwright.
+pathIgnorePatterns = ["e2e/**", "node_modules/**"]
+timeout = 30000
+coverageReporter = ["text", "lcov"]
+coverageSkipTestFiles = true
+# server.ts is exercised by server.test.ts in a real Bun subprocess, which coverage cannot see; apps/web is covered by
+# the E2E suites, not here. Bun reports no branch coverage, and applies the threshold to every file, not to the total:
+# 90 % of lines and 80 % of functions per file (the smallest modules have only a handful of functions).
+coveragePathIgnorePatterns = ["**/testing/**", "apps/api/src/server.ts", "apps/web/**", "node_modules/**"]
+coverageThreshold = { lines = 0.9, functions = 0.8 }

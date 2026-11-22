@@ -1,3 +1,4 @@
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'bun:test';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -7,7 +8,6 @@ import { loadMigrations } from '@lexican/db/testing';
 import { SQL } from 'bun';
 import { bunSqlPgCodecs, drizzle } from 'drizzle-orm/bun-sql/postgres';
 import mysql from 'mysql2/promise';
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 /** `bun run migrate:legacy` runs cli.ts as a script: each import parses argv, runs, and calls process.exit. */
 async function cli(args: string[]): Promise<{ code: number; stderr: string }> {

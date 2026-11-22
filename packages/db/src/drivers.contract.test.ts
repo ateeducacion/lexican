@@ -1,6 +1,6 @@
+import { afterAll, beforeAll, describe, expect, it } from 'bun:test';
 import { and, eq, sql } from 'drizzle-orm';
 import { boolean, jsonb, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { queryRows } from './db.ts';
 import { globalRole } from './schema.ts';
 import { openPglite, openPostgres, type TestDb } from './testing.ts';
@@ -76,10 +76,10 @@ for (const driver of ['pglite', 'postgres'] as const) {
           await tx.insert(probe).values({ key: 'rolled-back' });
           await tx.insert(probe).values({ key: 'partial' });
         }),
-      ).rejects.toSatisfy(
-        (error: { cause?: { code?: string; errno?: string } }) =>
-          error.cause?.code === '23505' || error.cause?.errno === '23505',
-      );
+      ).rejects.toSatisfy((error) => {
+        const { cause } = error as { cause?: { code?: string; errno?: string } };
+        return cause?.code === '23505' || cause?.errno === '23505';
+      });
       expect(await t.db.select().from(probe).where(eq(probe.key, 'rolled-back'))).toEqual([]);
       await t.db.insert(probe).values({ key: 'partial', active: false });
       expect(await t.db.select().from(probe).where(eq(probe.key, 'partial'))).toHaveLength(2);

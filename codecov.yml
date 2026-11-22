@@ -1,5 +1,5 @@
 # Codecov reports project and patch coverage on every pull request (both must reach 90 %).
-# The local and CI blocking gate is `npm run test:coverage` (vitest thresholds, vitest.config.ts).
+# The local and CI blocking gate is `bun run test:coverage` (per-file lines and functions, [test] in bunfig.toml).
 coverage:
   status:
     project:

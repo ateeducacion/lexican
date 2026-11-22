@@ -1,10 +1,10 @@
+import { afterAll, beforeAll, describe, expect, it } from 'bun:test';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { type Db, queryRows } from '@lexican/db';
 import { openPglite, type TestDb } from '@lexican/db/testing';
 import { sql } from 'drizzle-orm';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type {
   Acepcion,
   Comentario,

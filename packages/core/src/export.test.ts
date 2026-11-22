@@ -1,5 +1,5 @@
+import { describe, expect, it } from 'bun:test';
 import { Ajv2020 } from 'ajv/dist/2020.js';
-import { describe, expect, it } from 'vitest';
 import schema from './dmlex-1.0.schema.json' with { type: 'json' };
 import { toCsv, toDmlex, toJson } from './export.ts';
 import type { DictionaryView, EntryView, VocabularyValue } from './types.ts';

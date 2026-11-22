@@ -47,7 +47,8 @@ jobs:
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
-          bun-version: 1.4.2
+          # bun test needs the vi API (stubGlobal, stubEnv, resetModules, waitFor) that only canary ships (ADR 0010).
+          bun-version: canary
 
       - run: bun ci
       - run: bun run check:lockfile
@@ -55,7 +56,8 @@ jobs:
       - run: bun run licenses
       - run: bun run lint # Biome: lint, formatting and import order
       - run: bun run typecheck
-      # Unit, contract (PGlite AND PostgreSQL), API integration and MariaDB migration tests; fails under 90 %.
+      # Unit, contract (PGlite AND PostgreSQL), API integration and MariaDB migration tests on bun test;
+      # fails when a file covers under 90 % of its lines or 80 % of its functions.
       - run: bun run test:coverage
 
       - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
@@ -162,6 +164,7 @@ jobs:
           persist-credentials: false
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
-          bun-version: 1.4.2
+          # bun test needs the vi API (stubGlobal, stubEnv, resetModules, waitFor) that only canary ships (ADR 0010).
+          bun-version: canary
       - run: bun ci
       - run: bun run test:migration

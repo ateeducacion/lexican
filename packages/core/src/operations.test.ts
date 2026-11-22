@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'bun:test';
 import { bindPath, operations } from './operations.ts';
 
 describe('bindPath', () => {
@@ -29,7 +29,7 @@ describe('operation table', () => {
         expect(
           Object.keys((op.input as unknown as { shape: object }).shape),
           `${name}.${param}`,
-        ).toContain(param);
+        ).toContain(param!);
       }
     }
   });

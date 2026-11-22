@@ -19,7 +19,7 @@ explican sus límites sin repetir versiones históricas.
 | Drizzle ORM / drizzle-kit | 1.0.0-rc.5-5935859 / 1.0.0-rc.5-5935859, exactas | esquema y migraciones compartidos; [ADR 0003](0003-drizzle-pglite.md)                      |
 | PostgreSQL / PGlite       | 18 / 0.5.8                                       | producción / demo y tests                                                                  |
 | Zod                       | 4.6                                              | contratos comunes a formularios, API, semillas e importación                               |
-| Vitest / Playwright       | 5.0 / 1.63 + axe                                 | pruebas unitarias, contratos y E2E                                                         |
+| bun test / Playwright     | canary / 1.63 + axe                              | pruebas unitarias, contratos y E2E ([ADR 0010](0010-bun-test.md))                          |
 
 Workspaces de Bun, sin herramientas adicionales de monorepo. `bun.lock` permanece en `lockfileVersion` 1 para
 Dependabot; Bun 1.4.2 conserva ese formato. `bun run check:lockfile` lo comprueba. `linker = "hoisted"` mantiene la
@@ -36,10 +36,10 @@ apps/api        servidor Bun, cookies, CAUCE, volumen de medios y SPA
 tools/legacy-migrator  MariaDB → PostgreSQL, solo para migrar
 ```
 
-Vite, Vitest, Playwright y TypeScript se ejecutan con `bunx --bun`: se conserva cada herramienta y se fuerza el
+Vite, Playwright y TypeScript se ejecutan con `bunx --bun`: se conserva cada herramienta y se fuerza el
 runtime de Bun en lugar del _shebang_ de Node. Docker y Actions solo necesitan Bun. No se sustituye Vite por el
-bundler de Bun ni Vitest por `bun test`. La suite con cobertura y los E2E de producción y demo comprueban esta
-compatibilidad. [Bun 1.4](https://bun.sh/blog/bun-v1.4) documenta el soporte de Vitest y Playwright.
+bundler de Bun. Las pruebas usan `bun test` desde el [ADR 0010](0010-bun-test.md), que sustituyó a Vitest. La suite
+con cobertura y los E2E de producción y demo comprueban esta compatibilidad.
 Los imports `node:*` de la API y los scripts usan la compatibilidad de Bun; no exigen instalar Node.js.
 
 ## Fronteras y simplificación
