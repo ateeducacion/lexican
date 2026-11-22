@@ -5,6 +5,7 @@ import {
   useRevalidator,
   useSearchParams,
 } from 'react-router';
+
 import { getApi } from '../../api/index.ts';
 import { ErrorMessage, PageTitle, useAction, useNotify } from '../../components/ui.tsx';
 import { AdminNav } from './AdminNav.tsx';
@@ -46,7 +47,7 @@ export function Component() {
         Un diccionario de aula está vigente mientras no hayan pasado tantos cursos como su vigencia,
         o siempre si es atemporal. Los no vigentes quedan en solo lectura.
       </p>
-      {/* biome-ignore lint/a11y/useSemanticElements: a button row, not form fields; a fieldset would restyle it. */}
+      {/* A button row, not form fields; a fieldset would restyle it. */}
       <div className="row" role="group" aria-label="Filtrar">
         {(Object.keys(FILTERS) as Filter[]).map((f) => (
           <button

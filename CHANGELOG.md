@@ -5,6 +5,12 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
 
 ## [Sin publicar]
 
+### Cambiado — `bun lint` y `bun fmt`
+
+- `bun lint` y `bun fmt` sustituyen a Biome ([ADR 0011](docs/adr/0011-bun-lint-fmt.md)), configurados en
+  `bunfig.toml`: mismas restricciones en el código compartido, `no-console`, _hooks_ de React y jsx-a11y. Formato de
+  Prettier a 100 columnas. Se pierde el lint de CSS y JSON.
+
 ### Cambiado — `bun test`
 
 - `bun test` sustituye a Vitest en las pruebas unitarias, de contrato, de integración y del migrador, sin cambiar

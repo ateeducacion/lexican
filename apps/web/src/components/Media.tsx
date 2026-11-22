@@ -1,5 +1,6 @@
 import type { MediaView } from '@lexican/core';
 import { useEffect, useState } from 'react';
+
 import { getApi } from '../api/index.ts';
 
 /** Renders an image, audio or video; resolves the source through the active adapter. */
@@ -19,10 +20,10 @@ export function Media({ media, alt }: { media: MediaView; alt: string }) {
   if (media.kind === 'image') return <img src={src} alt={alt} loading="lazy" />;
   // Uploaded clips come without caption files; the sense's definition and example are their text alternative.
   if (media.kind === 'audio')
-    // biome-ignore lint/a11y/useMediaCaption: no caption track exists for user uploads (see above).
+    // eslint-disable-next-line jsx-a11y/media-has-caption -- no caption track exists for user uploads (see above).
     return <audio controls src={src} aria-label={alt} preload="none" />;
   return (
-    // biome-ignore lint/a11y/useMediaCaption: no caption track exists for user uploads (see above).
+    // eslint-disable-next-line jsx-a11y/media-has-caption -- no caption track exists for user uploads (see above).
     <video controls src={src} aria-label={alt} preload="metadata" style={{ maxHeight: 240 }} />
   );
 }

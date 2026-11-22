@@ -1,10 +1,12 @@
 import { ALPHABET, type EntrySummary } from '@lexican/core';
 import { type FormEvent, useEffect, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router';
+
 import { getApi } from '../api/index.ts';
-import styles from './EntryList.module.css';
 import { EmptyState, ErrorMessage, Loading, StatusBadge } from './ui.tsx';
 import { useVocab } from './vocab.ts';
+
+import styles from './EntryList.module.css';
 
 // CONTRACT (implemented by the personal-dictionary agent; used by classroom pages too).
 // Searchable, alphabet-indexed, topic-filterable list of entries of one dictionary. Reads/writes the
@@ -165,7 +167,7 @@ export function EntryList({
         Entradas
       </h2>
       <div className={styles.filters}>
-        {/* biome-ignore lint/a11y/useSemanticElements: <search> is not yet safe on every browser LexiCán targets. */}
+        {/* <search> is not yet safe on every browser LexiCán targets. */}
         <form role="search" onSubmit={search} className={styles.search}>
           <label htmlFor="entry-search" className="visually-hidden">
             Buscar una palabra

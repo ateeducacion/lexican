@@ -16,5 +16,103 @@ coverageSkipTestFiles = true
 # server.ts is exercised by server.test.ts in a real Bun subprocess, which coverage cannot see; apps/web is covered by
 # the E2E suites, not here. Bun reports no branch coverage, and applies the threshold to every file, not to the total:
 # 90 % of lines and 80 % of functions per file (the smallest modules have only a handful of functions).
-coveragePathIgnorePatterns = ["**/testing/**", "apps/api/src/server.ts", "apps/web/**", "node_modules/**"]
+coveragePathIgnorePatterns = [
+  "**/testing/**",
+  "apps/api/src/server.ts",
+  "apps/web/**",
+  "node_modules/**",
+]
 coverageThreshold = { lines = 0.9, functions = 0.8 }
+
+# Lint (bun lint, ADR 0011): Bun's defaults (ESLint and typescript-eslint recommended, React hooks) plus the rules
+# Biome enforced here before.
+[lint]
+ignorePatterns = [
+  "analysis/",
+  "packages/db/migrations/",
+  "coverage/",
+  "test-results/",
+  "playwright-report/",
+]
+
+[lint.rules]
+"no-console" = ["error", { allow = ["warn", "error"] }]
+"eqeqeq" = ["error", "smart"]
+"prefer-const" = "error"
+# Accessibility (WCAG 2.2 AA, docs/ACCESSIBILITY.md): every jsx-a11y rule, except prefer-tag-over-role, which would turn
+# each role="status" live region into an <output> form element.
+"jsx-a11y/alt-text" = "error"
+"jsx-a11y/anchor-ambiguous-text" = "error"
+"jsx-a11y/anchor-has-content" = "error"
+"jsx-a11y/anchor-is-valid" = "error"
+"jsx-a11y/aria-activedescendant-has-tabindex" = "error"
+"jsx-a11y/aria-props" = "error"
+"jsx-a11y/aria-proptypes" = "error"
+"jsx-a11y/aria-role" = "error"
+"jsx-a11y/aria-unsupported-elements" = "error"
+"jsx-a11y/autocomplete-valid" = "error"
+"jsx-a11y/click-events-have-key-events" = "error"
+"jsx-a11y/control-has-associated-label" = "error"
+"jsx-a11y/heading-has-content" = "error"
+"jsx-a11y/html-has-lang" = "error"
+"jsx-a11y/iframe-has-title" = "error"
+"jsx-a11y/img-redundant-alt" = "error"
+"jsx-a11y/interactive-supports-focus" = "error"
+"jsx-a11y/label-has-associated-control" = "error"
+"jsx-a11y/lang" = "error"
+"jsx-a11y/media-has-caption" = "error"
+"jsx-a11y/mouse-events-have-key-events" = "error"
+"jsx-a11y/no-access-key" = "error"
+"jsx-a11y/no-aria-hidden-on-focusable" = "error"
+"jsx-a11y/no-autofocus" = "error"
+"jsx-a11y/no-distracting-elements" = "error"
+"jsx-a11y/no-interactive-element-to-noninteractive-role" = "error"
+"jsx-a11y/no-noninteractive-element-interactions" = "error"
+"jsx-a11y/no-noninteractive-element-to-interactive-role" = "error"
+"jsx-a11y/no-noninteractive-tabindex" = "error"
+"jsx-a11y/no-redundant-roles" = "error"
+"jsx-a11y/no-static-element-interactions" = "error"
+"jsx-a11y/role-has-required-aria-props" = "error"
+"jsx-a11y/role-supports-aria-props" = "error"
+"jsx-a11y/scope" = "error"
+"jsx-a11y/tabindex-no-positive" = "error"
+
+[[lint.overrides]]
+files = ["scripts/**", "apps/api/src/cli/**", "tools/*/src/cli.ts"]
+rules = { "no-console" = "off" }
+
+# Shared code runs in the browser (demo Web Worker) and on the server: web APIs only (ADR 0009).
+[[lint.overrides]]
+files = ["packages/http/src/**", "packages/app/src/**", "packages/core/src/**", "apps/web/src/**"]
+excludeFiles = ["**/*.test.ts", "**/testing/**"]
+
+[lint.overrides.rules]
+"no-restricted-globals" = [
+  "error",
+  { name = "Bun", message = "Bun APIs only in apps/api (server, ADR 0009)." },
+]
+"no-restricted-imports" = [
+  "error",
+  { paths = [{ name = "pg", message = "Server-only dependency." }, { name = "proxy-addr", message = "Server-only dependency." }, { name = "bun", message = "Server-only dependency." }], patterns = [{ group = ["node:*"], message = "Shared code runs in the browser (demo Web Worker): no Node modules." }] },
+]
+
+# Format (bun fmt): Prettier's output with the style Biome used here.
+[fmt]
+printWidth = 100
+singleQuote = true
+trailingComma = "all"
+sortImports = true
+ignorePatterns = [
+  "analysis/",
+  "packages/db/migrations/",
+  "packages/core/src/dmlex-1.0.schema.json",
+  "coverage/",
+  "test-results/",
+  "playwright-report/",
+  "apps/web/public/**/*.svg",
+]
+
+# Single quotes are for JavaScript and TypeScript only, as with Biome.
+[[fmt.overrides]]
+files = ["**/*.css", "**/*.yml", "**/*.yaml"]
+options = { singleQuote = false }

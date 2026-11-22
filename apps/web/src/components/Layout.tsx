@@ -7,12 +7,14 @@ import {
   useNavigation,
   useRouteLoaderData,
 } from 'react-router';
+
 import { getApi } from '../api/index.ts';
 import { DemoStatusBanner } from '../demo/DemoStatusBanner.tsx';
 import { ROLE_LABEL, type RootData } from '../session.ts';
 import { AppInfo } from './AppInfo.tsx';
-import styles from './Layout.module.css';
 import { Dialog, NotifyProvider } from './ui.tsx';
+
+import styles from './Layout.module.css';
 
 export function Layout() {
   const { user } = useRouteLoaderData('root') as RootData;
@@ -23,7 +25,7 @@ export function Layout() {
   const account = useRef<HTMLDetailsElement>(null);
 
   // Move focus to the main region after client-side navigation so screen readers announce the new page.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the path is the trigger, not an input of the effect.
+  // The path is the trigger, not an input of the effect.
   useEffect(() => {
     main.current?.focus({ preventScroll: true });
     if (account.current) account.current.open = false;
@@ -66,7 +68,7 @@ export function Layout() {
       <a className="skip-link" href="#contenido">
         Saltar al contenido
       </a>
-      {/* biome-ignore lint/a11y/noInteractiveElementToNoninteractiveRole: explicit landmark; print styles select header[role=banner]. */}
+      {/* Explicit landmark; print styles select header[role=banner]. */}
       <header role="banner" className={styles.header}>
         <div className={`container ${styles.bar}`}>
           <NavLink

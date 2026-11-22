@@ -7,6 +7,7 @@ import {
   useNavigate,
   useRevalidator,
 } from 'react-router';
+
 import { getApi } from '../../api/index.ts';
 import { EntryContent } from '../../components/EntryContent.tsx';
 import { EntryEditor } from '../../components/EntryEditor.tsx';
@@ -18,8 +19,9 @@ import {
   useAction,
   useNotify,
 } from '../../components/ui.tsx';
-import styles from './Classrooms.module.css';
 import { BackToClassroom } from './shared.tsx';
+
+import styles from './Classrooms.module.css';
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const api = await getApi();
@@ -70,7 +72,9 @@ export function Component() {
           classroom={d}
           submitLabel="Guardar cambios"
           onSave={async (input) => {
-            const saved = await (await getApi()).updateEntry({
+            const saved = await (
+              await getApi()
+            ).updateEntry({
               entryId: entry.id,
               version: entry.version,
               entry: input,
@@ -115,7 +119,7 @@ export function Component() {
       </p>
 
       {teacher && (
-        // biome-ignore lint/a11y/useSemanticElements: a toolbar of buttons, not form fields; a fieldset would restyle it.
+        // A toolbar of buttons, not form fields; a fieldset would restyle it.
         <div
           className={`no-print ${styles.toolbar}`}
           style={{ margin: 'var(--space-3) 0 var(--space-5)' }}

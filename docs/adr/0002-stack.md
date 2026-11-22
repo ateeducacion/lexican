@@ -12,7 +12,7 @@ explican sus límites sin repetir versiones históricas.
 | ------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------ |
 | Bun                       | 1.4.2                                            | gestor de paquetes, runtime de herramientas y API; bundle autosuficiente del servidor      |
 | TypeScript                | ~6.0                                             | comprobación estática con `tsc --noEmit`; una actualización mayor requiere revisión propia |
-| Biome                     | 2.5.15                                           | lint, formato y orden de importaciones                                                     |
+| `bun lint` / `bun fmt`    | canary                                           | lint, formato y orden de importaciones; [ADR 0011](0011-bun-lint-fmt.md)                   |
 | React / Vite              | 19.3 / 8.3                                       | interfaz común a producción y demo; build estático con `base` configurable                 |
 | react-router              | 8.4, modo datos                                  | loaders y revalidación; hash en la demo y rutas normales en producción                     |
 | Hono                      | ^4.13.13                                         | la misma API en Bun y en el Worker; [ADR 0009](0009-hono-bun-worker.md)                    |

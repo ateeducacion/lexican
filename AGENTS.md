@@ -28,7 +28,7 @@ Esta versión (2.x) es una reconstrucción completa del Laravel 8 + Voyager orig
 | --------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Bun                         | `1.4.2`                                               | gestor de paquetes (`bun.lock` en **`lockfileVersion` 1** para Dependabot: no borrarlo; si hay que regenerarlo, `rm bun.lock && bunx bun@1.3.14 install`; `bun run check:lockfile`), `bun ci`, `linker = "hoisted"` y runtime de herramientas y servidor (imagen `oven/bun:1.4.2-alpine`); nunca APIs de Bun en paquetes compartidos |
 | TypeScript                  | `~6.0`                                                | solo `tsc --noEmit`; TypeScript 7 se adopta en una PR aparte                                                                                                                                                                                                                                                                         |
-| Biome                       | `2.5.15` (exacta)                                     | lint, formato y orden de importaciones (`bun run lint`, `bun run fix`, `make lint`, `make fix`); sustituye a ESLint y Prettier                                                                                                                                                                                                       |
+| `bun lint` / `bun fmt`      | canary                                                | lint, formato y orden de importaciones (`bun run lint`, `bun run fix`, `make lint`, `make fix`), en `bunfig.toml`; sustituyen a Biome ([ADR 0011](docs/adr/0011-bun-lint-fmt.md))                                                                                                                                                    |
 | React / Vite / react-router | 19.3 / 8.3 / 8.4                                      | router en modo datos; sin TanStack Query ni Redux                                                                                                                                                                                                                                                                                    |
 | Hono                        | `^4.13.13`                                            | la API, la misma en el servidor y en el Worker de la demo ([ADR 0009](docs/adr/0009-hono-bun-worker.md))                                                                                                                                                                                                                             |
 | Drizzle ORM / drizzle-kit   | `1.0.0-rc.5-5935859` / `1.0.0-rc.5-5935859` (exactas) | actualizar juntas y revisar las RC; migraciones v3                                                                                                                                                                                                                                                                                   |
@@ -58,7 +58,7 @@ tools/legacy-migrator  MariaDB → PostgreSQL (solo para migrar)
   `packages/app` + prueba de contrato + UI.
 - Las rutas no deciden permisos: solo _sesión → validación → servicio → respuesta_.
 - `packages/core` no importa React, Hono ni Drizzle. `packages/http` no importa `node:*`, `pg`, Bun ni configuración
-  institucional (Biome lo impide: `noRestrictedImports`, `noRestrictedGlobals`).
+  institucional (`bun lint` lo impide: `no-restricted-imports`, `no-restricted-globals`).
 - React no llama a los servicios: todo pasa por la API (también en la demo; lo comprueba `transport.test.ts`).
 - Sin interfaces de repositorio: los servicios usan Drizzle directamente ([ADR 0003](docs/adr/0003-drizzle-pglite.md)).
 
@@ -165,8 +165,8 @@ bun run dev:api                  # API en :3000
 bun run dev                      # web en :5173 contra la API
 bun run dev:demo                 # demo (Worker + PGlite), sin backend
 docker compose --profile app up --build   # imagen Bun local: CAS de pruebas + datos ficticios en :3000
-bun run check                    # lint (Biome) + typecheck + test
-make fix                         # Biome arregla lint, formato e importaciones
+bun run check                    # lint (bun lint + bun fmt) + typecheck + test
+make fix                         # bun lint --fix + bun fmt: lint, formato e importaciones
 bun run e2e:demo                 # E2E de la demo
 bun run build && bun run build:demo && bun run check:dist
 bun run db:generate              # nueva migración tras editar schema.ts
