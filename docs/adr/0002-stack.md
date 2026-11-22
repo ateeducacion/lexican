@@ -19,7 +19,7 @@ explican sus límites sin repetir versiones históricas.
 | Drizzle ORM / drizzle-kit | 1.0.0-rc.5-5935859 / 1.0.0-rc.5-5935859, exactas | esquema y migraciones compartidos; [ADR 0003](0003-drizzle-pglite.md)                      |
 | PostgreSQL / PGlite       | 18 / 0.5.8                                       | producción / demo y tests                                                                  |
 | Zod                       | 4.6                                              | contratos comunes a formularios, API, semillas e importación                               |
-| bun test / Playwright     | canary / 1.65 + axe                              | pruebas unitarias, contratos y E2E ([ADR 0010](0010-bun-test.md))                          |
+| bun test / Playwright     | canary / 1.66α + axe                             | pruebas unitarias, contratos y E2E ([ADR 0010](0010-bun-test.md))                          |
 
 Workspaces de Bun, sin herramientas adicionales de monorepo. `bun.lock` permanece en `lockfileVersion` 1 para
 Dependabot; Bun 1.4.2 conserva ese formato. `bun run check:lockfile` lo comprueba. `linker = "hoisted"` mantiene la
