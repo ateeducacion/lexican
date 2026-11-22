@@ -54,22 +54,22 @@ Los paquetes se importan como TypeScript fuente (sin compilar entre ellos); la A
 
 ## Scripts
 
-| Script                                                           | Qué hace                                                                                                                                              |
-| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bun run dev` / `dev:demo` / `dev:api`                           | Vite (producción), Vite (demo), API con recarga                                                                                                       |
-| `bun run build`                                                  | web (`apps/web/dist`) + API (`apps/api/dist`)                                                                                                         |
-| `bun run build:demo` / `preview:demo`                            | demo estática (`apps/web/dist-demo`) / servirla como Pages en http://localhost:4317/lexican/ (sin _fallback_)                                         |
-| `bun run check`                                                  | `lint` + `typecheck` + `test`                                                                                                                         |
-| `bun run lint` / `fix` / `format` / `typecheck`                  | `bun lint` y `bun fmt --check` (lint, formato y orden de importaciones) / lo mismo arreglando / solo formato / `tsc`. Atajos: `make lint`, `make fix` |
-| `bun run test` / `test:watch` / `test:coverage`                  | bun test                                                                                                                                              |
-| `bun run test:contracts` / `test:integration` / `test:migration` | bun test de `packages/app`, `apps/api`, `tools`                                                                                                       |
-| `bun run e2e` / `e2e:demo`                                       | Playwright: todo / solo proyectos `demo-*`                                                                                                            |
-| `bun run db:generate`                                            | genera una migración SQL a partir de `schema.ts`                                                                                                      |
-| `bun run db:migrate` / `db:seed`                                 | aplica migraciones / siembra vocabularios (`-- --demo` añade datos ficticios)                                                                         |
-| `bun run migrate:legacy …`                                       | migrador legacy ([docs/MIGRATION.md](docs/MIGRATION.md))                                                                                              |
-| `bun run check:dist`                                             | revisa los bundles (secretos, hosts, base `/lexican/`, PGlite fuera de producción)                                                                    |
-| `bun run audit` / `licenses` / `sbom`                            | avisos de seguridad / licencias de producción / SBOM SPDX                                                                                             |
-| `bun run metrics`                                                | métricas `upstream` vs árbol actual para el informe de modernización                                                                                  |
+| Script                                                           | Qué hace                                                                                                                                                    |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun run dev` / `dev:demo` / `dev:api`                           | Vite (producción), Vite (demo), API con recarga                                                                                                             |
+| `bun run build`                                                  | web (`apps/web/dist`) + API (`apps/api/dist`)                                                                                                               |
+| `bun run build:demo` / `preview:demo`                            | demo estática (`apps/web/dist-demo`) / servirla como Pages en http://localhost:4317/lexican/ (sin _fallback_)                                               |
+| `bun run check`                                                  | `lint` + `typecheck` + `test`                                                                                                                               |
+| `bun run lint` / `fix` / `format` / `typecheck`                  | `bun lint` y `bun fmt --check` (lint, formato y orden de importaciones) / lo mismo arreglando / solo formato / `bun check`. Atajos: `make lint`, `make fix` |
+| `bun run test` / `test:watch` / `test:coverage`                  | bun test                                                                                                                                                    |
+| `bun run test:contracts` / `test:integration` / `test:migration` | bun test de `packages/app`, `apps/api`, `tools`                                                                                                             |
+| `bun run e2e` / `e2e:demo`                                       | Playwright: todo / solo proyectos `demo-*`                                                                                                                  |
+| `bun run db:generate`                                            | genera una migración SQL a partir de `schema.ts`                                                                                                            |
+| `bun run db:migrate` / `db:seed`                                 | aplica migraciones / siembra vocabularios (`-- --demo` añade datos ficticios)                                                                               |
+| `bun run migrate:legacy …`                                       | migrador legacy ([docs/MIGRATION.md](docs/MIGRATION.md))                                                                                                    |
+| `bun run check:dist`                                             | revisa los bundles (secretos, hosts, base `/lexican/`, PGlite fuera de producción)                                                                          |
+| `bun run audit` / `licenses` / `sbom`                            | avisos de seguridad / licencias de producción / SBOM SPDX                                                                                                   |
+| `bun run metrics`                                                | métricas `upstream` vs árbol actual para el informe de modernización                                                                                        |
 
 `make help` muestra los atajos del `Makefile` (envoltorio fino sobre estos scripts).
 

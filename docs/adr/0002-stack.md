@@ -8,18 +8,18 @@
 Antes de la primera etiqueta de versión, esta decisión recoge el stack vigente; las decisiones especializadas
 explican sus límites sin repetir versiones históricas.
 
-| Pieza                     | Versión                                          | Motivo                                                                                     |
-| ------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| Bun                       | 1.4.2                                            | gestor de paquetes, runtime de herramientas y API; bundle autosuficiente del servidor      |
-| TypeScript                | ~6.0                                             | comprobación estática con `tsc --noEmit`; una actualización mayor requiere revisión propia |
-| `bun lint` / `bun fmt`    | canary                                           | lint, formato y orden de importaciones; [ADR 0011](0011-bun-lint-fmt.md)                   |
-| React / Vite              | 19.3 / 8.3                                       | interfaz común a producción y demo; build estático con `base` configurable                 |
-| react-router              | 8.4, modo datos                                  | loaders y revalidación; hash en la demo y rutas normales en producción                     |
-| Hono                      | ^4.13.13                                         | la misma API en Bun y en el Worker; [ADR 0009](0009-hono-bun-worker.md)                    |
-| Drizzle ORM / drizzle-kit | 1.0.0-rc.5-5935859 / 1.0.0-rc.5-5935859, exactas | esquema y migraciones compartidos; [ADR 0003](0003-drizzle-pglite.md)                      |
-| PostgreSQL / PGlite       | 18 / 0.5.8                                       | producción / demo y tests                                                                  |
-| Zod                       | 4.6                                              | contratos comunes a formularios, API, semillas e importación                               |
-| bun test / Playwright     | canary / 1.66α + axe                             | pruebas unitarias, contratos y E2E ([ADR 0010](0010-bun-test.md))                          |
+| Pieza                     | Versión                                          | Motivo                                                                                |
+| ------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| Bun                       | 1.4.2                                            | gestor de paquetes, runtime de herramientas y API; bundle autosuficiente del servidor |
+| TypeScript                | reglas de TS 7                                   | comprobación estática con `bun check`; [ADR 0012](0012-bun-check.md)                  |
+| `bun lint` / `bun fmt`    | canary                                           | lint, formato y orden de importaciones; [ADR 0011](0011-bun-lint-fmt.md)              |
+| React / Vite              | 19.3 / 8.3                                       | interfaz común a producción y demo; build estático con `base` configurable            |
+| react-router              | 8.4, modo datos                                  | loaders y revalidación; hash en la demo y rutas normales en producción                |
+| Hono                      | ^4.13.13                                         | la misma API en Bun y en el Worker; [ADR 0009](0009-hono-bun-worker.md)               |
+| Drizzle ORM / drizzle-kit | 1.0.0-rc.5-5935859 / 1.0.0-rc.5-5935859, exactas | esquema y migraciones compartidos; [ADR 0003](0003-drizzle-pglite.md)                 |
+| PostgreSQL / PGlite       | 18 / 0.5.8                                       | producción / demo y tests                                                             |
+| Zod                       | 4.6                                              | contratos comunes a formularios, API, semillas e importación                          |
+| bun test / Playwright     | canary / 1.66α + axe                             | pruebas unitarias, contratos y E2E ([ADR 0010](0010-bun-test.md))                     |
 
 Workspaces de Bun, sin herramientas adicionales de monorepo. `bun.lock` permanece en `lockfileVersion` 1 para
 Dependabot; Bun 1.4.2 conserva ese formato. `bun run check:lockfile` lo comprueba. `linker = "hoisted"` mantiene la
@@ -36,7 +36,7 @@ apps/api        servidor Bun, cookies, CAUCE, volumen de medios y SPA
 tools/legacy-migrator  MariaDB → PostgreSQL, solo para migrar
 ```
 
-Vite, Playwright y TypeScript se ejecutan con `bunx --bun`: se conserva cada herramienta y se fuerza el
+Vite y Playwright se ejecutan con `bunx --bun`: se conserva cada herramienta y se fuerza el
 runtime de Bun en lugar del _shebang_ de Node. Docker y Actions solo necesitan Bun. No se sustituye Vite por el
 bundler de Bun. Las pruebas usan `bun test` desde el [ADR 0010](0010-bun-test.md), que sustituyó a Vitest. Desde la 1.65,
 Playwright soporta oficialmente ejecutar su _test runner_ con Bun (`bunx --bun playwright test`). La suite
