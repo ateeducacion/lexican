@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'bun:test';
 import { fakeDirectory, httpDirectory, parseCauceResponse } from './cauce.ts';
 
 afterEach(() => vi.unstubAllGlobals());

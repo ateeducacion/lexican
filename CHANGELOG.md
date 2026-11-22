@@ -5,6 +5,12 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
 
 ## [Sin publicar]
 
+### Cambiado — `bun test`
+
+- `bun test` sustituye a Vitest en las pruebas unitarias, de contrato, de integración y del migrador, sin cambiar
+  ningún test ([ADR 0010](docs/adr/0010-bun-test.md)). La CI de pruebas usa Bun canary y la cobertura bloqueante es por fichero:
+  90 % de líneas y 80 % de funciones (Bun no mide ramas).
+
 ### Cambiado — Biome
 
 - Biome 2.5.15 sustituye a ESLint y Prettier (`bun run lint`/`fix`, `make lint`/`make fix`): mismas reglas efectivas,

@@ -16,7 +16,7 @@
     "allowImportingTsExtensions": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "types": ["bun", "vite/client"]
+    "types": ["bun-types", "vite/client"]
   },
   "include": [
     "apps/*/src",

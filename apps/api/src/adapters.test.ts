@@ -1,8 +1,8 @@
+import { afterEach, describe, expect, it, vi } from 'bun:test';
 import { mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { roleFromDirectory } from '@lexican/app';
-import { afterEach, describe, expect, it, vi } from 'vitest';
 import { httpDirectory, parseCauceResponse } from './cauce.ts';
 import { loadConfig } from './config.ts';
 import { fsMediaStorage } from './media-storage.ts';

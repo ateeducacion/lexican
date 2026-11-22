@@ -1,7 +1,7 @@
+import { afterAll, beforeAll, describe, expect, it } from 'bun:test';
 import type { EntryInput, OperationName, OperationOutputs } from '@lexican/core';
 import { seedVocabulary, vocabularyValues } from '@lexican/db';
 import { openPglite, openPostgres, type TestDb } from '@lexican/db/testing';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { type Actor, createPasswordUser, createServices, memoryMediaStorage } from './index.ts';
 
 /**
@@ -100,7 +100,7 @@ describe.each(drivers)('application contract on $name', ({ open }) => {
     });
     expect(e.headword).toBe('Guagua');
     expect(e.senses.map((s) => s.position)).toEqual([1, 2]);
-    expect(e.senses[0]!.topicIds).toEqual([vocab['topic:dialecto_canario']]);
+    expect(e.senses[0]!.topicIds).toEqual([vocab['topic:dialecto_canario']!]);
     await expect(
       call('createEntry', ana, { dictionaryId: anaDict, entry: entry('guagua') }),
     ).rejects.toMatchObject({ code: 'conflict' });

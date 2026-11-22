@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'bun:test';
 import { type Actor, generateJoinCode } from './index.ts';
 import { type AppFixture, appFixture } from './testing/fixture.ts';
 
@@ -73,8 +73,10 @@ describe('classrooms', () => {
       expect(first.classroom!.joinCode).toBe('AAAAAA');
       spy.mockClear();
       await expect(f.call('createClassroom', owner, { title: 'Código B' })).rejects.toSatisfy(
-        (e: { code?: string; cause?: { code?: string } }) =>
-          e.code === '23505' || e.cause?.code === '23505',
+        (error) => {
+          const e = error as { code?: string; cause?: { code?: string } };
+          return e.code === '23505' || e.cause?.code === '23505';
+        },
       );
       expect(draws()).toBe(6);
       // One collision, then a fresh code.
