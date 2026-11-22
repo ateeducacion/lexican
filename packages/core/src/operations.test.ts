@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test';
+
 import { bindPath, operations } from './operations.ts';
 
 describe('bindPath', () => {

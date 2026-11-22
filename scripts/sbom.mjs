@@ -2,6 +2,7 @@
 // resolution of bun.lock. Bun has no SBOM command; this keeps the release artifact.
 // Usage: bun run sbom  (writes sbom.spdx.json)
 import { readFileSync, writeFileSync } from 'node:fs';
+
 import { packages } from './deps.mjs';
 
 const root = JSON.parse(readFileSync('package.json', 'utf8'));

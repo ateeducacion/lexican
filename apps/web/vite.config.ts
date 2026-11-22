@@ -1,6 +1,7 @@
 import { execSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+
 import react from '@vitejs/plugin-react';
 import { defineConfig, type Plugin } from 'vite';
 

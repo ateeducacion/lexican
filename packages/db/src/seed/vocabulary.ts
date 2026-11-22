@@ -1,4 +1,5 @@
 import { VocabularyValueInput } from '@lexican/core';
+
 import type { Db } from '../db.ts';
 import { vocabularyValues } from '../schema.ts';
 import data from './vocabulary.json' with { type: 'json' };

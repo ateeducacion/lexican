@@ -1,11 +1,13 @@
 import { type DictionaryView, formatSchoolYear } from '@lexican/core';
 import { Link, type LoaderFunctionArgs, useLoaderData, useSearchParams } from 'react-router';
+
 import { getApi } from '../../api/index.ts';
 import { EntryList } from '../../components/EntryList.tsx';
 import { EmptyState } from '../../components/ui.tsx';
 import { useVocab } from '../../components/vocab.ts';
-import styles from './Classrooms.module.css';
 import { ClassroomState, PageHeader } from './shared.tsx';
+
+import styles from './Classrooms.module.css';
 
 export async function loader({ params }: LoaderFunctionArgs) {
   return (await getApi()).getDictionary({ dictionaryId: params.classroomId! });

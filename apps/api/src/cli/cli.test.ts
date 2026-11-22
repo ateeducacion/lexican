@@ -2,7 +2,9 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'bun:te
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+
 import { loadMigrations } from '@lexican/db/testing';
+
 import { emptyDatabase } from '../testing/pg.ts';
 
 /** The `db:migrate` and `db:seed` scripts run as modules: each import executes the CLI once. */

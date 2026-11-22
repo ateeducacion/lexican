@@ -1,13 +1,11 @@
 import { writeFile } from 'node:fs/promises';
+
 import { csvLine } from './transform.ts';
 
 /** Migration report (§70/§71): per-table metrics, media, every anomaly with its class, and post-load checks. */
 
 export type AnomalyClass =
-  | 'repairable automatically'
-  | 'needs rule'
-  | 'needs human review'
-  | 'cannot migrate';
+  'repairable automatically' | 'needs rule' | 'needs human review' | 'cannot migrate';
 
 export interface Anomaly {
   table: string;

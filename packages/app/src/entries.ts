@@ -24,6 +24,7 @@ import {
   vocabularyValues,
 } from '@lexican/db';
 import { and, asc, eq, exists, inArray, isNull, like, notInArray, sql } from 'drizzle-orm';
+
 import {
   assertEditable,
   assertReadable,
@@ -342,7 +343,10 @@ export function entryServices(deps: Deps) {
             )
           : undefined,
       );
-      const [total] = await db.select({ n: sql<number>`count(*)::int` }).from(entries).where(where);
+      const [total] = await db
+        .select({ n: sql<number>`count(*)::int` })
+        .from(entries)
+        .where(where);
       const rows = await db
         .select({ id: entries.id })
         .from(entries)

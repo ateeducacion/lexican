@@ -1,4 +1,5 @@
 import { mkdir } from 'node:fs/promises';
+
 import { buildApp } from './app.ts';
 import { loadConfig } from './config.ts';
 import { openDb, runMigrations } from './db.ts';

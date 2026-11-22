@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test';
+
 import {
   buildSnapshot,
   codeFromLabel,
@@ -16,8 +17,8 @@ import {
   memberRoleOf,
   normalizeLabel,
   orderSenses,
-  type SenseData,
   safeFileName,
+  type SenseData,
   sniffMedia,
   submissionStatusOf,
   vocabularyOfField,

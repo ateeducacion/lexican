@@ -7,6 +7,7 @@ import type {
 } from '@lexican/core';
 import { seedVocabulary, vocabularyValues } from '@lexican/db';
 import { openPglite } from '@lexican/db/testing';
+
 import {
   type Actor,
   createPasswordUser,

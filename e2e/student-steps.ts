@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+
 import { expect } from './fixtures.ts';
 
 export const CLASSROOM = 'Canarismos de 2º ESO B';

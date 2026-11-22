@@ -1,9 +1,11 @@
 import { type DictionaryView, operations } from '@lexican/core';
 import { type FormEvent, useState } from 'react';
 import { Link, useLoaderData, useNavigate } from 'react-router';
+
 import { getApi } from '../../api/index.ts';
 import { ErrorMessage, Field, PageTitle, useAction, useNotify } from '../../components/ui.tsx';
-import { AVATARS, Avatar } from './Avatar.tsx';
+import { Avatar, AVATARS } from './Avatar.tsx';
+
 import styles from './personal.module.css';
 
 export async function loader(): Promise<DictionaryView> {

@@ -1,4 +1,5 @@
-import { createBrowserRouter, createHashRouter, type RouteObject, redirect } from 'react-router';
+import { createBrowserRouter, createHashRouter, redirect, type RouteObject } from 'react-router';
+
 import { Layout } from './components/Layout.tsx';
 import { RouteError } from './pages/RouteError.tsx';
 import { requireUserLoader, rootLoader } from './session.ts';

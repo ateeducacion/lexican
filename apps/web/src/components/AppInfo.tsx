@@ -1,9 +1,11 @@
 import type { GlobalRole } from '@lexican/core';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Link } from 'react-router';
+
 import { APP_COMMIT, APP_VERSION, SOURCE_URL } from '../env.ts';
-import styles from './Layout.module.css';
 import { Dialog } from './ui.tsx';
+
+import styles from './Layout.module.css';
 
 /** "?" (help adapted to the role) and "i" (version, licence, source code) buttons for the top bar. */
 export function AppInfo({ role }: { role: GlobalRole | null }) {

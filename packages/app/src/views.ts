@@ -24,6 +24,7 @@ import {
   users,
 } from '@lexican/db';
 import { and, asc, eq, inArray, isNull, sql } from 'drizzle-orm';
+
 import type { DictionaryRow, SettingsRow } from './access.ts';
 import { type Actor, type Deps, iso } from './context.ts';
 

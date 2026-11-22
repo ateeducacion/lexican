@@ -93,6 +93,7 @@ Nunca se prueba por primera vez contra producción.
    docker exec -i lexican-legacy mariadb -uroot -p… -e 'create database lexican'
    docker exec -i lexican-legacy mariadb -uroot -p… lexican < volcado.sql
    ```
+
 2. **Destino vacío.** Crea una base PostgreSQL nueva y aplica el esquema: `DATABASE_URL=… bun run db:migrate`.
 3. **Dry-run** y revisión del CSV con el equipo funcional: `bun run migrate:legacy … --dry-run --report ensayo-dry.json`.
    Decide cada `needs rule` y `needs human review` (corregir en el legacy de ensayo, aceptar o cambiar la regla).
@@ -106,6 +107,7 @@ Nunca se prueba por primera vez contra producción.
    -- nuevo
    select count(*) from entries where legacy_source = 'dp_entradas' and deleted_at is null;
    ```
+
 6. **Checksums de medios**: la verificación «medios copiados con checksum correcto» debe ser `ok`. Además,
    `faltantes` y `corruptos` se revisan con el equipo (¿existen en otra copia del NFS?).
 7. **Integridad**: todas las entradas de `verification` en `ok: true`. Una con `ok: false` no impide el commit

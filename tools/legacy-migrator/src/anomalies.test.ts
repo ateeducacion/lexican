@@ -2,9 +2,11 @@ import { afterAll, beforeAll, describe, expect, it } from 'bun:test';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+
 import { type Db, queryRows } from '@lexican/db';
 import { openPglite, type TestDb } from '@lexican/db/testing';
 import { sql } from 'drizzle-orm';
+
 import type {
   Acepcion,
   Comentario,
@@ -14,7 +16,7 @@ import type {
   Medio,
   Persona,
 } from './legacy.ts';
-import { type MigrateOptions, migrateLegacy } from './migrate.ts';
+import { migrateLegacy, type MigrateOptions } from './migrate.ts';
 import type { Report } from './report.ts';
 
 /**

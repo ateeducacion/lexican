@@ -4,9 +4,9 @@ import {
   type DictionaryView,
   formatSchoolYear,
   MAX_VALIDITY_YEARS,
+  schoolYearOf,
   SENSE_FIELDS,
   type SenseField,
-  schoolYearOf,
 } from '@lexican/core';
 import { type FormEvent, useState } from 'react';
 import {
@@ -16,12 +16,14 @@ import {
   useNavigate,
   useRevalidator,
 } from 'react-router';
+
 import { getApi } from '../../api/index.ts';
 import { Dialog, ErrorMessage, Field, useAction, useNotify } from '../../components/ui.tsx';
 import { useVocab } from '../../components/vocab.ts';
 import { useSession } from '../../session.ts';
-import styles from './Classrooms.module.css';
 import { JoinCode, PageHeader } from './shared.tsx';
+
+import styles from './Classrooms.module.css';
 
 export async function loader({ params }: LoaderFunctionArgs) {
   return params.classroomId

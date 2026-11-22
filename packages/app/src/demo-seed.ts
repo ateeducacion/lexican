@@ -15,6 +15,7 @@ import {
   vocabularyValues,
 } from '@lexican/db';
 import { and, eq } from 'drizzle-orm';
+
 import { createPasswordUser } from './auth.ts';
 import type { Actor, Deps } from './context.ts';
 import { createServices } from './index.ts';

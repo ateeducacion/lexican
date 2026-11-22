@@ -1,4 +1,4 @@
-import { DomainError, type MediaKind, type MediaView, mediaKindOf } from '@lexican/core';
+import { DomainError, type MediaKind, mediaKindOf, type MediaView } from '@lexican/core';
 import {
   dictionaries,
   dictionaryMemberships,
@@ -11,6 +11,7 @@ import {
 } from '@lexican/db';
 import { and, eq, gte, isNull, sql } from 'drizzle-orm';
 import { fileTypeFromBuffer } from 'file-type';
+
 import { dictionaryAccess } from './access.ts';
 import { type Actor, type Deps, notFound, requireUser } from './context.ts';
 

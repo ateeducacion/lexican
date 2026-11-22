@@ -1,4 +1,5 @@
 import type { UserView } from '@lexican/core';
+
 import { getApi } from '../../api/index.ts';
 import { ApiError } from '../../api/types.ts';
 

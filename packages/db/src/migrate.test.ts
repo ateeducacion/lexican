@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'bun:test';
 import { fileURLToPath } from 'node:url';
+
 import { sql } from 'drizzle-orm';
 import { readMigrationFiles } from 'drizzle-orm/migrator';
+
 import { queryRows } from './db.ts';
 import { migrateBundled } from './migrate.ts';
 import { appSettings, vocabularyValues } from './schema.ts';

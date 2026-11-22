@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test';
+
 import { ClassroomInput, JoinInput, ListEntriesQuery } from './contracts.ts';
 import { mediaKindOf } from './fields.ts';
 

@@ -1,10 +1,11 @@
 import { describe, expect, it, vi } from 'bun:test';
+
 import {
-  type CasServer,
-  CasUnavailable,
   casEndpoint,
   casLoginUrl,
   casLogoutUrl,
+  type CasServer,
+  CasUnavailable,
   parseLogoutRequest,
   parseServiceResponse,
   validateTicket,

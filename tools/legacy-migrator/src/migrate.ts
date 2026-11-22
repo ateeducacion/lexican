@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { copyFile, stat as fsStat, mkdir, readdir, readFile } from 'node:fs/promises';
+import { copyFile, mkdir, readdir, readFile, stat as fsStat } from 'node:fs/promises';
 import { join } from 'node:path';
+
 import {
   type EntrySnapshot,
   headwordKey,
@@ -31,11 +32,12 @@ import {
   senseMedia,
   senseTopics,
   submissions,
-  userSchools,
   users,
+  userSchools,
   vocabularyValues,
 } from '@lexican/db';
 import { eq, type SQL, sql } from 'drizzle-orm';
+
 import type { Acepcion, DpEntrada, LegacyData, Master, Medio, Tematica } from './legacy.ts';
 import { COUNTED_ONLY } from './legacy.ts';
 import { anomaly, newReport, orphan, type Report, stat } from './report.ts';
@@ -59,8 +61,8 @@ import {
   normalizeLabel,
   orderSenses,
   originalNameOf,
-  type SenseData,
   safeFileName,
+  type SenseData,
   sniffMedia,
   submissionStatusOf,
   vocabularyOfField,

@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+
 import { PageTitle } from '../components/ui.tsx';
 
 export function Component() {

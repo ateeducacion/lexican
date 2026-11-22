@@ -1,6 +1,7 @@
 import { DomainError, type GlobalRole, type ParsedInput, type UserView } from '@lexican/core';
-import { authIdentities, type Db, schools, userSchools, users } from '@lexican/db';
+import { authIdentities, type Db, schools, users, userSchools } from '@lexican/db';
 import { and, eq, sql } from 'drizzle-orm';
+
 import { type Actor, audit, type Deps, requireUser } from './context.ts';
 import { toUserView } from './views.ts';
 

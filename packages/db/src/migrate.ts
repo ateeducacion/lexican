@@ -1,6 +1,7 @@
 import type { MigrationMeta } from 'drizzle-orm/migrator';
 import { formatToMillis } from 'drizzle-orm/migrator.utils';
 import { migrate } from 'drizzle-orm/pg-core';
+
 import type { Db } from './db.ts';
 
 async function sha256(text: string): Promise<string> {
