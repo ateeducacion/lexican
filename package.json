@@ -47,6 +47,9 @@
     "metrics": "bun scripts/metrics.mjs",
     "og-image": "bun run build:demo && bun scripts/make-og-image.mjs"
   },
+  "overrides": {
+    "playwright-core": "1.66.0-alpha-2026-11-22"
+  },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "1.66.0-alpha-2026-11-22",
