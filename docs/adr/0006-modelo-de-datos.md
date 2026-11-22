@@ -13,7 +13,7 @@
 - Estados explícitos: `submission_status = pending | published | rejected | withdrawn`; booleanos `hidden`, `active`,
   `timeless`; `deleted_at` solo donde se necesita borrado recuperable.
 - Vocabularios controlados en una tabla `vocabulary_values(vocabulary, code, label, abbreviation, position, featured,
-  active)` con códigos estables. Las acepciones referencian valores por relación, no por id histórico.
+active)` con códigos estables. Las acepciones referencian valores por relación, no por id histórico.
 - Campos de acepción configurables por aula como arrays tipados `visible_fields` / `required_fields`
   (`SENSE_FIELDS`), no como tabla EAV.
 - Bloqueo optimista: `entries.version`; una escritura con versión antigua devuelve 409.

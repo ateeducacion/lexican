@@ -197,7 +197,10 @@ export const classroomSettings = pgTable('classroom_settings', {
   groupLabel: text('group_label').notNull().default(''),
   maxSenses: smallint('max_senses'),
   visibleFields: text('visible_fields').array().notNull(),
-  requiredFields: text('required_fields').array().notNull().default(sql`'{}'::text[]`),
+  requiredFields: text('required_fields')
+    .array()
+    .notNull()
+    .default(sql`'{}'::text[]`),
   guidelines: text('guidelines').notNull().default(''),
   visibleToStudents: boolean('visible_to_students').notNull().default(true),
   submissionsEnabled: boolean('submissions_enabled').notNull().default(true),

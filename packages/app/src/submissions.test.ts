@@ -1,5 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'bun:test';
+
 import type { EntryView, SenseField, SenseView } from '@lexican/core';
+
 import type { SettingsRow } from './access.ts';
 import { type Actor, submissionProblem } from './index.ts';
 import { type AppFixture, appFixture, PNG } from './testing/fixture.ts';

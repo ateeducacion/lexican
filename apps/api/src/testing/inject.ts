@@ -1,4 +1,5 @@
 import type { Logger } from '@lexican/http';
+
 import type { buildApp } from '../app.ts';
 
 export const silentLog: Logger = {

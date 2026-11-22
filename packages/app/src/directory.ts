@@ -1,4 +1,5 @@
 import { DEMO_ACCOUNTS, DEMO_SCHOOL, DomainError } from '@lexican/core';
+
 import type { InstitutionalProfile } from './auth.ts';
 
 /** Resolves a validated CAS subject to a profile: CAUCE in production, fixtures with the test CAS. */

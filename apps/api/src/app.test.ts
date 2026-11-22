@@ -2,9 +2,11 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'bun:te
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+
 import { seedDemo } from '@lexican/app';
 import { openPglite, openPostgres, type TestDb } from '@lexican/db/testing';
 import { safeError } from '@lexican/http';
+
 import { buildApp } from './app.ts';
 import { loadConfig } from './config.ts';
 import { fsMediaStorage } from './media-storage.ts';

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { MEDIA_KINDS, SENSE_FIELD_CODES, VOCABULARIES } from './fields.ts';
 import { MAX_VALIDITY_YEARS } from './school-year.ts';
 

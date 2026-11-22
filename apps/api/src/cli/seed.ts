@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
+
 import { seedDemo } from '@lexican/app';
 import { seedVocabulary } from '@lexican/db';
+
 import { loadConfig } from '../config.ts';
 import { openDb } from '../db.ts';
 import { fsMediaStorage } from '../media-storage.ts';

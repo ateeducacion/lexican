@@ -4,12 +4,14 @@ import { mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import { type Db, queryRows, seedVocabulary } from '@lexican/db';
 import { openPostgres, type TestDb } from '@lexican/db/testing';
 import { sql } from 'drizzle-orm';
 import mysql from 'mysql2/promise';
+
 import { type LegacyData, loadLegacy } from './legacy.ts';
-import { type MigrateOptions, migrateLegacy } from './migrate.ts';
+import { migrateLegacy, type MigrateOptions } from './migrate.ts';
 
 /**
  * legacy fixture (MariaDB) → migrator → PostgreSQL → assertions (§79). Runs only with both servers:

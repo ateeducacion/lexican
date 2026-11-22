@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import { type Db, jsonbTextCodec } from '@lexican/db';
 import { SQL } from 'bun';
 import { migrate } from 'drizzle-orm/bun-sql/migrator';

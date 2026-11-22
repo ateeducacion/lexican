@@ -1,7 +1,9 @@
 import type { EntrySnapshot, EntryView, SenseField } from '@lexican/core';
-import styles from './EntryContent.module.css';
+
 import { Media } from './Media.tsx';
 import { useVocab } from './vocab.ts';
+
+import styles from './EntryContent.module.css';
 
 type Sense = EntryView['senses'][number] | EntrySnapshot['senses'][number];
 

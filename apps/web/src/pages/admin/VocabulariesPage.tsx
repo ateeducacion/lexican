@@ -1,11 +1,12 @@
 import {
   VOCABULARIES,
-  VOCABULARY_LABELS,
   type Vocabulary,
+  VOCABULARY_LABELS,
   type VocabularyValue,
 } from '@lexican/core';
 import { type FormEvent, useState } from 'react';
 import { useLoaderData, useRevalidator, useSearchParams } from 'react-router';
+
 import { getApi } from '../../api/index.ts';
 import { ErrorMessage, PageTitle, useAction, useNotify } from '../../components/ui.tsx';
 import { invalidateVocabulary } from '../../session.ts';

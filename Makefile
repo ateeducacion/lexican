@@ -43,11 +43,11 @@ integration:
 e2e:
 	bun run e2e
 
-## Lint, format and import order (Biome) and typecheck
+## Lint, format and import order (bun lint, bun fmt) and typecheck
 lint:
 	bun run lint && bun run typecheck
 
-## Fix lint, formatting and import order (Biome)
+## Fix lint, formatting and import order (bun lint, bun fmt)
 fix:
 	bun run fix
 

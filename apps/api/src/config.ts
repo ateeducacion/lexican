@@ -1,4 +1,5 @@
 import { isIP } from 'node:net';
+
 import type { SchoolYearConfig } from '@lexican/core';
 import { isCasPath } from '@lexican/http';
 import { z } from 'zod';

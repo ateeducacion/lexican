@@ -1,7 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from 'bun:test';
+
 import type { EntryInput, OperationName, OperationOutputs } from '@lexican/core';
 import { seedVocabulary, vocabularyValues } from '@lexican/db';
 import { openPglite, openPostgres, type TestDb } from '@lexican/db/testing';
+
 import { type Actor, createPasswordUser, createServices, memoryMediaStorage } from './index.ts';
 
 /**

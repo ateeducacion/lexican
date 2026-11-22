@@ -4,6 +4,7 @@ import { demoSeedVersion, seedDemo } from '@lexican/app';
 import { type Db, migrateBundled } from '@lexican/db';
 import { createApi, safeError } from '@lexican/http';
 import { drizzle } from 'drizzle-orm/pglite';
+
 import { deleteDatabase, openBlobStore } from './blob-store.ts';
 import {
   DATA_DIR,
@@ -13,7 +14,7 @@ import {
   MEDIA_DB,
   type ToWorker,
 } from './protocol.ts';
-import { demoCarrier as carrier, createMessageHandler, type Fetcher } from './worker-core.ts';
+import { createMessageHandler, demoCarrier as carrier, type Fetcher } from './worker-core.ts';
 
 /**
  * The demo "server": the shared Hono API (`@lexican/http`) with the same services, on PGlite (IndexedDB) and media

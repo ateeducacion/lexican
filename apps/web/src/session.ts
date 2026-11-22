@@ -1,5 +1,6 @@
 import type { UserView, VocabularyValue } from '@lexican/core';
 import { redirect, useRouteLoaderData } from 'react-router';
+
 import { getApi } from './api/index.ts';
 import { readDemoSession } from './demo/session.ts';
 

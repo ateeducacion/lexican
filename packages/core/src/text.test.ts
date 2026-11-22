@@ -1,4 +1,5 @@
 import { expect, it } from 'bun:test';
+
 import { headwordKey, initialOf, normalizeText, sortKeyOf } from './text.ts';
 
 it('RULE-094 keys are case-insensitive and accent-sensitive', () => {

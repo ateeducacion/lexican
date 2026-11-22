@@ -1,6 +1,7 @@
 import type { DictionaryView, EntrySummary, SubmitResult, WindowState } from '@lexican/core';
 import { useState } from 'react';
 import { Link, useLoaderData, useRevalidator } from 'react-router';
+
 import { getApi } from '../../api/index.ts';
 import {
   EmptyState,
@@ -10,8 +11,9 @@ import {
   StatusBadge,
   useAction,
 } from '../../components/ui.tsx';
-import styles from './personal.module.css';
 import { CLOSED_WINDOW } from './windowLabels.ts';
+
+import styles from './personal.module.css';
 
 interface Data {
   entries: EntrySummary[];

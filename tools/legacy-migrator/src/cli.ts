@@ -1,9 +1,11 @@
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
+
 import { type Db, jsonbTextCodec } from '@lexican/db';
 import { SQL } from 'bun';
 import { bunSqlPgCodecs, drizzle } from 'drizzle-orm/bun-sql/postgres';
 import mysql from 'mysql2/promise';
+
 import { loadLegacy } from './legacy.ts';
 import { migrateLegacy } from './migrate.ts';
 import { writeReport } from './report.ts';

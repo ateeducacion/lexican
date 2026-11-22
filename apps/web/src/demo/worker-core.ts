@@ -1,4 +1,5 @@
-import { type SessionCarrier, safeError } from '@lexican/http';
+import { safeError, type SessionCarrier } from '@lexican/http';
+
 import type { DemoContext, DemoContextUpdate, FromWorker, ToWorker } from './protocol.ts';
 
 /** What the worker serves: the Hono app's `fetch`, called with the demo context as its env. */

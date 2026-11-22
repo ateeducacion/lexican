@@ -5,6 +5,7 @@ import { execFileSync, execSync } from 'node:child_process';
 import { existsSync, lstatSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
+
 import { packages } from './deps.mjs';
 
 const git = (...args) =>

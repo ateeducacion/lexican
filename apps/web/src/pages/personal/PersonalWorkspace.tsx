@@ -19,6 +19,7 @@ import {
   useRevalidator,
   useSearchParams,
 } from 'react-router';
+
 import { getApi } from '../../api/index.ts';
 import { EntryContent } from '../../components/EntryContent.tsx';
 import { EntryList } from '../../components/EntryList.tsx';
@@ -32,8 +33,9 @@ import {
   useNotify,
 } from '../../components/ui.tsx';
 import { useVocab } from '../../components/vocab.ts';
-import styles from './PersonalWorkspace.module.css';
 import { CLOSED_WINDOW } from './windowLabels.ts';
+
+import styles from './PersonalWorkspace.module.css';
 
 interface Data {
   dict: DictionaryView;
@@ -548,7 +550,9 @@ function SendDialog({
     close();
   };
   const send = useAction(async () => {
-    const dry = await (await getApi()).submitEntries({
+    const dry = await (
+      await getApi()
+    ).submitEntries({
       entryIds: [entry.id],
       classroomIds: chosen,
       dryRun: true,

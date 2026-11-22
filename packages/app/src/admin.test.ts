@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'bun:test';
+
 import type { Actor } from './index.ts';
 import { type AppFixture, appFixture } from './testing/fixture.ts';
 

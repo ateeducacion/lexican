@@ -17,11 +17,12 @@ import { type Db, sessions } from '@lexican/db';
 import { and, eq, gt, lt, sql } from 'drizzle-orm';
 import { type Context, Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
+
 import {
-  type CasServer,
-  CasUnavailable,
   casLoginUrl,
   casLogoutUrl,
+  type CasServer,
+  CasUnavailable,
   parseLogoutRequest,
   validateTicket,
 } from './cas.ts';

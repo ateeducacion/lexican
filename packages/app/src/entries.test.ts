@@ -1,6 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'bun:test';
+
 import { auditEvents, users } from '@lexican/db';
 import { desc, eq } from 'drizzle-orm';
+
 import { verifyPassword } from './auth.ts';
 import { type Actor, demoSeedVersion } from './index.ts';
 import { type AppFixture, appFixture, PNG } from './testing/fixture.ts';

@@ -1,5 +1,6 @@
 import { formatSchoolYear, type StatsView } from '@lexican/core';
 import { useLoaderData } from 'react-router';
+
 import { getApi } from '../../api/index.ts';
 import { PageTitle } from '../../components/ui.tsx';
 import { AdminNav } from './AdminNav.tsx';

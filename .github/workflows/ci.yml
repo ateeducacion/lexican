@@ -54,7 +54,7 @@ jobs:
       - run: bun run check:lockfile
       - run: bun run audit
       - run: bun run licenses
-      - run: bun run lint # Biome: lint, formatting and import order
+      - run: bun run lint # bun lint + bun fmt --check: lint, formatting and import order
       - run: bun run typecheck
       # Unit, contract (PGlite AND PostgreSQL), API integration and MariaDB migration tests on bun test;
       # fails when a file covers under 90 % of its lines or 80 % of its functions.

@@ -6,7 +6,9 @@ import {
 } from '@lexican/core';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
+
 import { formatDate, PageTitle } from '../../components/ui.tsx';
+
 import styles from './Classrooms.module.css';
 
 export const WINDOW_LABEL: Record<WindowState, string> = {

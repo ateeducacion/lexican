@@ -1,9 +1,11 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+
 import { PGlite } from '@electric-sql/pglite';
 import { SQL } from 'bun';
 import { bunSqlPgCodecs, drizzle as drizzlePg } from 'drizzle-orm/bun-sql/postgres';
 import { drizzle as drizzlePglite } from 'drizzle-orm/pglite';
+
 import { type Db, jsonbTextCodec } from './db.ts';
 import { migrateBundled } from './migrate.ts';
 

@@ -3,10 +3,10 @@ import {
   DomainError,
   isClassroomCurrent,
   type ParsedInput,
-  type StatsView,
   schoolYearOf,
-  type VocabularyValue,
+  type StatsView,
   validityToReactivate,
+  type VocabularyValue,
 } from '@lexican/core';
 import {
   auditEvents,
@@ -19,6 +19,7 @@ import {
   vocabularyValues,
 } from '@lexican/db';
 import { and, asc, desc, eq, ilike, isNull, or, sql } from 'drizzle-orm';
+
 import {
   type Actor,
   audit,

@@ -5,6 +5,7 @@ import {
   type OperationName,
   operations,
 } from '@lexican/core';
+
 import { ApiError, type WebApi } from './types.ts';
 
 /**

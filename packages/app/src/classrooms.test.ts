@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'bun:test';
+
 import { type Actor, generateJoinCode } from './index.ts';
 import { type AppFixture, appFixture } from './testing/fixture.ts';
 

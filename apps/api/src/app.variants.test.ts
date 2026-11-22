@@ -2,9 +2,11 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'bun:te
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+
 import { createPasswordUser } from '@lexican/app';
 import { authIdentities } from '@lexican/db';
 import { openPglite, type TestDb } from '@lexican/db/testing';
+
 import { buildApp } from './app.ts';
 import { fakeDirectory, type InstitutionalDirectory } from './cauce.ts';
 import { type Config, loadConfig } from './config.ts';

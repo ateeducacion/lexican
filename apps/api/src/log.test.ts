@@ -1,4 +1,5 @@
 import { afterEach, expect, it, vi } from 'bun:test';
+
 import { createLogger } from './log.ts';
 
 afterEach(() => vi.restoreAllMocks());

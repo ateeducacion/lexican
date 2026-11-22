@@ -1,9 +1,11 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'bun:test';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+
 import { memoryMediaStorage, seedDemo } from '@lexican/app';
 import { openPglite, type TestDb } from '@lexican/db/testing';
 import { createApi } from '@lexican/http';
+
 import { createApiClient } from '../api/client.ts';
 import { ApiError } from '../api/types.ts';
 import type { FromWorker, ToWorker } from './protocol.ts';
