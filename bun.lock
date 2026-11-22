@@ -24,7 +24,7 @@
         "@lexican/db": "*",
         "@lexican/http": "*",
         "drizzle-orm": "1.0.0-rc.5",
-        "hono": "^4.13.18",
+        "hono": "^4.13.19",
         "proxy-addr": "^2.0.7",
         "zod": "^4.6.7",
       },
@@ -90,7 +90,7 @@
         "@lexican/db": "*",
         "drizzle-orm": "1.0.0-rc.5",
         "fast-xml-parser": "^5.12.1",
-        "hono": "^4.13.18",
+        "hono": "^4.13.19",
       },
     },
     "tools/legacy-migrator": {
@@ -291,7 +291,7 @@
 
     "generate-function": ["generate-function@2.3.1", "", { "dependencies": { "is-property": "^1.0.2" } }, "sha512-eeB5GfMNeevm/GRYq20ShmsaGcmI81kIX2K9XQx5miC8KdHaC6Jm0qQ8ZNeGOi7wYB8OsdxKs+Y2oVuTFuVwKQ=="],
 
-    "hono": ["hono@4.13.18", "", {}, "sha512-H9q/E1XizaWstJxUW881dmLxEj+t/TrGGnyxINkm4+sK0qUwsMtFdo2BWI9Vs3cIS19MU6b6iCijoUoEf4f3DA=="],
+    "hono": ["hono@4.13.19", "", {}, "sha512-KmXvQAXwcAHV+muzbIwoJ23niEB5nMoDVr9WcRkU8mvjUECm/1+7v4Jgp7P7a+H6MLFrh+vXrGonGrGS+RQfkA=="],
 
     "iconv-lite": ["iconv-lite@0.7.3", "", { "dependencies": { "safer-buffer": ">= 2.1.2 < 3.0.0" } }, "sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ=="],
 
