@@ -5,6 +5,12 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
 
 ## [Sin publicar]
 
+### Cambiado — `bun check`
+
+- `bun check` sustituye a `tsc` en `bun run typecheck` ([ADR 0012](docs/adr/0012-bun-check.md)): comprueba con las
+  reglas de TypeScript 7 en unos 0,2 s (antes, unos 4 s) y se elimina la dependencia `typescript`. Pages pasa a Bun
+  canary, porque la 1.4.2 no trae `bun check`.
+
 ### Cambiado — Playwright sobre Bun
 
 - Playwright 1.66 en alfa (`1.66.0-alpha-2026-11-22`, exacta). Desde la 1.65, Playwright soporta oficialmente su
