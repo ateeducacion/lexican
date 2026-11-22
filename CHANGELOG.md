@@ -5,6 +5,11 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
 
 ## [Sin publicar]
 
+### Cambiado — Playwright sobre Bun
+
+- Playwright 1.65, la primera versión que soporta oficialmente su _test runner_ sobre Bun (`bunx --bun playwright`).
+  Bajo Bun no hay modo _watch_ y la salida de consola de un test no llega a la traza.
+
 ### Cambiado — `bun lint` y `bun fmt`
 
 - `bun lint` y `bun fmt` sustituyen a Biome ([ADR 0011](docs/adr/0011-bun-lint-fmt.md)), configurados en
