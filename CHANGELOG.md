@@ -5,6 +5,13 @@ Formato basado en [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.
 
 ## [Sin publicar]
 
+### Cambiado — Playwright sobre Bun
+
+- Playwright 1.66 en alfa (`1.66.0-alpha-2026-11-22`, exacta). Desde la 1.65, Playwright soporta oficialmente su
+  _test runner_ sobre Bun (`bunx --bun playwright`). Se usa la alfa porque el Firefox de la 1.65.1 se cae al buscar por
+  etiqueta después de un análisis de axe (microsoft/playwright#44135). Bajo Bun no hay modo _watch_ y la salida de
+  consola de un test no llega a la traza.
+
 ### Cambiado — `bun lint` y `bun fmt`
 
 - `bun lint` y `bun fmt` sustituyen a Biome ([ADR 0011](docs/adr/0011-bun-lint-fmt.md)), configurados en

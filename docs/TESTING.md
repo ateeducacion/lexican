@@ -83,6 +83,8 @@ TEST_DATABASE_URL=postgres://lexican:lexican@localhost:5432/postgres bun run tes
 
 Depurar un E2E: `bunx --bun playwright test e2e/student.spec.ts --project=demo-chromium --headed`; las trazas de fallos
 quedan en `test-results/` (`trace: 'retain-on-failure'`) y se abren con `bunx --bun playwright show-trace`.
+El _runner_ se ejecuta sobre Bun (Playwright 1.65 o posterior): no hay modo _watch_, `--only-changed` no sigue las
+importaciones y la salida de consola de un test no aparece en la traza.
 
 ## Cobertura
 
