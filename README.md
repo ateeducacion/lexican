@@ -2,6 +2,13 @@
 
 [![CI](https://github.com/ateeducacion/lexican/actions/workflows/ci.yml/badge.svg)](https://github.com/ateeducacion/lexican/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/ateeducacion/lexican/graph/badge.svg)](https://codecov.io/gh/ateeducacion/lexican) [![Licencia: AGPL-3.0-or-later](https://img.shields.io/badge/licencia-AGPL--3.0--or--later-0f4c81)](LICENSE)
 
+> [!IMPORTANT]
+> **Migración experimental.** LexiCán 1.x, el servicio que usaban los centros, está detenido desde el 21 de octubre de
+> 2026 por las vulnerabilidades críticas de PHP y no volverá a ponerse en servicio. La Consejería ha decidido
+> sustituirlo por el **glosario de Moodle**: en Gomera para el concurso «Mi canarismo favorito» y en EVAGD como recurso
+> de aula. Esta reconstrucción (2.x) es una migración experimental, sin despliegue previsto. La demo es solo
+> demostrativa y no sustituye al servicio.
+
 Diccionarios personales y de aula para aprender léxico. Cada alumno o alumna construye su propio diccionario con
 palabras, acepciones, ejemplos, imágenes, audio y vídeo; el profesorado reúne lo mejor en un diccionario de aula que
 revisa, comenta y publica.
