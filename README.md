@@ -1,6 +1,6 @@
 # LexiCán
 
-[![CI](https://github.com/ateeducacion/lexican/actions/workflows/ci.yml/badge.svg)](https://github.com/ateeducacion/lexican/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/ateeducacion/lexican/graph/badge.svg)](https://codecov.io/gh/ateeducacion/lexican) [![Licencia: AGPL-3.0-or-later](https://img.shields.io/badge/licencia-AGPL--3.0--or--later-0f4c81)](LICENSE)
+[![CI](https://github.com/ateeducacion/lexican/actions/workflows/ci.yml/badge.svg)](https://github.com/ateeducacion/lexican/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/ateeducacion/lexican/graph/badge.svg)](https://codecov.io/gh/ateeducacion/lexican) [![Licencia: AGPL-3.0-or-later](https://img.shields.io/badge/licencia-AGPL--3.0--or--later-0f4c81)](LICENSE) ![Estado: experimental](https://img.shields.io/badge/estado-experimental-orange)
 
 > [!IMPORTANT]
 > **Migración experimental.** LexiCán 1.x, el servicio que usaban los centros, está detenido desde el 21 de octubre de
